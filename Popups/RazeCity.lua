@@ -60,6 +60,8 @@ function OnOpen()
 	local originalOwnerPlayer = Players[eOriginalOwner];
 	local eOwnerBeforeOccupation = g_pSelectedCity:GetOwnerBeforeOccupation();
 	local eConqueredFrom = g_pSelectedCity:GetJustConqueredFrom();
+	local bWipedOut = (originalOwnerPlayer:GetCities():GetCount() < 1);
+
 	local iWarmongerPoints = localPlayer:GetDiplomacy():ComputeCityWarmongerPoints(g_pSelectedCity, eConqueredFrom);
 	if (eOriginalOwner ~= eOwnerBeforeOccupation and eOriginalOwner ~= Game.GetLocalPlayer() and not localPlayer:GetDiplomacy():IsAtWarWith(eOriginalOwner) and eOriginalOwner ~= eConqueredFrom) then
 		Controls.Button1:LocalizeAndSetText("LOC_RAZE_CITY_LIBERATE_FOUNDER_BUTTON_LABEL", PlayerConfigurations[eOriginalOwner]:GetCivilizationShortDescription());
@@ -80,17 +82,23 @@ function OnOpen()
 	end
 
 	Controls.Button3:LocalizeAndSetText("LOC_RAZE_CITY_KEEP_BUTTON_LABEL");
-	szWarmongerString = Locale.Lookup("LOC_RAZE_CITY_KEEP_WARMONGER_EXPLANATION", localPlayer:GetDiplomacy():GetWarmongerLevel(-iWarmongerPoints));
-	if (originalOwnerPlayer:IsAlive()) then
+	if (bWipedOut ~= true) then
+		szWarmongerString = Locale.Lookup("LOC_RAZE_CITY_KEEP_WARMONGER_EXPLANATION", localPlayer:GetDiplomacy():GetWarmongerLevel(-iWarmongerPoints));
 		Controls.Button3:LocalizeAndSetToolTip("LOC_RAZE_CITY_KEEP_EXPLANATION", szWarmongerString);
 	else
+		szWarmongerString = Locale.Lookup("LOC_RAZE_CITY_KEEP_LAST_CITY_EXPLANATION");
 		Controls.Button3:LocalizeAndSetToolTip(szWarmongerString);
 	end
 
 	Controls.Button4:LocalizeAndSetText("LOC_RAZE_CITY_RAZE_BUTTON_LABEL");
 	if (g_pSelectedCity:CanRaze()) then
-		szWarmongerString = Locale.Lookup("LOC_RAZE_CITY_RAZE_WARMONGER_EXPLANATION", localPlayer:GetDiplomacy():GetWarmongerLevel(-iWarmongerPoints * 3));
-		Controls.Button4:LocalizeAndSetToolTip("LOC_RAZE_CITY_RAZE_EXPLANATION", szWarmongerString);
+		if (bWipedOut ~= true) then
+			szWarmongerString = Locale.Lookup("LOC_RAZE_CITY_RAZE_WARMONGER_EXPLANATION", localPlayer:GetDiplomacy():GetWarmongerLevel(-iWarmongerPoints * 3));
+			Controls.Button4:LocalizeAndSetToolTip("LOC_RAZE_CITY_RAZE_EXPLANATION", szWarmongerString);
+		else
+			szWarmongerString = Locale.Lookup("LOC_RAZE_CITY_RAZE_LAST_CITY_EXPLANATION");
+			Controls.Button4:LocalizeAndSetToolTip(szWarmongerString);
+		end
 		Controls.Button4:SetDisabled(false);
 	else
 		Controls.Button4:LocalizeAndSetToolTip("LOC_RAZE_CITY_RAZE_DISABLED_EXPLANATION");

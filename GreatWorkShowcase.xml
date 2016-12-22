@@ -26,9 +26,10 @@
 			</Container>
 			<Container ID="WritingDetails" Size="parent,parent">
 				<Label ID="WritingName" Offset="0,-140" Anchor="C,C" WrapWidth="500" Align="center" Style="GreatWorksWritingName"/>
-				<Line Anchor="C,C" Offset="200,-100" Start="-200,0" End="200,0" Width="2" Color="0,0,0,122"/>
+				<Line ID="WritingLine" Anchor="C,C" Offset="200,-100" Start="-200,0" End="200,0" Width="2" Color="0,0,0,122"/>
 				<Label ID="WritingQuote" Size="520,200" Offset="-5,-20" Anchor="C,C" Align="center" Style="GreatWorksWritingQuote"/>
 				<Label ID="WritingAuthor" Offset="-5,70" Anchor="C,C" Align="center" Style="GreatWorksWritingQuote"/>
+				<Image ID="WritingDeco" Anchor="C,C" Offset="0,0" Texture="GreatWorks_WritingDeco" Color="72,71,66,255" />
 			</Container>
 			<GridButton ID="ViewGreatWorks" Anchor="C,B" Offset="0,10" Size="280,40" Style="MainButton" String="LOC_GREAT_WORKS_VIEW_GREAT_WORKS"/>
 			<Button	ID="NextGreatWork" Anchor="C,C"	Offset="300,0" Size="60,60" Texture="Controls_StepperLarge" Hidden="1"/>

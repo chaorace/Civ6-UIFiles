@@ -135,8 +135,23 @@ function UpdateGreatWork()
 		Controls.GreatWorkImage:SetOffsetY(0);
 		Controls.GreatWorkImage:SetTexture(GREAT_WORK_WRITING_TEXTURE);
 		Controls.WritingName:SetText(Locale.ToUpper(Locale.Lookup(greatWorkInfo.Name)));
-		Controls.WritingQuote:SetText(Locale.Lookup(greatWorkInfo.Quote));
-		Controls.WritingAuthor:SetText("-" .. greatWorkCreator);
+		local quoteKey:string = greatWorkInfo.Quote;
+		if (quoteKey ~= nil) then
+			Controls.WritingLine:SetHide(false);
+			Controls.WritingQuote:SetText(Locale.Lookup(quoteKey));
+			Controls.WritingQuote:SetHide(false);
+			Controls.WritingAuthor:SetText("-" .. greatWorkCreator);
+			Controls.WritingAuthor:SetHide(false);
+			Controls.WritingDeco:SetHide(true);
+		else
+			local titleOffset:number = -45;
+			Controls.WritingName:SetOffsetY(titleOffset);
+			Controls.WritingLine:SetHide(true);
+			Controls.WritingQuote:SetHide(true);
+			Controls.WritingAuthor:SetHide(true);
+			Controls.WritingDeco:SetHide(false);
+			Controls.WritingDeco:SetOffsetY(Controls.WritingName:GetSizeY() + -20);
+		end
 		Controls.WritingDetails:SetHide(false);
 	elseif greatWorkObjectType == GREAT_WORK_ARTIFACT_TYPE or greatWorkObjectType == GREAT_WORK_RELIC_TYPE then
 		if greatWorkObjectType == GREAT_WORK_ARTIFACT_TYPE then

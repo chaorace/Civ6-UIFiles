@@ -58,7 +58,7 @@ function Player_WriteParameterValues(o, parameter)
 				else
 					local leaderType:string = parameter.Value.Value;
 
-					playerConfig:SetLeaderName(parameter.Value.Name);
+					playerConfig:SetLeaderName(parameter.Value.RawName or parameter.Value.Name);
 
 
 					playerConfig:SetLeaderTypeName(leaderType);
@@ -233,7 +233,7 @@ function GetPlayerInfo(domain, leader_type)
 	-- This can't happen until GameCore supports 
 	-- multiple 'random' pools.
 	if(leader_type ~= "RANDOM") then
-		local info_query = "SELECT CivilizationIcon, LeaderIcon, LeaderName, CivilizationName, LeaderAbilityName, LeaderAbilityDescription, LeaderAbilityIcon, CivilizationAbilityName, CivilizationAbilityDescription, CivilizationAbilityIcon from Players where Domain = ? and LeaderType = ? LIMIT 1";
+		local info_query = "SELECT CivilizationIcon, LeaderIcon, LeaderName, CivilizationName, LeaderAbilityName, LeaderAbilityDescription, LeaderAbilityIcon, CivilizationAbilityName, CivilizationAbilityDescription, CivilizationAbilityIcon, Portrait, PortraitBackground from Players where Domain = ? and LeaderType = ? LIMIT 1";
 		local item_query = "SELECT Name, Description, Icon from PlayerItems where Domain = ? and LeaderType = ? ORDER BY SortIndex";
 		local info_results = DB.ConfigurationQuery(info_query, domain, leader_type);
 		local item_results = DB.ConfigurationQuery(item_query, domain, leader_type);
@@ -251,6 +251,8 @@ function GetPlayerInfo(domain, leader_type)
 				info.LeaderIcon= row.LeaderIcon;
 				info.LeaderName = row.LeaderName;
 				info.CivilizationName = row.CivilizationName;
+				info.Portrait = row.Portrait;
+				info.PortraitBackground = row.PortraitBackground;
 				if(row.LeaderAbilityName and row.LeaderAbilityDescription and row.LeaderAbilityIcon) then
 					info.LeaderAbility = {
 						Name = row.LeaderAbilityName,
@@ -402,18 +404,29 @@ function SetUniqueCivLeaderData(info:table, tooltipControls:table)
 		tooltipControls.DummyImage:UnloadTexture();
 
 		-- Set leader placard
-		local leaderImageName = info.LeaderType.."_NEUTRAL";
-		local leaderName = string.gsub(info.LeaderType, "LEADER_","")
+		local leaderPortrait:string;
+		if info.Portrait then
+			leaderPortrait = info.Portrait;
+		else
+			leaderPortrait = info.LeaderType .. "_NEUTRAL";
+		end
 	
-		tooltipControls.DummyImage:SetTexture(leaderImageName);
+		tooltipControls.DummyImage:SetTexture(leaderPortrait);
 		local imageRatio = tooltipControls.DummyImage:GetSizeX()/tooltipControls.DummyImage:GetSizeY();
 		if(imageRatio > .51) then
  			tooltipControls.LeaderImage:SetTextureOffsetVal(30,10)
 		else
 			tooltipControls.LeaderImage:SetTextureOffsetVal(10,50)
 		end
-		tooltipControls.LeaderImage:SetTexture(leaderImageName);
-		tooltipControls.LeaderBG:SetTexture(info.LeaderType.."_BACKGROUND");
+		tooltipControls.LeaderImage:SetTexture(leaderPortrait);
+
+		local leaderBGImage:string;
+		if info.PortraitBackground then
+			leaderBGImage = info.PortraitBackground;
+		else
+			leaderBGImage = info.LeaderType .. "_BACKGROUND";
+		end
+		tooltipControls.LeaderBG:SetTexture(leaderBGImage);
 	end
 
 	-- Set Leader unique data

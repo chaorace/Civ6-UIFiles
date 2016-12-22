@@ -205,6 +205,7 @@ function GameParameters_UI_DefaultCreateParameterDriver(o, parameter)
 			UpdateValue = function(value)
 				local button = c.PullDown:GetButton();
 				button:SetText( value and value.Name or nil);
+				button:SetToolTipString(value and value.Description or nil);
 			end,
 			UpdateValues = function(values)
 				c.PullDown:ClearEntries();
@@ -222,8 +223,8 @@ function GameParameters_UI_DefaultCreateParameterDriver(o, parameter)
 				end
 				c.PullDown:CalculateInternals();
 			end,
-			SetEnabled = function(enabled)
-				c.PullDown:SetDisabled(not enabled);
+			SetEnabled = function(enabled, parameter)
+				c.PullDown:SetDisabled(not enabled or #parameter.Values <= 1);
 			end,
 			SetVisible = function(visible)
 				c.Root:SetHide(not visible);
@@ -307,12 +308,12 @@ function UI_SetParameterEnabled(o, parameter)
 	local control = o.Controls[parameter.ParameterId];
 	if(control) then
 		if(control.SetEnabled) then
-			control.SetEnabled(parameter.Enabled);
+			control.SetEnabled(parameter.Enabled, parameter);
 		end
 
 		for i,v in ipairs(control) do
 			if(v.SetEnabled) then
-				v.SetEnabled(parameter.Enabled);
+				v.SetEnabled(parameter.Enabled, parameter);
 			end	
 		end
 	end
@@ -424,6 +425,14 @@ function BuildGameSetup(createParameterFunc:ifunction)
 	g_GameParameters.UI_SetParameterValue = UI_SetParameterValue;
 	g_GameParameters.UI_SetParameterEnabled = UI_SetParameterEnabled;
 	g_GameParameters.UI_SetParameterVisible = UI_SetParameterVisible;
+
+	-- Optional overrides.
+	if(GameParameters_FilterValues) then
+		g_GameParameters.Default_Parameter_FilterValues = g_GameParameters.Parameter_FilterValues;
+		g_GameParameters.Parameter_FilterValues = GameParameters_FilterValues;
+	end
+
+
 	g_GameParameters:Initialize();
 	g_GameParameters:FullRefresh();
 end
@@ -521,8 +530,8 @@ function MapSize_ValueChanged(p)
 	local playerCountChange = GameConfiguration.SetParticipatingPlayerCount(participatingCount);
 	Network.BroadcastGameConfig(true);
 
-	print(playerCountChange);
-	if (playerCountChange ~= 0) then
-		LuaEvents.GameSetup_PlayerCountChanged();
-	end
+	-- NOTE: This used to only be called if playerCountChange was non-zero.
+	-- This needs to be called more frequently than that because each player slot entry's add/remove button
+	-- needs to be potentially updated to reflect the min/max player constraints.
+	LuaEvents.GameSetup_PlayerCountChanged();
 end

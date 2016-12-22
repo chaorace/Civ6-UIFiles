@@ -48,29 +48,43 @@ end
 function GenerateLayers(selectedPlayerID:number)
 	local playerConfig = PlayerConfigurations[selectedPlayerID];
 	if (playerConfig ~= nil) then
-		local leaderName = playerConfig:GetLeaderTypeName();
-		local numLayers = GameInfo.Leaders[leaderName].SceneLayers;
-
-		m_kBackgroundLayersIM:ResetInstances();
+		
 		m_uiBackgroundLayers = {};
-		leaderName = string.gsub(leaderName, "LEADER_","")
-		if (numLayers == 0) then
-			leaderName = "CLEOPATRA";
-			numLayers = 4;
-		end
+		m_kBackgroundLayersIM:ResetInstances();
 
+		local leaderName = playerConfig:GetLeaderTypeName();
 		local unloadTextures : boolean = m_oldLeaderName ~= leaderName;
 		m_oldLeaderName = leaderName;
 
-		for i=1, numLayers, 1 do
-			local instance:table	= m_kBackgroundLayersIM:GetInstance();
-			if (unloadTextures) then
-				instance.Background_Image:UnloadTexture();
+		local diplomacyInfo = GameInfo.DiplomacyInfo[leaderName];
+		if diplomacyInfo and diplomacyInfo.BackgroundImage then
+			local layer:table = CreateBackgroundLayer(diplomacyInfo.BackgroundImage, unloadTextures);
+			table.insert(m_uiBackgroundLayers, layer);
+		else
+			local numLayers = GameInfo.Leaders[leaderName].SceneLayers;
+			leaderName = string.gsub(leaderName, "LEADER_","");
+
+			-- Safety fallback
+			if (numLayers == 0) then
+				leaderName = "CLEOPATRA";
+				numLayers = 4;
 			end
-			instance.Background_Image:SetTexture(leaderName.."_"..i);
-			table.insert(m_uiBackgroundLayers, instance);
+
+			for i=1, numLayers, 1 do
+				local layer:table = CreateBackgroundLayer(leaderName.."_"..i, unloadTextures);
+				table.insert(m_uiBackgroundLayers, layer);
+			end
 		end
 	end
+end
+
+function CreateBackgroundLayer(texture:string, unloadTextures:boolean)
+	local instance:table = m_kBackgroundLayersIM:GetInstance();
+	if (unloadTextures) then
+		instance.Background_Image:UnloadTexture();
+	end
+	instance.Background_Image:SetTexture(texture);
+	return instance;
 end
 
 -- This function correctly sizes the background images.  Layers 1-3 are sized down vertically by 200 pixels so that most of the 

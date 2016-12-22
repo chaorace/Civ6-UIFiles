@@ -526,27 +526,49 @@ function SetupParameters:Data_DiscoverParameters()
 
 	-- Cross reference parameters with criteria and dependencies.
 	local parameter_criteria = {};
-	for i, row in ipairs(CachedQuery("SELECT * from ParameterCriteria")) do
-		table.insert(parameter_criteria, row);
+	for i, query in ipairs(CachedQuery("SELECT * from ParameterCriteriaQueries")) do
+		local q = queries[query.QueryId];
+		if(q) then
+			for _, row in ipairs(self:Data_Query(q)) do
+				local criteria = {
+					ParameterId = row[query.ParameterIdField],
+					ConfigurationGroup = row[query.ConfigurationGroupField],
+					ConfigurationId = row[query.ConfigurationIdField],
+					Operator = row[query.OperatorField],
+					ConfigurationValue = row[query.ConfigurationValueField],
+				};
 
-		local c = parameter_criteria[row.ParameterId];
-		if(c == nil) then
-			c = {};
-			parameter_criteria[row.ParameterId] = c;
-		end 
-
-		table.insert(c, row);
+				local c = parameter_criteria[criteria.ParameterId];
+				if(c == nil) then
+					c = {};
+					parameter_criteria[criteria.ParameterId] = c;
+				end 
+				table.insert(c, criteria);
+			end
+		end
 	end
 
 	local parameter_dependencies = {};
-	for i, row in ipairs(CachedQuery("SELECT * from ParameterDependencies")) do
-		local dependencies = parameter_dependencies[row.ParameterId];
-		if(dependencies == nil) then
-			dependencies = {};
-			parameter_dependencies[row.ParameterId] = dependencies;
-		end 
+	for i, query in ipairs(CachedQuery("SELECT * from ParameterDependencyQueries")) do
+		local q = queries[query.QueryId];
+		if(q) then
+			for _, row in ipairs(self:Data_Query(q)) do
+				local criteria = {
+					ParameterId = row[query.ParameterIdField],
+					ConfigurationGroup = row[query.ConfigurationGroupField],
+					ConfigurationId = row[query.ConfigurationIdField],
+					Operator = row[query.OperatorField],
+					ConfigurationValue = row[query.ConfigurationValueField],
+				};
 
-		table.insert(dependencies, row);
+				local c = parameter_dependencies[criteria.ParameterId];
+				if(c == nil) then
+					c = {};
+					parameter_dependencies[criteria.ParameterId] = c;
+				end 
+				table.insert(c, criteria);
+			end
+		end
 	end
 	
 	local configuration_updates = {};
@@ -857,17 +879,21 @@ function SetupParameters:Parameter_FilterValues(parameter, values)
 		end
 
 		local new_values = {};
+		
+		local gameInProgress = GameConfiguration.GetGameState() ~= GameStateTypes.GAMESTATE_PREGAME;
+		local checkComputerSlots = Network.IsHost() and not gameInProgress;
+
+		local curPlayerConfig = PlayerConfigurations[self.PlayerId];
+		local curSlotStatus = curPlayerConfig:GetSlotStatus();
+		local localPlayerId = Network.GetLocalPlayerID();
+		local checkOwnership = self.PlayerId == localPlayerId or (checkComputerSlots and curSlotStatus == SlotStatus.SS_COMPUTER);
+
 		for i,v in ipairs(values) do
 			local reason;
-			if(not Modding.IsLeaderAllowed(self.PlayerId, v.Value)) then
+			if(checkOwnership and not Modding.IsLeaderAllowed(self.PlayerId, v.Value)) then
 				reason = "LOC_SETUP_ERROR_LEADER_NOT_OWNED";
-			else
-				if(leaders_in_use) then
-					-- Test whether this leader is in use.
-					if(leaders_in_use[v.Value]) then
-						reason = "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS";
-					end	
-				end
+			elseif(leaders_in_use and leaders_in_use[v.Value]) then
+				reason = "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS";
 			end
 
 			if(reason == nil) then
@@ -910,7 +936,12 @@ function SetupParameters:Parameter_GetEnabled(parameter)
 		return false;
 	end
 
-	return (not Network.IsInSession() or Network.IsHost() or self.PlayerId == Network.GetLocalPlayerID());
+	-- Disable the ruleset parameter the moment a network session has been created.
+	if(parameter.ParameterId == "Ruleset") then
+		return not Network.IsInSession();
+	else
+		return (not Network.IsInSession() or Network.IsHost() or self.PlayerId == Network.GetLocalPlayerID());
+	end	
 end
 -------------------------------------------------------------------------------
 

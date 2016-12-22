@@ -46,12 +46,12 @@ PageLayouts["Civic" ] = function(page)
 
 	local unlocks = {};
 	for i,v in ipairs(unlockables) do
-		table.insert(unlocks, {"ICON_" .. v[1], Locale.Lookup(v[2]), v[1]});
+		table.insert(unlocks, {"ICON_" .. v[1], Locale.Lookup(v[2]), v[3], v[1]});
 	end
 
 	local function SortUnlockables(a,b)
-		local ta = GameInfo.Types[a[3]];
-		local tb = GameInfo.Types[b[3]];
+		local ta = GameInfo.Types[a[4]];
+		local tb = GameInfo.Types[b[4]];
 
 		if(ta.Kind == tb.Kind) then
 			-- sort by Name

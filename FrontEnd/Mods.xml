@@ -89,7 +89,7 @@
 				<Label ID="ModTitle" Style="FontNormal16" Anchor="L,T" Offset="0,5" String="LOC_MODS_MOD_TITLE" />
 				<Label ID="ModDescription" Style="FontNormal12" Anchor="L,T" Offset="0,0" String="LOC_MODS_MOD_TEASER" WrapWidth="750" />
 			</Stack>
-			<CheckBox ID="ModEnabled" Style="MainMenuCheck" Anchor="R,C" Offset="15,0" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="LOC_MODS_ENABLE"  />
+			<CheckBox ID="ModEnabled" Style="CheckBoxModsControl" Anchor="R,C" Offset="15,0" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="LOC_MODS_ENABLE"  />
 		</Grid>
 	</Instance>
 

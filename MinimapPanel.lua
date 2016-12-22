@@ -116,7 +116,16 @@ function RealizeFlyouts( pControl:table )
 end
 
 -- ===========================================================================
+function RefreshMinimapOptions()
+    Controls.ToggleYieldsButton:SetCheck(UserConfiguration.ShowMapYield());
+    Controls.ToggleGridButton:SetCheck(bGridOn);
+end
+
+-- ===========================================================================
 function ToggleMapOptionsList()	
+    if Controls.MapOptionsPanel:IsHidden() then
+        RefreshMinimapOptions();
+    end
 	Controls.MapOptionsPanel:SetHide( not Controls.MapOptionsPanel:IsHidden() );
 	RealizeFlyouts(Controls.MapOptionsPanel);
 	Controls.MapOptionsButton:SetSelected( not Controls.MapOptionsPanel:IsHidden() );
@@ -181,9 +190,9 @@ end
 -- ===========================================================================
 function ToggleContinentLens()
 	if Controls.ContinentLensButton:IsChecked() then
-		UILens.SetActive("Continent");
+		UILens.SetActive("Continent");                 	else
         RefreshInterfaceMode();
-	else
+
         m_shouldCloseLensMenu = false;
         if UI.GetInterfaceMode() == InterfaceModeTypes.VIEW_MODAL_LENS then
 			UI.SetInterfaceMode(InterfaceModeTypes.SELECTION);
@@ -532,6 +541,11 @@ end
 --	Input Hotkey Event
 -- ===========================================================================
 function OnInputActionTriggered( actionId )
+	-- dont show panel if there is no local player
+	if (Game.GetLocalPlayer() == -1) then
+		return;
+	end
+
 	if m_ToggleReligionLensId ~= nil and (actionId == m_ToggleReligionLensId) then
         LensPanelHotkeyControl( Controls.ReligionLensButton );
         ToggleReligionLens();
@@ -739,6 +753,8 @@ function Initialize()
 	LuaEvents.NotificationPanel_ShowContinentLens.Add(OnToggleContinentLensExternal);
 	LuaEvents.Tutorial_DisableMapDrag.Add( OnTutorial_DisableMapDrag );
     LuaEvents.Tutorial_SwitchToWorldView.Add( OnTutorial_SwitchToWorldView );
+    LuaEvents.MinimapPanel_ToggleGrid.Add( ToggleGrid );
+    LuaEvents.MinimapPanel_RefreshMinimapOptions.Add( RefreshMinimapOptions );
 end
 Initialize();
 

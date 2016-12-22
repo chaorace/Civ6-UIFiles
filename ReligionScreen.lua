@@ -1321,6 +1321,10 @@ end
 
 -- ===========================================================================
 function Open()
+	if (Game.GetLocalPlayer() == -1) then
+		return
+	end
+
 	UpdateData();
 	ContextPtr:SetHide(false);
 	UI.PlaySound("UI_Screen_Open");

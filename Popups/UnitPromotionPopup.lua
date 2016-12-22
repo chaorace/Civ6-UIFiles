@@ -59,12 +59,19 @@ function OnLocalPlayerTurnEnd()
 	end
 end
 
-function OnPromoteUnit(ePromotion)
-	local pSelectedUnit = UI.GetHeadSelectedUnit();
-	if (pSelectedUnit ~= nil) then
-		local tParameters = {};
-		tParameters[UnitCommandTypes.PARAM_PROMOTION_TYPE] = ePromotion;
-		UnitManager.RequestCommand( pSelectedUnit, UnitCommandTypes.PROMOTE, tParameters );
+function OnPromoteUnit(ePromotion, unitID)
+	if Game.GetLocalPlayer() == -1 then
+		return;
+	end
+
+	local pLocalPlayer:table = Players[Game.GetLocalPlayer()];
+	if pLocalPlayer then
+		local pUnit:table = pLocalPlayer:GetUnits():FindID(unitID);
+		if (pUnit ~= nil) then
+			local tParameters = {};
+			tParameters[UnitCommandTypes.PARAM_PROMOTION_TYPE] = ePromotion;
+			UnitManager.RequestCommand( pUnit, UnitCommandTypes.PROMOTE, tParameters );
+		end
 	end
 end
 
@@ -281,6 +288,7 @@ function OnPromoteUnitPopup()
 					local ePromotion = item;
 					promotionInstance.PromotionSlot:RegisterCallback( Mouse.eLClick, OnPromoteUnit );
 					promotionInstance.PromotionSlot:SetVoid1( ePromotion );
+					promotionInstance.PromotionSlot:SetVoid2( pUnit:GetID() );
 				end
 			end
 

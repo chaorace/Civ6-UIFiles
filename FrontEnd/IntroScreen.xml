@@ -14,6 +14,8 @@
         <Image Texture="Shell_HavokLogo" StretchMode="Auto" Anchor="L,C"/>
       </Stack>
 		</Stack>
+
+		<Button ID="SecretButton" Offset="930,190" Size="110,90" Color="0,0,0,0"/>
   </Box>
 </ContextDefaults>
 

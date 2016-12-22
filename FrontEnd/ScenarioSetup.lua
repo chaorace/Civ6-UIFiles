@@ -4,7 +4,8 @@
 include("InstanceManager");
 include("PlayerSetupLogic");
 include("Civ6Common");
-
+-- ===========================================================================
+-- ===========================================================================
 
 -- ===========================================================================
 -- ===========================================================================
@@ -12,6 +13,7 @@ include("Civ6Common");
 local m_NonLocalPlayerSlotManager	:table = InstanceManager:new("NonLocalPlayerSlotInstance", "Root", Controls.NonLocalPlayersSlotStack);
 local m_singlePlayerID				:number = 0;			-- The player ID of the human player in singleplayer.
 local m_AdvancedMode				:boolean = false;
+local m_ScenarioData				:table = {};
 
 -- ===========================================================================
 -- Input Handler
@@ -27,29 +29,111 @@ function OnInputHandler( pInputStruct:table )
 	return true;
 end
 
+-- Override for SetupParameters to filter ruleset values by scenario only.
+function GameParameters_FilterValues(o, parameter, values)
+	values = o.Default_Parameter_FilterValues(o, parameter, values);
+	if(parameter.ParameterId == "Ruleset") then
+		local new_values = {};
+		for i,v in ipairs(values) do
+			local scenarioData = GetScenarioData(v.Value);
+			if(scenarioData.IsScenario) then
+				table.insert(new_values, v);
+			end
+		end
+		values = new_values;
+	end
+
+	return values;
+end
+
+function GetScenarioData(scenarioType:string)
+	if not m_ScenarioData[scenarioType] then
+		local query:string = "SELECT Description, LongDescription, IsScenario, ScenarioSetupPotrait, ScenarioSetupPotraitBackground from Rulesets where RulesetType = ? LIMIT 1";
+		local result:table = DB.ConfigurationQuery(query, scenarioType);
+		if result and #result > 0 then
+			m_ScenarioData[scenarioType] = result[1];
+		else
+			m_ScenarioData[scenarioType] = {};
+		end
+	end
+	return m_ScenarioData[scenarioType];
+end
+
+function RefreshScenarioData(scenarioType:string)
+	local portrait:string;
+	local background:string;
+	local description:string;
+	local data:table = GetScenarioData(scenarioType);
+
+	if (data.LongDescription) then
+		description = Locale.Lookup(data.LongDescription);
+	elseif(data.Description) then
+		description = Locale.Lookup(data.Description);
+	end
+
+	if data.ScenarioSetupPotrait then
+		portrait = data.ScenarioSetupPotrait;
+	end
+	
+	if data.ScenarioSetupPotraitBackground then
+		background = data.ScenarioSetupPotraitBackground;
+	end
+
+	if(background) then
+		Controls.LeaderBG:SetTexture(background);
+		Controls.RLeaderBG:SetTexture(background);
+	end
+	Controls.LeaderBG:SetHide(background == nil);
+	Controls.RLeaderBG:SetHide(background == nil);
+
+	if(portrait) then
+		Controls.LeaderImage:SetTexture(portrait);
+	end
+	Controls.LeaderImage:SetHide(portrait == nil);
+
+	Controls.ScenarioDescription:SetText(description);
+end
+
 -- ===========================================================================
-function CreatePulldownDriver(o, parameter, c)
+function CreatePulldownDriver(o, parameter, c, container)
 	local driver = {
 		Control = c,
+		Container = container,
 		UpdateValue = function(value)
 			local button = c:GetButton();
 			button:SetText( value and value.Name or nil);
 		end,
 		UpdateValues = function(values)
-			c:ClearEntries();
+			-- If container was included, hide it if there is only 1 possible value.
+			if(#values == 1 and container ~= nil) then
+				container:SetHide(true);
+			else
+				if(container) then
+					container:SetHide(false);
+				end
 
-			for i,v in ipairs(values) do
-				local entry = {};
-				c:BuildEntry( "InstanceOne", entry );
-				entry.Button:SetText(v.Name);
-				entry.Button:SetToolTipString(v.Description);
+				c:ClearEntries();
+				for i,v in ipairs(values) do
+					local entry = {};
+					c:BuildEntry( "InstanceOne", entry );
+					entry.Button:SetText(v.Name);
+					entry.Button:SetToolTipString(v.Description);
 
-				entry.Button:RegisterCallback(Mouse.eLClick, function()
-					o:SetParameterValue(parameter, v);
-					Network.BroadcastGameConfig();
-				end);
-			end
-			c:CalculateInternals();
+					entry.Button:RegisterCallback(Mouse.eLClick, function()
+						o:SetParameterValue(parameter, v);
+						Network.BroadcastGameConfig();
+					end);
+
+					if v.Domain == "Rulesets" then
+						entry.Button:RegisterCallback(Mouse.eMouseEnter, function() 
+							if c:IsOpen() then
+								RefreshScenarioData(v.Value);
+							end
+						end);
+					end
+				end
+				c:CalculateInternals();
+			end			
 		end,
 		SetEnabled = function(enabled)
 			c:SetDisabled(not enabled);
@@ -62,13 +146,44 @@ function CreatePulldownDriver(o, parameter, c)
 end
 
 -- ===========================================================================
+function CreateRightPanelDescriptionDriver(o, parameter)
+	local driver = {
+		UpdateValue = function(v)
+			Controls.ScenarioDescription:SetText(v.Description or v.Name);
+			RefreshScenarioData(v.Value);
+		end,
+		UpdateValues = nil,
+		SetEnabled = nil,
+		SetVisible = nil,	-- Never hide the basic pulldown.
+		Destroy = nil,		-- It's a fixed control, no need to delete.
+	};
+	
+	return driver;	
+end
+
+-- ===========================================================================
 -- Override parameter behavior for basic setup screen.
+g_ParameterFactories["Ruleset"] = function(o, parameter)
+	
+	local drivers = {};
+	-- Basic setup version.
+	-- Use an explicit table.
+	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_GameRuleset));
+
+	table.insert(drivers, CreateRightPanelDescriptionDriver(o, parameter));
+
+	-- Advanced setup version.
+	-- Create the parameter dynamically like we normally would...
+	table.insert(drivers, GameParameters_UI_DefaultCreateParameterDriver(o, parameter));
+
+	return drivers;
+end
 g_ParameterFactories["GameDifficulty"] = function(o, parameter)
 
 	local drivers = {};
 	-- Basic setup version.
 	-- Use an explicit table.
-	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_GameDifficulty));
+	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_GameDifficulty, Controls.CreateGame_GameDifficultyContainer));
 
 	-- Advanced setup version.
 	-- Create the parameter dynamically like we normally would...
@@ -83,7 +198,7 @@ g_ParameterFactories["GameSpeeds"] = function(o, parameter)
 	local drivers = {};
 	-- Basic setup version.
 	-- Use an explicit table.
-	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_SpeedPulldown));
+	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_SpeedPulldown, Controls.CreateGame_SpeedPulldownContainer));
 
 	-- Advanced setup version.
 	-- Create the parameter dynamically like we normally would...
@@ -98,7 +213,7 @@ g_ParameterFactories["Map"] = function(o, parameter)
 	local drivers = {};
 	-- Basic setup version.
 	-- Use an explicit table.
-	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_MapType));
+	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_MapType, Controls.CreateGame_MapTypeContainer));
 
 	-- Advanced setup version.
 	-- Create the parameter dynamically like we normally would...
@@ -113,7 +228,7 @@ g_ParameterFactories["MapSize"] = function(o, parameter)
 	local drivers = {};
 	-- Basic setup version.
 	-- Use an explicit table.
-	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_MapSize));
+	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_MapSize, Controls.CreateGame_MapSizeContainer));
 
 	-- Advanced setup version.
 	-- Create the parameter dynamically like we normally would...
@@ -241,6 +356,9 @@ function UI_PostRefreshParameters()
 			Controls.StartButton:LocalizeAndSetToolTip("LOC_SETUP_PLAYER_PARAMETER_ERROR");
 		end
 	end
+
+	Controls.CreateGameOptions:CalculateSize();
+	Controls.CreateGameOptions:ReprocessAnchoring();
 end
 
 
@@ -252,6 +370,9 @@ end
 
 -- ===========================================================================
 function OnShow()
+
+
+
 	BuildGameSetup();
 	RefreshPlayerSlots();
 	GameSetup_RefreshParameters();
@@ -263,6 +384,7 @@ end
 function OnHide()
 	HideGameSetup();
 	ReleasePlayerParameters();
+	m_ScenarioData = {};
 end
 
 

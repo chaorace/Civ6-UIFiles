@@ -20,7 +20,8 @@
       <Grid ID="HeaderGrid" Texture="Controls_LensHeaderSmall" SliceTextureSize="71,49" SliceCorner="20,24" Size="full,49" Color="255,255,255,200">
         <Image ID="HeaderDropshadow" Texture="Controls_GradientSmall" Size="full,22"  Color="0,0,0,255" Anchor="L,B" AnchorSide="I,O"/>
         <Label ID="WonderCompletedHeader" String="{LOC_HUD_POPUP_WORLD_WONDER_CREATED:upper}" Style="FontFlair24" FontStyle="glow" ColorSet="WonderHeader" Anchor="C,C"/>
-        <Button ID="Close" Texture="Controls_CloseButtonAlt" Size="32,32" Anchor="R,C" Offset="2,0"/>
+				<Button ID="Close" Texture="Controls_CloseButtonAlt" Size="32,32" Anchor="R,C" Offset="2,0"/>
+				<GridButton ID="ReplayButton" Style="ButtonMainSmall" Size="100,32" Anchor="L,C" Offset="20,-1" String="[ICON_Revert]" TextOffset="-2,2" SizeToText="30,18" />
       </Grid>
     </SlideAnim>
   </AlphaAnim>

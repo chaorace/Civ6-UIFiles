@@ -7,20 +7,20 @@
 		<Grid						ID="MainPanel"																Offset="-5,27"	Size="296,95"	Texture="CivicPanel_Frame" SliceCorner="80,80" SliceSize="1,1" SliceTextureSize="110,88" ConsumeMouseOver="1">
 			<FlipAnim			ID="MainGearAnim"																														Texture="CivicPanel_MeterFrameAnim" FrameCount="3" Columns="3" Speed="10" Size="40,40" Stopped="1" />
       <Stack        ID="TitleStack"     Offset="65,8" StackGrowth="Right" StackPadding="4">
-        <TextButton		ID="TitleButton"		Size="200,40"	Style="PanelHeaderText" String="$ChangeCivic$" />
+        <TextButton		ID="TitleButton"		Size="200,40"	Style="PanelHeaderText" String="" />
         <Image      ID="RecommendedIcon"  Offset="0,-4" Size="22,22" Texture="AdvisorRec22" ConsumeMouse="1" ToolTip="LOC_TECH_FILTER_RECOMMENDED" Hidden="1">
           <FlipAnim       Texture="AdvisorRecAnim22"  Size="26,26" Anchor="C,C" FrameCount="12" Columns="4" Speed="14" EndPause="3" Color="255,255,255,200"/>
         </Image>
       </Stack>
 			<Image				ID="ResearchGearFrame"																											Texture="CivicPanel_MeterFrame">
 				<Button			ID="IconButton"									Anchor="C,C"									Size="44,44"	Texture="CivicPanel_Button" >
-					<Image		ID="Icon"												Anchor="C,C"									Size="38,38"	Texture="Tech38" />
+					<Image		ID="Icon"												Anchor="C,C"									Size="38,38"	Texture="Tech38" Hidden="1" />
 				</Button>
 				<Meter			ID="BoostMeter"									Anchor="C,C"									Size="56,56"	Texture="CivicPanel_BoostMeter"  Percent="0"		Speed="1.0" Follow="1"/>
 				<Meter			ID="ProgressMeter"							Anchor="C,C"									Size="56,56"	Texture="CivicPanel_Meter"				Percent="0"	Speed="1.0" Follow="1"/>
 			</Image>
-			<Label				ID="TurnsLeftLabel"							Anchor="L,B"	Offset="15,17" 								Style="FontNormal12"	String="LOC_RESEARCH_CHOOSER_TURNS" />
-			<Label				ID="TurnsLeft"									Anchor="L,B"	Offset="12,3"									Style="FontNormal14"	String="33" />
+			<Label				ID="TurnsLeftLabel"							Anchor="L,B"	Offset="15,17" 								Style="FontNormal12"	String="LOC_RESEARCH_CHOOSER_TURNS" Hidden="1" />
+			<Label				ID="TurnsLeft"									Anchor="L,B"	Offset="12,3"									Style="FontNormal14"	String="" />
 			<Image				ID="IconCanBeBoosted"						Anchor="L,B"	Offset="50,-4"								Texture="CivicPanel_BoostIconAvailable"	Hidden="1" />
 			<Label				ID="BoostLabel"									Anchor="L,B"	Offset="80,7"									Style="FontNormal12"	Color0="150,150,150,155" />
 			<Image				ID="IconHasBeenBoosted"					Anchor="L,B"	Offset="50,-4"								Texture="CivicPanel_BoostIconBoosted"		Hidden="1" />

@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GameInfo>
   <IconTextureAtlases>
-    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="30" IconsPerRow="8" IconsPerColumn="8" Filename="CityStates30.dds"/>
-    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="40" IconsPerRow="8" IconsPerColumn="8" Filename="CityStates40.dds"/>
-    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="68" IconsPerRow="8" IconsPerColumn="8" Filename="CityStates68.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="22" IconsPerRow="8" IconsPerColumn="1" Filename="CityStates22.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="30" IconsPerRow="8" IconsPerColumn="1" Filename="CityStates30.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="36" IconsPerRow="8" IconsPerColumn="1" Filename="CityStates36.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="40" IconsPerRow="8" IconsPerColumn="1" Filename="CityStates40.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="44" IconsPerRow="8" IconsPerColumn="1" Filename="CityStates44.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="48" IconsPerRow="8" IconsPerColumn="1" Filename="CityStates48.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="64" IconsPerRow="8" IconsPerColumn="1" Filename="CityStates64.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="68" IconsPerRow="8" IconsPerColumn="1" Filename="CityStates68.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="80" IconsPerRow="8" IconsPerColumn="1" Filename="CityStates80.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="256" IconsPerRow="8" IconsPerColumn="1" Filename="CityStates256.dds"/>
   </IconTextureAtlases>
   <IconDefinitions>
 		<Row Name="ICON_CITYSTATE_SCIENCE"			Atlas="ICON_ATLAS_CITYSTATES" Index="0"/>

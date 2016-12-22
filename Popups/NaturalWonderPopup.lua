@@ -70,9 +70,12 @@ function ShowPopup( kData:table )
 		UI.LookAtPlot(kData.plotx, kData.ploty);
 	end
 
-	UI.PlaySound(kData.QuoteAudio);
+	if(kData.QuoteAudio) then
+		UI.PlaySound(kData.QuoteAudio);
+	end
+
 	Controls.WonderName:SetText( kData.Name );
-	Controls.WonderQuote:SetHide( kData.Quote == nil );
+	Controls.WonderQuoteContainer:SetHide( kData.Quote == nil );
 	Controls.WonderIcon:SetIcon( "ICON_".. kData.TypeName);
 	if kData.Quote ~= nil then
 		Controls.WonderQuote:SetText( kData.Quote );

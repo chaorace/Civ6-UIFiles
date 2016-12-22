@@ -17,7 +17,9 @@ function OnClose()
 end
 
 function ShowStore()
-	Steam.ActivateGameOverlayToStore();
+    if (Steam ~= nil) then
+	    Steam.ActivateGameOverlayToStore();
+    end
 end
 
 -- ===========================================================================

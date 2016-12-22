@@ -449,7 +449,12 @@ function UpdateFriendsList()
 
 	g_FriendsIM:ResetInstances();
 
-	local friends:table = GetSteamFriendsList(FlippedSteamFriendsSortFunction);
+	local friends : table;
+	if (Steam ~= nil) then
+		friends = GetSteamFriendsList(FlippedSteamFriendsSortFunction);
+	else
+		friends = {};
+	end
 
 	if table.count(friends) == 0 then
 		Controls.Friends:SetHide(true);
@@ -531,7 +536,8 @@ function SortAndDisplayListings(resetSelection:boolean)
 				for i,v in ipairs(mods) do
 
 					-- TODO: Add Version.
-					if(Modding.IsModInstalled(v.ModId)) then
+					if(Modding.IsModInstalled(v.ModId) and Modding.IsJoinGameAllowed(v.ModId)) then
+						--Mod is installed and we join games with it.
 						-- Mod installed, this should be GREEN
 						modColor = ColorString_ModGreen;
 					elseif(v.SubscriptionId and #v.SubscriptionId > 0) then
@@ -838,7 +844,9 @@ function OnShow()
 
 	UpdateFriendsList();
 
-	Steam.SetRichPresence("civPresence", "LOC_PRESENCE_IN_SHELL");
+	if (Steam ~= nil) then
+		Steam.SetRichPresence("civPresence", "LOC_PRESENCE_IN_SHELL");
+	end
 end
 
 -- ===========================================================================

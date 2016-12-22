@@ -2,109 +2,158 @@
 <GameInfo>
   <IconTextureAtlases>
     <Row Name="ICON_ATLAS_RELIGIONS" IconSize="22" IconsPerRow="8" IconsPerColumn="8" Filename="Religions22"/>
-		<Row Name="ICON_ATLAS_RELIGIONS" IconSize="50" IconsPerRow="8" IconsPerColumn="8" Filename="Religions50"/>
+    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="50" IconsPerRow="8" IconsPerColumn="8" Filename="Religions50"/>
     <Row Name="ICON_ATLAS_RELIGIONS" IconSize="100" IconsPerRow="8" IconsPerColumn="8" Filename="Religions100"/>
-    
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Pantheon"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Buddhism"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Catholicism"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Confucianism"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Hinduism"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Islam"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Judaism"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Orthodoxy"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Protestantism"/>
-		<Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Sikhism"/>
-		<Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Shinto"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Taoism"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Zoroastrianism"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom1"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom2"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom3"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom4"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom5"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom6"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom7"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom8"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom9"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom10"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom11"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom12"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom13"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom14"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom15"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom16"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom17"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom18"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom19"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom20"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom21"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom22"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom23"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom24"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom25"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom26"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom27"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom28"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom29"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom30"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom31"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom32"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom33"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom34"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom35"/>
-    <Row Name="ICON_ATLAS_RELIGIONS" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom36"/>
+
+    <Row Name="ICON_ATLAS_RELIGIONS_PANTHEON" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Pantheon"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_BUDDHISM" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Buddhism"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CATHOLICISM" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Catholicism"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CONFUCIANISM" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Confucianism"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_HINDUISM" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Hinduism"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_ISLAM" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Islam"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_JUDAISM" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Judaism"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_ORTHODOXY" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Orthodoxy"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_PROTESTANTISM" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Protestantism"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_SIKHISM" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Sikhism"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_SHINTO" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Shinto"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_TAOISM" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Taoism"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_ZOROASTRIANISM" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Zoroastrianism"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_1" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom1"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_2" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom2"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_3" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom3"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_4" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom4"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_5" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom5"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_6" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom6"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_7" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom7"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_8" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom8"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_9" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom9"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_10" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom10"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_11" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom11"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_12" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom12"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_13" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom13"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_14" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom14"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_15" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom15"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_16" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom16"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_17" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom17"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_18" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom18"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_19" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom19"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_20" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom20"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_21" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom21"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_22" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom22"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_23" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom23"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_24" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom24"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_25" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom25"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_26" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom26"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_27" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom27"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_28" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom28"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_29" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom29"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_30" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom30"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_31" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom31"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_32" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom32"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_33" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom33"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_34" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom34"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_35" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom35"/>
+    <Row Name="ICON_ATLAS_RELIGIONS_CUSTOM_36" IconSize="270" IconsPerRow="1" IconsPerColumn="1" Filename="Religion_Custom36"/>
   </IconTextureAtlases>
   <IconDefinitions>
-    <Row Name="ICON_RELIGION_PANTHEON"                    Atlas="ICON_ATLAS_RELIGIONS" Index="0"/>
-    <Row Name="ICON_RELIGION_BUDDHISM"                    Atlas="ICON_ATLAS_RELIGIONS" Index="1"/>
-    <Row Name="ICON_RELIGION_CATHOLICISM"									Atlas="ICON_ATLAS_RELIGIONS" Index="2"/>
-    <Row Name="ICON_RELIGION_CONFUCIANISM"                Atlas="ICON_ATLAS_RELIGIONS" Index="3"/>
-    <Row Name="ICON_RELIGION_HINDUISM"                    Atlas="ICON_ATLAS_RELIGIONS" Index="4"/>
-    <Row Name="ICON_RELIGION_ISLAM"												Atlas="ICON_ATLAS_RELIGIONS" Index="5"/>
-    <Row Name="ICON_RELIGION_JUDAISM"                     Atlas="ICON_ATLAS_RELIGIONS" Index="6"/>
-    <Row Name="ICON_RELIGION_ORTHODOXY"                   Atlas="ICON_ATLAS_RELIGIONS" Index="7"/>
-    <Row Name="ICON_RELIGION_PROTESTANTISM"               Atlas="ICON_ATLAS_RELIGIONS" Index="8"/>
-    <Row Name="ICON_RELIGION_SIKHISM"                     Atlas="ICON_ATLAS_RELIGIONS" Index="9"/>
-    <Row Name="ICON_RELIGION_SHINTO"											Atlas="ICON_ATLAS_RELIGIONS" Index="10"/>
-    <Row Name="ICON_RELIGION_TAOISM"                      Atlas="ICON_ATLAS_RELIGIONS" Index="11"/>
-    <Row Name="ICON_RELIGION_ZOROASTRIANISM"              Atlas="ICON_ATLAS_RELIGIONS" Index="12"/>
-    <Row Name="ICON_RELIGION_CUSTOM_1"				            Atlas="ICON_ATLAS_RELIGIONS" Index="13"/>
-    <Row Name="ICON_RELIGION_CUSTOM_2"				            Atlas="ICON_ATLAS_RELIGIONS" Index="14"/>
-    <Row Name="ICON_RELIGION_CUSTOM_3"				            Atlas="ICON_ATLAS_RELIGIONS" Index="15"/>
-    <Row Name="ICON_RELIGION_CUSTOM_4"				            Atlas="ICON_ATLAS_RELIGIONS" Index="16"/>
-    <Row Name="ICON_RELIGION_CUSTOM_5"				            Atlas="ICON_ATLAS_RELIGIONS" Index="17"/>
-    <Row Name="ICON_RELIGION_CUSTOM_6"				            Atlas="ICON_ATLAS_RELIGIONS" Index="18"/>
-    <Row Name="ICON_RELIGION_CUSTOM_7"				            Atlas="ICON_ATLAS_RELIGIONS" Index="19"/>
-    <Row Name="ICON_RELIGION_CUSTOM_8"				            Atlas="ICON_ATLAS_RELIGIONS" Index="20"/>
-    <Row Name="ICON_RELIGION_CUSTOM_9"				            Atlas="ICON_ATLAS_RELIGIONS" Index="21"/>
-    <Row Name="ICON_RELIGION_CUSTOM_10"				            Atlas="ICON_ATLAS_RELIGIONS" Index="22"/>
-    <Row Name="ICON_RELIGION_CUSTOM_11"				            Atlas="ICON_ATLAS_RELIGIONS" Index="23"/>
-    <Row Name="ICON_RELIGION_CUSTOM_12"				            Atlas="ICON_ATLAS_RELIGIONS" Index="24"/>
-    <Row Name="ICON_RELIGION_CUSTOM_13"				            Atlas="ICON_ATLAS_RELIGIONS" Index="25"/>
-    <Row Name="ICON_RELIGION_CUSTOM_14"				            Atlas="ICON_ATLAS_RELIGIONS" Index="26"/>
-    <Row Name="ICON_RELIGION_CUSTOM_15"				            Atlas="ICON_ATLAS_RELIGIONS" Index="27"/>
-    <Row Name="ICON_RELIGION_CUSTOM_16"				            Atlas="ICON_ATLAS_RELIGIONS" Index="28"/>
-    <Row Name="ICON_RELIGION_CUSTOM_17"				            Atlas="ICON_ATLAS_RELIGIONS" Index="29"/>
-    <Row Name="ICON_RELIGION_CUSTOM_18"				            Atlas="ICON_ATLAS_RELIGIONS" Index="30"/>
-    <Row Name="ICON_RELIGION_CUSTOM_19"				            Atlas="ICON_ATLAS_RELIGIONS" Index="31"/>
-    <Row Name="ICON_RELIGION_CUSTOM_20"				            Atlas="ICON_ATLAS_RELIGIONS" Index="32"/>
-    <Row Name="ICON_RELIGION_CUSTOM_21"				            Atlas="ICON_ATLAS_RELIGIONS" Index="33"/>
-    <Row Name="ICON_RELIGION_CUSTOM_22"				            Atlas="ICON_ATLAS_RELIGIONS" Index="34"/>
-    <Row Name="ICON_RELIGION_CUSTOM_23"				            Atlas="ICON_ATLAS_RELIGIONS" Index="35"/>
-    <Row Name="ICON_RELIGION_CUSTOM_24"				            Atlas="ICON_ATLAS_RELIGIONS" Index="36"/>
-    <Row Name="ICON_RELIGION_CUSTOM_25"				            Atlas="ICON_ATLAS_RELIGIONS" Index="37"/>
-    <Row Name="ICON_RELIGION_CUSTOM_26"				            Atlas="ICON_ATLAS_RELIGIONS" Index="38"/>
-    <Row Name="ICON_RELIGION_CUSTOM_27"				            Atlas="ICON_ATLAS_RELIGIONS" Index="39"/>
-    <Row Name="ICON_RELIGION_CUSTOM_28"				            Atlas="ICON_ATLAS_RELIGIONS" Index="40"/>
-    <Row Name="ICON_RELIGION_CUSTOM_29"				            Atlas="ICON_ATLAS_RELIGIONS" Index="41"/>
-    <Row Name="ICON_RELIGION_CUSTOM_30"				            Atlas="ICON_ATLAS_RELIGIONS" Index="42"/>
-    <Row Name="ICON_RELIGION_CUSTOM_31"				            Atlas="ICON_ATLAS_RELIGIONS" Index="43"/>
-    <Row Name="ICON_RELIGION_CUSTOM_32"				            Atlas="ICON_ATLAS_RELIGIONS" Index="44"/>
-    <Row Name="ICON_RELIGION_CUSTOM_33"				            Atlas="ICON_ATLAS_RELIGIONS" Index="45"/>
-    <Row Name="ICON_RELIGION_CUSTOM_34"				            Atlas="ICON_ATLAS_RELIGIONS" Index="46"/>
-    <Row Name="ICON_RELIGION_CUSTOM_35"				            Atlas="ICON_ATLAS_RELIGIONS" Index="47"/>
-    <Row Name="ICON_RELIGION_CUSTOM_36"				            Atlas="ICON_ATLAS_RELIGIONS" Index="48"/>
-    
+    <Row Name="ICON_RELIGION_PANTHEON" Atlas="ICON_ATLAS_RELIGIONS" Index="0"/>
+    <Row Name="ICON_RELIGION_BUDDHISM" Atlas="ICON_ATLAS_RELIGIONS" Index="1"/>
+    <Row Name="ICON_RELIGION_CATHOLICISM" Atlas="ICON_ATLAS_RELIGIONS" Index="2"/>
+    <Row Name="ICON_RELIGION_CONFUCIANISM" Atlas="ICON_ATLAS_RELIGIONS" Index="3"/>
+    <Row Name="ICON_RELIGION_HINDUISM" Atlas="ICON_ATLAS_RELIGIONS" Index="4"/>
+    <Row Name="ICON_RELIGION_ISLAM" Atlas="ICON_ATLAS_RELIGIONS" Index="5"/>
+    <Row Name="ICON_RELIGION_JUDAISM" Atlas="ICON_ATLAS_RELIGIONS" Index="6"/>
+    <Row Name="ICON_RELIGION_ORTHODOXY" Atlas="ICON_ATLAS_RELIGIONS" Index="7"/>
+    <Row Name="ICON_RELIGION_PROTESTANTISM" Atlas="ICON_ATLAS_RELIGIONS" Index="8"/>
+    <Row Name="ICON_RELIGION_SIKHISM" Atlas="ICON_ATLAS_RELIGIONS" Index="9"/>
+    <Row Name="ICON_RELIGION_SHINTO" Atlas="ICON_ATLAS_RELIGIONS" Index="10"/>
+    <Row Name="ICON_RELIGION_TAOISM" Atlas="ICON_ATLAS_RELIGIONS" Index="11"/>
+    <Row Name="ICON_RELIGION_ZOROASTRIANISM" Atlas="ICON_ATLAS_RELIGIONS" Index="12"/>
+    <Row Name="ICON_RELIGION_CUSTOM_1" Atlas="ICON_ATLAS_RELIGIONS" Index="13"/>
+    <Row Name="ICON_RELIGION_CUSTOM_2" Atlas="ICON_ATLAS_RELIGIONS" Index="14"/>
+    <Row Name="ICON_RELIGION_CUSTOM_3" Atlas="ICON_ATLAS_RELIGIONS" Index="15"/>
+    <Row Name="ICON_RELIGION_CUSTOM_4" Atlas="ICON_ATLAS_RELIGIONS" Index="16"/>
+    <Row Name="ICON_RELIGION_CUSTOM_5" Atlas="ICON_ATLAS_RELIGIONS" Index="17"/>
+    <Row Name="ICON_RELIGION_CUSTOM_6" Atlas="ICON_ATLAS_RELIGIONS" Index="18"/>
+    <Row Name="ICON_RELIGION_CUSTOM_7" Atlas="ICON_ATLAS_RELIGIONS" Index="19"/>
+    <Row Name="ICON_RELIGION_CUSTOM_8" Atlas="ICON_ATLAS_RELIGIONS" Index="20"/>
+    <Row Name="ICON_RELIGION_CUSTOM_9" Atlas="ICON_ATLAS_RELIGIONS" Index="21"/>
+    <Row Name="ICON_RELIGION_CUSTOM_10" Atlas="ICON_ATLAS_RELIGIONS" Index="22"/>
+    <Row Name="ICON_RELIGION_CUSTOM_11" Atlas="ICON_ATLAS_RELIGIONS" Index="23"/>
+    <Row Name="ICON_RELIGION_CUSTOM_12" Atlas="ICON_ATLAS_RELIGIONS" Index="24"/>
+    <Row Name="ICON_RELIGION_CUSTOM_13" Atlas="ICON_ATLAS_RELIGIONS" Index="25"/>
+    <Row Name="ICON_RELIGION_CUSTOM_14" Atlas="ICON_ATLAS_RELIGIONS" Index="26"/>
+    <Row Name="ICON_RELIGION_CUSTOM_15" Atlas="ICON_ATLAS_RELIGIONS" Index="27"/>
+    <Row Name="ICON_RELIGION_CUSTOM_16" Atlas="ICON_ATLAS_RELIGIONS" Index="28"/>
+    <Row Name="ICON_RELIGION_CUSTOM_17" Atlas="ICON_ATLAS_RELIGIONS" Index="29"/>
+    <Row Name="ICON_RELIGION_CUSTOM_18" Atlas="ICON_ATLAS_RELIGIONS" Index="30"/>
+    <Row Name="ICON_RELIGION_CUSTOM_19" Atlas="ICON_ATLAS_RELIGIONS" Index="31"/>
+    <Row Name="ICON_RELIGION_CUSTOM_20" Atlas="ICON_ATLAS_RELIGIONS" Index="32"/>
+    <Row Name="ICON_RELIGION_CUSTOM_21" Atlas="ICON_ATLAS_RELIGIONS" Index="33"/>
+    <Row Name="ICON_RELIGION_CUSTOM_22" Atlas="ICON_ATLAS_RELIGIONS" Index="34"/>
+    <Row Name="ICON_RELIGION_CUSTOM_23" Atlas="ICON_ATLAS_RELIGIONS" Index="35"/>
+    <Row Name="ICON_RELIGION_CUSTOM_24" Atlas="ICON_ATLAS_RELIGIONS" Index="36"/>
+    <Row Name="ICON_RELIGION_CUSTOM_25" Atlas="ICON_ATLAS_RELIGIONS" Index="37"/>
+    <Row Name="ICON_RELIGION_CUSTOM_26" Atlas="ICON_ATLAS_RELIGIONS" Index="38"/>
+    <Row Name="ICON_RELIGION_CUSTOM_27" Atlas="ICON_ATLAS_RELIGIONS" Index="39"/>
+    <Row Name="ICON_RELIGION_CUSTOM_28" Atlas="ICON_ATLAS_RELIGIONS" Index="40"/>
+    <Row Name="ICON_RELIGION_CUSTOM_29" Atlas="ICON_ATLAS_RELIGIONS" Index="41"/>
+    <Row Name="ICON_RELIGION_CUSTOM_30" Atlas="ICON_ATLAS_RELIGIONS" Index="42"/>
+    <Row Name="ICON_RELIGION_CUSTOM_31" Atlas="ICON_ATLAS_RELIGIONS" Index="43"/>
+    <Row Name="ICON_RELIGION_CUSTOM_32" Atlas="ICON_ATLAS_RELIGIONS" Index="44"/>
+    <Row Name="ICON_RELIGION_CUSTOM_33" Atlas="ICON_ATLAS_RELIGIONS" Index="45"/>
+    <Row Name="ICON_RELIGION_CUSTOM_34" Atlas="ICON_ATLAS_RELIGIONS" Index="46"/>
+    <Row Name="ICON_RELIGION_CUSTOM_35" Atlas="ICON_ATLAS_RELIGIONS" Index="47"/>
+    <Row Name="ICON_RELIGION_CUSTOM_36" Atlas="ICON_ATLAS_RELIGIONS" Index="48"/>
+	
+    <Row Name="ICON_RELIGION_PANTHEON" Atlas="ICON_ATLAS_RELIGIONS_PANTHEON" Index="0"/>
+    <Row Name="ICON_RELIGION_BUDDHISM" Atlas="ICON_ATLAS_RELIGIONS_BUDDHISM" Index="0"/>
+    <Row Name="ICON_RELIGION_CATHOLICISM" Atlas="ICON_ATLAS_RELIGIONS_CATHOLICISM" Index="0"/>
+    <Row Name="ICON_RELIGION_CONFUCIANISM" Atlas="ICON_ATLAS_RELIGIONS_CONFUCIANISM" Index="0"/>
+    <Row Name="ICON_RELIGION_HINDUISM" Atlas="ICON_ATLAS_RELIGIONS_HINDUISM" Index="0"/>
+    <Row Name="ICON_RELIGION_ISLAM" Atlas="ICON_ATLAS_RELIGIONS_ISLAM" Index="0"/>
+    <Row Name="ICON_RELIGION_JUDAISM" Atlas="ICON_ATLAS_RELIGIONS_JUDAISM" Index="0"/>
+    <Row Name="ICON_RELIGION_ORTHODOXY" Atlas="ICON_ATLAS_RELIGIONS_ORTHODOXY" Index="0"/>
+    <Row Name="ICON_RELIGION_PROTESTANTISM" Atlas="ICON_ATLAS_RELIGIONS_PROTESTANTISM" Index="0"/>
+    <Row Name="ICON_RELIGION_SIKHISM" Atlas="ICON_ATLAS_RELIGIONS_SIKHISM" Index="0"/>
+    <Row Name="ICON_RELIGION_SHINTO" Atlas="ICON_ATLAS_RELIGIONS_SHINTO" Index="0"/>
+    <Row Name="ICON_RELIGION_TAOISM" Atlas="ICON_ATLAS_RELIGIONS_TAOISM" Index="0"/>
+    <Row Name="ICON_RELIGION_ZOROASTRIANISM" Atlas="ICON_ATLAS_RELIGIONS_ZOROASTRIANISM" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_1" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_1" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_2" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_2" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_3" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_3" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_4" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_4" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_5" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_5" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_6" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_6" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_7" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_7" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_8" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_8" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_9" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_9" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_10" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_10" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_11" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_11" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_12" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_12" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_13" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_13" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_14" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_14" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_15" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_15" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_16" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_16" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_17" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_17" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_18" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_18" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_19" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_19" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_20" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_20" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_21" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_21" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_22" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_22" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_23" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_23" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_24" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_24" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_25" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_25" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_26" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_26" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_27" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_27" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_28" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_28" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_29" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_29" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_30" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_30" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_31" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_31" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_32" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_32" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_33" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_33" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_34" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_34" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_35" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_35" Index="0"/>
+    <Row Name="ICON_RELIGION_CUSTOM_36" Atlas="ICON_ATLAS_RELIGIONS_CUSTOM_36" Index="0"/>
   </IconDefinitions>
 </GameInfo>

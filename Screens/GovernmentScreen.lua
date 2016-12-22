@@ -1750,8 +1750,13 @@ function OnLocalPlayerTurnBegin()
 		RefreshAllData();
 	end
 end
+
 function OnLocalPlayerTurnEnd()
 	m_isLocalPlayerTurn = false;
+
+	if(GameConfiguration.IsHotseat()) then
+		Close();
+	end
 end
 
 -- ===========================================================================

@@ -97,8 +97,11 @@ function GetSelectedCity()
 	if (g_PlacementSettings.Player >= 0 and g_PlacementSettings.CityID >= 0) then
 		local pPlayer = Players[g_PlacementSettings.Player];
 		if pPlayer ~= nil then
-			pCity = pPlayer:GetCities():FindID(g_PlacementSettings.CityID);
-			return pCity;
+			local pPlayerCities = pPlayer:GetCities();
+			if (pPlayerCities ~= nil) then
+				pCity = pPlayerCities:FindID(g_PlacementSettings.CityID);
+				return pCity;
+			end
 		end
 	end
 	return nil;

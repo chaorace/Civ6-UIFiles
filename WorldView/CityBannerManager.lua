@@ -43,6 +43,7 @@ local SIZE_HOLY_SITE_ICON		:number = 22;
 local SIZE_RELIGION_ICON_LARGE	:number = 100;
 local SIZE_RELIGION_ICON_SMALL	:number = 22;
 local ZOOM_MULT_DELTA			:number = .01;
+local ALPHA_DIM					:number = 0.45;
 
 local m_pDirtyCityComponents	:table = {};
 local m_isReligionLensActive	:boolean = false;
@@ -323,7 +324,7 @@ function CityBanner.UpdateAerodromeBanner( self : CityBanner )
 				self.m_Instance.UnitListPopup:BuildEntry( "UnitListEntry", unitEntry );
 
 				-- Update name
-				unitEntry.UnitName:SetText( Locale.ToUpper(unit:GetName()) );
+				unitEntry.UnitName:SetText( Locale.ToUpper( unit:GetName() ) );
 
 				-- Update icon
 				local iconInfo:table, iconShadowInfo:table = GetUnitIconAndIconShadow(unit, 22, true);

@@ -10,7 +10,6 @@ PAUSE_INCREMENT = .18;
 
 -- Global Constants
 g_FileEntryInstanceManager	= InstanceManager:new("FileEntry", "InstanceRoot", Controls.FileListEntryStack );
-g_ReferencedPackages		= InstanceManager:new("ReferencedPackageInstance", "Label", Controls.ReferencedPackagesStack);
 g_DescriptionTextManager	= InstanceManager:new("DescriptionText", "Root", Controls.GameInfoStack );
 g_DescriptionHeaderManager	= InstanceManager:new("DetailsHeader", "Root", Controls.GameInfoStack );
 g_DescriptionItemManager	= InstanceManager:new("DetailsItem", "Root", Controls.GameInfoStack );
@@ -151,7 +150,7 @@ end
 
 function UpdateGameType()
 	-- Updates the gameType from the game configuration. 
-	if(GameConfiguration.IsWorldBuilder()) then
+	if(GameConfiguration.IsWorldBuilderEditor()) then
 		g_GameType = SaveTypes.WORLDBUILDER_MAP;
 	else
 		g_GameType = Network.GetGameConfigurationSaveType();
@@ -196,7 +195,13 @@ function SetSelected( index )
 		g_FileEntryInstanceList[ g_iSelectedFileEntry ].Button:SetDisabled(true);
 		local kSelectedFile = g_FileList[ g_iSelectedFileEntry ];
 		local displayName = GetDisplayName(kSelectedFile.Name); 
-		PopulateInspectorData(kSelectedFile, displayName);
+
+		local mods = kSelectedFile.RequiredMods or {};
+		local mod_errors = Modding.CheckRequirements(mods, g_GameType);
+		local success = (mod_errors == nil or mod_errors.Success);
+
+		-- Populate details of the save, include list of mod errors so the UI can reflect.
+		PopulateInspectorData(kSelectedFile, displayName, mod_errors);
 
 		if (g_MenuType == LOAD_GAME) then
 			-- Assume the filename is valid when loading.
@@ -208,58 +213,8 @@ function SetSelected( index )
 		UpdateActionButtonState();
 		Controls.Delete:SetHide( false );
 
-		-- List mods.
-		local errors = {};
-
-		local mods = kSelectedFile.RequiredMods or {};
-		local mod_titles = {};
-
-		-- Test for errors.
-		-- Will return a combination array/map of any errors regarding this combination of mods.
-		-- Array messages are generalized error codes regarding the set.
-		-- Map messages are error codes specific to the mod Id.
-		local errors = Modding.CheckRequirements(mods, g_GameType);
-		local success = (errors == nil or errors.Success);
-		for i,v in ipairs(mods) do
-			local title;
-			
-			local mod_handle = Modding.GetModHandle(v.Id);
-			if(mod_handle) then
-				local mod_info = Modding.GetModInfo(mod_handle);
-				title = Locale.Lookup(mod_info.Name);
-			else
-				title = Locale.LookupBundle(v.Title);
-				if(title == nil or #title == 0) then
-					title = Locale.Lookup(v.Title);
-				end
-			end
-
-			if(errors and errors[v.Id]) then
-				table.insert(mod_titles, "[COLOR_RED]" .. title .. "[ENDCOLOR]");
-			else
-				table.insert(mod_titles, title);
-			end
-		end
-		table.sort(mod_titles, function(a,b) return Locale.Compare(a,b) == -1 end);
-			
-		g_ReferencedPackages:ResetInstances();
-	
-		for i,v in ipairs(mod_titles) do
-			local instance = g_ReferencedPackages:GetInstance();
-			instance.Label:SetText(v);	
-		end
-	
-		Controls.ReferencedPackagesStack:CalculateSize();
-		Controls.ReferencedPackagesStack:ReprocessAnchoring();
-		Controls.ReferencedPackagesScrollPanel:CalculateInternalSize();
-
-		modsHidden = (#mods == 0);
-		Controls.ShowModsButtonContainer:SetHide(modsHidden);
-
 		-- Presume there are no errors if the table is nil.
-		if (errors and errors.Success ~= true) then
-			Controls.ActionButton:SetDisabled(true);
-		end
+		Controls.ActionButton:SetDisabled(not success);
 	else
 		if (g_MenuType == LOAD_GAME) then
 			Controls.ActionButton:SetDisabled( true );
@@ -267,8 +222,6 @@ function SetSelected( index )
 		end
 
 		Controls.Delete:SetHide( true );
-		modsHidden = true;
-		Controls.ShowModsButtonContainer:SetHide(true);
     end
 	if(not modsHidden) then
 		Controls.GameInfoScrollPanel:SetSizeY(280);
@@ -278,180 +231,226 @@ function SetSelected( index )
 end
 
 -----------------------------------------------------------------------------------------------------------------------
-function PopulateInspectorData(fileInfo : table, fileName)
-		local name = fileInfo.DisplayName or fileName;
-		if(name ~= nil) then
-			Controls.FileName:SetText(name);
-		else
-			-- Set default file data for save game...
-			local defaultFileName: string = "";
-			local turnNumber = Game.GetCurrentGameTurn();
-			local localPlayer = Game.GetLocalPlayer();
-			if (localPlayer ~= -1) then
-				local player = Players[localPlayer];
-				local playerConfig = PlayerConfigurations[player:GetID()];
-				local strDate = Calendar.MakeYearStr(turnNumber, GameConfiguration.GetCalendarType(), GameConfiguration.GetGameSpeedType(), false);
-				defaultFileName = Locale.ToUpper( Locale.Lookup(playerConfig:GetLeaderName())).." "..turnNumber.. " ".. strDate;
+function PopulateInspectorData(fileInfo, fileName, mod_errors)
+
+	function LookupBundleOrText(value)
+		if(value) then
+			local text = Locale.LookupBundle(value);
+			if(text == nil) then
+				text = Locale.Lookup(value);
 			end
-			Controls.FileName:SetText(defaultFileName);
+			return text;
 		end
+	end
+
+	local name = fileInfo.DisplayName or fileName;
+	if(name ~= nil) then
+		Controls.FileName:SetText(name);
+	else
+		-- Set default file data for save game...
+		local defaultFileName: string = "";
+		local turnNumber = Game.GetCurrentGameTurn();
+		local localPlayer = Game.GetLocalPlayer();
+		if (localPlayer ~= -1) then
+			local player = Players[localPlayer];
+			local playerConfig = PlayerConfigurations[player:GetID()];
+			local strDate = Calendar.MakeYearStr(turnNumber, GameConfiguration.GetCalendarType(), GameConfiguration.GetGameSpeedType(), false);
+			defaultFileName = Locale.ToUpper( Locale.Lookup(playerConfig:GetLeaderName())).." "..turnNumber.. " ".. strDate;
+		end
+		Controls.FileName:SetText(defaultFileName);
+	end
 		
-		-- Preview image
-		local bHasPreview = UI.ApplyFileQueryPreviewImage( g_LastFileQueryRequestID, fileInfo.Id, Controls.SavedMinimap);
-		Controls.SavedMinimapContainer:SetShow(bHasPreview);
-		Controls.SavedMinimap:SetShow(bHasPreview);
-		Controls.NoMapDataLabel:SetHide(bHasPreview);
+	-- Preview image
+	local bHasPreview = UI.ApplyFileQueryPreviewImage( g_LastFileQueryRequestID, fileInfo.Id, Controls.SavedMinimap);
+	Controls.SavedMinimapContainer:SetShow(bHasPreview);
+	Controls.SavedMinimap:SetShow(bHasPreview);
+	Controls.NoMapDataLabel:SetHide(bHasPreview);
 
-		Controls.CivIcon:LocalizeAndSetToolTip(fileInfo.HostCivilizationName);
-		Controls.LeaderIcon:LocalizeAndSetToolTip(fileInfo.HostLeaderName);
+	local hostCivilizationName = LookupBundleOrText(fileInfo.HostCivilizationName);
+	Controls.CivIcon:SetToolTipString(hostCivilizationName);
+		
+	local hostLeaderName = LookupBundleOrText(fileInfo.HostLeaderName);
+	Controls.LeaderIcon:SetToolTipString(hostLeaderName);
 
-		if (fileInfo.HostLeader ~= nil and fileInfo.HostCivilization ~= nil) then
+	if (fileInfo.HostLeader ~= nil and fileInfo.HostCivilization ~= nil) then
 
-			if (fileInfo.HostBackgroundColorValue ~= nil and fileInfo.HostForegroundColorValue ~= nil) then
+		if (fileInfo.HostBackgroundColorValue ~= nil and fileInfo.HostForegroundColorValue ~= nil) then
 
-				local m_secondaryColor = fileInfo.HostBackgroundColorValue;
-				local m_primaryColor = fileInfo.HostForegroundColorValue;
-				local darkerBackColor = DarkenLightenColor(m_primaryColor,(-85),100);
-				local brighterBackColor = DarkenLightenColor(m_primaryColor,90,255);
+			local m_secondaryColor = fileInfo.HostBackgroundColorValue;
+			local m_primaryColor = fileInfo.HostForegroundColorValue;
+			local darkerBackColor = DarkenLightenColor(m_primaryColor,(-85),100);
+			local brighterBackColor = DarkenLightenColor(m_primaryColor,90,255);
 
-				-- Icon colors
-				Controls.CivBacking_Base:SetColor(m_primaryColor);
-				Controls.CivBacking_Lighter:SetColor(brighterBackColor);
-				Controls.CivBacking_Darker:SetColor(darkerBackColor);
-				Controls.CivIcon:SetColor(m_secondaryColor);
-			end
-
-			Controls.CivIcon:SetIcon("ICON_"..fileInfo.HostCivilization);
-			Controls.LeaderIcon:SetIcon("ICON_"..fileInfo.HostLeader);
-
-		else
-			Controls.CivBacking_Base:SetColorByName("LoadSaveGameInfoIconBackingBase");
-			Controls.CivBacking_Darker:SetColorByName("LoadSaveGameInfoIconBackingDarker");
-			Controls.CivBacking_Lighter:SetColorByName("LoadSaveGameInfoIconBackingLighter");
-			Controls.CivIcon:SetColorByName("White");			
-
-			Controls.CivIcon:SetIcon("ICON_CIVILIZATION_UNKNOWN");
-			Controls.LeaderIcon:SetIcon("ICON_LEADER_DEFAULT");
+			-- Icon colors
+			Controls.CivBacking_Base:SetColor(m_primaryColor);
+			Controls.CivBacking_Lighter:SetColor(brighterBackColor);
+			Controls.CivBacking_Darker:SetColor(darkerBackColor);
+			Controls.CivIcon:SetColor(m_secondaryColor);
 		end
 
-		-- Difficulty
-		Controls.GameDifficulty:LocalizeAndSetToolTip(fileInfo.HostDifficultyName);
-		if (fileInfo.HostDifficulty ~= nil) then
-			Controls.GameDifficulty:SetIcon("ICON_"..fileInfo.HostDifficulty);
-		else
+		if(not Controls.CivIcon:SetIcon("ICON_"..fileInfo.HostCivilization)) then
+			Controls.CivIcon:SetIcon("ICON_CIVILIZATION_UNKNOWN")
+		end
+
+		if(not Controls.LeaderIcon:SetIcon("ICON_"..fileInfo.HostLeader)) then
+			Controls.LeaderIcon:SetIcon("ICON_LEADER_DEFAULT")
+		end
+
+	else
+		Controls.CivBacking_Base:SetColorByName("LoadSaveGameInfoIconBackingBase");
+		Controls.CivBacking_Darker:SetColorByName("LoadSaveGameInfoIconBackingDarker");
+		Controls.CivBacking_Lighter:SetColorByName("LoadSaveGameInfoIconBackingLighter");
+		Controls.CivIcon:SetColorByName("White");			
+
+		Controls.CivIcon:SetIcon("ICON_CIVILIZATION_UNKNOWN");
+		Controls.LeaderIcon:SetIcon("ICON_LEADER_DEFAULT");
+	end
+
+	-- Difficulty
+	local gameDifficulty = LookupBundleOrText(fileInfo.HostDifficultyName);
+	Controls.GameDifficulty:SetToolTipString(gameDifficulty);
+	if (fileInfo.HostDifficulty ~= nil) then
+		if(not Controls.GameDifficulty:SetIcon("ICON_"..fileInfo.HostDifficulty)) then
 			Controls.GameDifficulty:SetIcon("ICON_DIFFICULTY_SETTLER");
 		end
+	else
+		Controls.GameDifficulty:SetIcon("ICON_DIFFICULTY_SETTLER");
+	end
 
-		-- Game speed
-		Controls.GameSpeed:LocalizeAndSetToolTip(fileInfo.GameSpeedName);
-		if (fileInfo.GameSpeed ~= nil) then
-			Controls.GameSpeed:SetIcon("ICON_"..fileInfo.GameSpeed);
-		else
+	-- Game speed
+	local gameSpeedName = LookupBundleOrText(fileInfo.GameSpeedName);
+	Controls.GameSpeed:SetToolTipString(gameSpeedName);
+
+	if (fileInfo.GameSpeed ~= nil) then
+		if(not Controls.GameSpeed:SetIcon("ICON_"..fileInfo.GameSpeed)) then
 			Controls.GameSpeed:SetIcon("ICON_GAMESPEED_STANDARD");
 		end
+	else
+		Controls.GameSpeed:SetIcon("ICON_GAMESPEED_STANDARD");
+	end
 		
-		if (fileInfo.CurrentTurn ~= nil) then
-			Controls.SelectedCurrentTurnLabel:LocalizeAndSetText("LOC_LOADSAVE_CURRENT_TURN", fileInfo.CurrentTurn);
+	if (fileInfo.CurrentTurn ~= nil) then
+		Controls.SelectedCurrentTurnLabel:LocalizeAndSetText("LOC_LOADSAVE_CURRENT_TURN", fileInfo.CurrentTurn);
+	else
+		Controls.SelectedCurrentTurnLabel:SetText("");
+	end
+
+	if (fileInfo.DisplaySaveTime ~= nil) then
+		Controls.SelectedTimeLabel:SetText(fileInfo.DisplaySaveTime);
+	else
+		Controls.SelectedTimeLabel:SetText("");
+	end
+
+	local hostEraName = LookupBundleOrText(fileInfo.HostEraName);
+	Controls.SelectedHostEraLabel:SetText(hostEraName);
+
+	g_DescriptionTextManager:ResetInstances();
+	g_DescriptionHeaderManager:ResetInstances();
+	g_DescriptionItemManager:ResetInstances();
+
+	optionsHeader = g_DescriptionHeaderManager:GetInstance();
+	optionsHeader.HeadingTitle:LocalizeAndSetText("LOC_LOADSAVE_GAME_OPTIONS_HEADER_TITLE");
+
+	local mapScriptName = LookupBundleOrText(fileInfo.MapScriptName);
+	if(mapScriptName) then
+		local maptype = g_DescriptionItemManager:GetInstance();
+		maptype.Title:SetText("LOC_LOADSAVE_GAME_OPTIONS_MAP_TYPE_TITLE");
+		maptype.Description:SetText(mapScriptName);
+	end
+
+	local mapSizeName = LookupBundleOrText(fileInfo.MapSizeName);
+	if (mapSizeName) then
+		local mapsize = g_DescriptionItemManager:GetInstance();
+		mapsize.Title:LocalizeAndSetText("LOC_LOADSAVE_GAME_OPTIONS_MAP_SIZE_TITLE");
+		mapsize.Description:SetText(mapSizeName);
+	end
+
+	if (fileInfo.SavedByVersion ~= nil) then
+		local savedByVersion = g_DescriptionItemManager:GetInstance();
+		savedByVersion.Title:LocalizeAndSetText("LOC_LOADSAVE_SAVED_BY_VERSION_TITLE");
+		savedByVersion.Description:SetText(fileInfo.SavedByVersion);
+	end
+
+	if (fileInfo.TunerActive ~= nil and fileInfo.TunerActive == true) then
+		local tunerActive = g_DescriptionItemManager:GetInstance();
+		tunerActive.Title:LocalizeAndSetText("LOC_LOADSAVE_TUNER_ACTIVE_TITLE");
+		tunerActive.Description:LocalizeAndSetText("LOC_YES_BUTTON");
+	end
+
+	-- advanced = g_DescriptionItemManager:GetInstance();
+	-- advanced.Title:LocalizeAndSetText("LOC_LOADSAVE_GAME_OPTIONS_ADVANCED_TITLE");
+	-- advanced.Description:SetText("Quick Combat[NEWLINE]Quick Movement[NEWLINE]No City Razing[NEWLINE]No Barbarians");
+
+	-- List mods.
+	local mods = fileInfo.RequiredMods or {};
+	local mod_titles = {};
+
+	for i,v in ipairs(mods) do
+		local title;
+			
+		local mod_handle = Modding.GetModHandle(v.Id);
+		if(mod_handle) then
+			local mod_info = Modding.GetModInfo(mod_handle);
+			title = Locale.Lookup(mod_info.Name);
 		else
-			Controls.SelectedCurrentTurnLabel:SetText("");
+			title = Locale.LookupBundle(v.Title);
+			if(title == nil or #title == 0) then
+				title = Locale.Lookup(v.Title);
+			end
 		end
 
-		if (fileInfo.DisplaySaveTime ~= nil) then
-			Controls.SelectedTimeLabel:SetText(fileInfo.DisplaySaveTime);
+		if(mod_errors and mod_errors[v.Id]) then
+			table.insert(mod_titles, "[ICON_BULLET] [COLOR_RED]" .. title .. "[ENDCOLOR]");
 		else
-			Controls.SelectedTimeLabel:SetText("");
+			table.insert(mod_titles, "[ICON_BULLET] " .. title);
 		end
+	end
+	table.sort(mod_titles, function(a,b) return Locale.Compare(a,b) == -1 end);
+	
+	if(#mod_titles > 0) then		
+		spacer = g_DescriptionTextManager:GetInstance();
+		spacer.Text:SetText(" ");
 
-		if (fileInfo.HostEra ~= nil) then
-			local pHostEraDesc = GameInfo.Eras[fileInfo.HostEra];
-			if (pHostEraDesc ~= nil) then
-				Controls.SelectedHostEraLabel:LocalizeAndSetText(pHostEraDesc.Name);
-			end		
-		else
-			Controls.SelectedHostEraLabel:SetText("");
+		local header = g_DescriptionHeaderManager:GetInstance();
+		header.HeadingTitle:LocalizeAndSetText("LOC_MAIN_MENU_ADDITIONAL_CONTENT");
+		for i,v in ipairs(mod_titles) do
+			local instance = g_DescriptionTextManager:GetInstance();
+			instance.Text:SetText(v);	
 		end
+	end
 
-		g_DescriptionTextManager:ResetInstances();
-		g_DescriptionHeaderManager:ResetInstances();
-		g_DescriptionItemManager:ResetInstances();
+	Controls.SelectedGameInfoStack1:CalculateSize();
+	Controls.SelectedGameInfoStack1:ReprocessAnchoring();
+	Controls.SelectedGameInfoStack2:CalculateSize();
+	Controls.SelectedGameInfoStack2:ReprocessAnchoring();
 
-		if (fileInfo.ScenarioDescription ~= nil) then
-			scenarioHeader = g_DescriptionHeaderManager:GetInstance();
-			scenarioHeader.HeadingTitle:LocalizeAndSetText("LOC_LOADSAVE_SCENARIO_HEADER_TITLE");
-			scenarioControl = g_DescriptionTextManager:GetInstance();	
-			scenarioControl.Text:LocalizeAndSetText(fileInfo.ScenarioDescription);
-		end
+	Controls.Root:CalculateVisibilityBox();
+	Controls.Root:ReprocessAnchoring();
 
-		optionsHeader = g_DescriptionHeaderManager:GetInstance();
-		optionsHeader.HeadingTitle:LocalizeAndSetText("LOC_LOADSAVE_GAME_OPTIONS_HEADER_TITLE");
+	Controls.SavedMinimap:SetSizeX(249);
+	Controls.SavedMinimap:ReprocessAnchoring();
+	Controls.SavedMinimapContainer:ReprocessAnchoring();
 
-		if (fileInfo.MapScriptName ~= nil) then
-			maptype = g_DescriptionItemManager:GetInstance();
-			maptype.Title:SetText("LOC_LOADSAVE_GAME_OPTIONS_MAP_TYPE_TITLE");
-			maptype.Description:LocalizeAndSetText(fileInfo.MapScriptName);
-		end
+	Controls.InspectorTopAreaStack:CalculateSize();
+	Controls.InspectorTopAreaStack:ReprocessAnchoring();
 
-		if (fileInfo.MapSizeName ~= nil) then
-			mapsize = g_DescriptionItemManager:GetInstance();
-			mapsize.Title:LocalizeAndSetText("LOC_LOADSAVE_GAME_OPTIONS_MAP_SIZE_TITLE");
-			mapsize.Description:LocalizeAndSetText(fileInfo.MapSizeName);
-		end
+	Controls.InspectorTopAreaGrid:DoAutoSize();
+	Controls.InspectorTopAreaGrid:ReprocessAnchoring();
 
-		if (fileInfo.WorldAgeName ~= nil) then
-			worldage = g_DescriptionItemManager:GetInstance();
-			worldage.Title:LocalizeAndSetText("LOC_LOADSAVE_GAME_OPTIONS_WORLD_AGE_TITLE");
-			worldage.Description:LocalizeAndSetText(fileInfo.WorldAgeName);
-		end
+	Controls.InspectorTopAreaGridContainer:DoAutoSize();
+	Controls.InspectorTopAreaGridContainer:ReprocessAnchoring();
 
-		if (fileInfo.SavedByVersion ~= nil) then
-			savedByVersion = g_DescriptionItemManager:GetInstance();
-			savedByVersion.Title:LocalizeAndSetText("LOC_LOADSAVE_SAVED_BY_VERSION_TITLE");
-			savedByVersion.Description:SetText(fileInfo.SavedByVersion);
-		end
+	Controls.InspectorTopAreaBox:DoAutoSize();
+	Controls.InspectorTopAreaBox:ReprocessAnchoring();
 
-		if (fileInfo.TunerActive ~= nil and fileInfo.TunerActive == true) then
-			tunerActive = g_DescriptionItemManager:GetInstance();
-			tunerActive.Title:LocalizeAndSetText("LOC_LOADSAVE_TUNER_ACTIVE_TITLE");
-			tunerActive.Description:LocalizeAndSetText("LOC_YES_BUTTON");
-		end
-
-		-- advanced = g_DescriptionItemManager:GetInstance();
-		-- advanced.Title:LocalizeAndSetText("LOC_LOADSAVE_GAME_OPTIONS_ADVANCED_TITLE");
-		-- advanced.Description:SetText("Quick Combat[NEWLINE]Quick Movement[NEWLINE]No City Razing[NEWLINE]No Barbarians");
+	Controls.InspectorTopArea:DoAutoSize();
+	Controls.InspectorTopArea:ReprocessAnchoring();
 
 
-		Controls.SelectedGameInfoStack1:CalculateSize();
-		Controls.SelectedGameInfoStack1:ReprocessAnchoring();
-		Controls.SelectedGameInfoStack2:CalculateSize();
-		Controls.SelectedGameInfoStack2:ReprocessAnchoring();
-
-		Controls.Root:CalculateVisibilityBox();
-		Controls.Root:ReprocessAnchoring();
-
-		Controls.SavedMinimap:SetSizeX(249);
-		Controls.SavedMinimap:ReprocessAnchoring();
-		Controls.SavedMinimapContainer:ReprocessAnchoring();
-
-		Controls.InspectorTopAreaStack:CalculateSize();
-		Controls.InspectorTopAreaStack:ReprocessAnchoring();
-
-		Controls.InspectorTopAreaGrid:DoAutoSize();
-		Controls.InspectorTopAreaGrid:ReprocessAnchoring();
-
-		Controls.InspectorTopAreaGridContainer:DoAutoSize();
-		Controls.InspectorTopAreaGridContainer:ReprocessAnchoring();
-
-		Controls.InspectorTopAreaBox:DoAutoSize();
-		Controls.InspectorTopAreaBox:ReprocessAnchoring();
-
-		Controls.InspectorTopArea:DoAutoSize();
-		Controls.InspectorTopArea:ReprocessAnchoring();
-
-
-		Controls.GameInfoStack:CalculateSize();
-		Controls.GameInfoStack:ReprocessAnchoring();
-		Controls.GameInfoScrollPanel:CalculateSize();
-		Controls.GameInfoScrollPanel:ReprocessAnchoring();
+	Controls.GameInfoStack:CalculateSize();
+	Controls.GameInfoStack:ReprocessAnchoring();
+	Controls.GameInfoScrollPanel:CalculateSize();
+	Controls.GameInfoScrollPanel:ReprocessAnchoring();
 
 end
 

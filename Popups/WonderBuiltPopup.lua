@@ -52,6 +52,7 @@ function OnWonderComplete(locX, locY, buildingIndex, playerIndex, iPercentComple
 
 			ms_eventID = ReferenceCurrentGameCoreEvent();
 			UIManager:QueuePopup( ContextPtr, PopupPriority.Current);
+			Controls.ReplayButton:SetHide(UI.GetWorldRenderView() == WorldRenderView.VIEW_2D);
 		end
 	end
 end
@@ -100,6 +101,12 @@ function Close()
     UI.PlaySound("Stop_Wonder_Tracks");
 end
 
+function RestartMovie()
+    -- stop the music before beginning another go-round
+    UI.PlaySound("Stop_Wonder_Tracks");
+	Events.RestartWonderMovie();
+end
+
 function OnClose()
 	Close();
 end
@@ -132,6 +139,7 @@ function Initialize()
 	if(not GameConfiguration.IsAnyMultiplayer()) then
 		ContextPtr:SetInputHandler( OnInputHandler, true );
 		Controls.Close:RegisterCallback(Mouse.eLClick, OnClose);
+		Controls.ReplayButton:RegisterCallback(Mouse.eLClick, RestartMovie);
 		Events.WonderCompleted.Add( OnWonderComplete );	
 		Events.SystemUpdateUI.Add( OnUpdateUI );
 	end

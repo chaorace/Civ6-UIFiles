@@ -100,17 +100,6 @@ function OnCloudCheck( )
 	UpdateActionButtonState();
 end
 
-----------------------------------------------------------------     
-----------------------------------------------------------------
-function OnShowReferencedPackages()
-	Controls.ReferencedPackagesWindow:SetHide(false);
-end
-
-----------------------------------------------------------------        
-----------------------------------------------------------------
-function OnCloseReferencedPackages()
-	Controls.ReferencedPackagesWindow:SetHide(true);
-end
 
 ---------------------------------------------------------------- 
 -- Show/Hide Handlers
@@ -260,7 +249,6 @@ function Resize()
 	end
 	Controls.LogoContainer:SetHide(hideLogo);
 	Controls.MainGrid:ReprocessAnchoring();
-	Controls.ReferencedPackagesWindow:ReprocessAnchoring();
 	Controls.DeleteConfirm:SetSizeVal(screenX,screenY);
 	Controls.DeleteConfirm:ReprocessAnchoring();
 end
@@ -290,15 +278,12 @@ function Initialize()
 	Controls.ActionButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.BackButton:RegisterCallback( Mouse.eLClick, OnBack );
 	Controls.BackButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-	Controls.CloseReferencedPackagesButton:RegisterCallback( Mouse.eLClick, OnCloseReferencedPackages);
-	Controls.CloseReferencedPackagesButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.CloudCheck:RegisterCallback( Mouse.eLClick, OnCloudCheck );
 	Controls.FileName:RegisterStringChangedCallback( OnFileNameChange )
 	Controls.No:RegisterCallback( Mouse.eLClick, OnNo );
 	Controls.No:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.Yes:RegisterCallback( Mouse.eLClick, OnYes );
 	Controls.Yes:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-	Controls.ShowModsButton:RegisterCallback( Mouse.eLClick, OnShowReferencedPackages );
 	Controls.Delete:RegisterCallback( Mouse.eLClick, OnDelete );
 	Controls.Delete:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 

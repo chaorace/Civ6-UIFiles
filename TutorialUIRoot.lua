@@ -158,6 +158,7 @@ local m_turn					: number		= -1;									-- Track the current turn; required to 
 
 local m_LockedProductionHash	:number = -1;	-- cached production type hash value for when production is locked during the tutorial
 local m_LockedResearchHash		:number = -1;	-- cached research type hash value for when research is locked during the tutorial
+local m_LockedUnitID			:number = -1;	-- cached unitID for when we want to lock a unit from selection
 
 
 -- ===========================================================================
@@ -911,6 +912,30 @@ function SelectAndCenterOnUnit( unitType :string )
 			if (unitTypeName == unitType) then
 				UI.SelectUnit(unit);
 				UI.LookAtPlot(unit:GetX(), unit:GetY());
+			end
+		end
+	end
+end
+
+-- ===========================================================================
+-- Locked Unit Handlers
+-- ===========================================================================
+function LockUnit( unitID:number )
+	m_LockedUnitID = unitID;
+end
+
+function UnlockUnit()
+	m_LockedUnitID = -1;
+end
+
+function CheckLockedUnit()
+	if (m_LockedUnitID ~= -1) then
+		local ePlayerID = Game.GetLocalPlayer();
+		local kPlayer:table = Players[ePlayerID];
+		if (kPlayer ~= nil) then
+			local pLockedUnit = UnitManager.GetUnit(ePlayerID, m_LockedUnitID);
+			if (pLockedUnit ~= nil) then
+				UI.DeselectUnit(pLockedUnit);
 			end
 		end
 	end
@@ -2221,7 +2246,15 @@ function OnTreasuryChanged(player, yield, balance)
 			TutorialCheck("Bankrupt")
 		end
 
-		if balance >= 500 and yield > 0 then
+		local eGameSpeed = GameConfiguration.GetGameSpeedType();
+		local iSpeedCostMultiplier = GameInfo.GameSpeeds[eGameSpeed].CostMultiplier;
+		local iGoldThreshold = 5 * iSpeedCostMultiplier;
+
+		if (iGoldThreshold <= 0) then
+			iGoldThreshold = 500;
+		end
+		
+		if balance >= iGoldThreshold and yield > 0 then
 			TutorialCheck("MoneySurplus")
 		end
 	end
@@ -2350,7 +2383,10 @@ function OnLoadScreenClose()
 end
 
 -- ===========================================================================
-function OnUnitSelectionChanged()			TutorialCheck("UnitSelectionChanged"); end
+function OnUnitSelectionChanged()			
+	TutorialCheck("UnitSelectionChanged");
+	CheckLockedUnit();
+end
 
 -- ===========================================================================
 function OnUnitMoveComplete(playerID, unitID, x, y, visibleToLocalPlayer, unitState)

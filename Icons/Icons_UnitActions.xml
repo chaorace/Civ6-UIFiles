@@ -67,6 +67,7 @@
     <Row Name="ICON_UNITOPERATION_EXCAVATE"               	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="52"/>
     <Row Name="ICON_UNITOPERATION_FORTIFY"                	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="53"/>
     <Row Name="ICON_UNITOPERATION_HEAL"                   	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="54"/>
+	<Row Name="ICON_UNITOPERATION_ALERT"					Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="90"/>
     <Row Name="ICON_UNITOPERATION_FOUND_CITY"             	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="55"/>
     <Row Name="ICON_UNITOPERATION_FOUND_RELIGION"         	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="56"/>
     <Row Name="ICON_UNITOPERATION_HARVEST_RESOURCE"       	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="57"/>

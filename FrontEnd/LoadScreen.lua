@@ -158,7 +158,7 @@ end
 -- ===========================================================================
 function OnLoadScreenContentReady()
 
-	if (GameConfiguration:IsWorldBuilder()) then
+	if (GameConfiguration:IsWorldBuilderEditor()) then
 		-- This needs to show some kind of World Builder splash screen.
 		-- It can't show leaders, etc., they may not be initialized.
 		return;
@@ -202,31 +202,46 @@ function OnLoadScreenContentReady()
 		UI.DataError("Received NIL playerConfig for player #"..tostring(localPlayer));
 	end
 
-	local leaderType	:string = playerConfig:GetLeaderTypeName();
-	local backgroundName:string = leaderType .. "_BACKGROUND";
-	local portraitName	:string = leaderType .. "_NEUTRAL";
-	local leaderDetails :string = Locale.Lookup("LOC_LOADING_INFO_" .. leaderType);
-
-	Controls.BackgroundImage:SetTexture( backgroundName );
+	local backgroundTexture:string;
+	local leaderType:string = playerConfig:GetLeaderTypeName();
+	local loadingInfo:table = GameInfo.LoadingInfo[leaderType];
+	if loadingInfo and loadingInfo.BackgroundImage then
+		backgroundTexture = loadingInfo.BackgroundImage;
+	else
+		backgroundTexture = leaderType .. "_BACKGROUND";
+	end
+	
+	Controls.BackgroundImage:SetTexture( backgroundTexture );
+	if (not Controls.BackgroundImage:HasTexture()) then
+		UI.DataError("Failed to load background image texture: "..backgroundTexture);
+	end
 
 	local LEADER_CONTAINER_X = 512;
-	--local offsetX = 300 + math.floor((Controls.Portrait:GetSizeX() - LEADER_CONTAINER_X)/2);
 	local offsetX = math.floor((Controls.Portrait:GetSizeX() - LEADER_CONTAINER_X)/2);
 	if (offsetX > 0) then
 		Controls.Portrait:SetOffsetX(offsetX);
 	else
 		Controls.Portrait:SetOffsetX(0);
 	end
-	--Controls.Portrait:ReprocessAnchoring();
+
+	local portraitName:string;
+	if loadingInfo and loadingInfo.ForegroundImage then
+		portraitName = loadingInfo.ForegroundImage;
+	else
+		portraitName = leaderType .. "_NEUTRAL";
+	end
+	
 	Controls.Portrait:SetTexture( portraitName );
 	if (not Controls.Portrait:HasTexture()) then
 		UI.DataError("We are lacking a texture for "..portraitName);
 	end
 	Controls.CivName:SetText( Locale.ToUpper( Locale.Lookup(playerConfig:GetCivilizationDescription())) );
 
+	
+	local eraInfoText;
+	local leaderInfoText;
 
 	local startEra = GameInfo.Eras[ GameConfiguration.GetStartEra() ];
-	
 	if (GameConfiguration.IsSavedGame()) then
 		-- Returns a list of 1 entry...
 		local metaData = UI.GetSaveGameMetaData();
@@ -240,16 +255,44 @@ function OnLoadScreenContentReady()
 	end
 
 	if (startEra ~= nil) then
-		Controls.EraInfo:SetText( Locale.Lookup(startEra.Description) );
+		eraInfoText = startEra.Description;
 	end
-	
+		
 	local kLeader	:table = GameInfo.Leaders[leaderType];
 	if kLeader ~= nil then
 		local leaderName:string = Locale.ToUpper(Locale.Lookup( kLeader.Name ));
 		Controls.LeaderName:SetText( leaderName );
-		Controls.LeaderInfo:SetText( leaderDetails );
+
+		local details = "LOC_LOADING_INFO_" .. leaderType;
+		if(Locale.HasTextKey(details)) then
+			leaderInfoText = details;
+		end
 	else
 		UI.DataError("No leader in DB by leaderType '"..leaderType.."'");
+	end
+	
+	if(loadingInfo) then
+		if(loadingInfo.EraText) then
+			eraInfoText = loadingInfo.EraText;
+		end
+
+		if(loadingInfo.LeaderText) then
+			leaderInfoText = loadingInfo.LeaderText;
+		end
+	end
+
+	if (eraInfoText) then
+		Controls.EraInfo:LocalizeAndSetText(eraInfoText);
+		Controls.EraInfo:SetHide(false);
+	else
+		Controls.EraInfo:SetHide(true);
+	end
+
+	if(leaderInfoText) then
+		Controls.LeaderInfo:LocalizeAndSetText(leaderInfoText);
+		Controls.LeaderInfo:SetHide(false);
+	else
+		Controls.LeaderInfo:SetHide(true);
 	end
 
 	local civType	:string = playerConfig:GetCivilizationTypeName();
@@ -265,7 +308,22 @@ function OnLoadScreenContentReady()
 
     -- start the voiceover
     local leaderID = playerConfig:GetLeaderTypeID();
-    if not m_isResyncLoad then
+    local bPlayDOM = true;
+
+	if(loadingInfo) then
+		bPlayDOM = loadingInfo.PlayDawnOfManAudio;
+	end
+
+    if (m_isResyncLoad) then
+        bPlayDOM = false;
+    end
+    if (GameConfiguration.IsHotseat()) then
+        bPlayDOM = true;
+    end
+
+	
+
+    if bPlayDOM then
         UI.SetSoundSwitchValue("Leader_Screen_Civilization", UI.GetCivilizationSoundSwitchValueByLeader(leaderID));
         UI.SetSoundSwitchValue("Civilization", UI.GetCivilizationSoundSwitchValueByLeader(leaderID));
         UI.SetSoundSwitchValue("Era_DawnOfMan", UI.GetEraSoundSwitchValue(startEra.Hash));

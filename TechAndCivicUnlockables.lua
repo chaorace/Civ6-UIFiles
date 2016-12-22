@@ -101,54 +101,54 @@ function GetUnlockableItems(playerId)
 	local unlockables = {};
 	for row in GameInfo.Buildings() do
 		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.BuildingType, row.Name});
+			table.insert(unlockables, {row, row.BuildingType, row.Name, row.BuildingType});
 		end
 	end
 		
 	for row in GameInfo.Districts() do
 		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.DistrictType, row.Name});
+			table.insert(unlockables, {row, row.DistrictType, row.Name, row.DistrictType});
 		end
 	end		
 	for row in GameInfo.Units() do
 		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.UnitType, row.Name});
+			table.insert(unlockables, {row, row.UnitType, row.Name, row.UnitType});
 		end
 	end
 
 	for row in GameInfo.Governments() do
 		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.GovernmentType, row.Name});
+			table.insert(unlockables, {row, row.GovernmentType, row.Name, row.GovernmentType});
 		end
 	end
 
 	for row in GameInfo.Improvements() do
 		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.ImprovementType, row.Name});
+			table.insert(unlockables, {row, row.ImprovementType, row.Name, row.ImprovementType});
 		end
 	end
 
 	for row in GameInfo.Policies() do
 		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.PolicyType, row.Name});
+			table.insert(unlockables, {row, row.PolicyType, row.Name, row.PolicyType});
 		end
 	end
 
 	for row in GameInfo.Projects() do
 		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.ProjectType, row.Name});
+			table.insert(unlockables, {row, row.ProjectType, row.Name, row.ProjectType});
 		end
 	end
 
 	for row in GameInfo.Resources() do
 		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.ResourceType, row.Name});
+			table.insert(unlockables, {row, row.ResourceType, row.Name, row.ResourceType});
 		end
 	end
 
 	for row in GameInfo.DiplomaticActions() do
 		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.DiplomaticActionType, row.Name});
+			table.insert(unlockables, {row, row.DiplomaticActionType, row.Name, row.CivilopediaKey});
 		end
 	end
 
@@ -157,6 +157,7 @@ end
 
 -- ===========================================================================
 --	Returns an array of items unlocked by a given tech and optional player id.
+--  The item format is an array of {ID, Name, CivilopediaKey}
 -- ===========================================================================
 function GetUnlockablesForTech( techType, playerId )
 
@@ -187,7 +188,7 @@ function GetUnlockablesForTech( techType, playerId )
 	local results = {};
 	for i, unlockable in ipairs(unlockables) do
 		if(CanUnlockWithThisTech(unlockable[1])) then
-			table.insert(results, {unlockable[2], unlockable[3]});
+			table.insert(results, {select(2,unpack(unlockable))});
 		end
 	end
 
@@ -196,6 +197,7 @@ end
 
 -- ===========================================================================
 --	Returns an array of items unlocked by a given civic and optional player id.
+--  The item format is an array of {ID, Name, CivilopediaKey}
 -- ===========================================================================
 function GetUnlockablesForCivic(civicType, playerId)
 
@@ -223,7 +225,9 @@ function GetUnlockablesForCivic(civicType, playerId)
 	-- Maybe in a patch :)
 	if(civicType == "CIVIC_DIPLOMATIC_SERVICE") then
 		local spy = GameInfo.Units["UNIT_SPY"]
-		table.insert(unlockables, {spy, spy.UnitType, spy.Name});
+		if(spy) then
+			table.insert(unlockables, {spy, spy.UnitType, spy.Name});
+		end
 	end
 
 	-- Filter out replaced items. 
@@ -235,7 +239,7 @@ function GetUnlockablesForCivic(civicType, playerId)
 	local results = {};
 	for i, unlockable in ipairs(unlockables) do
 		if(CanUnlockWithCivic(unlockable[1])) then
-			table.insert(results, {unlockable[2], unlockable[3]});
+			table.insert(results, {select(2,unpack(unlockable))});
 		end
 	end
 

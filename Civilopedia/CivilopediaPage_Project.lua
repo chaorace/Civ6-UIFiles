@@ -29,6 +29,9 @@ local sectionId = page.SectionId;
 	table.sort(prereq_projects, function(a,b) return Locale.Compare(a,b) == -1; end);
 
 	-- Right Column
+	AddPortrait("ICON_" .. projectType);
+
+	-- Right Column
 	AddRightColumnStatBox("LOC_UI_PEDIA_REQUIREMENTS", function(s)
 		s:AddSeparator();
 

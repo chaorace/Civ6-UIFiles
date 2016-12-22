@@ -87,6 +87,15 @@ function OnDefaultButton()
 	end
 end
 
+-------------------------------------------------------------------------------
+-- Event Listeners
+-------------------------------------------------------------------------------
+Events.FinishedGameplayContentConfigure.Add(function(result)
+	if(ContextPtr and not ContextPtr:IsHidden() and result.Success) then
+		GameSetup_RefreshParameters();
+	end
+end);
+
 -------------------------------------------------
 -- Mods Setting Button Handler
 -- TODO: Remove this, and place contents mods screen into the ParametersStack (in the SecondaryParametersStack, or in its own ModsStack)

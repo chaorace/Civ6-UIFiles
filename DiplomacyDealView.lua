@@ -356,6 +356,7 @@ function OnValuePulldownCommit(forType)
 			end
 
 			UpdateDealStatus();
+			UpdateProposedWorkingDeal();
 		end
 	end
 

@@ -7,7 +7,7 @@
     <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="36" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols36.dds"/>
     <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="45" IconsPerRow="8" IconsPerColumn="8" Filename="CivDefaults45.dds"/> <!--Baked in color-->
     <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="44" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols44.dds"/> <!-- city state ribbon -->
-	<Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="48" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols48.dds"/>
+	  <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="48" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols48.dds"/>
     <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="50" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols50.dds"/>
 	  <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="64" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols64.dds"/>
     <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="80" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols80.dds"/>
@@ -22,16 +22,6 @@
     <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="64"   IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec64.dds"/>
     <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="80"   IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec80.dds"/>
     <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="256"  IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec256.dds"/>
-
-    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="22"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland22.dds"/>
-    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="30"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland30.dds"/>
-    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="36"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland36.dds"/>
-    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="45"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland45.dds"/> <!--Baked in color-->
-    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="48"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland48.dds"/>
-    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="50"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland50.dds"/>
-    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="64"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland64.dds"/>
-    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="80"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland80.dds"/>
-    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="256" IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland256.dds"/>
 	</IconTextureAtlases>
   
 	<IconDefinitions>
@@ -57,7 +47,6 @@
     <Row Name="ICON_CIVILIZATION_SUMERIA"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="19"/>
       
 	  <Row Name="ICON_CIVILIZATION_AZTEC"             Atlas="ICON_ATLAS_CIVILIZATION_AZTEC"   Index="0"/>
-    <Row Name="ICON_CIVILIZATION_POLAND"            Atlas="ICON_ATLAS_CIVILIZATION_POLAND"  Index="0"/>
 
     <Row Name="ICON_CIVILIZATION_AMSTERDAM"         Atlas="ICON_ATLAS_CIVILIZATIONS" Index="20"/>
     <Row Name="ICON_CIVILIZATION_BRUSSELS"          Atlas="ICON_ATLAS_CIVILIZATIONS" Index="21"/>

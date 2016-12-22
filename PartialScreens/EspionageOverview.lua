@@ -795,6 +795,12 @@ end
 
 ------------------------------------------------------------------------------------------------
 function Open(forceTabIndex:number)
+	-- dont show panel if there is no local player
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID == -1) then
+		return
+	end
+
 	m_AnimSupport:Show();
 
 	if forceTabIndex then

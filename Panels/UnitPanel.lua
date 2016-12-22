@@ -448,6 +448,10 @@ function GetUnitActionsTable( pUnit )
 
 			local instance;
 
+			if (operationRow.Index == 53) then
+				local foo = bar;
+			end
+
 			-- if unit can build an improvement, show all the buildable improvements for that tile
 			if (actionHash == UnitOperationTypes.BUILD_IMPROVEMENT) then
 				local tParameters = {};
@@ -915,13 +919,14 @@ function View(data)
 	end
 
 	-- Populate Earned Promotions UI
-	if (data.UnitExperience > 0 and not UILens.IsLensActive("Religion")) then
+	if (not UILens.IsLensActive("Religion") and data.Combat > 0) then
 		Controls.XPArea:SetHide(false);
 		Controls.XPBar:SetPercent( data.UnitExperience / data.MaxExperience );
 		Controls.XPArea:SetToolTipString( Locale.Lookup("LOC_HUD_UNIT_PANEL_XP_TT", data.UnitExperience, data.MaxExperience, data.UnitLevel+1 ) );
     else
 		Controls.XPArea:SetHide(true);
 	end
+	
 	
 	Controls.PromotionBanner:SetColor( m_primaryColor );
 

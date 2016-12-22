@@ -522,6 +522,7 @@ function ViewOverall()
 		local victoryType:string = row.VictoryType;
 		if IsCustomVictoryType(victoryType) and Game.IsVictoryEnabled(victoryType) then
 			PopulateOverallInstance(m_OverallIM:GetInstance(), victoryType);
+
 		end
 	end
 
@@ -536,6 +537,7 @@ function ViewOverall()
 		Controls.OverallViewStack:SetOffsetX(-5);
 	end
 end
+
 
 function PopulateOverallInstance(instance:table, victoryType:string, typeText:string)
 	
@@ -710,7 +712,14 @@ function PopulateOverallPlayerIconInstance(instance:table, playerData:table, ico
 	ColorCivIcon(instance, playerID);
 
 	local civName:string, civIcon:string = GetCivNameAndIcon(playerID);
-	local details:string = playerData.FirstTiebreakSummary .. "[NEWLINE]" .. playerData.SecondTiebreakSummary;
+
+	local details:string;
+	if playerData.FirstTiebreakSummary == playerData.SecondTiebreakSummary then
+		details = playerData.FirstTiebreakSummary;
+	else
+		details = playerData.FirstTiebreakSummary .. "[NEWLINE]" .. playerData.SecondTiebreakSummary;
+	end
+
 	local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, iconSize);
 	if(textureSheet == nil or textureSheet == "") then
 		UI.DataError("Could not find icon in PopulateOverallPlayerIconInstance: icon=\""..civIcon.."\", iconSize="..tostring(iconSize));
@@ -1720,6 +1729,12 @@ end
 --	SCREEN EVENTS
 -- ===========================================================================
 function Open()
+	-- dont show panel if there is no local player
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID == -1) then
+		return
+	end
+
 	UpdateData();
 	m_AnimSupport.Show();
 	UI.PlaySound("CityStates_Panel_Open");

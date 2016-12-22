@@ -2,123 +2,245 @@
 
 <Context Name="WorldPlayerEditor">
 
-  <Container Style="ModalScreen">
+	<Container Style="ModalScreen">
 
-    <Grid Size="980,700" Offset="20,50" Texture="Religion_OverviewFrame" SliceCorner="15,15" SliceTextureSize="34,33">
+		<Grid Size="980,700" Offset="20,50" Texture="Religion_OverviewFrame" SliceCorner="15,15" SliceTextureSize="34,33">
 
-      <ListBox ID="PlayerList" Size="400,640" Offset="15,15">
+			<Container ID="TopContainer" Size="parent, parent-400">
 
-        <Grid Style="UnitFrame" Anchor="L,T" Size="400,640" >
-          <ScrollPanel Size="390,620" Anchor="L,T" Vertical="1" Offset="5,10" >
-            <Stack ID="ListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
+				<ListBox ID="PlayerList" Size="300, parent-56" Offset="15,15">
 
-            <ScrollBar  Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
-            <UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
-            <DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
-          </ScrollPanel>
-        </Grid>
+					<Grid Style="UnitFrame" Anchor="L,T" Size="400,parent" >
+						<ScrollPanel Size="390,220" Anchor="L,T" Vertical="1" Offset="5,10" >
+							<Stack ID="ListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
 
-        <InstanceData Name="EntryInstance" >
-          <GridButton  Size="370,24" Style="ButtonLightWeight"  Anchor="C,C" ID="Button" />
-        </InstanceData>
+							<ScrollBar  Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+							<UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
+							<DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+						</ScrollPanel>
+					</Grid>
 
-      </ListBox>
+					<InstanceData Name="EntryInstance" >
+						<GridButton  Size="370,24" Style="ButtonLightWeight"  Anchor="C,C" ID="Button" />
+					</InstanceData>
 
-      <Stack StackGrowth="Right" Anchor="L,B" Offset="15,15" StackPadding="5">
-        <GridButton ID="NewPlayerButton"    String="Add Player"     Size="130,26" Style="MainMenuSquareButton" />
-        <GridButton ID="NewAIPlayerButton"  String="Add AI Player"  Size="130,26" Style="MainMenuSquareButton" />
-        <GridButton ID="RemovePlayerButton" String="Remove Player"  Size="130,26" Style="MainMenuSquareButton" />
-      </Stack>
+				</ListBox>
 
-      <Stack StackGrowth="Down" Anchor="L,T" Offset="430,15" StackPadding="15">
-        
-        <Stack StackGrowth="Right" Anchor="L,T" StackPadding="15">
+				<Stack StackGrowth="Right" Anchor="L,B" Offset="15,15" StackPadding="5">
+					<GridButton ID="NewPlayerButton"    String="Add Player"     Size="130,26" Style="MainMenuSquareButton" />
+					<GridButton ID="NewAIPlayerButton"  String="Add AI Player"  Size="130,26" Style="MainMenuSquareButton" />
+					<GridButton ID="RemovePlayerButton" String="Remove Player"  Size="130,26" Style="MainMenuSquareButton" />
+				</Stack>
 
-          <SimplePullDown ID="CivPullDown"    Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
-          <SimplePullDown ID="LeaderPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+				<Container ID="ValuesContainer" Size="parent-430, parent-30" Offset="430,15">
 
-        </Stack>
+					<Stack StackGrowth="Down" Anchor="L,T" StackPadding="4">
 
-		  <Stack StackGrowth="Right" Anchor="L,T" StackPadding="15" Offset="0,-30">
+						<Stack StackGrowth="Right" Anchor="L,T" StackPadding="15">
+							<SimplePullDown ID="CivPullDown"    Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+							<SimplePullDown ID="LeaderPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+						</Stack>
 
-			  <SimplePullDown ID="CivLevelPullDown"  Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+						<Stack StackGrowth="Right" Anchor="L,T" StackPadding="15" Offset="0,-30">
+							<SimplePullDown ID="CivLevelPullDown"  Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+						</Stack>
 
-		  </Stack>
+						<Stack StackGrowth="Right" Anchor="L,T" StackPadding="15" Offset="0,-30">
+							<SimplePullDown ID="EraPullDown" Style="MainPullDown" ScrollThreshold="400" Size="200,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
 
-		  <Stack StackGrowth="Right" Anchor="L,T" StackPadding="15" Offset="0,-30">
+							<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+								<Label Anchor="L,C" FontSize="18" Size="125,29" String="Gold:"/>
+								<Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
+									<Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
+										<EditBox ID="GoldEdit" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
+									</Box>
+								</Box>
+							</Stack>
 
-          <SimplePullDown ID="EraPullDown" Style="MainPullDown" ScrollThreshold="400" Size="200,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
-        
-          <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
-            <Label Anchor="L,C" FontSize="18" Size="125,29" String="Gold:"/>
-            <Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
-              <Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
-                <EditBox ID="GoldEdit" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
-              </Box>
-            </Box>
-          </Stack>
+							<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+								<Label Anchor="L,C" FontSize="18" Size="125,29" String="Faith:"/>
+								<Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
+									<Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
+										<EditBox ID="FaithEdit" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
+									</Box>
+								</Box>
+							</Stack>
+						</Stack>
+					</Stack>
 
-          <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
-            <Label Anchor="L,C" FontSize="18" Size="125,29" String="Faith:"/>
-            <Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
-              <Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
-                <EditBox ID="FaithEdit" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
-              </Box>
-            </Box>
-          </Stack>
-        
-        </Stack>
+				</Container>
+			</Container>
 
-        <Stack StackGrowth="Right" StackPadding="5" Offset="0,-30">
+			<Container ID="TabsContainer" Size="parent, parent-300" Offset="0,300">
+				
+				<Stack StackGrowth="Down" Anchor="L,T" StackPadding="4">
 
-          <Stack StackGrowth="Bottom" StackPadding="5" >
-            <Label Anchor="L,C" FontSize="32" Size="125,29" String="Techs"/>
-            <MultiSelectListBox ID="TechList" Size="265,515" ListContainer="TechListContainer">
+					<!-- ==================================================================	-->
+					<!--	Tab Header																												-->
+					<!-- ==================================================================	-->
+					<Container ID="TabArea" Anchor="C,T" Offset="0,0" Size="parent,42">
+						<Image Anchor="C,T" Offset="0,4" Size="parent-8,22" Color="0,0,0,255" Texture="Controls_GradientSmall" />
+						<Container ID="TabContainer" Offset="0,0" Size="parent,34" />
+						<Grid Anchor="C,B" Offset="0,0" Size="parent-6,8" Style="Divider3Grid" />
+					</Container>
 
-              <Grid Style="UnitFrame" Anchor="L,T" Size="parent,parent" >
-                <ScrollPanel Size="255,495" Anchor="L,T" Vertical="1" Offset="5,10" >
-                  <Stack ID="TechListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
+					<ScrollPanel ID="Scroll" Offset="4,4" Size="parent-8,parent" Vertical="1" AutoScrollBar="1">
+						<Stack ID="Stack" Anchor="L,T" Offset="0,1" StackPadding="4"/>
+						<ScrollBar Anchor="R,C" Offset="2,0" Size="11,parent" AnchorSide="I,I" Style="ScrollVerticalBarAlt" />
+					</ScrollPanel>
 
-                  <ScrollBar  Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
-                  <UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
-                  <DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
-                </ScrollPanel>
-              </Grid>
+				</Stack>
+			</Container>
+		</Grid>
 
-              <InstanceData Name="EntryInstance" >
-                <CheckBox  Size="240,24" Style="MainCheckBox"  Anchor="L,T" ID="Button" BoxOnLeft="1"/>
-              </InstanceData>
+	</Container>
 
-            </MultiSelectListBox>
-          </Stack>
+	<!-- ==================================================================	-->
+	<!--	Instances																													-->
+	<!-- ==================================================================	-->
+	<Instance				Name="TabInstance">
+		<GridButton			ID="Button"					Size="50,34" Style="TabButton" FontSize="14" TextOffset="0,2">
+			<AlphaAnim		ID="Selection"				Offset="-2,0"	Size="parent+3,parent" Speed="4" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
+				<GridButton								Size="parent,parent" Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
+			</AlphaAnim>
+		</GridButton>
+	</Instance>
 
-          <Stack StackGrowth="Bottom" StackPadding="5" >
-            <Label Anchor="L,C" FontSize="32" Size="125,29" String="Civics"/>
-            <MultiSelectListBox ID="CivicsList" Size="265,515" ListContainer="CivicsListContainer">
+	<!-- Non-Collapsable Rows -->
+	<Instance					Name="SimpleInstance">
+		<Stack					ID="Top"	StackGrowth="Down" />
+	</Instance>
 
-              <Grid Style="UnitFrame" Anchor="L,T" Size="parent,parent" >
-                <ScrollPanel Size="255,495" Anchor="L,T" Vertical="1" Offset="5,10" >
-                  <Stack ID="CivicsListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
+	<!-- Collapsable Row(s) area -->
+	<Instance					Name="GroupInstance">
+		<Container				ID="Top"																				Size="parent,10"	AutoSize="V">
+			<GridButton			ID="RowHeaderButton"	Offset="0,0"	Size="parent,30"		Style="RowButton"		String="$RowHeaderButton"  />
+			<Image				ID="RowExpandCheck"		Anchor="R,T"	Offset="5,5"			Size="22,22"			Texture="Controls_ExpandButton" />
+			<ScrollPanel		ID="CollapseScroll"		Offset="0,31"	Size="parent,20"		StackGrowth="Bottom"	FullClip="1" >
+				<SlideAnim		ID="CollapseAnim"		Start="0,0"		EndOffset="0,0"			Speed="4" Cycle="Once"	Stopped="1">
+					<Stack		ID="ContentStack"		Offset="0,0"	StackGrowth="Bottom" />
+				</SlideAnim>
+			</ScrollPanel>
+		</Container>
+	</Instance>
 
-                  <ScrollBar  Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
-                  <UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
-                  <DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
-                </ScrollPanel>
-              </Grid>
+	<!-- Player Techs Tab -->
+	<Instance Name="PlayerTechsInstance">
+		<Stack StackGrowth="Bottom" StackPadding="5" >
+			<MultiSelectListBox ID="TechList" Size="265,330" ListContainer="TechListContainer">
 
-              <InstanceData Name="EntryInstance" >
-                <CheckBox  Size="240,24" Style="MainCheckBox"  Anchor="L,T" ID="Button" BoxOnLeft="1"/>
-              </InstanceData>
+				<Grid Style="UnitFrame" Anchor="L,T" Size="parent,parent" >
+					<ScrollPanel Size="255,310" Anchor="L,T" Vertical="1" Offset="5,10" >
+						<Stack ID="TechListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
 
-            </MultiSelectListBox>
-          </Stack>
+						<ScrollBar  Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+						<UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
+						<DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+					</ScrollPanel>
+				</Grid>
 
-        </Stack>
-        
-      </Stack>
+				<InstanceData Name="EntryInstance" >
+					<CheckBox  Size="240,24" Style="MainCheckBox"  Anchor="L,T" ID="Button" BoxOnLeft="1"/>
+				</InstanceData>
 
-    </Grid>
+			</MultiSelectListBox>
+		</Stack>
+	</Instance>
 
-  </Container>
+	<!-- Player Civics Tab -->
+	<Instance Name="PlayerCivicsInstance">
+		<Stack StackGrowth="Bottom" StackPadding="5" >
+			<MultiSelectListBox ID="CivicsList" Size="265,330" ListContainer="CivicsListContainer">
+
+				<Grid Style="UnitFrame" Anchor="L,T" Size="parent,parent" >
+					<ScrollPanel Size="255,310" Anchor="L,T" Vertical="1" Offset="5,10" >
+						<Stack ID="CivicsListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
+
+						<ScrollBar  Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+						<UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
+						<DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+					</ScrollPanel>
+				</Grid>
+
+				<InstanceData Name="EntryInstance" >
+					<CheckBox  Size="240,24" Style="MainCheckBox"  Anchor="L,T" ID="Button" BoxOnLeft="1"/>
+				</InstanceData>
+
+			</MultiSelectListBox>
+		</Stack>
+	</Instance>
 	
+	<Instance Name="CityHeaderInstance">
+		<Container ID="Top" Offset="8,0" Size="parent,22" >
+			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+			<Stack StackGrowth="Right" >
+				<Container Offset="1,0" Size="232,parent">
+					<Label Style="ReportHeaderText" String="City" />
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,255" />
+				<Container Size="237,parent">
+					<Label Style="ReportHeaderText" String="District" />
+				</Container>
+				<Box Size="2,parent" Color="46,70,95,255" />
+				<Container Size="237,parent">
+					<Label Style="ReportHeaderText" String="Building" />
+				</Container>
+				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128" />
+			</Stack>
+		</Container>
+	</Instance>
+
+	<Instance Name="CityEntryInstance">
+		<Container ID="Top" Offset="8,0" Size="parent,32">
+			<Grid Offset="-8,-1" Size="parent,parent" SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255" />
+			<Stack StackGrowth="Right" >
+				<Container Offset="1,0" Size="232,parent">
+					<Label ID="CityName" Style="ReportValueLeftName" />
+				</Container>
+				<Box Anchor="C,C" Size="2,19" Color="46,70,95,255" />
+				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128" />
+			</Stack>
+		</Container>
+	</Instance>
+
+	<Instance Name="DistrictEntryInstance">
+		<Container ID="Top" Offset="8,0" Size="parent,32">
+			<Grid Offset="-8,-1" Size="parent,parent" SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255" />
+			<Stack StackGrowth="Right" >
+				<Container Size="10,parent"/>
+				<Button	ID="RemoveButton" Anchor="R,C" Offset="0,0" Size="21,21" Texture="Controls_CloseButtonAltSmall"	StateOffsetIncrement="0,21" />
+				<Box Anchor="C,C" Size="2,22" Color="46,70,95,128" />
+				<Container Size="237,parent">
+					<Label ID="DistrictName" Style="ReportValueLeftName" />
+				</Container>
+				<Box Anchor="C,C" Size="2,19" Color="46,70,95,255" />
+				<Container Size="200,parent">
+					<CheckBox Size="parent,17" Style="MainCheckBox" Anchor="L,C" ID="PillagedCheck" BoxOnLeft="1" String="Pillaged"/>
+				</Container>
+				<Box Anchor="C,C" Size="2,19" Color="46,70,95,255" />
+				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128" />
+			</Stack>
+		</Container>
+	</Instance>
+
+	<Instance Name="BuildingEntryInstance">
+		<Container ID="Top" Offset="8,0" Size="parent,32">
+			<Grid Offset="-8,-1" Size="parent,parent" SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255" />
+			<Stack StackGrowth="Right" >
+				<Container Size="20,parent"/>
+				<Button	ID="RemoveButton" Anchor="R,C" Offset="0,0" Size="21,21" Texture="Controls_CloseButtonAltSmall"	StateOffsetIncrement="0,21" />
+				<Box Anchor="C,C" Size="2,22" Color="46,70,95,128" />
+				<Container Size="227,parent">
+					<Label ID="BuildingName" Style="ReportValueLeftName" />
+				</Container>
+				<Box Anchor="C,C" Size="2,19" Color="46,70,95,255" />
+				<Container Size="200,parent">
+					<CheckBox Size="parent,17" Style="MainCheckBox" Anchor="L,C" ID="PillagedCheck" BoxOnLeft="1" String="Pillaged"/>
+				</Container>
+				<Box Anchor="C,C" Size="2,19" Color="46,70,95,255" />
+				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128" />
+			</Stack>
+		</Container>
+	</Instance>
+
 </Context>

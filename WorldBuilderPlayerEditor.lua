@@ -2,9 +2,16 @@
 --	World Builder Player Editor
 -- ===========================================================================
 
+include("InstanceManager");
+include("SupportFunctions");
+include("TabSupport");
+
 -- ===========================================================================
 --	DATA MEMBERS
 -- ===========================================================================
+
+local DATA_FIELD_SELECTION						:string = "Selection";
+
 local m_SelectedPlayer = nil;
 local m_PlayerEntries      : table = {};
 local m_PlayerIndexToEntry : table = {};
@@ -14,10 +21,137 @@ local m_EraEntries         : table = {};
 local m_TechEntries        : table = {};
 local m_CivicEntries       : table = {};
 local m_CivLevelEntries	   : table = {};
+local m_ViewingTab		   : table = {};
+local m_tabs				:table;
+
+local m_groupIM				:table = InstanceManager:new("GroupInstance",			"Top",		Controls.Stack);				-- Collapsable
+local m_simpleIM			:table = InstanceManager:new("SimpleInstance",			"Top",		Controls.Stack);				-- Non-Collapsable, simple
+local m_tabIM			   : table = InstanceManager:new("TabInstance",				"Button",	Controls.TabContainer);
+
+local m_uiGroups			:table = nil;	-- Track the groups on-screen for collapse all action.
 
 -- ===========================================================================
 --	FUNCTIONS
 -- ===========================================================================
+
+-- ===========================================================================
+--
+-- ===========================================================================
+function AddTabSection( name:string, populateCallback:ifunction )
+	local kTab		:table				= m_tabIM:GetInstance();	
+	kTab.Button[DATA_FIELD_SELECTION]	= kTab.Selection;
+
+	local callback	:ifunction	= function()
+		if m_tabs.prevSelectedControl ~= nil then
+			m_tabs.prevSelectedControl[DATA_FIELD_SELECTION]:SetHide(true);
+		end
+		kTab.Selection:SetHide(false);
+		populateCallback();
+	end
+
+	kTab.Button:GetTextControl():SetText( Locale.Lookup(name) );
+	kTab.Button:SetSizeToText( 40, 20 );
+    kTab.Button:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+
+	m_tabs.AddTab( kTab.Button, callback );
+end
+
+-- ===========================================================================
+--	Instantiate a new collapsable row (group) holder & wire it up.
+--	ARGS:	(optional) isCollapsed
+--	RETURNS: New group instance
+-- ===========================================================================
+function NewCollapsibleGroupInstance( isCollapsed:boolean )
+	if isCollapsed == nil then
+		isCollapsed = false;
+	end
+	local instance:table = m_groupIM:GetInstance();	
+	instance.ContentStack:DestroyAllChildren();
+	instance["isCollapsed"]		= isCollapsed;
+	instance["CollapsePadding"] = nil;				-- reset any prior collapse padding
+
+	instance.CollapseAnim:SetToBeginning();
+	if isCollapsed == false then
+		instance.CollapseAnim:SetToEnd();
+	end	
+
+	instance.RowHeaderButton:RegisterCallback( Mouse.eLClick, function() OnToggleCollapseGroup(instance); end );			
+  	instance.RowHeaderButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+
+	instance.CollapseAnim:RegisterAnimCallback(               function() OnAnimGroupCollapse( instance ); end );
+
+	table.insert( m_uiGroups, instance );
+
+	return instance;
+end
+
+-- ===========================================================================
+--	Set a group to it's proper collapse/open state
+--	Set + - in group row
+-- ===========================================================================
+function RealizeGroup( instance:table )
+	local v :number = (instance["isCollapsed"]==false and instance.RowExpandCheck:GetSizeY() or 0);
+	instance.RowExpandCheck:SetTextureOffsetVal(0, v);
+
+	instance.ContentStack:CalculateSize();	
+	instance.CollapseScroll:CalculateSize();
+	
+	local groupHeight	:number = instance.ContentStack:GetSizeY();
+	instance.CollapseAnim:SetBeginVal(0, -(groupHeight - instance["CollapsePadding"]));
+	instance.CollapseScroll:SetSizeY( groupHeight );				
+
+	instance.Top:ReprocessAnchoring();
+end
+
+-- ===========================================================================
+--	Callback
+--	Expand or contract a group based on its existing state.
+-- ===========================================================================
+function OnToggleCollapseGroup( instance:table )
+	instance["isCollapsed"] = not instance["isCollapsed"];
+	instance.CollapseAnim:Reverse();
+	RealizeGroup( instance );
+end
+
+-- ===========================================================================
+--	Toggle a group expanding / collapsing
+--	instance,	A group instance.
+-- ===========================================================================
+function OnAnimGroupCollapse( instance:table)
+		-- Helper
+	function lerp(y1:number,y2:number,x:number)
+		return y1 + (y2-y1)*x;
+	end
+	local groupHeight	:number = instance.ContentStack:GetSizeY();
+	local collapseHeight:number = instance["CollapsePadding"]~=nil and instance["CollapsePadding"] or 0;
+	local startY		:number = instance["isCollapsed"]==true  and groupHeight or collapseHeight;
+	local endY			:number = instance["isCollapsed"]==false and groupHeight or collapseHeight;
+	local progress		:number = instance.CollapseAnim:GetProgress();
+	local sizeY			:number = lerp(startY,endY,progress);
+
+	instance.CollapseAnim:SetSizeY( groupHeight );		
+	instance.CollapseScroll:SetSizeY( sizeY );	
+	instance.ContentStack:ReprocessAnchoring();	
+	instance.Top:ReprocessAnchoring()
+
+	Controls.Stack:CalculateSize();
+	Controls.Scroll:CalculateSize();			
+end
+
+
+-- ===========================================================================
+function SetGroupCollapsePadding( instance:table, amount:number )
+	instance["CollapsePadding"] = amount;
+end
+
+-- ===========================================================================
+function ResetTabForNewPageContent()
+	m_uiGroups = {};
+	m_ViewingTab = {};
+	m_groupIM:ResetInstances();
+	m_simpleIM:ResetInstances();
+	Controls.Scroll:SetScrollValue( 0 );	
+end
 
 -- ===========================================================================
 --	Get the index if the CivEntry that matches the civ type.
@@ -72,6 +206,36 @@ function GetCivLevelEntryIndexByType(civLevelType)
 end
 
 -- ===========================================================================
+function UpdateTechTabValues()
+
+	if m_SelectedPlayer ~= nil then
+
+		if (m_ViewingTab.TechInstance ~= nil and m_ViewingTab.TechInstance.TechList ~= nil) then
+			for i,techEntry in ipairs(m_TechEntries) do
+				local hasTech = WorldBuilder.PlayerManager():PlayerHasTech( m_SelectedPlayer.Index, techEntry.Type.Index );
+				m_ViewingTab.TechInstance.TechList:SetEntrySelected( techEntry, hasTech, false );
+			end
+		end
+	end
+
+end
+
+-- ===========================================================================
+function UpdateCivicsTabValues()
+
+	if m_SelectedPlayer ~= nil then
+
+		if (m_ViewingTab.CivicsInstance ~= nil and m_ViewingTab.CivicsInstance.CivicsList) then
+			for i,civicEntry in ipairs(m_CivicEntries) do
+				local hasCivic = WorldBuilder.PlayerManager():PlayerHasCivic( m_SelectedPlayer.Index, civicEntry.Type.Index );
+				m_ViewingTab.CivicsInstance.CivicsList:SetEntrySelected( civicEntry, hasCivic, false );
+			end
+		end
+	end
+
+end
+
+-- ===========================================================================
 --	Handler for when a player is selected.
 -- ===========================================================================
 function OnPlayerSelected(entry)
@@ -96,23 +260,29 @@ function OnPlayerSelected(entry)
 			Controls.FaithEdit:SetText( entry.Faith );
 		end
 
-		for i,techEntry in ipairs(m_TechEntries) do
-			local hasTech = WorldBuilder.PlayerManager():PlayerHasTech( m_SelectedPlayer.Index, techEntry.Type.Index );
-			Controls.TechList:SetEntrySelected( techEntry, hasTech, false );
+		if (m_ViewingTab.Name ~= nil) then
+
+			UpdateTechTabValues();
+			UpdateCivicsTabValues();
+
+			if (m_ViewingTab.Name == "Cities") then
+				ViewPlayerCitiesPage();				
+			end
+
 		end
 
-		for i,civicEntry in ipairs(m_CivicEntries) do
-			local hasCivic = WorldBuilder.PlayerManager():PlayerHasCivic( m_SelectedPlayer.Index, civicEntry.Type.Index );
-			Controls.CivicsList:SetEntrySelected( civicEntry, hasCivic, false );
-		end
 	end
 
 	Controls.CivPullDown:SetDisabled( not playerSelected );
 	Controls.EraPullDown:SetDisabled( not playerSelected );
 	Controls.GoldEdit:SetDisabled( not playerSelected );
 	Controls.FaithEdit:SetDisabled( not playerSelected );
-	Controls.TechList:SetDisabled( not playerSelected );
-	Controls.CivicsList:SetDisabled( not playerSelected );
+	if (m_ViewingTab.TechInstance ~= nil and m_ViewingTab.TechInstance.TechList ~= nil) then
+		m_ViewingTab.TechInstance.TechList:SetDisabled( not playerSelected );
+	end
+	if (m_ViewingTab.CivicsInstance ~= nil and m_ViewingTab.CivicsInstance.CivicsList ~= nil) then
+		m_ViewingTab.CivicsInstance.CivicsList:SetDisabled( not playerSelected );
+	end
 	Controls.LeaderPullDown:SetDisabled( entry == nil or not entry.IsFullCiv or entry.Civ == -1 );
 end
 
@@ -175,6 +345,118 @@ function UpdatePlayerList()
 end
 
 -- ===========================================================================
+--	Tab Callback
+-- ===========================================================================
+function ViewPlayerTechsPage()	
+
+	ResetTabForNewPageContent();
+
+	local instance:table = m_simpleIM:GetInstance();	
+	instance.Top:DestroyAllChildren();
+	
+	m_ViewingTab.Name = "Techs";
+	m_ViewingTab.TechInstance = {};
+	ContextPtr:BuildInstanceForControl( "PlayerTechsInstance", m_ViewingTab.TechInstance, instance.Top ) ;	
+	
+	m_ViewingTab.TechInstance.TechList:SetEntries( m_TechEntries );
+	m_ViewingTab.TechInstance.TechList:SetEntrySelectedCallback( OnTechSelected );
+	UpdateTechTabValues();
+
+	Controls.Scroll:CalculateSize();
+	Controls.Stack:CalculateSize();
+
+	local xOffset, yOffset = Controls.Scroll:GetParentRelativeOffset();
+	Controls.Scroll:SetSizeY( Controls.TabsContainer:GetSizeY() - yOffset );
+
+end
+
+-- ===========================================================================
+--	Tab Callback
+-- ===========================================================================
+function ViewPlayerCivicsPage()	
+
+	ResetTabForNewPageContent();
+
+	local instance:table = m_simpleIM:GetInstance();	
+	instance.Top:DestroyAllChildren();
+	
+	m_ViewingTab.Name = "Civics";
+	m_ViewingTab.CivicsInstance = {};
+	ContextPtr:BuildInstanceForControl( "PlayerCivicsInstance", m_ViewingTab.CivicsInstance, instance.Top ) ;	
+	
+	m_ViewingTab.CivicsInstance.CivicsList:SetEntries( m_CivicEntries );
+	m_ViewingTab.CivicsInstance.CivicsList:SetEntrySelectedCallback( OnCivicSelected );
+	UpdateCivicsTabValues();
+
+	Controls.Stack:CalculateSize();
+	Controls.Scroll:CalculateSize();
+
+	local xOffset, yOffset = Controls.Scroll:GetParentRelativeOffset();
+	Controls.Scroll:SetSizeY( Controls.TabsContainer:GetSizeY() - yOffset );
+end
+
+-- ===========================================================================
+--	Tab Callback
+-- ===========================================================================
+function ViewPlayerCitiesPage()	
+
+	ResetTabForNewPageContent();
+
+	if (m_SelectedPlayer ~= nil) then
+	
+		m_ViewingTab.Name = "Cities";
+
+		local pPlayer = Players[m_SelectedPlayer.Index];
+
+		local pPlayerCities = pPlayer:GetCities();
+
+		for iCity, pCity in pPlayerCities:Members() do
+			-- City
+
+			local instance:table = NewCollapsibleGroupInstance();	
+			instance.RowHeaderButton:LocalizeAndSetText( pCity:GetName() );
+			instance.Top:SetID("City");
+
+			local pCityBldgs = pCity:GetBuildings();
+
+			-- District
+			local pCityDistricts = pCity:GetDistricts();
+			for iDistrict, pDistrict in pCityDistricts:Members() do
+				local pDistrictType = GameInfo.Districts[ pDistrict:GetType() ];
+				if (pDistrictType ~= nil) then
+					local pDistrictLineItemInstance:table = {};
+					ContextPtr:BuildInstanceForControl("DistrictEntryInstance", pDistrictLineItemInstance, instance.ContentStack );
+					pDistrictLineItemInstance.DistrictName:LocalizeAndSetText( pDistrictType.Name );
+				end
+
+				-- Buildings
+				local districtBuildings = pCityBldgs:GetBuildingsAtLocation( pDistrict:GetLocation() );
+
+				for iBuilding, eBuilding in ipairs(districtBuildings) do
+					local pBuildingType = GameInfo.Buildings[ eBuilding ];
+					if (pBuildingType ~= nil) then
+						local pBuildingLineItemInstance:table = {};
+						ContextPtr:BuildInstanceForControl("BuildingEntryInstance", pBuildingLineItemInstance, instance.ContentStack );
+						pBuildingLineItemInstance.BuildingName:LocalizeAndSetText( pBuildingType.Name );
+					end
+				end
+			end		
+
+			SetGroupCollapsePadding(instance, 0 );
+			RealizeGroup( instance );
+				
+		end
+	
+	
+		Controls.Stack:CalculateSize();
+		Controls.Scroll:CalculateSize();
+
+		local xOffset, yOffset = Controls.Scroll:GetParentRelativeOffset();
+		Controls.Scroll:SetSizeY( Controls.TabsContainer:GetSizeY() - yOffset );
+	end
+end
+
+-- ===========================================================================
 function OnShow()
 
 	UpdatePlayerList();
@@ -219,12 +501,14 @@ end
 -- ===========================================================================
 function OnPlayerTechEdited(player, tech, progress)
 
-	if m_SelectedPlayer ~= nil and m_SelectedPlayer.Index == player then
-		for i,techEntry in ipairs(m_TechEntries) do
-			if techEntry.Type.Index == tech then
-				local hasTech = WorldBuilder.PlayerManager():PlayerHasTech( player, tech );
-				Controls.TechList:SetEntrySelected( techEntry, hasTech, false );
-				break;
+	if (m_ViewingTab.TechInstance ~= nil and m_ViewingTab.TechInstance.TechList ~= nil) then
+		if m_SelectedPlayer ~= nil and m_SelectedPlayer.Index == player then
+			for i,techEntry in ipairs(m_TechEntries) do
+				if techEntry.Type.Index == tech then
+					local hasTech = WorldBuilder.PlayerManager():PlayerHasTech( player, tech );
+					m_ViewingTab.TechInstance.TechList:SetEntrySelected( techEntry, hasTech, false );
+					break;
+				end
 			end
 		end
 	end
@@ -233,12 +517,14 @@ end
 -- ===========================================================================
 function OnPlayerCivicEdited(player, civic, progress)
 
-	if m_SelectedPlayer ~= nil and m_SelectedPlayer.Index == player then
-		for i,civicEntry in ipairs(m_CivicEntries) do
-			if civicEntry.Type.Index == civic then
-				local hasCivic = WorldBuilder.PlayerManager():PlayerHasCivic( player, civic );
-				Controls.CivicsList:SetEntrySelected( civicEntry, hasCivic, false );
-				break;
+	if (m_ViewingTab.CivicsInstance ~= nil and m_ViewingTab.CivicsInstance.CivicsList ~= nil) then
+		if m_SelectedPlayer ~= nil and m_SelectedPlayer.Index == player then
+			for i,civicEntry in ipairs(m_CivicEntries) do
+				if civicEntry.Type.Index == civic then
+					local hasCivic = WorldBuilder.PlayerManager():PlayerHasCivic( player, civic );
+					m_ViewingTab.CivicsInstance.CivicsList:SetEntrySelected( civicEntry, hasCivic, false );
+					break;
+				end
 			end
 		end
 	end
@@ -405,15 +691,20 @@ function OnInit()
 	for type in GameInfo.Technologies() do
 		table.insert(m_TechEntries, { Text=type.Name, Type=type });
 	end
-	Controls.TechList:SetEntries( m_TechEntries );
-	Controls.TechList:SetEntrySelectedCallback( OnTechSelected );
 
 	-- CivicsList
 	for type in GameInfo.Civics() do
 		table.insert(m_CivicEntries, { Text=type.Name, Type=type });
 	end
-	Controls.CivicsList:SetEntries( m_CivicEntries );
-	Controls.CivicsList:SetEntrySelectedCallback( OnCivicSelected );
+
+	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
+	AddTabSection( "LOC_WORLDBUILDER_TAB_TECHS",		ViewPlayerTechsPage );
+	AddTabSection( "LOC_WORLDBUILDER_TAB_CIVICS",		ViewPlayerCivicsPage );
+	AddTabSection( "LOC_WORLDBUILDER_TAB_CITIES",		ViewPlayerCitiesPage );
+	
+
+	m_tabs.SameSizedTabs(50);
+	m_tabs.CenterAlignTabs(-10);		
 
 	-- Gold/Faith
 	Controls.GoldEdit:RegisterStringChangedCallback( OnGoldEdited );

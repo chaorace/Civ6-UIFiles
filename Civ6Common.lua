@@ -722,3 +722,157 @@ function IsTutorialRunning()
 	end
 	return false;
 end
+
+-- ===========================================================================
+--	DifferentiateCiv
+-- ===========================================================================	
+--	This is a fix for duplicate civs.  If you feed it a control, it will generate a tooltip which lists the cities for that civ, to help differentiate which civ you are currently viewing.
+--	Note: This function does NOT contain the IsDuplicate? check.  Use this function once you have already determined whether or not you wish to differentiate the civ.
+--	Additionally, you can pass icon backing/icon controls to be colored with the civ's colors.
+--	ARG1 playerID	(number)						The player id of the civ in question
+--	ARG2 tooltipControl (table)			OPTIONAL	This is the control that should receive the tooltip
+--	ARG3 icon (table)					OPTIONAL	The icon control which will receive the foreground color for the civ
+--	ARG4 iconBacking (table)			OPTIONAL	The image behind the icon which will receive the background color for the civ
+--	ARG5 iconBackingDarker (table)		OPTIONAL	If you are making a fancy icon with more depth, you can additionally pass the layer to be darkened
+--	ARG6 iconBackingLighter (table)		OPTIONAL	.. and also the layer to be lightened
+--	ARG7 observerPlayerID (number)		OPTIONAL	Checks if the players met 
+--	RETURNS (string)								String to be used as a tooltip which lists Civ name, Leader/Player name, list of cities
+function DifferentiateCiv(playerID:number, tooltipControl:table, icon:table, iconBacking:table, iconBackingDarker:table, iconBackingLighter:table, observerPlayerID:number)
+	
+	local player:table = Players[playerID];
+	local playerConfig:table = PlayerConfigurations[playerID];
+	
+	local hasMet:boolean = true;
+	if player ~= nil and observerPlayerID ~= nil and playerID ~= observerPlayerID then
+		hasMet = player:GetDiplomacy():HasMet(observerPlayerID);
+	end
+
+	if (player ~= nil and hasMet and iconBacking ~= nil and icon ~= nil) then
+		m_primaryColor, m_secondaryColor  = UI.GetPlayerColors( playerID );
+		iconBacking:SetColor(m_primaryColor);
+		if(iconBackingLighter ~= nil and iconBackingDarker ~= nil) then
+			local darkerBackColor = DarkenLightenColor(m_primaryColor,(-85),100);
+			local brighterBackColor = DarkenLightenColor(m_primaryColor,90,255);
+			iconBackingLighter:SetColor(brighterBackColor);
+			iconBackingDarker:SetColor(darkerBackColor);
+		end
+		icon:SetColor(m_secondaryColor);
+	end
+
+	-- Set the leader name, civ name, and civ icon data
+	local leader:string = playerConfig:GetLeaderTypeName();
+	if GameInfo.CivilizationLeaders[leader] == nil then
+		UI.DataError("Banners found a leader \""..leader.."\" which is not/no longer in the game; icon may be whack.");
+	else
+		if(GameInfo.CivilizationLeaders[leader].CivilizationType ~= nil) then
+
+			local civIcon:string;
+			local civTooltip:string;
+			if hasMet then
+				local civTypeName = GameInfo.CivilizationLeaders[leader].CivilizationType;
+				local civName = Locale.Lookup(GameInfo.Civilizations[civTypeName].Name);
+				local leaderName = Locale.Lookup(GameInfo.Leaders[leader].Name);
+				if GameConfiguration.IsAnyMultiplayer() and player:IsHuman() then
+					local playerName = playerConfig:GetPlayerName();
+					leaderName = leaderName .. " ("..Locale.ToUpper(playerName)..")"
+				end
+
+				civIcon = "ICON_"..civTypeName;
+				
+				--Create a tooltip which shows a list of this Civ's cities
+				civTooltip = civName .. "[NEWLINE]".. leaderName;
+				local playerCities = player:GetCities();
+				if(playerCities ~= nil) then
+					civTooltip = civTooltip .. "[NEWLINE]"..Locale.Lookup("LOC_PEDIA_CONCEPTS_PAGEGROUP_CITIES_NAME").. ":";
+					for i,city in playerCities:Members() do
+						civTooltip = civTooltip.. "[NEWLINE]".. Locale.Lookup(city:GetName());
+					end
+				end
+			else
+				civIcon = "ICON_LEADER_DEFAULT";
+				civTooltip = Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER");
+				if GameConfiguration.IsAnyMultiplayer() and player:IsHuman() then
+					local playerName = playerConfig:GetPlayerName();
+					civTooltip = civTooltip .. " ("..Locale.ToUpper(playerName)..")";
+				end
+				
+			end
+			
+			if (icon ~= nil) then
+				icon:SetIcon(civIcon);
+			end
+			if (tooltipControl ~= nil) then
+				tooltipControl:SetToolTipString(Locale.Lookup(civTooltip));
+			end
+			return civTooltip;
+		end
+	end
+end
+
+-- Duplicating this function from SupportFunctions so that we won't have to pull in the entire file just to support DifferentiateCivs
+-- ===========================================================================
+--	Transforms a ABGR color by some amount
+--	ARGS:	hexColor	Hex color value (0xAAGGBBRR)
+--			amt			(0-255) the amount to darken or lighten the color
+--			alpha		???
+--	RETURNS:	transformed color (0xAAGGBBRR)
+-- ===========================================================================
+function DarkenLightenColor( hexColor:number, amt:number, alpha:number )
+
+	--Parse the a,g,b,r hex values from the string
+	local hexString :string = string.format("%x",hexColor);
+	local b = string.sub(hexString,3,4);
+	local g = string.sub(hexString,5,6);
+	local r = string.sub(hexString,7,8);
+	b = tonumber(b,16);
+	g = tonumber(g,16);
+	r = tonumber(r,16);
+
+	if (b == nil) then b = 0; end
+	if (g == nil) then g = 0; end
+	if (r == nil) then r = 0; end
+
+	local a = string.format("%x",alpha);
+	if (string.len(a)==1) then
+			a = "0"..a;
+	end
+
+	b = b + amt;
+	if (b < 0 or b == 0) then
+		b = "00";
+	elseif (b > 255 or b == 255) then
+		b = "FF";
+	else
+		b = string.format("%x",b);
+		if (string.len(b)==1) then
+			b = "0"..b;
+		end
+	end
+
+	g = g + amt;
+	if (g < 0 or g == 0) then
+		g = "00";
+	elseif (g > 255 or g == 255) then
+		g = "FF";
+	else
+		g = string.format("%x",g);
+		if (string.len(g)==1) then
+			g = "0"..g;
+		end
+	end
+
+	r = r + amt;
+	if (r < 0 or r == 0) then
+		r = "00";
+	elseif (r > 255 or r == 255) then
+		r = "FF";
+	else
+		r = string.format("%x",r);
+		if (string.len(r)==1) then
+			r = "0"..r;
+		end
+	end
+
+	hexString = a..b..g..r; 
+	return tonumber(hexString,16);
+end

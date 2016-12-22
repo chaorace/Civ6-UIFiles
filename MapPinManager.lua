@@ -252,31 +252,10 @@ function MapPinFlag.SetFlagUnitEmblem( self : MapPinFlag )
 	local pMapPin = self:GetMapPin();
     if pMapPin ~= nil then			
 		local iconName = pMapPin:GetIconName();
-		local iconNameShadow = pMapPin:GetIconName();
-		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconName);
-		local textureOffsetShadowX, textureOffsetShadowY, textureSheetShadow = IconManager:FindIconAtlas(iconNameShadow);	
-
-		--[[ Unit icon based lookup
-		local iconName = "ICON_" .. unitInfo.UnitType .. "_WHITE";
-		local iconNameShadow = "ICON_" .. unitInfo.UnitType .. "_BLACK";
-		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconName);
-		local textureOffsetShadowX, textureOffsetShadowY, textureSheetShadow = IconManager:FindIconAtlas(iconNameShadow);
-		--]]
-
-		if (textureSheet == nil) then			--Check to see if the unit has an icon atlas index defined
-			print("Could not find icon for " .. iconName);
-			textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas("ICON_MAP_PIN_UNKNOWN_WHITE");		--If not, resolve the index to be a generic unknown index
-		end
-		if (textureSheetShadow == nil) then
-			textureOffsetShadowX, textureOffsetShadowY, textureSheetShadow = IconManager:FindIconAtlas("ICON_MAP_PIN_UNKNOWN_BLACK");
+		if(not self.m_Instance.UnitIcon:SetIcon(iconName)) then
+			self.m_Instance.UnitIcon:SetIcon("ICON_MAP_PIN_UNKNOWN_WHITE");
 		end
 
-		if (textureSheet ~= nil) then			--Check to make sure that the unknown index is also defined...
-			self.m_Instance.UnitIcon:SetTexture( textureOffsetX, textureOffsetY, textureSheet );
-		end
-		--if (textureSheetShadow ~= nil) then
-		--	self.m_Instance.UnitIconShadow:SetTexture( textureOffsetShadowX, textureOffsetShadowY, textureSheetShadow );
-		--end
 	end
 end
 

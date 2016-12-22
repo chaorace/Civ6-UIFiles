@@ -411,6 +411,12 @@ end
 --			-1 or nil it will show an overview list.
 -- ===========================================================================
 function OpenOverview( iPlayer:number )	
+	-- dont show panel if there is no local player
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID == -1) then
+		return
+	end
+
 	UI.PlaySound("CityStates_Panel_Open");
 	m_mode = MODE.Overview;
 	m_kScreenSlideAnim.Show();
@@ -425,6 +431,12 @@ end
 --			-1 or nil it will show an overview list.
 -- ===========================================================================
 function OnOpenSendEnvoys( iPlayer:number )	
+	-- dont show panel if there is no local player
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID == -1) then
+		return
+	end
+
 	m_mode = MODE.SendEnvoys;
 	UI.PlaySound("CityStates_Panel_Open");
 	m_kScreenSlideAnim.Show();
@@ -452,6 +464,12 @@ end
 --	Open panel pointing to a specific City State
 -- ===========================================================================
 function OpenSingleViewCityState( playerID:number )	
+	-- dont show panel if there is no local player
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID == -1) then
+		return
+	end
+
 	if m_mode == MODE.Overview or m_mode == MODE.SendEnvoys then
 		m_mode = MODE.EnvoySent;
 	end

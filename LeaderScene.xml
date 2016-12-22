@@ -19,7 +19,7 @@
   
   <Instance Name="Layer">
     <SlideAnim ID="Background_Anim" Begin="0,0" End="0,0" Cycle="Once" Function="OutQuint" Power="4" Speed=".5" Size="full,full">
-      <Image   ID="Background_Image" Anchor="L,C"	Size="1920, 1010" Texture="CLEOPATRA_1"	      StretchMode="Fill"/>
+      <Image   ID="Background_Image" Anchor="L,C"	Size="1920, 1010" Texture="CLEOPATRA_1" Sampler ="Linear" StretchMode="Fill"/>
     </SlideAnim>
   </Instance>
 </Context>

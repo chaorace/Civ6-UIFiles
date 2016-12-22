@@ -21,7 +21,7 @@ end
 
 function UpdateTurnName()
 	local strTurn	:string = tostring( Game.GetCurrentGameTurn() );
-	local strDate :string = Calendar.MakeYearStr(Game.GetCurrentGameTurn(), GameConfiguration.GetCalendarType(), GameConfiguration.GetGameSpeedType(), false);
+	local strDate :string = Calendar.MakeYearStr(Game.GetCurrentGameTurn());
 	local strNewTurn = strDate .. " : " .. strTurn;
 
 	Controls.NewTurnLabel:SetText(strNewTurn);

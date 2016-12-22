@@ -56,7 +56,12 @@ function DrawTop5()
             if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
                 local pID = pPlayer:GetID();
                 local playerConfig:table = PlayerConfigurations[pID];
-                local bHasMet = m_LocalPlayer:GetDiplomacy():HasMet(playersData[iPlayer].OriginalID);
+
+				local bHasMet = false;
+				if(m_LocalPlayer) then
+					bHasMet = m_LocalPlayer:GetDiplomacy():HasMet(playersData[iPlayer].OriginalID);
+				end
+
                 local name:string;
                 local imgname:string;
                 local detailsText:string = "";
@@ -207,7 +212,7 @@ function PopulateVictoryType(victoryType:string, typeText:string)
 end
 
 function DrawVictoryProgress()
-    local strDate = Calendar.MakeYearStr(Game.GetCurrentGameTurn(), GameConfiguration.GetCalendarType(), GameConfiguration.GetGameSpeedType(), false);
+    local strDate = Calendar.MakeYearStr(Game.GetCurrentGameTurn());
     local playerConfig:table = PlayerConfigurations[Game.GetLocalPlayer()];
     local name:string = Locale.Lookup(playerConfig:GetPlayerName());
 
@@ -241,7 +246,7 @@ end
 -- Draw the Gossip Log screen
 -- ===========================================================================
 function DrawGossipLog()
-    local strDate = Calendar.MakeYearStr(Game.GetCurrentGameTurn(), GameConfiguration.GetCalendarType(), GameConfiguration.GetGameSpeedType(), false);
+    local strDate = Calendar.MakeYearStr(Game.GetCurrentGameTurn());
     local iNumAdded:number = 0;
     local iMaxAdded:number;
     local playerConfig:table = PlayerConfigurations[Game.GetLocalPlayer()];
@@ -299,7 +304,7 @@ end
 -- ===========================================================================
 function RefreshARX()
     if UI.HasARX() then
-        local strDate = Calendar.MakeYearStr(Game.GetCurrentGameTurn(), GameConfiguration.GetCalendarType(), GameConfiguration.GetGameSpeedType(), false);
+        local strDate = Calendar.MakeYearStr(Game.GetCurrentGameTurn());
 
         m_bIsPortrait = UI.IsARXDisplayPortrait();
 		
@@ -317,7 +322,14 @@ function RefreshARX()
         UI.SetARXTagsPropertyByClass("button", "style.visibility", "visible");
 
         -- header with civ name
-        fullStr = "<span class=title>"..Locale.Lookup(PlayerConfigurations[m_LocalPlayer:GetID()]:GetPlayerName()).."</span>";
+		local playerName;
+		if(m_LocalPlayerID and PlayerConfigurations[m_LocalPlayerID]) then
+			playerName = Locale.Lookup(PlayerConfigurations[m_LocalPlayerID]:GetPlayerName());
+		else
+			playerName = Locale.Lookup("LOC_MULTIPLAYER_UNKNOWN");
+		end
+
+        fullStr = "<span class=title>".. playerName .."</span>";
         -- and turn and date
 		fullStr = fullStr.."<br><span class=content>" .. Locale.Lookup("LOC_TOP_PANEL_CURRENT_TURN").." "..tostring(Game.GetCurrentGameTurn());
 
@@ -326,14 +338,21 @@ function RefreshARX()
         else
             fullStr = fullStr..", "..strDate;
         end
-                            
-        local eraIndex:number = m_LocalPlayer:GetEra() + 1;
-        for _,era in pairs(m_kEras) do
-            if era.Index == eraIndex then
-                fullStr = fullStr..", "..Locale.Lookup("LOC_GAME_ERA_DESC", era.Description ).."</span>";
-                break;
-            end		
-        end
+                       
+		local eraName;
+		if(m_LocalPlayer) then
+			local eraIndex:number = m_LocalPlayer:GetEra() + 1;
+			for _,era in pairs(m_kEras) do
+				if era.Index == eraIndex then
+					eraName = Locale.Lookup("LOC_GAME_ERA_DESC", era.Description );
+					break;
+				end		
+			end
+		else
+			eraName = Locale.Lookup("LOC_MULTIPLAYER_UNKNOWN");
+		end    
+
+		fullStr = fullStr..", ".. eraName .."</span>";
 
         if m_ScreenMode == 0 then
             DrawTop5();

@@ -16,14 +16,6 @@
     <Row Name="ICON_ATLAS_MONTEZUMA" IconSize="64"  IconsPerRow="1" IconsPerColumn="1" Filename="Montezuma64"/>
     <Row Name="ICON_ATLAS_MONTEZUMA" IconSize="80"  IconsPerRow="1" IconsPerColumn="1" Filename="Montezuma80"/>
     <Row Name="ICON_ATLAS_MONTEZUMA" IconSize="256" IconsPerRow="1" IconsPerColumn="1" Filename="Montezuma256"/>
-
-    <Row Name="ICON_ATLAS_JADWIGA" IconSize="32"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga32"/>
-    <Row Name="ICON_ATLAS_JADWIGA" IconSize="45"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga45"/>
-    <Row Name="ICON_ATLAS_JADWIGA" IconSize="50"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga50"/>
-    <Row Name="ICON_ATLAS_JADWIGA" IconSize="55"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga55"/>
-    <Row Name="ICON_ATLAS_JADWIGA" IconSize="64"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga64"/>
-    <Row Name="ICON_ATLAS_JADWIGA" IconSize="80"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga80"/>
-    <Row Name="ICON_ATLAS_JADWIGA" IconSize="256" IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga256"/>
   </IconTextureAtlases>
   <IconDefinitions>
     <Row Name="ICON_LEADER_DEFAULT"                        Atlas="ICON_ATLAS_LEADERS" Index="0"/>
@@ -54,8 +46,6 @@
     <Row Name="ICON_LEADER_MINOR_CIV_MILITARISTIC"         Atlas="ICON_ATLAS_LEADERS" Index="0"/>
     <Row Name="ICON_LEADER_MINOR_CIV_INDUSTRIAL"           Atlas="ICON_ATLAS_LEADERS" Index="0"/>
     <Row Name="ICON_LEADER_BARBARIAN"                      Atlas="ICON_ATLAS_LEADERS" Index="0"/>
-
-    <Row Name="ICON_LEADER_JADWIGA"                        Atlas="ICON_ATLAS_JADWIGA" Index="0"/>
     <Row Name="ICON_LEADER_MONTEZUMA"                      Atlas="ICON_ATLAS_MONTEZUMA" Index="0"/>
   </IconDefinitions>
 </GameInfo>

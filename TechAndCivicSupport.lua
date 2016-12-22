@@ -233,6 +233,7 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 		for i,v in ipairs(unlockables) do
 
 			local typeName = v[1];
+			local civilopediaKey = v[3];
 			local typeInfo = GameInfo.Types[typeName];
 		
 			if(kGovernmentIM and typeInfo and typeInfo.Kind == "KIND_GOVERNMENT") then
@@ -252,7 +253,7 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 
 				unlock.GovernmentInstanceGrid:RegisterCallback(Mouse.eLClick, callback);
 				unlock.GovernmentInstanceGrid:RegisterCallback(Mouse.eRClick, function() 
-					LuaEvents.OpenCivilopedia(typeName);
+					LuaEvents.OpenCivilopedia(civilopediaKey);
 				end);
 			else
 				
@@ -274,24 +275,8 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 					unlockIcon.UnlockIcon:ClearCallback(Mouse.eLClick);
 				end
 
-				--if #unlockables > 6 then
-				--	unlockIcon.Icon:SetSizeX((38*6)/#unlockables);
-				--	unlockIcon.UnlockIcon:SetSizeX((38*6)/#unlockables);
-				--end
-
-				local pediaKey = typeName;
-
-				if(typeInfo.Kind == "KIND_DIPLOMATIC_ACTION") then
-					local diploAction = GameInfo.DiplomaticActions[typeName];
-					if(diploAction and diploAction.CivilopediaKey) then
-						pediaKey = diploAction.CivilopediaKey;
-					else
-						pediaKey = "DIPLO_1"; -- Civilopedia Diplomacy -> Introduction.
-					end
-				end
-
 				unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
-					LuaEvents.OpenCivilopedia(pediaKey);
+					LuaEvents.OpenCivilopedia(civilopediaKey);
 				end);
 			end
 		end
@@ -320,6 +305,7 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 		for i,v in ipairs(unlockables) do
 
 			local typeName	:string = v[1];
+			local civilopediaKey = v[3];
 			local unlockIcon:table	= instanceManager:GetInstance();
 			
 			local icon = GetUnlockIcon(typeName);		
@@ -339,7 +325,7 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 			end
 
 			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
-				LuaEvents.OpenCivilopedia(typeName);
+				LuaEvents.OpenCivilopedia(civilopediaKey);
 			end);
 		end
 		return #unlockables;
@@ -433,6 +419,10 @@ end
 function RealizeTurnsLeft( kControl:table, kData:table)
 	
 	local turnsLeft			:number = (kData == nil) and -1 or kData.TurnsLeft;
+	
+	-- The UI was only designed to show up to 3 characters in this label
+	if turnsLeft > 999 then turnsLeft = 999; end
+
 	local isLastCompleted	:boolean = false;
 	local isRepeatable		:boolean = false;
 
@@ -544,7 +534,7 @@ function RealizeCurrentResearch( playerID:number, kData:table, kControl:table )
 
 		-- Show/Hide Recommended Icon
 		if kControl.RecommendedIcon then
-			if kData.IsRecommended and kData.AdvisorType ~= nil then
+			if kData.IsRecommended and kData.AdvisorType then
 				kControl.RecommendedIcon:SetIcon(kData.AdvisorType);
 				kControl.RecommendedIcon:SetHide(false);
 				kControl.TitleStack:ReprocessAnchoring();
@@ -656,7 +646,7 @@ function RealizeCurrentCivic( playerID:number, kData:table, kControl:table )
 
 		-- Show/Hide Recommended Icon
 		if kControl.RecommendedIcon then
-			if kData.IsRecommended then
+			if kData.IsRecommended and kData.AdvisorType then
 				kControl.RecommendedIcon:SetIcon(kData.AdvisorType);
 				kControl.RecommendedIcon:SetHide(false);
 				kControl.TitleStack:ReprocessAnchoring();

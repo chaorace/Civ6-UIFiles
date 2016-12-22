@@ -60,7 +60,10 @@ end
 
 -- ===========================================================================
 function OnExitGame()
-	Steam.ClearRichPresence();
+    if (Steam ~= nil) then
+        Steam.ClearRichPresence();
+    end
+
     Events.UserConfirmedClose();
 end
 
@@ -139,15 +142,17 @@ function Close()
 		-- Animation is not in an expected state, just reset all...
 		Controls.AlphaIn:SetToBeginning();
 		Controls.SlideIn:SetToBeginning();
-		Controls.PauseWindowClose:SetToBeginning();		
+		Controls.PauseWindowClose:SetToBeginning();
 		ShutdownAfterClose();
 		ContextPtr:SetHide(true);
 		UI.DataError("Forced closed() of the in game top options menu.  (Okay if someone was spamming ESC.)");
 	end
-	local playerChangeSlide =  ContextPtr:LookUpControl( "/InGame/PlayerChange/PopupSlideIn" );
-	if (playerChangeSlide:GetOffsetY() ~= 0) then
-		LuaEvents.InGameTopOptionsMenu_Close();		
+
+	local playerChange =  ContextPtr:LookUpControl( "/InGame/PlayerChange" );
+	if (not UIManager:IsInPopupQueue(playerChange)) then
+		LuaEvents.InGameTopOptionsMenu_Close();
 	end	
+
 	Input.PopContext();
 end
 

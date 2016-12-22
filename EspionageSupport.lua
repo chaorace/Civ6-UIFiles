@@ -115,7 +115,8 @@ function GetMissionLootString(mission:table)
 		local techInfo:table = GameInfo.Technologies[mission.LootInfo];
 		lootString = Locale.Lookup(techInfo.Name);
 	elseif operationInfo.Hash == UnitOperationTypes.SPY_GREAT_WORK_HEIST then
-		local greatWorkInfo:table = GameInfo.GreatWorks[mission.LootInfo];
+		local greatWorkType:number = Game.GetGreatWorkTypeFromIndex(mission.LootInfo);
+		local greatWorkInfo:table = GameInfo.GreatWorks[greatWorkType];
 		lootString = Locale.Lookup(greatWorkInfo.Name);
 	elseif operationInfo.Hash == UnitOperationTypes.SPY_SIPHON_FUNDS then
 		lootString = Locale.Lookup("LOC_ESPIONAGEOVERVIEW_MISSIONOUTCOME_GOLD", mission.LootInfo);

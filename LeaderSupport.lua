@@ -97,9 +97,26 @@ end
 function LeaderSupport_QueueAnimationSequence( leaderName: string, sequenceName : string, leaderMood )
 	local kSequence = GetLeaderAnimationSequence(leaderName, sequenceName, leaderMood);
 	if (kSequence ~= nil) then
-		ms_LeaderAnimationQueue = kSequence;
+		-- Current sequence empty/complete?
+		if (ms_LeaderAnimationQueue.Sequence == nil or #ms_LeaderAnimationQueue.Sequence == 0) then
+			ms_LeaderAnimationQueue = kSequence;
+			-- Start the animation
+			LeaderSupport_UpdateAnimationQueue();
+		else
+			-- There are still animations to play from the last sequence.
+			if (kSequence.Sequence ~= nil) then				
+				-- It would be nice to just add the new animations to the end BUT, what if the last animation in the previous list was looping?
+				-- If, so we would never get to our desired animations.
+
+				-- Instead, we will add the new sequence, but just let the current animation complete and kick us off, rather than interrupting it.
+				ms_LeaderAnimationQueue = kSequence;
+				if (ms_LeaderAnimationQueue.Initial ~= nil and ms_LeaderAnimationQueue.Initial ~= "") then
+					-- Act like it is the initial animation too.
+					ms_bInitialAnimtion = true;	
+				end
+			end
+		end
 	end
-	LeaderSupport_UpdateAnimationQueue();
 end
 
 ------------------------------------------------------------------------------

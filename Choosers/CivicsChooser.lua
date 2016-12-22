@@ -108,7 +108,7 @@ function View( playerID:number, kData:table )
 	table.sort(kData, function(a, b) return Locale.Compare(a.Name, b.Name) == -1; end);	
 	for i, data in ipairs(kData) do
 		if data.IsCurrent or data.IsLastCompleted then
-			RealizeCurrentCivic( playerID, data );		
+			RealizeCurrentCivic( playerID, data );
 			if (data.Repeatable) then
 				AddAvailableCivic( playerID, data );
 			end	
@@ -187,7 +187,7 @@ function AddAvailableCivic( playerID:number, kData:table )
 	end
 		
 	-- Hide/Show Recommendation Icon
-	if kData.IsRecommended then
+	if kData.IsRecommended and kData.AdvisorType ~= nil then
 		kItemInstance.RecommendedIcon:SetIcon(kData.AdvisorType);
 		kItemInstance.RecommendedIcon:SetHide(false);
 	else

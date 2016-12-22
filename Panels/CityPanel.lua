@@ -518,6 +518,15 @@ end
 -- ===========================================================================
 --	GAME Event
 -- ===========================================================================
+function OnPlayerResourceChanged( ownerPlayerID:number, resourceTypeID:number)
+	if (Game.GetLocalPlayer() ~= nil and ownerPlayerID == Game.GetLocalPlayer()) then
+		Refresh();
+	end
+end
+
+-- ===========================================================================
+--	GAME Event
+-- ===========================================================================
 function OnToggleOverviewPanel()
 	if Controls.ToggleOverviewPanel:IsChecked() then
 		LuaEvents.CityPanel_ShowOverviewPanel(true);
@@ -1075,6 +1084,7 @@ function Initialize()
 	Events.InterfaceModeChanged.Add(	OnInterfaceModeChanged );
 	Events.LocalPlayerChanged.Add(		OnLocalPlayerChanged );
 	Events.UnitSelectionChanged.Add(	OnUnitSelectionChanged );
+	Events.PlayerResourceChanged.Add(	OnPlayerResourceChanged );
 
 	-- LUA Events
 	LuaEvents.CityPanelOverview_CloseButton.Add( OnCloseOverviewPanel );

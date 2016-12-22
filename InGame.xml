@@ -29,14 +29,14 @@
 
 	<Container		ID="HUD">
 		<LuaContext	ID="CameraManager"						FileName="CameraManager" Hidden="1"/>
-		<LuaContext	ID="PlotToolTip"							FileName="PlotToolTip"													/>
 		<LuaContext	ID="NotificationPanel"				FileName="NotificationPanel"										/>
 		<LuaContext ID="WorldTracker"	            FileName="WorldTracker"									        />
-		<LuaContext	ID="MinimapPanel"							FileName="MinimapPanel"													/>	
+		<LuaContext	ID="MinimapPanel"							FileName="MinimapPanel"													/>
 		<LuaContext	ID="CityPanel"								FileName="CityPanel"								Hidden="1"	/>
 		<LuaContext	ID="UnitPanel"								FileName="UnitPanel"								Hidden="1"	/>
     <LuaContext	ID="ActionPanel"							FileName="ActionPanel"													/>
-		<LuaContext	ID="MultiplayerTurnManager"		FileName="MultiplayerTurnManager"		Hidden="1"	/>   
+		<LuaContext	ID="MultiplayerTurnManager"		FileName="MultiplayerTurnManager"		Hidden="1"	/>
+		<LuaContext	ID="PlotToolTip"							FileName="PlotToolTip"													/>
 	</Container>
 
 	<Container		ID="PartialScreens">

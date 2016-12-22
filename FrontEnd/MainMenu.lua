@@ -15,7 +15,8 @@ local m_kPopupDialog;
 local m_currentOptions:table = {};		--Track which main menu options are being displayed and selected. Indices follow the format of {optionControl:table, isSelected:boolean}
 local m_initialPause = 1.5;				--How long to wait before building the main menu options when the game first loads
 local m_internetButton:table = nil;		--Cache internet button so it can be updated when online status events fire
-local mm_resumeButton:table = nil;		--Cache resume button so it can be updated when FileListQueryResults event fires
+local m_resumeButton:table = nil;		--Cache resume button so it can be updated when FileListQueryResults event fires
+local m_scenariosButton:table = nil;	--Cache scenarios button so it can be updated later.
 
 -- ===========================================================================
 --	Constants
@@ -64,6 +65,21 @@ function UpdateResumeGame(resumeButton)
 	end
 end
 
+function UpdateScenariosButton(button)
+	if(button) then 
+		m_scenariosButton = button; 
+	end
+
+	if(button) then
+		button.Top:SetHide(true);
+		local query = "SELECT 1 from Rulesets where IsScenario = 1 and SupportsSinglePlayer = 1 LIMIT 1";
+		local results = DB.ConfigurationQuery(query);
+		if(results and #results > 0) then
+			button.Top:SetHide(false);
+		end
+	end
+end
+
 
 function OnPlayCiv6()
 	local save = Options.GetAppOption("Debug", "PlayNowSave");
@@ -82,6 +98,12 @@ end
 function OnAdvancedSetup()
 	GameConfiguration.SetToDefaults();
 	UIManager:QueuePopup(Controls.AdvancedSetup, PopupPriority.Current);
+end
+
+-- ===========================================================================
+function OnScenarioSetup()
+	GameConfiguration.SetToDefaults();
+	UIManager:QueuePopup(Controls.ScenarioSetup, PopupPriority.Current);
 end
 
 -- ===========================================================================
@@ -127,17 +149,16 @@ function OnUserRequestClose()
 		m_kPopupDialog:AddButton(Locale.Lookup("LOC_CANCEL_BUTTON"), ExitCancel);
 		m_kPopupDialog:AddButton(Locale.Lookup("LOC_OK_BUTTON"), ExitOK, nil, nil, "PopupButtonAltInstance"); 
 		m_kPopupDialog:Open();
+		UIManager:PushModal(Controls.PopupDialog, true);
 	end
 end
 
 -- ===========================================================================
 function ExitOK()
-	m_kPopupDialog:Close();
+	ExitCancel();
 
 	if (Steam ~= nil) then
 		Steam.ClearRichPresence();
-	else
-		print("TODO: Steam.ClearRichPresence() not present non-Steam platform");
 	end
 
 	Events.UserConfirmedClose();
@@ -146,6 +167,7 @@ end
 -- ===========================================================================
 function ExitCancel()
 	m_kPopupDialog:Close();
+	UIManager:PopModal(Controls.PopupDialog);
 end
 
     -- ===========================================================================
@@ -377,7 +399,10 @@ local m_SinglePlayerSubMenu :table = {
 								{label = "LOC_MAIN_MENU_RESUME_GAME",		callback = OnResumeGame,	tooltip = "LOC_MAINMENU_RESUME_GAME_TT", buttonState = UpdateResumeGame},
 								{label = "LOC_LOAD_GAME",					callback = OnLoadSinglePlayer,	tooltip = "LOC_MAINMENU_LOAD_GAME_TT",},
 								{label = "LOC_PLAY_CIVILIZATION_6",			callback = OnPlayCiv6,	tooltip = "LOC_MAINMENU_PLAY_NOW_TT"},
+								{label = "LOC_SETUP_SCENARIOS",				callback = OnScenarioSetup,	tooltip = "LOC_MAINMENU_SCENARIOS_TT", buttonState = UpdateScenariosButton},
 								{label = "LOC_SETUP_CREATE_GAME",			callback = OnAdvancedSetup,	tooltip = "LOC_MAINMENU_CREATE_GAME_TT"},
+							
+
 							};
 
 local m_MultiPlayerSubMenu :table = {
@@ -569,6 +594,7 @@ function BuildSubMenu(menuOptions:table)
 	Controls.SubButtonTrackAnim:Play();
 	Controls.SubMenuClip:SetSizeY(trackHeight);
 	Controls.SubMenuAlpha:SetSizeY(trackHeight);
+	Controls.SubButtonClip:SetSizeY(trackHeight);
 	Controls.SubMenuContainer:SetSizeY(Controls.MainMenuClip:GetSizeY());
 end
 
@@ -625,6 +651,7 @@ function BuildAllMenus()
 	-- Reset cached buttons to make sure we don't reference reused instances
 	m_resumeButton = nil;
 	m_internetButton = nil;
+	m_scenariosButton = nil;
 
 	-- WISHLIST: When we rebuild the menus, let's check to see if there are ANY saved games whatsoever.  
 	-- If none exist, then do not display the option in the submenu. (See: OnFileListQueryResults)
@@ -672,8 +699,6 @@ function OnShow()
 
 	if (Steam ~= nil) then
 		Steam.SetRichPresence("location", "LOC_PRESENCE_IN_SHELL");
-	else
-		print("TODO: Steam.SetRichPresence not present for non-Steam platform");
 	end
 
 	local gameType = SaveTypes.SINGLE_PLAYER;

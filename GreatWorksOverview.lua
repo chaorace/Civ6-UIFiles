@@ -771,7 +771,7 @@ function CanMoveGreatWork(srcBldgs:table, srcBuilding:number, srcSlot:number, ds
 				
 				for row in GameInfo.GreatWork_ValidSubTypes() do
 					if srcSlotTypeString == row.GreatWorkSlotType and dstGreatWorkObjectType == row.GreatWorkObjectType then
-						return true;
+						return CanMoveWorkAtAll(dstBldgs, dstBuilding, dstSlot);
 					end
 				end
 			end
@@ -826,6 +826,10 @@ end
 --	Show / Hide
 -- ===========================================================================
 function Open()
+	if (Game.GetLocalPlayer() == -1) then
+		return
+	end
+
 	UpdateData();
 	ContextPtr:SetHide(false);
 
@@ -850,6 +854,10 @@ end
 --	Game Event Callbacks
 -- ===========================================================================
 function OnShowScreen()
+	if (Game.GetLocalPlayer() == -1) then
+		return
+	end
+
 	Open();
 	UI.PlaySound("UI_Screen_Open");
 end

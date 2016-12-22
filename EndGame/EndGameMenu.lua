@@ -51,7 +51,7 @@ local g_LineSegmentInstanceManager = InstanceManager:new("GraphLineInstance","Li
 -- TODO: Move this into the database.
 local Styles = {
 	["GENERIC_DEFEAT"] ={
-		RibbonIcon = nil,
+		RibbonIcon = "ICON_DEFEAT_GENERIC",
 		Ribbon = "EndGame_Ribbon_Defeat",
 		RibbonTile = "EndGame_RibbonTile_Defeat",
 		Background = "EndGame_BG_Defeat",
@@ -567,10 +567,16 @@ function Data(playerId, victory_or_defeat_type)
 	local victory = GameInfo.Victories[victory_or_defeat_type];
 	local defeat = GameInfo.Defeats[victory_or_defeat_type];
 
-
 	local playerName = pc:GetPlayerName();
 	local playerIcon = "ICON_" .. civType;
-	local playerPortrait = leaderType .. "_NEUTRAL";
+	local playerPortrait:string;
+
+	local loadingInfo:table = GameInfo.LoadingInfo[leaderType];
+	if loadingInfo and loadingInfo.ForegroundImage then
+		playerPortrait = loadingInfo.ForegroundImage;
+	else
+		playerPortrait = leaderType .. "_NEUTRAL";
+	end
 
 	local name, blurb, icon, style;
 	
@@ -641,7 +647,6 @@ function OnPlayerVictory( player, victory, eventID)
 			victory = victoryInfo and victoryInfo.VictoryType or "VICTORY_DEFAULT";
 			View(Data(player, victory));
 		else
-			UI.SetPauseEventID( eventID );
 			-- Another player was victorious...
 			-- In the future, we'll want to be more specific stating that another player has won.
 			-- However we're lacking strings and time.
@@ -650,6 +655,7 @@ function OnPlayerVictory( player, victory, eventID)
 			-- Only show the defeat screen to other living players.  If a player
 			-- was defeated, they would receive another notification.
 			if(p:IsAlive()) then
+				UI.SetPauseEventID( eventID );					-- Set the pause event, the closing of the end game screen will release it.
 				View(Data(localPlayer, "DEFEAT_DEFAULT"));
 			end
 		end

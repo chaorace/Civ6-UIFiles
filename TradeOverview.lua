@@ -660,6 +660,12 @@ end
 
 -- ===========================================================================
 function Open()
+	-- dont show panel if there is no local player
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID == -1) then
+		return
+	end
+
 	m_AnimSupport.Show();
 	UI.PlaySound("CityStates_Panel_Open");
 end

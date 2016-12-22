@@ -113,11 +113,6 @@
                           <ScrollBar Anchor="R,C" Style="Slider_Blue" Vertical="1" Offset="-2,-2"/>
                         </ScrollPanel>
                       </Stack>
-                      <!--/Stack of Inspector Contents-->
-                      <Container ID="ShowModsButtonContainer" Size="parent, 40" Anchor="C,B">
-                        <Box Color="30,125,182,50" Size="parent,2" Anchor="L,T"/>
-                        <GridButton ID="ShowModsButton" Anchor="C,B" Style="ShellButtonOrnateFlat" String="LOC_LOAD_MENU_MODS"/>
-                      </Container>
                     </Container>
                   </Grid>
                   <!-- /INSPECTOR inner glow -->
@@ -157,27 +152,6 @@
               </Grid>
               <!-- /SELECTOR opaque background -->
 
-
-              <!-- ************************** MODS popup ******************************** -->
-              <Grid ID="ReferencedPackagesWindow" Style="SubContainerFill" Color="0,0,0,150" Size="parent,parent" ConsumeMouseOver="1" Hidden="1" Anchor="C,C">
-                <Grid Size="parent,200" Anchor="C,C" Offset="0,0" SizePadding="0,20" Style="EnhancedToolTip"  Hidden="0" >
-
-                  <Label ID="ReferencedPackagesPrompt" Anchor="C,T"  Offset="0,20" WrapWidth="440"  Style="PanelHeaderText" ColorSet="BodyTextCool" String="LOC_LOAD_MENU_MODS"/>
-
-                  <ScrollPanel Offset="20,110" Anchor="L,T" Size="435,245" ID="ReferencedPackagesScrollPanel" Vertical="1" AutoScrollBar="1" >
-
-                    <!-- Scroll Controls -->
-                    <ScrollBar Style="Slider_Vert" Length="214" Offset="0,18" Anchor="R,T" AnchorSide="O,I" />
-                    <UpButton  Offset="0,0"  Style="Scroll_Up"  Anchor="R,T" AnchorSide="O,I" />
-                    <DownButton Offset="0,0" Style="Scroll_Down"  Anchor="R,B" AnchorSide="O,I" />
-
-                    <Stack Anchor="L,T" Offset="0,0"  StackGrowth="Bottom" StackPadding="4" ID="ReferencedPackagesStack" />
-                  </ScrollPanel>
-
-                  <!-- Close Button  -->
-                  <Button ID="CloseReferencedPackagesButton" Style="CloseButtonAlt" Anchor="R,T" Offset="0,0"/>
-                </Grid>
-              </Grid>
               <!-- /SELECTOR grid opaque background-->
             </Stack>
             <!-- /Stack of Inspector/Game Select-->
@@ -252,8 +226,5 @@
 		</Grid>
 	</Instance>
 
-	<Instance Name="ReferencedPackageInstance" >
-		<Label ID="Label" Anchor="L,C"  Offset="0,0" Style="FontNormal18" ColorSet="BodyTextCool"  />
-	</Instance>
 
 </Context>

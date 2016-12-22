@@ -84,65 +84,70 @@ local m_DirtyComponents				:table  = nil;
 local m_UnitFlagInstances			:table  = {};
 local m_isMapDeselectDisabled		:boolean= false;
 
+-- COMMENTING OUT hstructures.
+-- These structures remained defined for the entire lifetime of the application.
+-- If a modder or scenario script needs to redefine it, yer boned.
+-- Replacing these with regular tables, for now.
 -- The meta table definition that holds the function pointers
-hstructure UnitFlagMeta
-	-- Pointer back to itself.  Required.
-	__index							: UnitFlagMeta
-
-	new								: ifunction;
-	destroy							: ifunction;
-	Initialize						: ifunction;
-	GetUnit							: ifunction;
-	SetInteractivity				: ifunction;
-	SetFogState						: ifunction;
-	SetHide							: ifunction;
-	SetForceHide					: ifunction;
-	SetFlagUnitEmblem				: ifunction;
-	SetColor						: ifunction;
-	SetDim							: ifunction;
-	OverrideDimmed					: ifunction;
-	UpdateDimmedState				: ifunction;
-	UpdateFlagType					: ifunction;
-	UpdateHealth					: ifunction;
-	UpdateVisibility				: ifunction;
-	UpdateSelected					: ifunction;
-	UpdateFormationIndicators		: ifunction;
-	UpdateName						: ifunction;
-	UpdatePosition					: ifunction;
-	SetPosition						: ifunction;
-	UpdateStats						: ifunction;
-	UpdateReadyState				: ifunction;
-	UpdatePromotions				: ifunction;
-	UpdateAircraftCounter			: ifunction;
-end
-
--- The structure that holds the banner instance data
-hstructure UnitFlag
-	meta							: UnitFlagMeta;
-
-	m_InstanceManager				: table;				-- The instance manager that made the control set.
-    m_Instance						: table;				-- The instanced control set.
-    
-	m_cacheMilitaryFormation		: number;				-- Name of last military formation this flag was in.
-    m_Type							: number;
-	m_Style							: number;
-	m_eVisibility					: number;
-    m_IsInitialized					: boolean;				-- Is flag done it's initial creation.
-	m_IsSelected					: boolean;
-    m_IsCurrentlyVisible			: boolean;
-	m_IsForceHide					: boolean;
-    m_IsDimmed						: boolean;
-	m_OverrideDimmed				: boolean;
-	m_OverrideDim					: boolean;
-	m_FogState						: number;
-    
-    m_Player						: table;
-    m_UnitID						: number;		-- The unit ID.  Keeping just the ID, rather than a reference because there will be times when we need the value, but the unit instance will not exist.
-end
+--hstructure UnitFlagMeta
+	---- Pointer back to itself.  Required.
+	--__index							: UnitFlagMeta
+--
+	--new								: ifunction;
+	--destroy							: ifunction;
+	--Initialize						: ifunction;
+	--GetUnit							: ifunction;
+	--SetInteractivity				: ifunction;
+	--SetFogState						: ifunction;
+	--SetHide							: ifunction;
+	--SetForceHide					: ifunction;
+	--SetFlagUnitEmblem				: ifunction;
+	--SetColor						: ifunction;
+	--SetDim							: ifunction;
+	--OverrideDimmed					: ifunction;
+	--UpdateDimmedState				: ifunction;
+	--UpdateFlagType					: ifunction;
+	--UpdateHealth					: ifunction;
+	--UpdateVisibility				: ifunction;
+	--UpdateSelected					: ifunction;
+	--UpdateFormationIndicators		: ifunction;
+	--UpdateName						: ifunction;
+	--UpdatePosition					: ifunction;
+	--SetPosition						: ifunction;
+	--UpdateStats						: ifunction;
+	--UpdateReadyState				: ifunction;
+	--UpdatePromotions				: ifunction;
+	--UpdateAircraftCounter			: ifunction;
+--end
+--
+---- The structure that holds the banner instance data
+--hstructure UnitFlag
+	--meta							: UnitFlagMeta;
+--
+	--m_InstanceManager				: table;				-- The instance manager that made the control set.
+    --m_Instance						: table;				-- The instanced control set.
+    --
+	--m_cacheMilitaryFormation		: number;				-- Name of last military formation this flag was in.
+    --m_Type							: number;
+	--m_Style							: number;
+	--m_eVisibility					: number;
+    --m_IsInitialized					: boolean;				-- Is flag done it's initial creation.
+	--m_IsSelected					: boolean;
+    --m_IsCurrentlyVisible			: boolean;
+	--m_IsForceHide					: boolean;
+    --m_IsDimmed						: boolean;
+	--m_OverrideDimmed				: boolean;
+	--m_OverrideDim					: boolean;
+	--m_FogState						: number;
+    --
+    --m_Player						: table;
+    --m_UnitID						: number;		-- The unit ID.  Keeping just the ID, rather than a reference because there will be times when we need the value, but the unit instance will not exist.
+--end
 
 -- Create one instance of the meta object as a global variable with the same name as the data structure portion.  
 -- This allows us to do a UnitFlag:new, so the naming looks consistent.
-UnitFlag = hmake UnitFlagMeta {};
+--UnitFlag = hmake UnitFlagMeta {};
+UnitFlag = {};
 
 -- Link its __index to itself
 UnitFlag.__index = UnitFlag;
@@ -163,9 +168,10 @@ end
 ------------------------------------------------------------------
 -- constructor
 ------------------------------------------------------------------
-function UnitFlag.new( self : UnitFlagMeta, playerID: number, unitID : number, flagType : number, flagStyle : number )
-    local o = hmake UnitFlag { };
-    setmetatable( o, self );
+function UnitFlag.new( self, playerID: number, unitID : number, flagType : number, flagStyle : number )
+   -- local o = hmake UnitFlag { };
+    local o = {};
+	setmetatable( o, self );
 
 	o:Initialize(playerID, unitID, flagType, flagStyle);
 
@@ -177,7 +183,7 @@ function UnitFlag.new( self : UnitFlagMeta, playerID: number, unitID : number, f
 end
 
 ------------------------------------------------------------------
-function UnitFlag.destroy( self : UnitFlag )
+function UnitFlag.destroy( self )
     if ( self.m_InstanceManager ~= nil ) then           
         self:UpdateSelected( false );
                         		    
@@ -188,13 +194,13 @@ function UnitFlag.destroy( self : UnitFlag )
 end
 
 ------------------------------------------------------------------
-function UnitFlag.GetUnit( self : UnitFlag )
+function UnitFlag.GetUnit( self )
 	local pUnit : table = self.m_Player:GetUnits():FindID(self.m_UnitID);
 	return pUnit;
 end
 
 ------------------------------------------------------------------
-function UnitFlag.Initialize( self : UnitFlag, playerID: number, unitID : number, flagType : number, flagStyle : number)
+function UnitFlag.Initialize( self, playerID: number, unitID : number, flagType : number, flagStyle : number)
 	if (flagType == FLAGTYPE_UNIT) then
 		if (flagStyle == FLAGSTYLE_MILITARY) then
 			self.m_InstanceManager = m_MilitaryInstanceManager;
@@ -292,7 +298,7 @@ end
 
 ------------------------------------------------------------------
 -- Set the user interativity for the flag.
-function UnitFlag.SetInteractivity( self : UnitFlag )
+function UnitFlag.SetInteractivity( self )
 
     local localPlayerID :number = Game.GetLocalPlayer();
     local flagPlayerID	:number = self.m_Player:GetID();
@@ -327,7 +333,7 @@ function UnitFlag.SetInteractivity( self : UnitFlag )
 end
 
 ------------------------------------------------------------------
-function UnitFlag.UpdateReadyState( self : UnitFlag )
+function UnitFlag.UpdateReadyState( self )
 	local pUnit : table = self:GetUnit();
 	if (pUnit ~= nil and pUnit:IsHuman()) then
 		self:SetDim(not pUnit:IsReadyToSelect());
@@ -335,7 +341,7 @@ function UnitFlag.UpdateReadyState( self : UnitFlag )
 end
 
 ------------------------------------------------------------------
-function UnitFlag.UpdateStats( self : UnitFlag )
+function UnitFlag.UpdateStats( self )
 	local pUnit : table = self:GetUnit();
 	if (pUnit ~= nil) then
 		self:UpdateFlagType();
@@ -346,7 +352,7 @@ function UnitFlag.UpdateStats( self : UnitFlag )
 end
 
 ------------------------------------------------------------------
-function UnitFlag.UpdateAircraftCounter( self : UnitFlag )
+function UnitFlag.UpdateAircraftCounter( self )
 	local pUnit : table = self:GetUnit();
 	if (pUnit ~= nil) then
 		local airUnitCapacity = pUnit:GetAirSlots();
@@ -442,7 +448,7 @@ end
 
 ------------------------------------------------------------------
 -- Set the flag color based on the player colors.
-function UnitFlag.SetColor( self : UnitFlag )
+function UnitFlag.SetColor( self )
 	local primaryColor, secondaryColor  = UI.GetPlayerColors( self.m_Player:GetID() );
 	local darkerFlagColor	:number = DarkenLightenColor(primaryColor,(-85),255);
 	local brighterFlagColor :number = DarkenLightenColor(primaryColor,90,255);
@@ -470,14 +476,14 @@ end
 
 ------------------------------------------------------------------
 -- Set the flag texture based on the unit's type
-function UnitFlag.SetFlagUnitEmblem( self : UnitFlag )      
+function UnitFlag.SetFlagUnitEmblem( self )      
 	local pUnit = self:GetUnit();
 	local iconInfo = "ICON_"..GameInfo.Units[pUnit:GetUnitType()].UnitType;
 	self.m_Instance.UnitIcon:SetIcon(iconInfo);
 end
 
 ------------------------------------------------------------------
-function UnitFlag.SetDim( self : UnitFlag, bDim : boolean )
+function UnitFlag.SetDim( self, bDim : boolean )
 	if (self.m_IsDimmed ~= bDim) then
 		self.m_IsDimmed = bDim;
 		self:UpdateDimmedState();
@@ -486,14 +492,14 @@ end
 
 -----------------------------------------------------------------
 -- Set whether or not the dimmed state for the flag is overridden
-function UnitFlag.OverrideDimmed( self : UnitFlag, bOverride : boolean )
+function UnitFlag.OverrideDimmed( self, bOverride : boolean )
 	self.m_OverrideDimmed = bOverride;
     self:UpdateDimmedState();
 end
      
 -----------------------------------------------------------------
 -- Set the flag's alpha state, based on the current dimming flags.
-function UnitFlag.UpdateDimmedState( self : UnitFlag )
+function UnitFlag.UpdateDimmedState( self )
 	if( self.m_IsDimmed and not self.m_OverrideDimmed ) then
 		self.m_Instance.FlagRoot:SetToEnd(true);
         self.m_Instance.FlagRoot:SetAlpha( ALPHA_DIM );
@@ -507,7 +513,7 @@ end
 
 ------------------------------------------------------------------
 -- Change the flag's fog state
-function UnitFlag.SetFogState( self : UnitFlag, fogState : number )
+function UnitFlag.SetFogState( self, fogState : number )
 
 	self.m_eVisibility = fogState;
 
@@ -522,7 +528,7 @@ end
 
 ------------------------------------------------------------------
 -- Change the flag's overall visibility
-function UnitFlag.SetHide( self : UnitFlag, bHide : boolean )
+function UnitFlag.SetHide( self, bHide : boolean )
 	local isPreviouslyVisible :boolean = self.m_IsCurrentlyVisible;
 	self.m_IsCurrentlyVisible = not bHide;
 	if self.m_IsCurrentlyVisible ~= isPreviouslyVisible then
@@ -532,7 +538,7 @@ end
 
 ------------------------------------------------------------------
 -- Change the flag's force hide
-function UnitFlag.SetForceHide( self : UnitFlag, bHide : boolean )
+function UnitFlag.SetForceHide( self, bHide : boolean )
 	self.m_IsForceHide = bHide;
 	self:UpdateVisibility();
 end
@@ -540,7 +546,7 @@ end
 ------------------------------------------------------------------
 -- Update the flag's type.  This adjust the look of the flag based
 -- on the state of the unit.
-function UnitFlag.UpdateFlagType( self : UnitFlag )
+function UnitFlag.UpdateFlagType( self )
             
 	local pUnit = self:GetUnit();
     if pUnit == nil then
@@ -596,7 +602,7 @@ end
 
 ------------------------------------------------------------------
 -- Update the health bar.
-function UnitFlag.UpdateHealth( self : UnitFlag )
+function UnitFlag.UpdateHealth( self )
     
 	local pUnit = self:GetUnit();
     if pUnit == nil then
@@ -657,7 +663,7 @@ end
 
 ------------------------------------------------------------------
 -- Update the visibility of the flag based on the current state.
-function UnitFlag.UpdateVisibility( self : UnitFlag )
+function UnitFlag.UpdateVisibility( self )
 
 	if self.m_IsForceHide then
 		self.m_Instance.Anchor:SetHide(true);
@@ -714,7 +720,7 @@ function GetLevyTurnsRemaining(pUnit : table)
 end
 
 ------------------------------------------------------------------
-function UnitFlag.UpdatePromotions( self : UnitFlag )
+function UnitFlag.UpdatePromotions( self )
 	self.m_Instance.Promotion_Flag:SetHide(true);
 	local pUnit : table = self:GetUnit();
 	if pUnit ~= nil then
@@ -749,7 +755,7 @@ end
 
 ------------------------------------------------------------------
 -- Update the unit name / tooltip
-function UnitFlag.UpdateName( self : UnitFlag )
+function UnitFlag.UpdateName( self )
 	local pUnit : table = self:GetUnit();
 	if pUnit ~= nil then
 		local unitName = pUnit:GetName();
@@ -832,7 +838,7 @@ end
 
 ------------------------------------------------------------------
 -- The selection state has changed.
-function UnitFlag.UpdateSelected( self : UnitFlag, isSelected : boolean )
+function UnitFlag.UpdateSelected( self, isSelected : boolean )
 	local pUnit : table = self:GetUnit();
 	
 	--local pPlayer : table = Players[Game.GetLocalPlayer()];
@@ -863,7 +869,7 @@ end
 
 ------------------------------------------------------------------
 -- Update the position of the flag to match the current unit position.
-function UnitFlag.UpdatePosition( self : UnitFlag )
+function UnitFlag.UpdatePosition( self )
 	local pUnit : table = self:GetUnit();
 	if (pUnit ~= nil) then
 		self:SetPosition( UI.GridToWorld( pUnit:GetX(), pUnit:GetY() ) );
@@ -922,7 +928,7 @@ end
 -- ===========================================================================
 --	Set the position of the flag.
 -- ===========================================================================
-function UnitFlag.SetPosition( self : UnitFlag, worldX : number, worldY : number, worldZ : number )
+function UnitFlag.SetPosition( self, worldX : number, worldY : number, worldZ : number )
 
 	local unitStackXOffset = 0;
 	local rangedAttackXOffset = 0;
@@ -1041,7 +1047,7 @@ end
 ------------------------------------------------------------------
 function OnUnitRemovedFromMap( playerID: number, unitID : number )
 	
-    local flagInstance:UnitFlag = GetUnitFlag( playerID, unitID );
+    local flagInstance = GetUnitFlag( playerID, unitID );
 	if flagInstance ~= nil then
 		flagInstance:destroy();
 		m_UnitFlagInstances[ playerID ][ unitID ] = nil;
@@ -1057,7 +1063,7 @@ end
 
 ------------------------------------------------------------------
 function OnUnitVisibilityChanged( playerID: number, unitID : number, eVisibility : number )
-    local flagInstance:UnitFlag = GetUnitFlag( playerID, unitID );
+    local flagInstance = GetUnitFlag( playerID, unitID );
 	if (flagInstance ~= nil) then
 		flagInstance:SetFogState( eVisibility );
 		flagInstance:UpdatePosition();
@@ -1067,6 +1073,14 @@ function OnUnitVisibilityChanged( playerID: number, unitID : number, eVisibility
 			UpdateIconStack(pUnit:GetX(), pUnit:GetY());
 		end
 
+    end
+end
+
+------------------------------------------------------------------
+function OnUnitEmbarkedStateChanged( playerID: number, unitID : number, bEmbarkedState : boolean )
+    local flagInstance = GetUnitFlag( playerID, unitID );
+	if (flagInstance ~= nil) then
+		flagInstance:UpdateFlagType();
     end
 end
 
@@ -1156,12 +1170,12 @@ function UpdateIconStack( plotX:number, plotY:number )
 		local landCombatOffsetX = 0;
 		local civilianOffsetX =  0;
 		local formationIndex = 0;
-		local DuoFlag:UnitFlag;
+		local DuoFlag;
 		for _, pUnit in ipairs(unitList) do
 			-- Cache commonly used values (optimization)
 			local unitID:number = pUnit:GetID();
 			local unitOwner:number = pUnit:GetOwner();
-			local flag:UnitFlag = GetUnitFlag( unitOwner, unitID );
+			local flag = GetUnitFlag( unitOwner, unitID );
 
 			if ( flag ~= nil and flag.m_eVisibility == RevealedState.VISIBLE ) then
 				local unitInfo:table = GameInfo.Units[pUnit:GetUnitType()];
@@ -1371,7 +1385,7 @@ function OnPlayerTurnActivated( ePlayer:number, bFirstTimeThisTurn:boolean )
 				local targetPlayer	:number		= pUnit:GetBarbarianTargetPlayer();
 				local unitID		:number		= pUnit:GetID();
 				local unitOwnerID	:number		= pUnit:GetOwner();
-				local flag			:UnitFlag	= GetUnitFlag( unitOwnerID, unitID );
+				local flag				= GetUnitFlag( unitOwnerID, unitID );
 
 				if targetPlayer ~= -1 and targetPlayer == idLocalPlayer then				
 					if flag.m_Instance.FlagRoot["AttentionInstance"] == nil then
@@ -1427,6 +1441,28 @@ function OnUnitDamageChanged( playerID : number, unitID : number, newDamage : nu
 					end
 
 					UI.AddWorldViewText(EventSubTypes.DAMAGE, szText, pUnit:GetX(), pUnit:GetY(), 0);
+				end
+			end
+		end
+	end
+end
+
+------------------------------------------------------------------
+function OnUnitAbilityGained( playerID : number, unitID : number, eAbilityType : number)
+	if (playerID == Game.GetLocalPlayer()) then
+		local pPlayer = Players[ playerID ];
+		if (pPlayer ~= nil) then
+			local pUnit = pPlayer:GetUnits():FindID(unitID);
+			if (pUnit ~= nil) then
+				local flag = GetUnitFlag(playerID, pUnit:GetID());
+				if (flag ~= nil) then
+					if (flag.m_eVisibility == RevealedState.VISIBLE) then
+						local sAbilityName = GameInfo.UnitAbilities[eAbilityType].Name;
+						if (sAbilityName ~= nil) then
+							local floatText = Locale.Lookup(sAbilityName);
+							UI.AddWorldViewText(EventSubTypes.DAMAGE, floatText, pUnit:GetX(), pUnit:GetY(), 0);
+						end
+					end
 				end
 			end
 		end
@@ -1751,6 +1787,7 @@ function RegisterDirtyEvents()
 	m_DirtyComponents:AddEvent("UNIT_OPERATION_DEACTIVATED");
 	m_DirtyComponents:AddEvent("UNIT_ACTIVITY_CHANGED");
 	m_DirtyComponents:AddEvent("UNIT_MOVEMENT_POINTS_CHANGED");
+	m_DirtyComponents:AddEvent("UNIT_EMBARK_CHANGED");
 end
 
 -- ===========================================================================
@@ -1816,10 +1853,12 @@ function Initialize()
 	Events.UnitSimPositionChanged.Add( UnitSimPositionChanged );
 	Events.UnitTeleported.Add( OnUnitTeleported );
 	Events.UnitVisibilityChanged.Add( OnUnitVisibilityChanged );
+	Events.UnitEmbarkedStateChanged.Add( OnUnitEmbarkedStateChanged );
 	Events.UnitCommandStarted.Add( OnUnitCommandStarted );
 	Events.UnitUpgraded.Add( OnUnitUpgraded );
 	Events.WorldRenderViewChanged.Add(PositionFlagsToView);
 	Events.UnitPromoted.Add(OnUnitPromotionChanged);
+	Events.UnitAbilityGained.Add(OnUnitAbilityGained);
 	--Events.UnitActivityChanged.Add(OnUnitActivityChanged); --Currently only needed for debugging.
 
 	LuaEvents.Tutorial_DisableMapSelect.Add( OnTutorial_DisableMapSelect );

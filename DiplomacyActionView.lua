@@ -465,7 +465,7 @@ end
 -- in a session with the other player yet, this will start one.
 function OnSelectInitialDiplomacyStatement(key)
 
-	if (ms_LocalPlayerID ~= ms_SelectedPlayerID and ms_SelectedPlayerID >= 0) then
+	if (ms_LocalPlayerID ~= ms_SelectedPlayerID and ms_SelectedPlayerID >= 0 and not GameConfiguration.IsPaused()) then
 
 		if (key == "CHOICE_DECLARE_SURPRISE_WAR") then 
 			DiplomacyManager.RequestSession(ms_LocalPlayerID, ms_SelectedPlayerID, "DECLARE_SURPRISE_WAR");
@@ -804,6 +804,7 @@ function PopulateStatementList( options: table, rootControl: table, isSubList: b
 		local instance		:table		= buttonIM:GetInstance(stackControl);
 		selectionText	= selectionText.. Locale.Lookup("LOC_CANCEL_BUTTON");
 		instance.ButtonText:SetText( selectionText );
+		instance.Button:SetToolTipString(nil);
 		instance.Button:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 		instance.Button:RegisterCallback( Mouse.eLClick,	function() 
 																rootControl.ContentStack:CalculateSize();
@@ -2582,11 +2583,10 @@ function Close()
 	
 	ResetPlayerPanel();
 
-	-- Stop the leader music, this will cause the current playlist to resume.
-	UI.PlaySound("Stop_Leader_Music");
-
 	local localPlayer = Game.GetLocalPlayer();
 	UI.SetSoundSwitchValue("Game_Location", UI.GetNormalEraSoundSwitchValue(ms_LocalPlayer:GetID()));
+	-- Stop the leader music, this will cause the current playlist to resume.
+	UI.PlaySound("Stop_Leader_Music");
 	UI.PlaySound("Exit_Leader_Screen");
     UI.SetSoundStateValue("Game_Views", "Normal_View");
 end
@@ -2720,6 +2720,14 @@ function OnGameDebugReturn( context:string, contextTable:table )
 end
 
 -- ===========================================================================
+function OnGamePauseStateChanged(bNewState)
+	if (not ContextPtr:IsHidden()) then
+		ResetPlayerPanel();
+		SelectPlayer(ms_SelectedPlayerID, OVERVIEW_MODE, true);
+	end
+end
+
+-- ===========================================================================
 function Initialize()
 
 	ContextPtr:SetInitHandler( OnInit );
@@ -2735,6 +2743,7 @@ function Initialize()
 	Events.DiplomacyMakePeace.Add( OnDiplomacyMakePeace );
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );	
 	Events.UserRequestClose.Add( OnUserRequestClose );
+	Events.GamePauseStateChanged.Add(OnGamePauseStateChanged);
 
 	-- LUA Events
 	LuaEvents.CityBannerManager_TalkToLeader.Add(OnTalkToLeader);

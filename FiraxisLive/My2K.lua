@@ -235,16 +235,14 @@ function LoggedIn()
 			ChangeMy2KTexture( control, labelControl, my2KLinked );
 		else
 			ChangeMy2KTexture( control, labelControl, false );
-			control:SetDisabled(false);
+			control:SetDisabled(true);
 			labelControl:LocalizeAndSetText("TXT_KEY_MY2K_MODE_ANONYMOUS");
 		end
 	end
 end
 
 function LoggedOut()
-	local control = ContextPtr:LookUpControl( "/FrontEnd/MainMenu/My2KLogin" );
-	local labelControl = ContextPtr:LookUpControl( "/FrontEnd/MainMenu/My2KStatus" );
-	ChangeMy2KTexture( control, labelControl, false );
+	LoggedIn()
 end
 
 function ClosePreviousMenu()

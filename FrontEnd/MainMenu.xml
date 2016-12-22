@@ -85,6 +85,7 @@
 	<LuaContext		ID="Options"							DeferLoad="1"	FileName="Options"						Hidden="1" />
 	<LuaContext		ID="ModsContext"					DeferLoad="1"	FileName="Mods"								Hidden="1" />
 	<LuaContext		ID="AdvancedSetup"				DeferLoad="1"	FileName="AdvancedSetup"			Hidden="1" />
+	<LuaContext		ID="ScenarioSetup"        DeferLoad="1" FileName="ScenarioSetup"      Hidden="1" /> 
 	<LuaContext		ID="CreditsScreen"											FileName="CreditsScreen"			Hidden="1" />
 	<LuaContext		ID="My2K"										            FileName="My2K"								Hidden="1" />
   <LuaContext		ID="WorldBuilder"					DeferLoad="1" FileName="WorldBuilderMenu"		Hidden="1" />

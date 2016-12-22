@@ -159,7 +159,26 @@ function OnUpdateUI( type:number, tag:string, iData1:number, iData2:number, strD
   end
 end
 
+-- ===========================================================================
+--	Input
+--	UI Event Handler
+-- ===========================================================================
+function KeyHandler( key:number )
+	if key == Keys.VK_ESCAPE then
+		OnClose();
+		return true;
+	end
+
+	return false;
+end
+function OnInputHandler( pInputStruct:table )
+	local uiMsg = pInputStruct:GetMessageType();
+	if uiMsg == KeyEvents.KeyUp then return KeyHandler( pInputStruct:GetKey() ); end;
+	return false;
+end
+
 function Initialize()
+	ContextPtr:SetInputHandler( OnInputHandler, true );
 	Controls.No:RegisterCallback( Mouse.eLClick, OnClose );
 	LuaEvents.DiplomacyActionView_ConfirmWarDialog.Add(OnShow);
 	LuaEvents.CityStates_ConfirmWarDialog.Add(OnShow);

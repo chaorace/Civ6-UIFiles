@@ -85,11 +85,7 @@ end
 -------------------------------------------------------------------------------
 function SetMapPinIcon(imageControl :table, mapPinIconName :string)
 	if(imageControl ~= nil and mapPinIconName ~= nil) then
-		local iconName = mapPinIconName;
-		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconName);
-		if (textureSheet ~= nil) then			--Check to make sure that the unknown index is also defined...
-			imageControl:SetTexture( textureOffsetX, textureOffsetY, textureSheet );
-		end
+		imageControl:SetIcon(mapPinIconName);
 	end
 end
 

@@ -178,6 +178,9 @@ function GetData()
 			
 		kCityData[cityName] = data;
 
+		-- Add outgoing route data
+		data.OutgoingRoutes = pCity:GetTrade():GetOutgoingRoutes();
+
 		-- Add resources
 		if m_debugNumResourcesStrategic > 0 or m_debugNumResourcesLuxuries > 0 or m_debugNumBonuses > 0 then
 			for debugRes=1,m_debugNumResourcesStrategic,1 do
@@ -232,13 +235,24 @@ function GetData()
 
 
 	-- Units (TODO: Group units by promotion class and determine total maintenance cost)
+	local MaintenanceDiscountPerUnit:number = pTreasury:GetMaintDiscountPerUnit();
 	local pUnits :table = player:GetUnits(); 	
-	for i, unit in pUnits:Members() do
-		--local unitTypeName = UnitManager.GetTypeName(unit)
-		--if "UNIT_SETTLER" == unitTypeName then
-		--end
+	for i, pUnit in pUnits:Members() do
+		local pUnitInfo:table = GameInfo.Units[pUnit:GetUnitType()];
+		local TotalMaintenanceAfterDiscount:number = pUnitInfo.Maintenance - MaintenanceDiscountPerUnit;
+		if TotalMaintenanceAfterDiscount > 0 then
+			if kUnitData[pUnitInfo.UnitType] == nil then
+				local UnitEntry:table = {};
+				UnitEntry.Name = pUnitInfo.Name;
+				UnitEntry.Count = 1;
+				UnitEntry.Maintenance = TotalMaintenanceAfterDiscount;
+				kUnitData[pUnitInfo.UnitType] = UnitEntry;
+			else
+				kUnitData[pUnitInfo.UnitType].Count = kUnitData[pUnitInfo.UnitType].Count + 1;
+				kUnitData[pUnitInfo.UnitType].Maintenance = kUnitData[pUnitInfo.UnitType].Maintenance + TotalMaintenanceAfterDiscount;
+			end
+		end
 	end
-	
 	
 	local kDealData	:table = {};
 	local kPlayers	:table = PlayerManager.GetAliveMajors();
@@ -698,6 +712,71 @@ function ViewYieldsPage()
 			end
 		end
 
+		-- Display wonder yields
+		if kCityData.Wonders then
+			for _, wonder in ipairs(kCityData.Wonders) do
+				if wonder.Yields[1] ~= nil then
+					local pLineItemInstance:table = {};
+					ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
+					pLineItemInstance.LineItemName:SetText( wonder.Name );
+
+					-- Show yields
+					for _, yield in ipairs(wonder.Yields) do
+						if (yield.YieldType == "YIELD_FOOD") then
+							pLineItemInstance.Food:SetText( toPlusMinusNoneString(yield.YieldChange) );
+						elseif (yield.YieldType == "YIELD_PRODUCTION") then
+							pLineItemInstance.Production:SetText( toPlusMinusNoneString(yield.YieldChange) );
+						elseif (yield.YieldType == "YIELD_GOLD") then
+							pLineItemInstance.Gold:SetText( toPlusMinusNoneString(yield.YieldChange) );
+						elseif (yield.YieldType == "YIELD_SCIENCE") then
+							pLineItemInstance.Science:SetText( toPlusMinusNoneString(yield.YieldChange) );
+						elseif (yield.YieldType == "YIELD_CULTURE") then
+							pLineItemInstance.Culture:SetText( toPlusMinusNoneString(yield.YieldChange) );
+						elseif (yield.YieldType == "YIELD_FAITH") then
+							pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.YieldChange) );
+						end
+					end
+				end
+			end
+		end
+
+		-- Display route yields
+		if kCityData.OutgoingRoutes then
+			for i,route in ipairs(kCityData.OutgoingRoutes) do
+				if route ~= nil then
+					if route.OriginYields then
+						-- Find destination city
+						local pDestPlayer:table = Players[route.DestinationCityPlayer];
+						local pDestPlayerCities:table = pDestPlayer:GetCities();
+						local pDestCity:table = pDestPlayerCities:FindID(route.DestinationCityID);
+
+						local pLineItemInstance:table = {};
+						ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
+						pLineItemInstance.LineItemName:SetText( Locale.Lookup("LOC_HUD_REPORTS_TRADE_WITH", Locale.Lookup(pDestCity:GetName()) ));
+
+						for j,yield in ipairs(route.OriginYields) do
+							local yieldInfo = GameInfo.Yields[yield.YieldIndex];
+							if yieldInfo then
+								if (yieldInfo.YieldType == "YIELD_FOOD") then
+									pLineItemInstance.Food:SetText( toPlusMinusNoneString(yield.Amount) );
+								elseif (yieldInfo.YieldType == "YIELD_PRODUCTION") then
+									pLineItemInstance.Production:SetText( toPlusMinusNoneString(yield.Amount) );
+								elseif (yieldInfo.YieldType == "YIELD_GOLD") then
+									pLineItemInstance.Gold:SetText( toPlusMinusNoneString(yield.Amount) );
+								elseif (yieldInfo.YieldType == "YIELD_SCIENCE") then
+									pLineItemInstance.Science:SetText( toPlusMinusNoneString(yield.Amount) );
+								elseif (yieldInfo.YieldType == "YIELD_CULTURE") then
+									pLineItemInstance.Culture:SetText( toPlusMinusNoneString(yield.Amount) );
+								elseif (yieldInfo.YieldType == "YIELD_FAITH") then
+									pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.Amount) );
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+
 		local pLineItemInstance:table = {};
 		ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
 		pLineItemInstance.LineItemName:SetText( Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES") );
@@ -764,6 +843,33 @@ function ViewYieldsPage()
 	SetGroupCollapsePadding(instance, pBuildingFooterInstance.Top:GetSizeY() );
 	RealizeGroup( instance );
 
+	-- ========== Unit Expenses ==========
+
+	instance = NewCollapsibleGroupInstance();
+	instance.RowHeaderButton:SetText( Locale.Lookup("LOC_HUD_REPORTS_ROW_UNIT_EXPENSES") );
+
+	-- Header
+	local pHeader:table = {};
+	ContextPtr:BuildInstanceForControl( "UnitExpensesHeaderInstance", pHeader, instance.ContentStack ) ;
+
+	-- Units
+	local iTotalUnitMaintenance:number = 0;
+	for UnitType,kUnitData in pairs(m_kUnitData) do
+		local pUnitInstance:table = {};
+		ContextPtr:BuildInstanceForControl( "UnitExpensesEntryInstance", pUnitInstance, instance.ContentStack );
+		pUnitInstance.UnitName:SetText(Locale.Lookup( kUnitData.Name ));
+		pUnitInstance.UnitCount:SetText(kUnitData.Count);
+		pUnitInstance.Gold:SetText("-" .. kUnitData.Maintenance);
+		iTotalUnitMaintenance = iTotalUnitMaintenance + kUnitData.Maintenance;
+	end
+
+	-- Footer
+	local pUnitFooterInstance:table = {};		
+	ContextPtr:BuildInstanceForControl( "GoldFooterInstance", pUnitFooterInstance, instance.ContentStack ) ;		
+	pUnitFooterInstance.Gold:SetText("[ICON_Gold]-"..tostring(iTotalUnitMaintenance) );
+
+	SetGroupCollapsePadding(instance, pUnitFooterInstance.Top:GetSizeY() );
+	RealizeGroup( instance );
 	
 	-- ========== Diplomatic Deals Expenses ==========
 	

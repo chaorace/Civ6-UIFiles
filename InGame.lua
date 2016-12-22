@@ -97,16 +97,18 @@ end
 function OnShow()
 	Controls.WorldViewControls:SetHide( false );
 
-	if GameConfiguration.IsAnyMultiplayer() then
-		if GameConfiguration.IsHotseat() then
-			Steam.SetRichPresence("civPresence", "LOC_PRESENCE_IN_GAME_HOTSEAT");
-		elseif GameConfiguration.IsLANMultiplayer() then
-			Steam.SetRichPresence("civPresence", "LOC_PRESENCE_IN_GAME_LAN");
+	if (Steam ~= nil) then
+		if (GameConfiguration.IsAnyMultiplayer()) then
+			if GameConfiguration.IsHotseat() then
+				Steam.SetRichPresence("civPresence", "LOC_PRESENCE_IN_GAME_HOTSEAT");
+			elseif GameConfiguration.IsLANMultiplayer() then
+				Steam.SetRichPresence("civPresence", "LOC_PRESENCE_IN_GAME_LAN");
+			else
+				Steam.SetRichPresence("civPresence", "LOC_PRESENCE_IN_GAME_ONLINE");
+			end
 		else
-			Steam.SetRichPresence("civPresence", "LOC_PRESENCE_IN_GAME_ONLINE");
+			Steam.SetRichPresence("civPresence", "LOC_PRESENCE_IN_GAME_SP");
 		end
-	else
-		Steam.SetRichPresence("civPresence", "LOC_PRESENCE_IN_GAME_SP");
 	end
 end
 
@@ -165,6 +167,7 @@ function OnInputActionTriggered( actionId )
             gameFile.IsQuicksave = true;
 
             Network.SaveGame(gameFile);
+            UI.PlaySound("Confirm_Bed_Positive");
         end
     end
 end

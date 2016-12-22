@@ -187,17 +187,6 @@ function OnCloudCheck( )
 	SetupFileList();
 end
 
-----------------------------------------------------------------        
-----------------------------------------------------------------
-function OnShowReferencedPackages()
-	Controls.ReferencedPackagesWindow:SetHide(false);
-end
-
-----------------------------------------------------------------        
-----------------------------------------------------------------
-function OnCloseReferencedPackages()
-	Controls.ReferencedPackagesWindow:SetHide(true);
-end
 
 ---------------------------------------------------------------- 
 -- Event Handler: ChangeMPLobbyMode
@@ -311,7 +300,6 @@ function Resize()
 	end
 	Controls.LogoContainer:SetHide(hideLogo);
 	Controls.MainGrid:ReprocessAnchoring();
-	Controls.ReferencedPackagesWindow:ReprocessAnchoring();
 end
 
 function OnUpdateUI( type:number, tag:string, iData1:number, iData2:number, strData1:string )   
@@ -327,7 +315,6 @@ function Initialize()
 	m_kPopupDialog:SetSize(400,200);
 
 	AutoSizeGridButton(Controls.BackButton,133,36);
-	AutoSizeGridButton(Controls.ShowModsButton,133,36);
 	SetupSortPulldown();
 	Resize();
 
@@ -346,13 +333,9 @@ function Initialize()
 	Controls.AutoCheck:RegisterCallback( Mouse.eLClick, OnAutoCheck );
 	Controls.BackButton:RegisterCallback( Mouse.eLClick, OnBack );
 	Controls.BackButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-	Controls.CloseReferencedPackagesButton:RegisterCallback( Mouse.eLClick, OnCloseReferencedPackages);
-	Controls.CloseReferencedPackagesButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.CloudCheck:RegisterCallback( Mouse.eLClick, OnCloudCheck );
 	Controls.Delete:RegisterCallback( Mouse.eLClick, OnDelete );
 	Controls.Delete:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-	Controls.ShowModsButton:RegisterCallback( Mouse.eLClick, OnShowReferencedPackages );
-	Controls.ShowModsButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
 	-- LUA Events
 	--??TRON remove LuaEvents.Lobby_ShowLoadScreen.Add(function() m_showMainMenuOnHide = false; end);

@@ -69,8 +69,8 @@
 
   <GreatWorksName						Style="FontFlair24" Color0="70,70,70,255" Color1="255,255,255,255" SmallCaps="30" SmallCapsLeading="0" SmallCapsType="FirstWord"/>
   <GreatWorksQuote					Style="FontFlair16" Color0="70,70,70,255" Color1="255,255,255,255" SmallCaps="16"/>
-  <GreatWorksWritingName					Style="FontFlair26" Color0="72,71,66,255" Color1="214,199,166,255" FontStyle="Stroke" SmallCaps="30" SmallCapsLeading="0" SmallCapsType="FirstWord"/>
-  <GreatWorksWritingQuote					Style="FontFlair20" Color0="72,71,66,255" Color1="214,199,166,255" FontStyle="Stroke"/>
+  <GreatWorksWritingName					Style="FontFlair26" Color0="72,71,66,255" SmallCaps="30" SmallCapsLeading="0" SmallCapsType="FirstWord"/>
+  <GreatWorksWritingQuote					Style="FontFlair20" Color0="72,71,66,255"/>
   <GreatWorksDetails				Style="FontNormal10" Color="208,212,217,255"/>
 
   <VictoryHeader       Style="FontFlair40" SmallCaps="50" SmallCapsLeading="0" FontStyle="Shadow" SmallCapsType="EveryWord" Color="224,184,119,255" GradientColor="248,241,227,255" EffectColor="0,0,0,70" />
@@ -478,6 +478,9 @@
                    SliceSize="1,1"
                    SliceTextureSize="45,24" 
 									 States="8"
+									 />
+	<CheckBoxModsControl Style="ButtonFont" TextOffset="-10,0" ButtonTexture="Shell_ButtonControl" ButtonSize="22,22"
+						 CheckTexture="Controls_CheckmarkBlue" CheckSize="19,18" CheckOffset="2,2"
 									 />
 
   <!-- *********************************************************************************** -->

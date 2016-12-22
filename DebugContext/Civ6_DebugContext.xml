@@ -6,10 +6,6 @@
 		<Label ID="Text"  WrapWidth="770" Style="FontNormal14" ColorSet="Beige_Black_Alpha" FontSize="14" />
 	</Instance>
 
-	<Context		ID="DebugContextPanels"		FileName="UI/DebugContext/DebugContextPanels" Hidden="0"  />
-	<Context		ID="TestContext"					FileName="UI/Civ6_UITestMenu"									Hidden="1"  />
-	<Context		ID="DebugUnitPanel"				FileName="UI/DebugContext/DebugUnitPanel"			Hidden="1"  />
-	<Context		ID="StatsScreen"					FileName="UI/FrontEnd/StatsScreen"						Hidden="1" />
 	<LuaContext ID="DebugHotloadCache"		FileName="UI/DebugContext/DebugHotloadCache"	Hidden="0" />
 
 	<Stack ID="DebugStack" >

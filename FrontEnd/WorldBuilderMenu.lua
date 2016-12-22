@@ -4,7 +4,7 @@
 -- ===========================================================================
 function OnNewWorldBuilderMap()
 	GameConfiguration.SetToDefaults();
-	GameConfiguration.SetWorldBuilder(true);
+	GameConfiguration.SetWorldBuilderEditor(true);
 	local advancedSetup = ContextPtr:LookUpControl( "/FrontEnd/MainMenu/AdvancedSetup" );
 	UIManager:QueuePopup(advancedSetup, PopupPriority.Current);
 end
@@ -15,7 +15,7 @@ Controls.NewWorldBuilderMap:RegisterCallback( Mouse.eLClick, OnNewWorldBuilderMa
 function OnLoadWorldBuilderMap()
 	GameConfiguration.SetToDefaults();
 	LuaEvents.MainMenu_SetLoadGameServerType(ServerType.SERVER_TYPE_NONE);
-	GameConfiguration.SetWorldBuilder(true);
+	GameConfiguration.SetWorldBuilderEditor(true);
 	local loadGameMenu = ContextPtr:LookUpControl( "/FrontEnd/MainMenu/LoadGameMenu" );
 	UIManager:QueuePopup(loadGameMenu, PopupPriority.Current);	
 end
@@ -25,7 +25,7 @@ Controls.LoadWorldBuilderMap:RegisterCallback( Mouse.eLClick, OnLoadWorldBuilder
 -- Back Button Handler
 -------------------------------------------------
 function BackButtonClick()
-	GameConfiguration.SetWorldBuilder(false);
+	GameConfiguration.SetWorldBuilderEditor(false);
 	UIManager:DequeuePopup( ContextPtr );
 end
 Controls.BackButton:RegisterCallback( Mouse.eLClick, BackButtonClick );

@@ -84,7 +84,10 @@ local g_steamFriendActionsNoInvite =
 	{ name ="LOC_FRIEND_ACTION_CHAT",		tooltip = "LOC_FRIEND_ACTION_CHAT_TT",		action = "chat" },	
 };
 
-local g_currentMaxPlayers = math.min(MapConfiguration.GetMaxMajorPlayers(), 12);	
+local MAX_EVER_PLAYERS : number = 12; -- hardwired max possible players in multiplayer, determined by how many players 
+local MIN_EVER_PLAYERS : number = 2;  -- hardwired min possible players in multiplayer, the game does bad things if there aren't at least two players on different teams.
+local g_currentMaxPlayers : number = MAX_EVER_PLAYERS;
+local g_currentMinPlayers : number = MIN_EVER_PLAYERS;
 	
 local PlayerConnectedChatStr = Locale.Lookup( "LOC_MP_PLAYER_CONNECTED_CHAT" );
 local PlayerDisconnectedChatStr = Locale.Lookup( "LOC_MP_PLAYER_DISCONNECTED_CHAT" );
@@ -108,6 +111,7 @@ local PLAYER_LIST_SIZE_HOTSEAT	:number = 535;
 local GRID_LINE_WIDTH			:number = 1020;
 local GRID_LINE_HEIGHT			:number = 51;
 local NUM_COLUMNS				:number = 5;
+
 -------------------------------------------------
 -- Localized Constants
 -------------------------------------------------
@@ -129,16 +133,35 @@ function OnInputHandler( uiMsg, wParam, lParam )
 	return false;
 end
 
+----------------------------------------------------------------  
+-- Helper Functions
+---------------------------------------------------------------- 
+function SetCurrentMaxPlayers( newMaxPlayers : number )
+	g_currentMaxPlayers = math.min(newMaxPlayers, MAX_EVER_PLAYERS);
+end
+
+function SetCurrentMinPlayers( newMinPlayers : number )
+	g_currentMinPlayers = math.max(newMinPlayers, MIN_EVER_PLAYERS);
+end
 
 ----------------------------------------------------------------  
 -- Event Handlers
 ---------------------------------------------------------------- 
 function OnMapMaxMajorPlayersChanged(newMaxPlayers : number)
 	if(g_currentMaxPlayers ~= newMaxPlayers) then
-		g_currentMaxPlayers = math.min(newMaxPlayers, 12);
+		SetCurrentMaxPlayers(newMaxPlayers);
 		if(ContextPtr:IsHidden() == false) then
 			CheckGameAutoStart();	-- game start can change based on the new max players.
 			BuildPlayerList();	-- rebuild player list because several player slots will have changed.
+		end
+	end
+end
+
+function OnMapMinMajorPlayersChanged(newMinPlayers : number)
+	if(g_currentMinPlayers ~= newMinPlayers) then
+		SetCurrentMinPlayers(newMinPlayers);
+		if(ContextPtr:IsHidden() == false) then
+			CheckGameAutoStart();	-- game start can change based on the new min players.
 		end
 	end
 end
@@ -153,6 +176,7 @@ function OnGameConfigChanged()
 		CheckGameAutoStart();  -- Toggling "No Duplicate Leaders" can affect the start countdown.
 	end
 	OnMapMaxMajorPlayersChanged(MapConfiguration.GetMaxMajorPlayers());	
+	OnMapMinMajorPlayersChanged(MapConfiguration.GetMinMajorPlayers());
 end
 
 -------------------------------------------------
@@ -603,7 +627,9 @@ end
 -- OnInviteButton
 -------------------------------------------------
 function OnInviteButton()
-	Steam.ActivateInviteOverlay();
+	if (Steam ~= nil) then
+		Steam.ActivateInviteOverlay();
+	end
 end
 
 -------------------------------------------------
@@ -676,7 +702,7 @@ end
 -------------------------------------------------
 function CheckGameAutoStart()
 	-- Check to see if we should start/stop the multiplayer game.
-	if(not GameConfiguration.IsHotseat()) then
+	if(not Network.IsPlayerHotJoining(Network.GetLocalPlayerID())) then
 		local startCountdown = true;
 
 		--reset global blocking variables because we're going to recalculate them.
@@ -717,20 +743,22 @@ function CheckGameAutoStart()
 					g_badPlayerForMapSize = true;
 				end
 
-				-- Check for duplicate leader blocker
-				if(noDupLeaders) then
-					local err = GetPlayerParameterError(iPlayer)
-					if(err and err.Id == "InvalidDomainValue" and err.Reason == "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS") then
-						startCountdown = false;
+				-- Check for selection error (ownership rules, duplicate leaders, etc)
+				local err = GetPlayerParameterError(iPlayer)
+				if(err) then
+					
+					startCountdown = false;
+					if(noDupLeaders and err.Id == "InvalidDomainValue" and err.Reason == "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS") then
 						g_duplicateLeaders = true;
 					end
 				end
+
 			end
 		end
 
 		-- Check player count
-		if(totalPlayers < 2) then
-			print("CheckGameAutoStart: Can't start game because there are not enough players");
+		if(totalPlayers < g_currentMinPlayers) then
+			print("CheckGameAutoStart: Can't start game because there are not enough players. " .. totalPlayers .. "/" .. g_currentMinPlayers);
 			startCountdown = false;
 			g_notEnoughPlayers = true;
 		end
@@ -747,12 +775,15 @@ function CheckGameAutoStart()
 		end
 
 	
-		if(startCountdown) then
-			-- Everyone has readied up and we can start.
-			StartCountdown();
-		else
-			-- We can't autostart now, stop the countdown incase we started it earlier.
-			StopCountdown();
+		-- Hotseat bypasses the countdown system.
+		if not GameConfiguration.IsHotseat() then
+			if(startCountdown) then
+				-- Everyone has readied up and we can start.
+				StartCountdown();
+			else
+				-- We can't autostart now, stop the countdown incase we started it earlier.
+				StopCountdown();
+			end
 		end
 	end
 	UpdateReadyButton();
@@ -860,12 +891,16 @@ function PopulateSlotTypePulldown( pullDown, playerID, slotTypeOptions )
 		-- This option is a valid swap player option.
 		local showSwapButton = pair.slotStatus == -1 
 			and playerSlotStatus ~= SlotStatus.SS_CLOSED -- Can't swap to closed slots.
+			and not pPlayerConfig:IsLocked() -- Can't swap to locked slots.
 			and not GameConfiguration.IsHotseat(); -- no swap option in hotseat.
 
 		-- This option is a valid slot type option.
 		local showSlotButton = pair.slotStatus ~= -1 
 			and Network.IsHost() -- Only the host can change slot types.
+			-- You can't switch to open/closed if the game is at the minimum player count.
+			and ((pair.slotStatus ~= SlotStatus.SS_CLOSED and pair.slotStatus ~= SlotStatus.SS_OPEN)  or GameConfiguration.GetParticipatingPlayerCount() > g_currentMinPlayers)
 			and (playerSlotStatus ~= SlotStatus.SS_TAKEN or GameConfiguration.IsHotseat()) -- You can only change the slot type of humans while in hotseat.
+			and not pPlayerConfig:IsLocked() -- Can't change the slot type of locked player slots.
 			-- Can normally only change slot types in the pregame unless this is a option that can be changed mid-game in hotseat.
 			and (GameConfiguration.GetGameState() == GameStateTypes.GAMESTATE_PREGAME 
 				or (pair.hotseatInProgress and GameConfiguration.IsHotseat())); 
@@ -1006,9 +1041,12 @@ function UpdatePlayerEntry_SlotTypeDisabled(playerID)
 	local localPlayerConfig = PlayerConfigurations[localPlayerID];
 	local playerEntry = g_PlayerEntries[playerID];
 	if(playerEntry ~= nil) then
+		local slotTypeStack = playerEntry.SlotTypePulldown:GetStack();
 		-- The slot type pulldown handles user access permissions internally (See PopulateSlotTypePulldown()).  
 		-- However, we need to disable the pulldown entirely if the local player has readied up.
-		local bCanChangeSlotType:boolean = not localPlayerConfig:GetReady() and playerID ~= Network.GetLocalPlayerID();
+		local bCanChangeSlotType:boolean = not localPlayerConfig:GetReady() 
+											and playerID ~= Network.GetLocalPlayerID()
+											and slotTypeStack:GetNumChildren() > 0; -- No available slot type options.
 
 		playerEntry.AlternateSlotTypePulldown:SetDisabled(not bCanChangeSlotType);
 		playerEntry.SlotTypePulldown:SetDisabled(not bCanChangeSlotType);
@@ -1033,6 +1071,7 @@ function UpdatePlayerEntry(playerID)
 		-- Can the local player change this slot's attributes (handicap; civ, etc) at this time?
 		local bCanChangePlayerValues = not pPlayerConfig:GetReady()  -- Can't change a slot once that player is ready.
 										and not gameInProgress -- Can't change player values once the game has been started.
+										and not pPlayerConfig:IsLocked() -- Can't change the values of locked players.
 										and (playerID == localPlayerID		-- You can change yourself.
 											-- Game host can alter all the non-human slots if they are not ready.
 											or (slotStatus ~= SlotStatus.SS_TAKEN and Network.IsHost() and not localPlayerConfig:GetReady())
@@ -1318,6 +1357,10 @@ function UpdateReadyButton_Hotseat()
 			Controls.StartLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_READY_BLOCKED_HOTSEAT_INVALID_TEAMS")));
 			Controls.ReadyButton:LocalizeAndSetToolTip("LOC_READY_BLOCKED_HOTSEAT_INVALID_TEAMS_TT");
 			Controls.ReadyButton:SetDisabled(true);
+		elseif(g_duplicateLeaders) then
+			Controls.StartLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS")));
+			Controls.ReadyButton:LocalizeAndSetToolTip("LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS");
+			Controls.ReadyButton:SetDisabled(true);
 		else
 			Controls.StartLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_START_GAME")));
 			Controls.ReadyButton:LocalizeAndSetToolTip("");
@@ -1407,13 +1450,19 @@ function UpdateReadyButton()
 		localPlayerButton:LocalizeAndSetToolTip( "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS");
 	end
 
-	local err = GetPlayerParameterError(localPlayerID);
+	local errorReason;
+	local player_ids = GameConfiguration.GetMultiplayerPlayerIDs();
+	for i, iPlayer in ipairs(player_ids) do	
+		-- Check for selection error (ownership rules, duplicate leaders, etc)
+		local err = GetPlayerParameterError(iPlayer)
+		if(err) then
+			errorReason = err.Reason or "LOC_SETUP_PLAYER_PARAMETER_ERROR"
+		end
+	end
 	-- Block ready up when there is a civ ownership issue.  
 	-- We have to do this because ownership is not communicated to the host.
-	if(err and err.Id == "InvalidDomainValue" and err.Reason == "LOC_SETUP_ERROR_LEADER_NOT_OWNED") then
-		local reason = err.Reason or "LOC_SETUP_PLAYER_PARAMETER_ERROR";
-
-		Controls.StartLabel:SetText("[COLOR_RED]" .. Locale.Lookup(reason) .. "[ENDCOLOR]");
+	if(errorReason) then
+		Controls.StartLabel:SetText("[COLOR_RED]" .. Locale.Lookup(errorReason) .. "[ENDCOLOR]");
 		Controls.ReadyButton:SetDisabled(true)
 		Controls.ReadyCheck:SetDisabled(true);
 		localPlayerButton:SetDisabled(true);
@@ -1562,8 +1611,11 @@ function OnShow()
 	BuildPlayerList();
 	PopulateTargetPull(Controls.ChatPull, Controls.ChatEntry, m_playerTargetEntries, m_playerTarget, false, OnChatPulldownChanged);
 	ShowHideChatPanel();
-	
-	Steam.SetRichPresence("civPresence", Network.IsHost() and "LOC_PRESENCE_HOSTING_GAME" or "LOC_PRESENCE_IN_STAGING_ROOM");
+
+	if (Steam ~= nil) then
+		Steam.SetRichPresence("civPresence", Network.IsHost() and "LOC_PRESENCE_HOSTING_GAME" or "LOC_PRESENCE_IN_STAGING_ROOM");
+	end
+
 	UpdateFriendsList();
 	RealizeInfoTabs();
 	RealizeGridSize();
@@ -1836,7 +1888,7 @@ function IsFriendInGame(friend:table)
 	for i, iPlayer in ipairs(player_ids) do	
 		local curPlayerConfig = PlayerConfigurations[iPlayer];
 		local steamID = curPlayerConfig:GetNetworkIdentifer();
-		if( steamID == friend.ID ) then
+		if( steamID == friend.ID and Network.IsPlayerConnected(iPlayer) ) then
 			return true;
 		end
 	end
@@ -1923,6 +1975,8 @@ end
 --	Initialize screen
 -- ===========================================================================
 function Initialize()
+	SetCurrentMaxPlayers(MapConfiguration.GetMaxMajorPlayers());
+	SetCurrentMinPlayers(MapConfiguration.GetMinMajorPlayers());
 
 	Events.SystemUpdateUI.Add(OnUpdateUI);
 
@@ -1940,7 +1994,9 @@ function Initialize()
 	Controls.ReadyCheck:RegisterCallback( Mouse.eLClick, OnReadyButton );
 	Controls.ReadyCheck:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	
+
 	Events.MapMaxMajorPlayersChanged.Add(OnMapMaxMajorPlayersChanged); 
+	Events.MapMinMajorPlayersChanged.Add(OnMapMinMajorPlayersChanged);
 	Events.MultiplayerPrePlayerDisconnected.Add( OnMultiplayerPrePlayerDisconnected );
 	Events.GameConfigChanged.Add(OnGameConfigChanged);
 	Events.PlayerInfoChanged.Add(OnPlayerInfoChanged);

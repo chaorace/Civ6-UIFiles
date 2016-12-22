@@ -145,8 +145,14 @@ function RefreshMissionOutcome()
 				Controls.SpyPromotionDescription:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_AGENTREADYFORPROMOTION", Locale.Lookup(m_missionHistory.Name)));
 				
 				-- Show loot reward
-				Controls.SpyLootRewardLabel:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_LOOTREWARD_TITLE", GetMissionLootString(m_missionHistory)));
-				Controls.SpyLootRewardDescription:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_LOOTREWARD_DESCRIPTION", GetMissionLootString(m_missionHistory)));
+				local missionLootString:string = GetMissionLootString(m_missionHistory);
+				if missionLootString ~= "" then
+					Controls.SpyLootRewardLabel:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_LOOTREWARD_TITLE", missionLootString));
+					Controls.SpyLootRewardDescription:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_LOOTREWARD_DESCRIPTION", missionLootString));
+					Controls.SpyLootGrid:SetHide(false);
+				else
+					Controls.SpyLootGrid:SetHide(true);
+				end
 
 				Controls.MissionRewardsContainer:SetHide(false);
 				Controls.MissionConsequencesContainer:SetHide(true);
@@ -170,7 +176,7 @@ function RefreshMissionOutcome()
 				end
 
 				-- Don't show the relationship damaged box if we escaped undetected
-				if m_missionHistory.InitialResult == EspionageResultTypes.FAIL_MUST_ESCAPE and m_missionHistory.EscapeResult == EspionageResultTypes.FAIL_MUST_ESCAPE then
+				if (m_missionHistory.InitialResult == EspionageResultTypes.FAIL_MUST_ESCAPE and m_missionHistory.EscapeResult == EspionageResultTypes.FAIL_MUST_ESCAPE) or m_missionHistory.InitialResult == EspionageResultTypes.FAIL_UNDETECTED then
 					Controls.MissionConsequencesContainer:SetHide(true);
 				else
 					Controls.MissionConsequencesContainer:SetHide(false);

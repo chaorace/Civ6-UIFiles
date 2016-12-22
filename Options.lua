@@ -623,9 +623,13 @@ function PopulateGraphicsOptions()
 	);
 
     -- UI Upscale
-    PopulateCheckBox(Controls.UIUpscaleCheckbox, Options.GetAppOption("Video", "UIUpscale"),
+	local iUIScaling = 0;
+	if (Options.GetAppOption("Video", "UIUpscale") > 0.0) then iUIScaling = 1 end;
+    PopulateCheckBox(Controls.UIUpscaleCheckbox, iUIScaling,
         function(option)
-            Options.SetAppOption("Video", "UIUpscale", option);
+			local value = 0.0;
+			if (option) then value = 1.0 end;
+            Options.SetAppOption("Video", "UIUpscale", value);
         end
     );
     Controls.UIUpscaleCheckbox:SetDisabled( Options.IsUIUpscaleAllowed() == 0 );
@@ -1000,6 +1004,9 @@ function PopulateGraphicsOptions()
     -- Water Shader
     PopulateCheckBox(Controls.WaterShaderCheckbox, InvertOptionInt(Options.GetGraphicsOption("General", "UseLowQualityWaterShader")),
         function(option)
+            -- Only high-resolution water shader has reflections
+            Controls.WaterReflectionPassesPullDown:SetDisabled(not option);
+
             Controls.PerformanceSlider:SetStepAndCall(performance_customStep);              -- It's enough to set just one of the Impact sliders to "custom", the logic sets the other one
             Options.SetGraphicsOption("General", "UseLowQualityWaterShader", not option);   -- First set the sliders to "custom", then set the new value, otherwise ProcessExternally() will overwrite the new value with a preset
         end
@@ -1010,7 +1017,8 @@ function PopulateGraphicsOptions()
         function(option)
             Controls.PerformanceSlider:SetStepAndCall(performance_customStep);  -- It's enough to set just one of the Impact sliders to "custom", the logic sets the other one
 		    Options.SetGraphicsOption("General", "SSReflectPasses", option);    -- First set the sliders to "custom", then set the new value, otherwise ProcessExternally() will overwrite the new value with a preset
-	    end
+	    end,
+        Options.GetGraphicsOption("General", "UseLowQualityWaterShader") == 1
     );
 
     -------------------------------------------------------------------------------

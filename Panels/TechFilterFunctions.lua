@@ -358,7 +358,7 @@ function CheckUnlocksForYield(techType, yieldType)
 				if rowDistrictModifier.DistrictType == districtType then
 					local modifierID = rowDistrictModifier.ModifierId;
 					for rowModifierYieldChange in GameInfo.ModifierArguments() do
-						if(rowModifierYieldChange.ModifierId == rowImprovementModifier.ModifierId and rowModifierYieldChange.Name == "ModifierId") then
+						if(rowModifierYieldChange.ModifierId == rowDistrictModifier.ModifierId and rowModifierYieldChange.Name == "ModifierId") then
 							modifierID = rowModifierYieldChange.Value;
 						end
 
