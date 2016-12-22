@@ -40,8 +40,13 @@ function ViewMyRoutes()
 	SetRoutesToCitiesTabSelected(false);
 	SetAvailableRoutesTabSelected(false);
 	
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID == -1) then
+		return;
+	end
+
 	-- Update Header
-	local playerTrade	:table	= Players[Game.GetLocalPlayer()]:GetTrade();
+	local playerTrade	:table	= Players[localPlayerID]:GetTrade();
 	local routesActive	:number = playerTrade:GetNumOutgoingRoutes();
 	local routesCapacity:number = playerTrade:GetOutgoingRouteCapacity();
 	Controls.HeaderLabel:SetText(Locale.ToUpper("LOC_TRADE_OVERVIEW_MY_ROUTES"));
@@ -183,6 +188,11 @@ function ViewAvailableRoutes()
 	SetRoutesToCitiesTabSelected(false);
 	SetAvailableRoutesTabSelected(true);
 
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID == -1) then
+		return;
+	end
+
 	local tradeManager:table = Game.GetTradeManager();
 
 	-- Update Header
@@ -190,7 +200,7 @@ function ViewAvailableRoutes()
 	Controls.ActiveRoutesLabel:SetHide(true);
 
 	-- Gather a list of trade units
-	local pPlayerUnits:table = Players[Game.GetLocalPlayer()]:GetUnits();
+	local pPlayerUnits:table = Players[localPlayerID]:GetUnits();
 	local tradeUnitList:table = {};
 	for i, pUnit in pPlayerUnits:Members() do
 		-- Ignore trade units that have a pending operation

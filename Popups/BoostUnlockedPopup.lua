@@ -115,13 +115,12 @@ function ShowTechBoost(techIndex, iTechProgress, eSource)
 	Controls.ProgressBar:SetPercent(currentPercent);
 
 	-- Update boost description and determine final research percentage
-	local techString = Locale.Lookup(techName)
 	if totalProgress > totalTechCost then
 		endPercent = 1.0;
-		Controls.BoostDescString:SetText(Locale.Lookup("LOC_TECH_BOOST_COMPLETE", techString));
+		Controls.BoostDescString:SetText(Locale.Lookup("LOC_TECH_BOOST_COMPLETE", techName));
 	else
 		endPercent = totalProgress / totalTechCost;
-		Controls.BoostDescString:SetText(Locale.Lookup("LOC_TECH_BOOST_ADVANCED", techString));
+		Controls.BoostDescString:SetText(Locale.Lookup("LOC_TECH_BOOST_ADVANCED", techName));
 	end
 	
 	Controls.ProgressBar:SetAnimationSpeed(.5);
@@ -308,6 +307,19 @@ function OnClose()
 end
 
 -- ===========================================================================
+function OnInputHandler( input )
+	local msg = input:GetMessageType();
+	if (msg == KeyEvents.KeyUp) then
+		local key = input:GetKey();
+		if key == Keys.VK_ESCAPE then
+			OnClose();
+			return true;
+		end
+	end
+	return false;
+end
+
+-- ===========================================================================
 function OnLoadGameViewStateDone()
     m_isPastLoadingScreen = true;
 end
@@ -351,6 +363,7 @@ end
 function Initialize()
 
 	ContextPtr:SetInitHandler( OnInit );
+	ContextPtr:SetInputHandler( OnInputHandler, true );
 
 	-- Control Events
 	Controls.ContinueButton:RegisterCallback( eLClick, OnClose );

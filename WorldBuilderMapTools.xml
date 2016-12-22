@@ -2,11 +2,11 @@
 
 <Context Name="WorldBuilderMapTools">
 
-    <TabControl ID="TabControl" Anchor="R,B" Size="370,450">
+    <TabControl ID="TabControl" Anchor="R,B" Size="370,600">
       <Stack Size="parent,parent" StackGrowth="Bottom">
 
         <!--Tab Container-->
-        <GridButton Style="WindowFrameHUD" Size="parent,410" NoStateChange="1">
+        <GridButton Style="WindowFrameHUD" Size="parent,560" NoStateChange="1">
           <Container ID="TabContainer" Offset="10,10">
             <LuaContext	ID="WorldBuilderPlotEditor"	FileName="WorldBuilderPlotEditor"/>
             <LuaContext	ID="WorldBuilderPlacement"	FileName="WorldBuilderPlacement"/>

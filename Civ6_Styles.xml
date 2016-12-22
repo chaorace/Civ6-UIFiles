@@ -14,6 +14,7 @@
   <d5 Color="0,0,211,100"		Size="50,50" />
   <d6 Color="211,0,211,100" Size="50,50" />
 
+  <WhiteSemiBold18					Style="FontNormal18"		FontStyle="shadow"	Color0="208,212,217,255"	Color1="0,0,0,150" />
   <WhiteSemiBold14					Style="FontNormal14"		FontStyle="shadow"	Color0="208,212,217,255"	Color1="0,0,0,150" />
   <WhiteSemiBold12					Style="FontNormal12"		FontStyle="shadow"	Color0="208,212,217,255"	Color1="0,0,0,150" />
 
@@ -33,6 +34,7 @@
   <Button20dark							Style="FontFlair20"			FontStyle="shadow"	Color0="5,29,51,255"			Color1="0,0,0,50" />
   <FlairShadow28						Style="FontFlair28"			FontStyle="shadow"	Color0="208,212,217,255"	Color1="0,0,0,200"/>
   <FlairShadow26						Style="FontFlair26"			FontStyle="shadow"	Color0="208,212,217,255"	Color1="0,0,0,200"/>
+  <FlairShadow22						Style="FontFlair22"			FontStyle="shadow"	Color0="208,212,217,255"	Color1="0,0,0,200"/>
   <BlueGlow		    					Style="FontNormal16"		FontStyle="glow"	  ColorSet="BlueGlow" />
 
   <StrongSmall							Style="FontFlair16"			FontStyle="stroke"	Color0="208,212,217,255"	Color1="0,0,0,200" />
@@ -71,6 +73,9 @@
   <GreatWorksWritingQuote					Style="FontFlair20" Color0="72,71,66,255" Color1="214,199,166,255" FontStyle="Stroke"/>
   <GreatWorksDetails				Style="FontNormal10" Color="208,212,217,255"/>
 
+  <VictoryHeader       Style="FontFlair40" SmallCaps="50" SmallCapsLeading="0" FontStyle="Shadow" SmallCapsType="EveryWord" Color="224,184,119,255" GradientColor="248,241,227,255" EffectColor="0,0,0,70" />
+  <VictorySubHeader       Style="FontFlair24" FontStyle="Shadow" Color="229,219,198,255" EffectColor="0,0,0,70"	/>
+  
   <!-- Window Fonts and Container Fonts -->
   <HeaderFont			FontStyle="stroke"	Color0="255,255,255,255"	Color1="0,0,0,200"	Style="FontBoldFlair18" Align="Center" SmallCaps="26" SmallCapsType="FirstWord" />
   <BodyFont				FontStyle="Shadow"	Color0="5,29,51,255"			Color1="0,0,0,50"		Style="FontNormal20" />
@@ -280,89 +285,139 @@
   <ChatPullDown AutoSizePopup="1" >
     <ButtonData>
       <GridButton Style="ButtonControl" Anchor="L,C" Size="parent,parent" TextColor="0,0,0,0">
-        <Image Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,0" Offset="3,0"  Size="20,16" Anchor="R,B"  />
-        <Image ShowOnMouseOver="1" Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,16" Offset="3,0"  Size="20,16" Anchor="R,B"  />
-        <Label ID="ChatIcon" Offset="5,7" String="[ICON_Global]"/>
-        <Line Start="33,0" End="33,parent" Width="2" Color="0,0,0,255" />
-        <Box Anchor="L,B" Offset="35,0" Size="230,26" Color="0,0,0,0" ConsumeMouse="1">
-          <EditBox	ID="ChatEntry" Anchor="C,C" Offset="0,0"	Size="parent,16" MaxLength="255" KeepFocus="1" />
+        <Image Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,0" Offset="3,0"  Size="20,16" Anchor="R,C"  />
+        <Image ShowOnMouseOver="1" Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,16" Offset="3,0"  Size="20,16" Anchor="R,C"  />
+        <Label ID="ChatIcon" Offset="5,2" String="[ICON_Global]" Style="FontNormal22"/>
+        <Box Offset="30,0" Anchor="L,C" Size="parent-52,parent" Color="0,0,0,0" ConsumeMouse="1">
+          <Box Anchor="L,C" Size="parent,parent-10" Color="0,0,0,60">
+            <EditBox	ID="ChatEntry" Anchor="C,C" Offset="1,0"	Size="parent,16" MaxLength="255" KeepFocus="1" Style="FontNormal14"		FontStyle="glow"		Color0="208,212,217,255"	Color1="16,43,67,100" CursorColor="194,194,204"/>
+            <Box Size="1,parent" Anchor="R,C" Color="0,0,0,150" />
+            <Box Size="1,parent" Anchor="L,C" Color="0,0,0,150" />
+          </Box>
         </Box>
       </GridButton>
     </ButtonData>
 
-    <GridData Style="UnitFrame" Anchor="C,B" Offset="0,0" AnchorSide="I,O"  Padding="5,5" />
+    <GridData Offset="0,24" Texture="Controls_DropdownPanel" InnerPadding="0,6" SliceCorner="10,10" SliceTextureSize="22,22"/>
 
     <ScrollPanelData Anchor="C,C" Vertical="1" Size="parent,parent" AutoScrollBar="1" >
       <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"   />
     </ScrollPanelData>
 
-    <StackData StackGrowth="Bottom" Padding="0" Anchor="C,T" />
+    <ScrollPanelData Anchor="C,C" Vertical="1" Size="parent,parent" AutoScrollBar="1" >
+      <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"   />
+    </ScrollPanelData>
 
     <InstanceData Name="InstanceOne" >
-      <GridButton Style="ButtonControl" ID="Button" Anchor="L,T"	Size="190,27" TextColor="0,0,0,0">
-        <Label ID="ChatIcon" Offset="5,8" String="[ICON_Global]"/>
-        <Label ID="ChatLabel" Offset="35,6" String="" Style="FontNormal12"/>
+      <GridButton Style="ButtonControl" ID="Button" Anchor="C,T"	Size="185,27"  FontStyle="glow" ColorSet="BlueGlow" TextAnchor="L,C" TextOffset="30,0">
+        <Label ID="ChatIcon" Offset="5,3" String="[ICON_Global]" Style="FontNormal22"/>
       </GridButton>
     </InstanceData>
+    
   </ChatPullDown>
 
   <ExpandedChatPullDown AutoSizePopup="1" >
     <ButtonData>
       <GridButton Style="ButtonControl" Anchor="L,C" Size="parent,parent" TextColor="0,0,0,0">
-        <Image Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,0" Offset="3,0"  Size="20,16" Anchor="R,B"  />
-        <Image ShowOnMouseOver="1" Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,16" Offset="3,0"  Size="20,16" Anchor="R,B"  />
-        <Label ID="ExpandedChatIcon" Offset="5,7" String="[ICON_Global]"/>
-        <Line Start="33,0" End="33,parent" Width="2" Color="0,0,0,255" />
-        <Box Anchor="L,B" Offset="35,0" Size="230,26" Color="0,0,0,0" ConsumeMouse="1">
-          <EditBox	ID="ExpandedChatEntry" Anchor="C,C" Offset="0,0"	Size="parent,16" MaxLength="255" KeepFocus="1" />
+        <Image Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,0" Offset="3,0"  Size="20,16" Anchor="R,C"  />
+        <Image ShowOnMouseOver="1" Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,16" Offset="3,0"  Size="20,16" Anchor="R,C"  />
+        <Label ID="ExpandedChatIcon" Offset="5,2" String="[ICON_Global]" Style="FontNormal22"/>
+        <Box Offset="30,0" Anchor="L,C" Size="parent-52,parent" Color="0,0,0,0" ConsumeMouse="1">
+          <Box Anchor="L,C" Size="parent,parent-10" Color="0,0,0,60">
+            <EditBox	ID="ExpandedChatEntry" Anchor="C,C" Offset="1,0"	Size="parent,16" MaxLength="255" KeepFocus="1" Style="FontNormal14"		FontStyle="glow"		Color0="208,212,217,255"	Color1="16,43,67,100" CursorColor="194,194,204"/>
+            <Box Size="1,parent" Anchor="R,C" Color="0,0,0,150" />
+            <Box Size="1,parent" Anchor="L,C" Color="0,0,0,150" />
+          </Box>
         </Box>
       </GridButton>
     </ButtonData>
 
-    <GridData Style="UnitFrame" Anchor="C,B" Offset="0,0" AnchorSide="I,O"  Padding="5,5" />
+    <GridData Offset="0,24" Texture="Controls_DropdownPanel" InnerPadding="0,6" SliceCorner="10,10" SliceTextureSize="22,22"/>
 
     <ScrollPanelData Anchor="C,C" Vertical="1" Size="parent,parent" AutoScrollBar="1" >
       <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"   />
     </ScrollPanelData>
 
-    <StackData StackGrowth="Bottom" Padding="0" Anchor="C,T" />
+    <ScrollPanelData Anchor="C,C" Vertical="1" Size="parent,parent" AutoScrollBar="1" >
+      <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"   />
+    </ScrollPanelData>
 
     <InstanceData Name="InstanceOne" >
-      <GridButton Style="ButtonControl" ID="Button" Anchor="L,T"	Size="190,27" TextColor="0,0,0,0">
-        <Label ID="ChatIcon" Offset="5,8" String="[ICON_Global]"/>
-        <Label ID="ChatLabel" Offset="35,6" String="" Style="FontNormal12"/>
+      <GridButton Style="ButtonControl" ID="Button" Anchor="C,T"	Size="185,27"  FontStyle="glow" ColorSet="BlueGlow" TextAnchor="L,C" TextOffset="30,0">
+        <Label ID="ChatIcon" Offset="5,3" String="[ICON_Global]" Style="FontNormal22"/>
       </GridButton>
     </InstanceData>
+    
   </ExpandedChatPullDown>
 
   <StagingRoomPullDown AutoSizePopup="1" >
     <ButtonData>
       <GridButton Style="ButtonControl" Anchor="L,C" Size="parent,parent" TextColor="0,0,0,0">
-        <Image Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,0" Offset="3,0"  Size="20,16" Anchor="R,B"  />
-        <Image ShowOnMouseOver="1" Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,16" Offset="3,0"  Size="20,16" Anchor="R,B"  />
-        <Label ID="ChatIcon" Offset="5,2" String="[ICON_Global]"/>
-        <Line Start="33,0" End="33,parent" Width="2" Color="0,0,0,255" />
-        <Box Anchor="L,B" Offset="35,0" Size="parent-60,26" Color="0,0,0,0" ConsumeMouse="1">
-          <EditBox	ID="ChatEntry" Anchor="C,C" Offset="1,0"	Size="parent,16" MaxLength="255" KeepFocus="1" FontSize="16"/>
+        <Image Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,0" Offset="3,0"  Size="20,16" Anchor="R,C"  />
+        <Image ShowOnMouseOver="1" Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,16" Offset="3,0"  Size="20,16" Anchor="R,C"  />
+        <Label ID="ChatIcon" Offset="5,2" String="[ICON_Global]" Style="FontNormal22"/>
+        <Box Offset="30,0" Anchor="L,C" Size="parent-52,parent" Color="0,0,0,0" ConsumeMouse="1">
+          <Box Anchor="L,C" Size="parent,parent-10" Color="0,0,0,60">
+            <EditBox	ID="ChatEntry" Anchor="C,C" Offset="1,0"	Size="parent,16" MaxLength="255" KeepFocus="1" Style="FontNormal14"		FontStyle="glow"		Color0="208,212,217,255"	Color1="16,43,67,100" CursorColor="194,194,204"/>
+            <Box Size="1,parent" Anchor="R,C" Color="0,0,0,150" />
+            <Box Size="1,parent" Anchor="L,C" Color="0,0,0,150" />
+          </Box>
         </Box>
       </GridButton>
     </ButtonData>
 
-    <GridData Style="UnitFrame" Anchor="C,B" Offset="0,0" AnchorSide="I,O"  Padding="5,5" />
+    <GridData Offset="0,24" Texture="Controls_DropdownPanel" InnerPadding="0,6" SliceCorner="10,10" SliceTextureSize="22,22"/>
 
     <ScrollPanelData Anchor="C,C" Vertical="1" Size="parent,parent" AutoScrollBar="1" >
       <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"   />
     </ScrollPanelData>
 
-    <StackData StackGrowth="Bottom" Padding="0" Anchor="C,T" />
+    <ScrollPanelData Anchor="C,C" Vertical="1" Size="parent,parent" AutoScrollBar="1" >
+      <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"   />
+    </ScrollPanelData>
 
     <InstanceData Name="InstanceOne" >
-      <GridButton Style="ButtonControl" ID="Button" Anchor="L,T"	Size="190,27" TextColor="0,0,0,0">
-        <Label ID="ChatIcon" Offset="5,3" String="[ICON_Global]"/>
-        <Label ID="ChatLabel" Offset="35,6" String="" Style="FontNormal12"/>
+      <GridButton Style="ButtonControl" ID="Button" Anchor="C,T"	Size="185,27"  FontStyle="glow" ColorSet="BlueGlow" TextAnchor="L,C" TextOffset="30,0">
+        <Label ID="ChatIcon" Offset="5,3" String="[ICON_Global]" Style="FontNormal22"/>
       </GridButton>
     </InstanceData>
   </StagingRoomPullDown>
+
+
+  <VictoryChatPullDown AutoSizePopup="1" >
+    <ButtonData>
+      <GridButton Style="ButtonControl" Anchor="L,C" Size="parent,parent" TextColor="0,0,0,0">
+        <Image Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,0" Offset="3,0"  Size="20,16" Anchor="R,C"  />
+        <Image ShowOnMouseOver="1" Texture="Controls_ButtonExtendSmall2.dds" TextureOffset="0,16" Offset="3,0"  Size="20,16" Anchor="R,C"  />
+        <Label ID="ChatIcon" Offset="5,2" String="[ICON_Global]" Style="FontNormal22"/>
+        <Box Offset="30,0" Anchor="L,C" Size="parent-52,parent" Color="0,0,0,0" ConsumeMouse="1">
+          <Box Anchor="L,C" Size="parent,parent-10" Color="0,0,0,60">
+            <EditBox	ID="ChatEntry" Anchor="C,C" Offset="1,0"	Size="parent,16" MaxLength="255" KeepFocus="1" Style="FontNormal14"		FontStyle="glow"		Color0="208,212,217,255"	Color1="16,43,67,100" CursorColor="194,194,204"/>
+            <Box Size="1,parent" Anchor="R,C" Color="0,0,0,150" />
+            <Box Size="1,parent" Anchor="L,C" Color="0,0,0,150" />
+          </Box>
+        </Box>
+      </GridButton>
+    </ButtonData>
+
+    <GridData Offset="0,24" Texture="Controls_DropdownPanel" InnerPadding="0,6" SliceCorner="10,10" SliceTextureSize="22,22"/>
+
+    <ScrollPanelData Anchor="C,C" Vertical="1" Size="parent,parent" AutoScrollBar="1" >
+      <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"   />
+    </ScrollPanelData>
+
+    <ScrollPanelData Anchor="C,C" Vertical="1" Size="parent,parent" AutoScrollBar="1" >
+      <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"   />
+    </ScrollPanelData>
+
+    <InstanceData Name="InstanceOne" >
+      <GridButton Style="ButtonControl" ID="Button" Anchor="C,T"	Size="185,27"  FontStyle="glow" ColorSet="BlueGlow" TextAnchor="L,C" TextOffset="30,0">
+        <Label ID="ChatIcon" Offset="5,3" String="[ICON_Global]" Style="FontNormal22"/>
+      </GridButton>
+    </InstanceData>
+    
+    
+  </VictoryChatPullDown>
 
   <GenericPullDown AutoSizePopup="1" >
     <ButtonData>
@@ -966,10 +1021,12 @@
     <ButtonData>
       <GridButton  Size="325,45" Style="TabFont" TextAnchor="L,C" TextOffset="100" WrapWidth="200">
         <GridData Texture="Controls_DropDownControlLarge" StateOffsetIncrement="0,45"	SliceCorner="10,15" SliceTextureSize="45,45" />
-        <Container Size="62,62" Anchor="L,C">
+        <Container Size="62,62" Anchor="L,C" Offset="-3,0">
+          <Image Texture="Controls_CircleBacking45" Size="51,51" Anchor="C,C" Offset="-1,0"/>
           <Image ID="CivIcon" Texture="CivDefaults45" Size="45,45" Anchor="C,C" Offset="-1,-1"/>
         </Container>
         <Container Size="62,62" Offset="44,-1" Anchor="L,C">
+          <Image Texture="Controls_CircleBacking45" Size="51,51" Anchor="C,C" Offset="0,1"/>
           <Image ID="LeaderIcon" Texture="Leaders45" Size="45,45" Anchor="C,C"/>
         </Container>
       </GridButton>
@@ -981,7 +1038,7 @@
     <StackData StackGrowth="Bottom" Anchor="C,T"/>
     <InstanceData Name="InstanceOne">
       <GridButton ID="Button" Style="ButtonControl" Anchor="L,T"	Size="315,50" TextAnchor="L,C" TextOffset="100" WrapWidth="200">
-        <Container Size="62,62" Anchor="L,C">
+        <Container Size="62,62" Anchor="L,C" Offset="-3,0">
           <Image ID="CivIcon" Texture="CivDefaults45" Size="45,45" Anchor="C,C" Offset="-1,-1"/>
         </Container>
         <Container Size="62,62" Offset="44,-1" Anchor="L,C">
@@ -1623,8 +1680,45 @@
     <Grid																														  Size="parent,40"						Texture="Controls_SubHeader2" ConsumeMouse="1" SliceCorner="20,2" SliceTextureSize="40,40">
       <Label				ID="ModalScreenTitle" Anchor="C,C"								Style="FontFlair24" FontStyle="glow" ColorSet="ShellHeader" SmallCaps="28" SmallCapsLeading="0" SmallCapsType="EveryWord"/>
     </Grid>
-    <Grid																							Offset="-8,-8"	Size="parent+16,parent+16"	Style="ScreenFrame"/>
-    <Button				ID="ModalScreenClose" Anchor="R,T"																							Style="CloseButtonLarge" Offset="-8,-5" />
+    <Grid	Offset="-8,-8"	Size="parent+16,parent+16"	Style="ScreenFrame"/>
+    
+    <!-- Minispec Yields -->
+    <Grid ID="YieldsContainer" Anchor="R,T" AutoSize="1" AutoSizePadding="20,5" Offset="0,0" Texture="TopBar_YieldFrame" SliceCorner="60,25" SliceSize="1,1" SliceTextureSize="64,54" Hidden="1">
+      <Stack                                    Offset="37,1" StackGrowth="Right" Padding="-1">
+        <Stack				                          StackGrowth="Down" Padding="-1">
+          <Grid	ID="ScienceBacking"							Size="40,24"	Style="YieldBacking" Color="24,156,216,150"	ToolTip="LOC_TOP_PANEL_SCIENCE_YIELD">
+            <Stack		ID="ScienceStack"					Anchor="L,C" Offset="0,2"	StackGrowth="Right">
+              <Label														Anchor="L,B" Offset="0,4"	String="[ICON_ScienceLarge]"/>
+              <Label	ID="SciencePerTurn"				Anchor="C,T"																Style="FontNormal18" ColorSet="ResScienceLabelCS" FontStyle="Stroke" String="0"/>
+            </Stack>
+          </Grid>
+          <Grid				ID="GoldBacking"					Size="40,24" Style="YieldBacking" Color="185,176,70,150">
+            <Stack		ID="GoldStack"						Anchor="L,C" Offset="0,2"	StackGrowth="Right" >
+              <Label														Anchor="L,B" Offset="0,4"	String="[ICON_GoldLarge]"/>
+              <Label	ID="GoldBalance"					Anchor="C,T"								Style="FontNormal18" ColorSet="ResGoldLabelCS" String="?"	/>
+              <Label	ID="GoldPerTurn"											 Offset="2,-2"									Style="FontNormal14" ColorSet="ResGoldLabelCS" FontStyle="Stroke" String="0" />
+            </Stack>
+          </Grid>
+        </Stack>
+        <Stack				                          StackGrowth="Down" Padding="-1">
+          <Grid	ID="CultureBacking"																		Size="40,24"		Style="YieldBacking" Color="254,42,237,100"	ToolTip="LOC_TOP_PANEL_CULTURE_YIELD">
+            <Stack		ID="CultureStack"					Anchor="L,C" Offset="0,2"	StackGrowth="Right">
+              <Label														Anchor="L,B" Offset="0,4"	String="[ICON_CultureLarge]"/>
+              <Label	ID="CulturePerTurn"				Anchor="C,T"																Style="FontNormal18" ColorSet="ResCultureLabelCS" FontStyle="Stroke" String="0"/>
+            </Stack>
+          </Grid>
+          <Grid	ID="FaithBacking"																			Size="40,24"		Style="YieldBacking" Color="99,114,159,200"	ToolTip="LOC_TOP_PANEL_FAITH">
+            <Stack		ID="FaithStack"						Anchor="L,C" Offset="0,2"	StackGrowth="Right">
+              <Label														Anchor="L,B" Offset="0,4"	String="[ICON_FaithLarge]"/>
+              <Label	ID="FaithBalance"					Anchor="C,T"							Style="FontNormal18" ColorSet="ResFaithLabelCS" String="?" />
+              <Label	ID="FaithPerTurn"					Offset="2,-2"																Style="FontNormal14" ColorSet="ResFaithLabelCS" FontStyle="Stroke" String="0"	/>
+            </Stack>
+          </Grid>
+        </Stack>
+      </Stack>
+    </Grid>
+    
+    <Button				ID="ModalScreenClose" Anchor="R,T"																							Style="CloseButtonLarge" Offset="-8,-5"/>
   </ModalScreenWide>
 
 
@@ -1710,7 +1804,6 @@
                  SliceSize="1,1"
                  SliceTextureSize="85,30"
                   />
-  <!-- WHITNEY IS DEPRECATING THIS...-->
   <CityBannerBackground Texture="UI/Art/Screens/InWorld/Banner_BannerBacking"
                   SliceCorner="53,24"
                   SliceSize="1,1"
@@ -1765,6 +1858,7 @@
               SliceCorner="10,10"
               SliceSize="4,3"
               SliceTextureSize="26,26"
+              MinSize="26,26"
                   />
 
   <PurchasePlotText			Style="FontNormal16"	ColorSet="ResGoldLabelCS"       FontStyle="stroke"  />
@@ -1981,7 +2075,8 @@
 	<ReportValueLeftName		Style="FontNormal14"	Align="left"	 Anchor="L,C" FontStyle="Glow" Color0="180,200,230,255"	Color1="7,15,23,255" Offset="5,0" />
 	<ReportTotalText				Style="FontNormal14"	Align="center" Anchor="C,C" FontStyle="Glow" Color0="255,255,255,255" Color1="7,15,23,255" />
 	<ReportEndValueText			Style="FontNormal16"	Align="center" Anchor="C,C" FontStyle="Glow" Color0="127,134,141,255" Color1="7,15,23,255" />
-	<ReportEndTotalText			Style="FontNormal18"	Align="right"	 Anchor="R,C" FontStyle="Glow" Color0="255,255,255,255" Color1="7,15,23,255" />
+	<ReportEndTotalText			Style="FontNormal18"	Align="right"	 Anchor="R,C" FontStyle="Glow" Color0="255,255,255,255" Color1="7,15,23,255" LeadingOffset="-7" />
+	<ReportResourceText			Style="FontNormal18"	Align="left"	 Anchor="L,C" FontStyle="Glow" Color0="180,200,230,255" Color1="7,15,23,255" />
 	<ReportRowStart					Style="FontNormal14"	Align="left"	 Anchor="L,C" FontStyle="Glow" Color0="150,200,255,255" Color1="7,15,23,255" />
 	<ReportBottomLabelText	Style="FontNormal14"	Align="right"	 Anchor="R,C" FontStyle="Glow" Color0="255,255,255,255" Color1="7,15,23,255" />
 	<ReportCityName					Style="FontNormal14" FontStyle="Glow"	Color0="180,200,230,255"	Color1="7,15,23,255" />

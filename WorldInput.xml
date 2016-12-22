@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- Note: Specifying -->
+
 <Context>
   <Container    ID="DebugStuff"       Anchor="L,T"  Size="100,20"  Offset="0,150" Hidden="1" >
     <AlphaAnim  ID="a1"                             Size="20,20"  Offset="0,0," AlphaBegin="1" AlphaEnd="0" Speed="2" Cycle="Once">
@@ -19,14 +19,16 @@
       </Box>
     </AlphaAnim>
   </Container>
+	
   <Container                                        Size="Full,Full">
     <Container  ID="LeftScreenEdge"    Anchor="L,T" Size="30,Full"               />
     <Container  ID="RightScreenEdge"   Anchor="R,T" Size="30,Full"               />
-    <Container  ID="TopScreenEdge"     Anchor="L,T" Size="Full,30" Offset="0,28" />
+		<Container  ID="TopScreenEdge"     Anchor="L,T" Size="Full,60" Offset="0,30" />
     <Container  ID="BottomScreenEdge"  Anchor="L,B" Size="Full,30" Offset="0,0"  />
   </Container>
+	
   <!-- Generic use popup for world view. Defined as last element in XML so it appears on top. -->
-  <Grid Style="PopupDialogGrid"  />
+  <Grid Style="PopupDialogGrid"  />	
   <Instance Name="PopupButtonInstance">
     <GridButton   ID="Button" Size="160,42" Style="MainButton" />
   </Instance>

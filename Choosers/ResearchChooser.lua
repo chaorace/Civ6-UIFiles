@@ -51,6 +51,14 @@ function GetData()
 	local pPlayer		:table  = Players[ePlayer];
 	local pPlayerTechs	:table	= pPlayer:GetTechs();
 	local pResearchQueue:table	= {};
+
+	-- Get recommendations
+	local techRecommendations:table = {};
+	local pGrandAI:table = pPlayer:GetGrandStrategicAI();
+	if pGrandAI then
+		techRecommendations = pGrandAI:GetTechRecommendations();
+	end
+
 	pResearchQueue = pPlayerTechs:GetResearchQueue(pResearchQueue);
 	
 	-- Fill in the "other" (not-current) items
@@ -70,6 +78,18 @@ function GetData()
 					kResearchData.ResearchQueuePosition = i;
 				end
 			end
+
+			-- Determine if this tech is recommended
+			kResearchData.IsRecommended = false;
+			if techRecommendations ~= nil then
+				for i,recommendation in pairs(techRecommendations) do
+					if kResearchData.Hash == recommendation.TechHash then
+						 kResearchData.IsRecommended = true;
+						 kResearchData.AdvisorType = kTech.AdvisorType;
+					end
+				end
+			end
+
 			table.insert( kData, kResearchData ); 
 		end
 	end
@@ -188,6 +208,8 @@ function AddAvailableResearch( playerID:number, kData:table )
 		kItemInstance.NodeNumber:SetHide(true);
 	end 
 
+    kItemInstance.Top:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+
 	-- Set up callback that changes the current research	
 	kItemInstance.Top:RegisterCallback(		Mouse.eLClick,	
 											function()
@@ -199,6 +221,14 @@ function AddAvailableResearch( playerID:number, kData:table )
 		kItemInstance.Top:RegisterCallback(Mouse.eRClick, function() LuaEvents.OpenCivilopedia(kData.TechType); end);
 	end
 	kItemInstance.Top:SetDisabled( isDisabled );
+
+	-- Hide/Show Recommendation Icon
+	if kData.IsRecommended and kData.AdvisorType then
+		kItemInstance.RecommendedIcon:SetIcon(kData.AdvisorType);
+		kItemInstance.RecommendedIcon:SetHide(false);
+	else
+		kItemInstance.RecommendedIcon:SetHide(true);
+	end
 end
 
 -- ===========================================================================

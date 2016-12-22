@@ -25,7 +25,7 @@ include( "SupportFunctions" );
 include( "Civ6Common" );			-- Tutorial check support
 include( "TechAndCivicSupport");	-- (Already includes Civ6Common and InstanceManager) PopulateUnlockablesForTech
 include( "TechFilterFunctions" );
-
+include( "ModalScreen_PlayerYieldsHelper" );
 
 -- ===========================================================================
 --	DEBUG
@@ -700,6 +700,14 @@ function View( playerTechData:table )
 			node.ProgressMeter:SetHide( true );			
 		end
 
+		-- Show/Hide Recommended Icon
+		if live.IsRecommended and live.AdvisorType ~= nil then
+			node.RecommendedIcon:SetIcon(live.AdvisorType);
+			node.RecommendedIcon:SetHide(false);
+		else
+			node.RecommendedIcon:SetHide(true);
+		end
+
 		-- Set art for icon area
 		if(node.Type ~= nil) then
 			local iconName :string = DATA_ICON_PREFIX .. node.Type;
@@ -862,6 +870,15 @@ function GetLivePlayerData( ePlayer:number, eCompletedTech:number )
 	local playerTechs	:table	= kPlayer:GetTechs();
 	local currentTechID	:number = playerTechs:GetResearchingTech();
 
+	-- Get recommendations
+	local techRecommendations:table = {};
+	local kGrandAI:table = kPlayer:GetGrandStrategicAI();
+	if kGrandAI then
+		for i,recommendation in pairs(kGrandAI:GetTechRecommendations()) do
+			techRecommendations[recommendation.TechHash] = recommendation.TechScore;
+		end
+	end
+
 	-- DEBUG: Output header to console.
 	if m_debugOutputTechInfo then
 		print("                          Item Id  Status      Progress   $ Era              Prereqs");
@@ -890,6 +907,14 @@ function GetLivePlayerData( ePlayer:number, eCompletedTech:number )
 			Status		= status,
 			Turns		= turnsLeft
 		}
+
+		-- Determine if tech is recommended
+		if techRecommendations[item.Hash] then
+			data[DATA_FIELD_LIVEDATA][type].AdvisorType = GameInfo.Technologies[item.Type].AdvisorType;
+			data[DATA_FIELD_LIVEDATA][type].IsRecommended = true;
+		else
+			data[DATA_FIELD_LIVEDATA][type].IsRecommended = false;
+		end
 
 		-- DEBUG: Output to console detailed information about the tech.
 		if m_debugOutputTechInfo then
@@ -1314,6 +1339,9 @@ function OnOpen()
 	UI.PlaySound("UI_Screen_Open");
 	View( m_kCurrentData );
 	ContextPtr:SetHide(false);
+
+	-- From ModalScreen_PlayerYieldsHelper
+	RefreshYields();
 
 	-- From Civ6_styles: FullScreenVignetteConsumer
 	Controls.ScreenAnimIn:SetToBeginning();

@@ -46,6 +46,14 @@ function GetData()
 		local pPlayer		:table  = Players[ePlayer];
 		local pPlayerCulture:table	= pPlayer:GetCulture();
 		local pResearchQueue:table	= {};
+
+		-- Get recommendations
+		local civicRecommendations:table = {};
+		local pGrandAI:table = pPlayer:GetGrandStrategicAI();
+		if pGrandAI then
+			civicRecommendations = pGrandAI:GetCivicsRecommendations();
+		end
+
 		pResearchQueue = pPlayerCulture:GetCivicQueue(pResearchQueue);
 	
 		-- Fill in the "other" (not-current) items
@@ -65,6 +73,18 @@ function GetData()
 						kCivicData.ResearchQueuePosition = i;
 					end
 				end
+
+				-- Determine if this civic is recommended
+				kCivicData.IsRecommended = false;
+				if civicRecommendations ~= nil then
+					for i,recommendation in pairs(civicRecommendations) do
+						if kCivicData.Hash == recommendation.CivicHash then
+							kCivicData.IsRecommended = true;
+							kCivicData.AdvisorType = kCivic.AdvisorType;
+						end
+					end
+				end
+
 				table.insert( kData, kCivicData ); 
 			end
 		end
@@ -164,6 +184,14 @@ function AddAvailableCivic( playerID:number, kData:table )
 	-- Only wire up Civilopedia handlers if not in a on-rails tutorial
 	if IsTutorialRunning()==false then
 		kItemInstance.Top:RegisterCallback(Mouse.eRClick, function() LuaEvents.OpenCivilopedia(kData.CivicType); end);
+	end
+		
+	-- Hide/Show Recommendation Icon
+	if kData.IsRecommended then
+		kItemInstance.RecommendedIcon:SetIcon(kData.AdvisorType);
+		kItemInstance.RecommendedIcon:SetHide(false);
+	else
+		kItemInstance.RecommendedIcon:SetHide(true);
 	end
 end
 

@@ -51,6 +51,7 @@
 								<Label			ID="TradingPostDisabledIcon"		Anchor="C,C"	String="[ICON_Exclamation]" Hidden="1"/>
 							</Label>
               <Label				ID="CityUnderSiegeIcon"					Anchor="L,C"	Style="FontNormal20" String="[ICON_UnderSiege]" ConsumeMouse="1" ToolTip="LOC_HUD_REPORTS_STATUS_UNDER_SEIGE"/>
+              <Label				ID="CityOccupiedIcon"	          Anchor="L,C"	Style="FontNormal20" String="[ICON_Occupied]" ConsumeMouse="1" ToolTip="LOC_HUD_CITY_GROWTH_OCCUPIED"/>
               <Label				ID="CityHousingInsufficientIcon"	  Anchor="L,C"	Style="FontNormal20" String="[ICON_HousingInsufficient]"/>
               <Label				ID="CityAmenitiesInsufficientIcon"	Anchor="L,C"	Style="FontNormal20" String="[ICON_AmenitiesInsufficient]"/>
 							<Label				ID="CityQuestIcon"							Anchor="L,C"	Style="FontNormal20" />
@@ -163,7 +164,8 @@
 								<Label			ID="TradingPostDisabledIcon"			Anchor="C,C"	String="[ICON_Exclamation]" Hidden="1"/>
 							</Label>
               <Label				ID="CityUnderSiegeIcon"	          Anchor="L,C"		Style="FontNormal20" String="[ICON_UnderSiege]" ConsumeMouse="1" ToolTip="LOC_HUD_REPORTS_STATUS_UNDER_SEIGE"/>
-							<Label				ID="CityQuestIcon"								Anchor="L,C"		Style="FontNormal20"/>
+              <Label				ID="CityOccupiedIcon"	            Anchor="L,C"	Style="FontNormal20" String="[ICON_Occupied]" ConsumeMouse="1" ToolTip="LOC_HUD_CITY_GROWTH_OCCUPIED"/>
+              <Label				ID="CityQuestIcon"								Anchor="L,C"		Style="FontNormal20"/>
 							<Label				ID="CityName"											Anchor="L,C"		Style="HeaderSmallCaps" String="BALTIMORE" />
 							<Image				ID="ReligionBannerIconContainer"	Anchor="L,C" 		Size="26,26"  Texture="Banner_ProductionCircle" Hidden="1">
 								<Image			ID="ReligionBannerIcon"						Anchor="C,C"		Size="22,22"  Texture="Religions22"/>
@@ -276,6 +278,7 @@
 
         <InstanceData Name="UnitListEntry">
           <GridButton  ID="Button" Style="UnitPanelHeader" Size="200,24" Texture="Controls_ButtonControl.dds" SliceCorner="10,10" SliceSize="1,1" SliceTextureSize="24,24" StateOffsetIncrement="0,24" TruncateWidth="180">
+            <Label ID="UnitName" Anchor="C,C" Offset="0,1" Style="UnitPanelHeader"/>
             <Image ID="UnitTypeIcon" Anchor="L,C" Size="22,22" Offset="2,0" Texture="UnitFlagAtlas22"/>
           </GridButton>
         </InstanceData>
@@ -360,11 +363,12 @@
       </SlideAnim>
     </AlphaAnim>
   </Instance>
-
+  
   <Instance Name="HolySiteIcon">
     <WorldAnchor ID="Anchor" Size="22,22">
-      <Image ID="HolySiteIcon" Size="22,22" Anchor="L,T" Texture="FontIcons" />
-      <Label ID="HolySiteLabel"  Anchor="L,T" Offset ="20,0" Style="FontFlair22" Text="TextLabel" />
+      <Grid    ID="HolySiteBacking" Style="DistrictBonusBack" AutoSize="H" AutoSizePadding="8,0">
+        <Label ID="HolySiteLabel"  Anchor="C,C"  Style="FontNormal16" Text="TextLabel" Offset="-2,-1" FontStyle="Glow" Color="208,212,217,255" EffectColor="88,144,191,100"/>
+      </Grid>
     </WorldAnchor>
   </Instance>
 

@@ -5,6 +5,7 @@
 -- ===========================================================================
 include("TabSupport");
 include("InstanceManager");
+include("ModalScreen_PlayerYieldsHelper");
 
 -- ===========================================================================
 --	CONSTANTS
@@ -77,23 +78,38 @@ local m_SelectedBeliefs		:table;
 local m_ToggleReligionId;
 
 -- ===========================================================================
+function GetDisplayPlayerID()
+
+	if Game.GetLocalObserver() == PlayerTypes.OBSERVER then
+		-- Use the first alive player
+		local aPlayers = PlayerManager.GetAliveMajors();
+		if (#aPlayers > 0) then
+			return aPlayers[1]:GetID();
+		end
+	end
+
+	return Game.GetLocalPlayer();
+end
+
+-- ===========================================================================
 --	Called every time screen is shown
 -- ===========================================================================
 function UpdatePlayerData()
-	if (Game.GetLocalPlayer() ~= -1) then
-		m_LocalPlayer					= Players[Game.GetLocalPlayer()];
+	local displayPlayerID = GetDisplayPlayerID();
+	if (displayPlayerID ~= -1) then
+		m_LocalPlayer					= Players[displayPlayerID];
 		local pPlayerReligion:table		= m_LocalPlayer:GetReligion();
 		m_PantheonBelief				= pPlayerReligion:GetPantheon();
 		m_CanCreatePantheon				= pPlayerReligion:CanCreatePantheon();
 		m_PlayerReligionType			= pPlayerReligion:GetReligionTypeCreated();
-		m_TurnBlockingType				= NotificationManager.GetFirstEndTurnBlocking(Game.GetLocalPlayer());
+		m_TurnBlockingType				= NotificationManager.GetFirstEndTurnBlocking(displayPlayerID);
 		m_NumBeliefsEarned				= pPlayerReligion:GetNumBeliefsEarned();
 		m_isHasProphet					= pPlayerReligion:HasReligiousFoundingUnit();
 	
 		m_NumBeliefsEquipped = 0;
 		local religions = m_pGameReligion:GetReligions();
 		for _, religion in ipairs(religions) do
-			if (religion.Founder == Game.GetLocalPlayer()) then
+			if (religion.Founder == displayPlayerID) then
 				m_NumBeliefsEquipped = table.count(religion.Beliefs);
 				break;
 			end
@@ -923,7 +939,7 @@ function ViewReligion(religionType:number)
 
 	-- Gather player data
 	local ownerPlayer:table = Players[religion.Founder];
-	local localPlayerID:number = Game.GetLocalPlayer();
+	local localPlayerID:number = GetDisplayPlayerID();
 	local localPlayer:table = Players[localPlayerID];
 	local localDiplomacy:table = localPlayer:GetDiplomacy();
 	local playerReligion:table = ownerPlayer:GetReligion();
@@ -932,7 +948,7 @@ function ViewReligion(religionType:number)
 	local belief:table= GameInfo.Beliefs[pantheonBelief];
 	local civID:number = PlayerConfigurations[religion.Founder]:GetCivilizationTypeID();
 
-	if religion.Founder == localPlayerID or localDiplomacy:HasMet(religion.Founder) then
+	if religion.Founder == localPlayerID or localDiplomacy:HasMet(religion.Founder) or Game.GetLocalObserver() == PlayerTypes.OBSERVER then
 		local civName:string = Locale.Lookup(GameInfo.Civilizations[civID].Name);
 		Controls.ViewReligionFounder:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_FOUNDER_NAME", civName)));
 		local holyCity:table = ownerPlayer:GetCities():FindID(playerReligion:GetHolyCityID());
@@ -1102,7 +1118,7 @@ function ViewReligion(religionType:number)
 		local civID:number = PlayerConfigurations[cityOwner]:GetCivilizationTypeID();
 		local civName:string = Locale.Lookup(GameInfo.Civilizations[civID].Name);
 		
-		if localPlayerID == cityOwner or localDiplomacy:HasMet(cityOwner) then
+		if localPlayerID == cityOwner or localDiplomacy:HasMet(cityOwner) or Game.GetLocalObserver() == PlayerTypes.OBSERVER then
 			cityInst.CityName:LocalizeAndSetText("LOC_UI_RELIGION_CITY_NAME", cityData:GetName(), civName);
 		else
 			cityInst.CityName:LocalizeAndSetText("LOC_UI_RELIGION_UNKNOWN_CITY");
@@ -1233,7 +1249,8 @@ function ViewAllReligions()
 
 	m_ReligionsIM:ResetInstances();
 
-	local localPlayerDiplomacy:table = Players[Game.GetLocalPlayer()]:GetDiplomacy();
+	local displayPlayerID = GetDisplayPlayerID();
+	local localPlayerDiplomacy:table = Players[displayPlayerID]:GetDiplomacy();
 
 	local allReligions:table = m_pGameReligion:GetReligions();
 	for _, religionInfo in ipairs(allReligions) do
@@ -1242,7 +1259,7 @@ function ViewAllReligions()
 			local religionInst:table = m_ReligionsIM:GetInstance();
 			local civID:number = PlayerConfigurations[religionInfo.Founder]:GetCivilizationTypeID();
 
-			if religionInfo.Founder == Game.GetLocalPlayer() or localPlayerDiplomacy:HasMet(religionInfo.Founder) then
+			if religionInfo.Founder == displayPlayerID or localPlayerDiplomacy:HasMet(religionInfo.Founder) or Game.GetLocalObserver() == PlayerTypes.OBSERVER then
 				local civName:string = Locale.Lookup(GameInfo.Civilizations[civID].Name);
 				religionInst.ReligionFounder:SetText(Locale.ToUpper(Locale.Lookup("LOC_UI_RELIGION_FOUNDER_NAME", civName)));
 			else
@@ -1292,7 +1309,9 @@ end
 function UpdateData()
 	UpdatePlayerData();
 	UpdateTabs();
-	m_ReligionTabs.SelectTab(m_MyReligionTab);
+	if (m_ReligionTabs ~= nil) then
+		m_ReligionTabs.SelectTab(m_MyReligionTab);
+	end
 end
 
 -- ===========================================================================
@@ -1305,6 +1324,9 @@ function Open()
 	UpdateData();
 	ContextPtr:SetHide(false);
 	UI.PlaySound("UI_Screen_Open");
+
+	-- From ModalScreen_PlayerYieldsHelper
+	RefreshYields();
 
 	-- From Civ6_styles: FullScreenVignetteConsumer
 	Controls.ScreenAnimIn:SetToBeginning();

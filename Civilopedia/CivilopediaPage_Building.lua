@@ -18,6 +18,23 @@ local sectionId = page.SectionId;
 
 	local isWonder = building.MaxWorldInstances ~= -1;
 
+	-- Index city-states
+	-- City states are always referenced by their civilization type and not leader type
+	-- despite game data referencing it that way.
+	local city_state_civilizations = {};
+	local city_state_leaders = {};
+	for row in GameInfo.Civilizations() do
+		if(row.StartingCivilizationLevelType == "CIVILIZATION_LEVEL_CITY_STATE") then
+			city_state_civilizations[row.CivilizationType] = true;
+		end
+	end
+
+	for row in GameInfo.CivilizationLeaders() do
+		if(city_state_civilizations[row.CivilizationType]) then
+			city_state_leaders[row.LeaderType] = row.CivilizationType;
+		end
+	end
+
 	local unique_to = {};
 	if(building.TraitType) then
 		local traitType = building.TraitType;
@@ -25,7 +42,16 @@ local sectionId = page.SectionId;
 			if(row.TraitType == traitType) then
 				local leader = GameInfo.Leaders[row.LeaderType];
 				if(leader) then
-					table.insert(unique_to, {"ICON_" .. row.LeaderType, leader.Name, row.LeaderType});
+					-- If this is a city state, use the civilization type.
+					local city_state_civilization = city_state_leaders[row.LeaderType];
+					if(city_state_civilization) then
+						local civ = GameInfo.Civilizations[city_state_civilization];
+						if(civ) then
+							table.insert(unique_to, {"ICON_" .. civ.CivilizationType, civ.Name, civ.CivilizationType});
+						end
+					else
+						table.insert(unique_to, {"ICON_" .. row.LeaderType, leader.Name, row.LeaderType});
+					end
 				end
 			end
 		end
@@ -237,6 +263,7 @@ local sectionId = page.SectionId;
 		end
 	end
 	
+	-- TODO: Migrate these strings to GreatWorkSlotTypes in the database.
 	local slotStrings = {
 		["GREATWORKSLOT_ART"] = "LOC_TYPE_TRAIT_GREAT_WORKS_ART_SLOTS";
 		["GREATWORKSLOT_WRITING"] = "LOC_TYPE_TRAIT_GREAT_WORKS_WRITING_SLOTS";
@@ -244,6 +271,7 @@ local sectionId = page.SectionId;
 		["GREATWORKSLOT_RELIC"] = "LOC_TYPE_TRAIT_GREAT_WORKS_RELIC_SLOTS";
 		["GREATWORKSLOT_ARTIFACT"] = "LOC_TYPE_TRAIT_GREAT_WORKS_ARTIFACT_SLOTS";
 		["GREATWORKSLOT_CATHEDRAL"] = "LOC_TYPE_TRAIT_GREAT_WORKS_CATHEDRAL_SLOTS";
+		["GREATWORKSLOT_PALACE"] = "LOC_TYPE_TRAIT_GREAT_WORKS_PALACE_SLOTS";
 	};
 
 	for row in GameInfo.Building_GreatWorks() do

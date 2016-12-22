@@ -1,4 +1,4 @@
-﻿1
+1
 00:00:01,000 --> 00:00:04,210
 Though its face may change throughout the ages,
 
@@ -13,7 +13,3 @@ By your actions this day...
 4
 00:00:22,950 --> 00:00:27,517
 You ensure our people a glorious tomorrow.
-
-5
-00:00:27,518 --> 00:00:27,520
- 

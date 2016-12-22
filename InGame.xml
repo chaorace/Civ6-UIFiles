@@ -89,17 +89,18 @@
 		<LuaContext ID="EspionagePopup"           FileName="EspionagePopup"						Hidden="1"  />
 		<LuaContext ID="EspionageEscape"          FileName="EspionageEscape"          Hidden="1"  />
 		<LuaContext	ID="PopupGeneric"							FileName="PopupGeneric"							Hidden="1"	TutorialActive="1" />
+		<LuaContext ID="Automation_NarrationPopup"	FileName="Automation_NarrationPopup"	Hidden="1"/>
 	</Container>
 
 	<Container		ID="EndGame">
 		<LuaContext	ID="EndGameMenu"							FileName="EndGameMenu"							Hidden="1"	/>
-	</Container>
+		<!--<LuaContext ID="EndDemo"									FileName="EndDemo"                  Hidden="1" />--> 
+  </Container>
 	
 	<Container		ID="Diplomacy">
 		<LuaContext ID="LeaderScene"              FileName="LeaderScene"              Hidden="1"  />
 		<LuaContext	ID="DiplomacyActionView"			FileName="DiplomacyActionView"			Hidden="1"	/>
 		<LuaContext	ID="DiplomacyDealView"			  FileName="DiplomacyDealView"			  Hidden="1"	/>
-		<LuaContext	ID="DiploPopup"							  FileName="DiploPopup"							  Hidden="1"	/>
 		<LuaContext ID="DeclareWarPopup"          FileName="DeclareWarPopup"          Hidden="1"  />
 	</Container>
 

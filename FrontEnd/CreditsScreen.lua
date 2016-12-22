@@ -152,7 +152,17 @@ function makeTable(creditsFile)
 	local prev_i = 1;
 	local t = {};
 	while true do
-		i = string.find(creditsFile, "\r\n", i+1, true)    -- find 'next' newline
+		local nChars = 1;
+		local crlf = string.find(creditsFile, "\r\n", i+1, true)
+		if (crlf ~= nil) then
+			-- handle CRLF line ending
+			nChars = 2;
+			i = crlf;
+		else
+			-- handle LF line ending
+			i = string.find(creditsFile, "\n", i+1, true)
+		end
+
 		if i == nil then 
 			local line :string = string.sub(creditsFile, prev_i);		
 			table.insert(t, line);
@@ -161,7 +171,7 @@ function makeTable(creditsFile)
 
 		local line :string = string.sub(creditsFile, prev_i, i - 1);		
 		table.insert(t, line);
-		prev_i = i + 2;				-- past linefeed/newline 		
+		prev_i = i + nChars;				-- past linefeed/newline 		
 	end
 	
 	return t;

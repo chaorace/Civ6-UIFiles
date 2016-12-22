@@ -30,6 +30,7 @@ local m_AnimSupport:table; -- AnimSidePanelSupport
 local m_OperativeIM:table		= InstanceManager:new("OperativeInstance", "Top", Controls.OperativeStack);
 local m_CityIM:table			= InstanceManager:new("CityInstance", "CityGrid", Controls.CityActivityStack);
 local m_EnemyOperativeIM:table	= InstanceManager:new("EnemyOperativeInstance", "GridButton", Controls.CapturedEnemyOperativeStack);
+local m_MissionHistoryIM:table	= InstanceManager:new("MissionHistoryInstance", "Top", Controls.MissionHistoryStack);
 
 -- A table of tabs indexed by EspionageTabs enum
 local m_tabs:table = nil;
@@ -37,6 +38,9 @@ local m_selectedTab:number = -1;
 
 -- ===========================================================================
 function Refresh()
+	-- Refresh Tabs
+	PopulateTabs();
+
 	if m_selectedTab == EspionageTabs.OPERATIVES then
 		Controls.OperativeTabContainer:SetHide(false);
 		Controls.CityActivityTabContainer:SetHide(true);
@@ -56,10 +60,15 @@ function Refresh()
 
 		RefreshMissionHistory();
 	end
-end;
+end
 
 function RefreshOperatives()
 	m_OperativeIM:ResetInstances();
+
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID == -1) then
+		return;
+	end
 
 	local idleSpies:table = {};
 	local activeSpies:table = {};
@@ -69,7 +78,7 @@ function RefreshOperatives()
 	local numberOfSpies:number = 0;
 
 	-- Sort spies
-	local localPlayerUnits:table = Players[Game.GetLocalPlayer()]:GetUnits();
+	local localPlayerUnits:table = Players[localPlayerID]:GetUnits();
 	for i, unit in localPlayerUnits:Members() do
 		local unitInfo:table = GameInfo.Units[unit:GetUnitType()];
 		if unitInfo.Spy then
@@ -163,9 +172,17 @@ end
 function RefreshMissionHistory()
 	m_EnemyOperativeIM:ResetInstances();
 
+	local localPlayerID = Game.GetLocalPlayer();
+	if (localPlayerID == -1) then
+		return;
+	end
+
+	-- Track size of elements in mission history panel to determine size of the mission history scroll panel
+	local desiredScrollPanelSizeY:number = Controls.MissionHistoryTabContainer:GetSizeY();
+
 	-- Update captured enemy operative info
 	local haveCapturedEnemyOperative:boolean = false;
-	local localPlayer:table = Players[Game.GetLocalPlayer()];
+	local localPlayer:table = Players[localPlayerID];
 	local playerDiplomacy:table = localPlayer:GetDiplomacy();
 	local numCapturedSpies:number = playerDiplomacy:GetNumSpiesCaptured();
 	for i=0,numCapturedSpies-1,1 do
@@ -179,11 +196,115 @@ function RefreshMissionHistory()
 	-- Hide captured enemy operative info if we have no captured enemy operatives
 	if haveCapturedEnemyOperative then
 		Controls.CapturedEnemyOperativeContainer:SetHide(false);
+		desiredScrollPanelSizeY = desiredScrollPanelSizeY - Controls.CapturedEnemyOperativeContainer:GetSizeY();
 	else
 		Controls.CapturedEnemyOperativeContainer:SetHide(true);
 	end
 
-	Controls.CapturedEnemyOperativeStack:ReprocessAnchoring();
+	-- Update mission history
+	m_MissionHistoryIM:ResetInstances();
+
+	if playerDiplomacy then
+		-- Add information for last 10 missions
+		local recentMissions:table = playerDiplomacy:GetRecentMissions(Game.GetLocalPlayer(), 10, 0);
+		if recentMissions then
+			-- Hide no missions label
+			Controls.NoRecentMissonsLabel:SetHide(true);
+
+			for i,mission in pairs(recentMissions) do
+				AddMisisonHistoryInstance(mission);
+			end
+		else
+			-- Show no missions label
+			Controls.NoRecentMissonsLabel:SetHide(false);
+		end
+	end
+
+	-- Adjust the mission history scroll panel to fill bottom of panel
+	desiredScrollPanelSizeY = desiredScrollPanelSizeY - Controls.MissionHistoryScrollPanel:GetOffsetY();
+	Controls.MissionHistoryScrollPanel:SetSizeY(desiredScrollPanelSizeY);
+
+	Controls.MissionHistoryScrollPanel:CalculateSize();
+	Controls.MissionHistoryTabContainer:ReprocessAnchoring();
+end
+
+-- ===========================================================================
+function AddMisisonHistoryInstance(mission:table)
+	-- Don't show missions where the spy must escape but the player has yet to choose an escape route
+	if mission.InitialResult == EspionageResultTypes.SUCCESS_MUST_ESCAPE or mission.InitialResult == EspionageResultTypes.FAIL_MUST_ESCAPE then
+		if mission.EscapeResult == EspionageResultTypes.NO_RESULT then
+			return;
+		end
+	end
+
+	local missionHistoryInstance:table = m_MissionHistoryIM:GetInstance();
+
+	-- Update operative name and rank
+	missionHistoryInstance.OperativeName:SetText(Locale.ToUpper(mission.Name));
+	missionHistoryInstance.OperativeRank:SetText(Locale.Lookup(GetSpyRankNameByLevel(mission.LevelAfter)));
+
+	-- Update name and turns since
+	local operationInfo:table = GameInfo.UnitOperations[mission.Operation];
+	missionHistoryInstance.MissionName:SetText(Locale.Lookup(operationInfo.Description));
+	local turnsSinceMission:number = Game.GetCurrentGameTurn() - mission.CompletionTurn;
+	missionHistoryInstance.TurnsSinceMission:SetText(Locale.Lookup("LOC_ESPIONAGEOVERVIEW_TURNS_AGO", turnsSinceMission));
+
+	-- Update outcome and font icon
+	local outcomeDetails:table = GetMissionOutcomeDetails(mission);
+	if outcomeDetails then
+		if outcomeDetails.Success then
+			missionHistoryInstance.MissionOutcomeText:SetText(Locale.ToUpper("LOC_ESPIONAGEOVERVIEW_MISSIONOUTCOME") .. " " .. Locale.ToUpper("LOC_ESPIONAGEOVERVIEW_SUCCESS"));
+		else
+			missionHistoryInstance.MissionOutcomeText:SetText(Locale.ToUpper("LOC_ESPIONAGEOVERVIEW_MISSIONOUTCOME") .. " " .. Locale.ToUpper("LOC_ESPIONAGEOVERVIEW_FAILURE"));
+		end
+
+		SetMissionHistorySuccess(missionHistoryInstance, outcomeDetails.Success);
+		missionHistoryInstance.OperationDetails:SetText(outcomeDetails.Description);
+
+		if outcomeDetails.SpyStatus ~= "" then
+			missionHistoryInstance.MissionOutcomeSpyStatus:SetText(outcomeDetails.SpyStatus);
+			missionHistoryInstance.MissionOutcomeSpyStatus:SetHide(false);
+		else
+			missionHistoryInstance.MissionOutcomeSpyStatus:SetHide(true);
+		end
+	end
+
+	-- Update mission and district icons
+	local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(operationInfo.Icon,40);
+	if textureSheet then
+		missionHistoryInstance.OperationIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+		missionHistoryInstance.OperationIcon:SetHide(false);
+	else
+		UI.DataError("Unable to find icon for spy operation: " .. operationInfo.Icon);
+		missionHistoryInstance.OperationIcon:SetHide(true);
+	end
+
+	local iconString:string = "ICON_" .. operationInfo.TargetDistrict;
+	textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconString,32);
+	if textureSheet then
+		missionHistoryInstance.OperationDistrictIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+	else
+		UI.DataError("Unable to find icon for district: " .. iconString);
+	end
+
+	-- Scale the operation and district icons to match the operation description
+	missionHistoryInstance.OperationIconGrid:SetSizeY(missionHistoryInstance.OperationDetailsContainer:GetSizeY());
+	missionHistoryInstance.OperationDistrictIconGrid:SetSizeY(missionHistoryInstance.OperationDetailsContainer:GetSizeY());
+end
+
+-- ===========================================================================
+function SetMissionHistorySuccess(missionHistoryInstance:table, wasSuccess:boolean)
+	if wasSuccess then
+		missionHistoryInstance.MissionGradient:SetColorByName("Green");
+		missionHistoryInstance.MissionOutcomeText:SetColor(0xFF329600);
+		missionHistoryInstance.MissionOutcomeSpyStatus:SetColor(0xFF329600);
+		missionHistoryInstance.MissionOutcomeFontIcon:SetText("[ICON_CheckSuccess]");
+	else
+		missionHistoryInstance.MissionGradient:SetColorByName("Red");
+		missionHistoryInstance.MissionOutcomeText:SetColor(0xFF0000C6);
+		missionHistoryInstance.MissionOutcomeSpyStatus:SetColor(0xFF0000C6);
+		missionHistoryInstance.MissionOutcomeFontIcon:SetText("[ICON_CheckFail]");
+	end
 end
 
 -- ===========================================================================
@@ -323,26 +444,74 @@ end
 --	Called once during Init
 -- ===========================================================================
 function PopulateTabs()
+	local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == -1 then
+		return;
+	end
+
+	-- Grab player and diplomacy for local player
+	local pPlayer:table = Players[localPlayerID];
+	local pPlayerDiplomacy:table = nil;
+	if pPlayer then
+		pPlayerDiplomacy = pPlayer:GetDiplomacy();
+	end
+
 	if m_tabs == nil then
 		m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
-		m_tabs.AddTab( Controls.OperativesTabButton,		OnSelectOperativesTab );
-        Controls.OperativesTabButton:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-		m_tabs.AddTab( Controls.CityActivityTabButton,		OnSelectCityActivityTab );
-        Controls.CityActivityTabButton:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-		--m_tabs.AddTab( Controls.MissionHistoryTabButton,	OnSelectMissionHistoryTab );
-        --Controls.MissionHistoryTabButton:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-
-		m_tabs.EvenlySpreadTabs();
-		m_tabs.CenterAlignTabs(-25);	-- Use negative to create padding as value represents amount to overlap
 	end
+
+	-- Operatives Tab
+	if not m_tabs.OperativesTabAdded then
+		m_tabs.AddTab( Controls.OperativesTabButton,		OnSelectOperativesTab );
+		Controls.OperativesTabButton:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+		m_tabs.OperativesTabAdded = true;
+	end
+
+	-- City Activity Tab
+	if not m_tabs.CityActivityTabAdded then
+		m_tabs.AddTab( Controls.CityActivityTabButton,		OnSelectCityActivityTab );
+		Controls.CityActivityTabButton:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+		m_tabs.CityActivityTabAdded = true;
+	end
+		
+	-- Mission History Tab
+	-- Only show mission history if we have any mission history or captured enemy operatives
+	local shouldShowMissionHistory:boolean = false;
+	if pPlayerDiplomacy then
+		local firstMission = pPlayerDiplomacy:GetMission(localPlayerID, 0);
+		if firstMission ~= 0 then
+			-- We have a mission so show history
+			shouldShowMissionHistory = true;
+		end
+
+		local numCapturedSpies:number = pPlayerDiplomacy:GetNumSpiesCaptured();
+		if numCapturedSpies > 0 then
+			-- Show mission history if we have captured enemy spies
+			shouldShowMissionHistory = true;
+		end
+	end
+
+	if shouldShowMissionHistory then
+		if not m_tabs.MissionHistoryTabAdded then
+			Controls.MissionHistoryTabButton:SetHide(false);
+			m_tabs.AddTab( Controls.MissionHistoryTabButton,	OnSelectMissionHistoryTab );
+			Controls.MissionHistoryTabButton:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+			m_tabs.MissionHistoryTabAdded = true;
+		end
+	else
+		Controls.MissionHistoryTabButton:SetHide(true);
+	end
+
+	m_tabs.EvenlySpreadTabs();
+	m_tabs.CenterAlignTabs(-25);	-- Use negative to create padding as value represents amount to overlap
 end
 
 -- ===========================================================================
 function SelectTabByIndex( tabIndex:number )
 	if tabIndex == EspionageTabs.CITY_ACTIVITY then
 		m_tabs.SelectTab( Controls.CityActivityTabButton );
-	--elseif tabIndex == EspionageTabs.MISSION_HISTORY then
-	--	m_tabs.SelectTab( Controls.MissionHistoryTabButton );
+	elseif tabIndex == EspionageTabs.MISSION_HISTORY then
+		m_tabs.SelectTab( Controls.MissionHistoryTabButton );
 	else
 		m_tabs.SelectTab( Controls.OperativesTabButton );
 	end
@@ -413,6 +582,9 @@ function AddOperative(spy:table)
 
 		-- Turns Remaining
 		local turnsRemaining:number = spy:GetSpyOperationEndTurn() - Game.GetCurrentGameTurn();
+		if turnsRemaining <= 0 then
+			turnsRemaining = 0;
+		end
 		operativeInstance.OperationTurnsRemaining:SetText(Locale.Lookup("LOC_ESPIONAGEOVERVIEW_MORE_TURNS", turnsRemaining));
 
 		-- Percent Complete

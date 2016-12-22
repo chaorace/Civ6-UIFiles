@@ -47,23 +47,24 @@ function Parameters_Config_EndWrite(o, config_changed)
 	end
 end
 
-function GameParameters_WriteParameterValues(o, parameter)
-
-	-- Only write game parameters if you are the host.
-	if(Network.IsInSession() and not Network.IsHost()) then
-		return false;
-	end
-
-	local result = SetupParameters.Config_WriteParameterValues(o, parameter);
-	if(result) then
-		if(parameter.ParameterId == "MapSize") then	
-			if(MapSize_ValueChanged) then
-				MapSize_ValueChanged(parameter);
-			end
-		end
+function GameParameters_SyncAuxConfigurationValues(o, parameter)
+	local result = SetupParameters.Parameter_SyncAuxConfigurationValues(o, parameter);
+	
+	-- If we don't already need to resync and the parameter is MapSize, perform additional checks.
+	if(not result and parameter.ParameterId == "MapSize" and MapSize_ValueNeedsChanging) then
+		return MapSize_ValueNeedsChanging(parameter);
 	end
 
 	return result;
+end
+
+function GameParameters_WriteAuxParameterValues(o, parameter)
+	SetupParameters.Config_WriteAuxParameterValues(o, parameter);
+
+	-- Some additional work if the parameter is MapSize.
+	if(parameter.ParameterId == "MapSize" and MapSize_ValueChanged) then	
+		MapSize_ValueChanged(parameter);
+	end
 end
 
 -------------------------------------------------------------------------------
@@ -412,9 +413,10 @@ function BuildGameSetup(createParameterFunc:ifunction)
 
 	g_GameParameters = SetupParameters.new();
 	g_GameParameters.Config_EndWrite = Parameters_Config_EndWrite;
-	g_GameParameters.Config_WriteParameterValues = GameParameters_WriteParameterValues;
 	g_GameParameters.Parameter_GetRelevant = GetRelevantParameters;
 	g_GameParameters.Parameter_PostProcess = GameParameters_PostProcess;
+	g_GameParameters.Parameter_SyncAuxConfigurationValues = GameParameters_SyncAuxConfigurationValues;
+	g_GameParameters.Config_WriteAuxParameterValues = GameParameters_WriteAuxParameterValues;
 	g_GameParameters.UI_AfterRefresh = GameParameters_UI_AfterRefresh;
 	g_GameParameters.UI_CreateParameter = createParameterFunc ~= nil and createParameterFunc or GameParameters_UI_CreateParameter;
 	g_GameParameters.UI_DestroyParameter = UI_DestroyParameter;
@@ -447,13 +449,45 @@ function HideGameSetup(hideParameterFunc)
 end
 
 
+function MapSize_ValueNeedsChanging(p)
+	local results = CachedQuery("SELECT * from MapSizes where Domain = ? and MapSizeType = ? LIMIT 1", p.Value.Domain, p.Value.Value);
+
+	local minPlayers = 2;
+	local maxPlayers = 2;
+	local defPlayers = 2;
+	local minCityStates = 0;
+	local maxCityStates = 0;
+	local defCityStates = 0;
+
+	if(results) then
+		for i, v in ipairs(results) do
+			minPlayers = v.MinPlayers;
+			maxPlayers = v.MaxPlayers;
+			defPlayers = v.DefaultPlayers;
+			minCityStates = v.MinCityStates;
+			maxCityStates = v.MaxCityStates;
+			defCityStates = v.DefaultCityStates;
+		end
+	end
+
+	-- TODO: Add Min/Max city states, set defaults.
+	if(MapConfiguration.GetMinMajorPlayers() ~= minPlayers) then
+		print("Min Major Players: " .. MapConfiguration.GetMinMajorPlayers() .. " should be " .. minPlayers);
+		return true;
+	elseif(MapConfiguration.GetMaxMajorPlayers() ~= maxPlayers) then
+		print("Max Major Players: " .. MapConfiguration.GetMaxMajorPlayers() .. " should be " .. maxPlayers);
+		return true;
+	end
+
+	return false;
+end
+
 function MapSize_ValueChanged(p)
 	print("MAP SIZE CHANGED");
 
 	-- The map size has changed!
 	-- Adjust the number of players to match the default players of the map size.
-	local query = "SELECT * from MapSizes where Domain = ? and MapSizeType = ? LIMIT 1";
-	local results = DB.ConfigurationQuery(query, p.Value.Domain, p.Value.Value);
+	local results = CachedQuery("SELECT * from MapSizes where Domain = ? and MapSizeType = ? LIMIT 1", p.Value.Domain, p.Value.Value);
 
 	local minPlayers = 2;
 	local maxPlayers = 2;

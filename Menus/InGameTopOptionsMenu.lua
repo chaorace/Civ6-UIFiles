@@ -22,6 +22,7 @@ local m_kPopupDialog	: table;			-- Custom due to Utmost popup status
 local ms_ExitToMain		: boolean = true;
 local m_isSimpleMenu	: boolean = false;
 local m_isLoadingDone   : boolean = false;
+local m_isRetired		: boolean = false;
 
 -- ===========================================================================
 --	COSTANTS
@@ -34,6 +35,7 @@ local ICON_PREFIX:string = "ICON_";
 
 -- ===========================================================================
 function OnReallyRetire()
+	m_isRetired = true;
     UI.RequestAction(ActionTypes.ACTION_RETIRE);
 	CloseImmediately();
 	UI.PlaySound("Notification_Misc_Negative");
@@ -162,16 +164,6 @@ end
 function OnReturn()
 	if (not ContextPtr:IsHidden() ) then
 		Close();
-	end
-end
-
--- ===========================================================================
---	LUA Event
--- ===========================================================================
-function OnCloseInGameOptionsMenu()
-	if (not ContextPtr:IsHidden() ) then
-		print("just not closing");
-		--Close();
 	end
 end
 
@@ -351,6 +343,14 @@ function RefreshModsInUse()
 end
 
 -- ===========================================================================
+function OnOpenInGameOptionsMenu()
+	-- Don't show pause menu if the player has retired (forfeit) from the game - fixes TTP 20129
+	if not m_isRetired then 
+		UIManager:QueuePopup( ContextPtr, PopupPriority.Utmost );
+	end
+end
+
+-- ===========================================================================
 --	Raised (typically) from InGame since when this is hidden it will not
 --	receive input from ForgeUI.
 -- ===========================================================================
@@ -398,12 +398,16 @@ function OnPlayerTurnActivationChanged()
 	end
 end
 
+-- ===========================================================================
 function OnRequestClose()
 	if m_isLoadingDone then
-		if (ContextPtr:IsHidden() ) then
-			UIManager:QueuePopup( ContextPtr, PopupPriority.Utmost );
+		-- Only handle the message if popup queuing is active (diplomacy is not up)
+		if UIManager:IsPopupQueueDisabled()==false then
+			if (ContextPtr:IsHidden() ) then
+				UIManager:QueuePopup( ContextPtr, PopupPriority.Utmost );
+			end
+			OnExitGameAskAreYouSure();
 		end
-		OnExitGameAskAreYouSure();
     else
 		Events.UserConfirmedClose();
 	end
@@ -434,8 +438,8 @@ function Initialize()
 	Controls.RestartGameButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.PauseWindowClose:RegisterEndCallback( ShutdownAfterClose );
 
-	LuaEvents.InGame_CloseInGameOptionsMenu.Add( OnCloseInGameOptionsMenu );
-	LuaEvents.DiploScene_SceneOpened.Add( OnCloseInGameOptionsMenu );
+	LuaEvents.InGame_OpenInGameOptionsMenu.Add( OnOpenInGameOptionsMenu );
+
 	LuaEvents.TutorialUIRoot_SimpleInGameMenu.Add( OnSimpleInGameMenu );
 
 	Events.PlayerTurnActivated.Add( OnPlayerTurnActivationChanged );

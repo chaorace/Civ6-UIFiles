@@ -4,8 +4,17 @@
 include( "InstanceManager" );
 include( "GameSetupLogic" );
 include( "SupportFunctions" );
+include( "Civ6Common" ); --GetLeaderUniqueTraits
 
 g_PlayerParameters = {};
+local m_currentInfo = {											--m_currentInfo is a duplicate of the data which is currently selected for the local player
+		CivilizationIcon = "ICON_CIVILIZATION_UNKNOWN",
+		LeaderIcon = "ICON_LEADER_DEFAULT",
+		CivilizationName = "LOC_RANDOM_CIVILIZATION",
+		LeaderName = "LOC_RANDOM_LEADER"
+	};
+
+local m_tooltipControls = {};
 
 -------------------------------------------------------------------------------
 -- Parameter Hooks
@@ -199,6 +208,7 @@ end
 --	LeaderIcon							-- The icon id representing the leader.
 --	CivilizationName					-- The name of the Civilization.
 --	LeaderName							-- The name of the Leader.
+--	LeaderType							-- The type name of the leader (to derive the standing portrait/background images)
 --  LeaderAbility = {					-- (nullable) A table containing details about the Leader's primary ability.
 --		Name							-- The name of the Leader's primary ability.
 --		Description						-- The description of the Leader's primary ability.
@@ -230,7 +240,7 @@ function GetPlayerInfo(domain, leader_type)
 		
 		if(info_results and item_results) then
 			local info = {};
-
+			info.LeaderType = leader_type;
 			for i,row in ipairs(info_results) do
 				-- This is a hack! We need to find a better way to handle multiple civs with different leaders
 				if (row.LeaderIcon == "ICON_LEADER_GORGO") then
@@ -266,7 +276,6 @@ function GetPlayerInfo(domain, leader_type)
 					Icon = row.Icon
 				});
 			end
-
 			return info;
 		end
 	end
@@ -309,6 +318,134 @@ function GenerateToolTipFromPlayerInfo(info)
 	return table.concat(lines, "[NEWLINE]");
 end
 
+-- ===========================================================================
+--	Correctly displays a special flyout for the leader selection dropdown.
+--	info:				The leader and civ info that we will use to set the data
+--	tooltipControls:	All of the data required for generating the tooltip.  Includes:
+--							InfoStack			table	- The primary stack which holds all the data for the panel
+--							InfoScrollPanel		table	- The scrollpanel for the flyout
+--							UniqueIconIM		table	- Instance manager for the unique civ abilities/units
+--							HeaderIconIM		table	- Instance manager for the header icon (has a different backing)
+--							HeaderIM			table	- Instance manager for the headers 
+--							CivToolTipSlide		table	- Flyout animation slide
+--							CivToolTipAlpha		table	- Flyout animation alpha
+--							HasLeaderPlacard	boolean - Indicates whether or not this tooltip should also display the leader placard flyout
+--							LeaderBG			table	- The background image displayed behind the leader
+--							LeaderImage			table	- The leader image
+--							DummyImage			table	- This dummy image is used so that we can calculate the ratio of the original leader image.  
+--														  We use this to determine how to position the leader within the placard.
+--							CivLeaderSlide		table	- Flyout leader placard slide
+--							CivLeaderAlpha		table	- Flyout leader placard alpha
+--						<< This data is passed from the contexts where we pick leaders - AdvancedSetup and StagingRoom >>
+--	alwaysHide:			A boolean indicating that we should always hide both flyouts.  The "Random" leader selection will always be hidden for example
+-- ===========================================================================
+function DisplayCivLeaderToolTip(info:table, tooltipControls:table, alwaysHide:boolean)
+	if(info.CivilizationName ~= "LOC_RANDOM_CIVILIZATION" and not alwaysHide) then --If we are showing leader data flyouts, then make sure we are playing forwards, and play until shown
+		if (tooltipControls.CivToolTipAlpha:IsReversing()) then
+			tooltipControls.CivToolTipAlpha:Reverse();
+			tooltipControls.CivToolTipSlide:Reverse();
+			if(tooltipControls.HasLeaderPlacard) then
+				tooltipControls.CivLeaderAlpha:Reverse();
+				tooltipControls.CivLeaderSlide:Reverse();
+			end
+		else
+			tooltipControls.CivToolTipAlpha:Play();
+			tooltipControls.CivToolTipSlide:Play();
+			if(tooltipControls.HasLeaderPlacard) then
+				tooltipControls.CivLeaderAlpha:Play();
+				tooltipControls.CivLeaderSlide:Play();
+			end
+		end
+		SetUniqueCivLeaderData(info, tooltipControls);
+	else
+		if (not tooltipControls.CivToolTipAlpha:IsReversing()) then --If we are hiding the leader data flyouts, make sure we are playing backwards, and play until hidden
+			tooltipControls.CivToolTipAlpha:Reverse();
+			tooltipControls.CivToolTipSlide:Reverse();
+			if(tooltipControls.HasLeaderPlacard) then
+				tooltipControls.CivLeaderAlpha:Reverse();
+				tooltipControls.CivLeaderSlide:Reverse();
+			end
+		else
+			tooltipControls.CivToolTipAlpha:Play();
+			tooltipControls.CivToolTipSlide:Play();
+			if(tooltipControls.HasLeaderPlacard) then
+				tooltipControls.CivLeaderAlpha:Play();
+				tooltipControls.CivLeaderSlide:Play();
+			end
+		end
+	end	
+end
+
+-- ===========================================================================
+function UpdateCivLeaderToolTip()
+	if m_currentInfo.LeaderType ~= nil then
+		SetUniqueCivLeaderData(m_currentInfo, m_tooltipControls);
+	end
+end
+
+-- ===========================================================================
+--	Sets all of the data for the Unique Civilization/Leader flyout and sizes the controls accordingly
+--	info				The leader and civ info that we will use to set the data
+--	tooltipControls		The controls that the info data will be attached to
+-- ===========================================================================
+function SetUniqueCivLeaderData(info:table, tooltipControls:table)
+
+	tooltipControls.HeaderIconIM:ResetInstances();
+	tooltipControls.UniqueIconIM:ResetInstances();
+	tooltipControls.HeaderIM:ResetInstances();
+
+	-- Check to make sure this player panel has the leader placard
+	if tooltipControls.HasLeaderPlacard then
+		-- Unload leader textures
+		tooltipControls.LeaderImage:UnloadTexture();
+		tooltipControls.LeaderBG:UnloadTexture();
+		tooltipControls.DummyImage:UnloadTexture();
+
+		-- Set leader placard
+		local leaderImageName = info.LeaderType.."_NEUTRAL";
+		local leaderName = string.gsub(info.LeaderType, "LEADER_","")
+	
+		tooltipControls.DummyImage:SetTexture(leaderImageName);
+		local imageRatio = tooltipControls.DummyImage:GetSizeX()/tooltipControls.DummyImage:GetSizeY();
+		if(imageRatio > .51) then
+ 			tooltipControls.LeaderImage:SetTextureOffsetVal(30,10)
+		else
+			tooltipControls.LeaderImage:SetTextureOffsetVal(10,50)
+		end
+		tooltipControls.LeaderImage:SetTexture(leaderImageName);
+		tooltipControls.LeaderBG:SetTexture(info.LeaderType.."_BACKGROUND");
+	end
+
+	-- Set Leader unique data
+	local leaderHeader = tooltipControls.HeaderIM:GetInstance();
+	leaderHeader.Header:SetText(Locale.ToUpper(Locale.Lookup(info.LeaderName)));
+	local leaderAbility = tooltipControls.HeaderIconIM:GetInstance();
+	leaderAbility.Icon:SetIcon(info.LeaderIcon);
+	leaderAbility.Header:SetText(Locale.ToUpper(Locale.Lookup(info.LeaderAbility.Name)));
+	leaderAbility.Description:LocalizeAndSetText(info.LeaderAbility.Description);
+	
+	-- Set Civ unique data
+	local civHeader = tooltipControls.HeaderIM:GetInstance();
+	civHeader.Header:SetText(Locale.ToUpper(Locale.Lookup(info.CivilizationName)));
+	local civAbility = tooltipControls.HeaderIconIM:GetInstance();
+	civAbility.Icon:SetIcon(info.CivilizationIcon);
+	civAbility.Header:SetText(Locale.ToUpper(Locale.Lookup(info.CivilizationAbility.Name)));
+	civAbility.Description:LocalizeAndSetText(info.CivilizationAbility.Description);
+	
+	-- Set Civ unique units data
+	for _, item in ipairs(info.Uniques) do
+		local instance:table = {};
+		instance = tooltipControls.UniqueIconIM:GetInstance();
+		instance.Icon:SetIcon(item.Icon);
+		local headerText:string = Locale.ToUpper(Locale.Lookup( item.Name ));
+		instance.Header:SetText( headerText );
+		instance.Description:SetText(Locale.Lookup(item.Description));
+	end
+
+	tooltipControls.InfoStack:CalculateSize();
+	tooltipControls.InfoStack:ReprocessAnchoring();
+	tooltipControls.InfoScrollPanel:CalculateSize();
+end
 
 -------------------------------------------------------------------------------
 -- Setup Player Interface
@@ -316,10 +453,16 @@ end
 -- It then appends a driver to the setup parameter to control a visual 
 -- representation of the parameter
 -------------------------------------------------------------------------------
-function SetupLeaderPulldown(playerId:number, instance:table, pulldownControlName:string, civIconControlName, leaderIconControlName)
+function SetupLeaderPulldown(playerId:number, instance:table, pulldownControlName:string, civIconControlName, leaderIconControlName, tooltipControls:table)
 	local parameters = GetPlayerParameters(playerId);
 	if(parameters == nil) then
 		parameters = CreatePlayerParameters(playerId);
+	end
+
+	-- Need to save our master tooltip controls so that we can update them if we hop into advanced setup and then go back to basic setup
+	if (tooltipControls.HasLeaderPlacard) then
+		m_tooltipControls = {};
+		m_tooltipControls = tooltipControls;
 	end
 
 	-- Defaults
@@ -341,41 +484,72 @@ function SetupLeaderPulldown(playerId:number, instance:table, pulldownControlNam
 		parameters.Controls["PlayerLeader"] = controls;
 	end
 
+	m_currentInfo = {										
+		CivilizationIcon = "ICON_CIVILIZATION_UNKNOWN",
+		LeaderIcon = "ICON_LEADER_DEFAULT",
+		CivilizationName = "LOC_RANDOM_CIVILIZATION",
+		LeaderName = "LOC_RANDOM_LEADER"
+	};
+
 	table.insert(controls, {
 		UpdateValue = function(v)
 			local button = control:GetButton();
-			button:SetText( v and v.Name or nil);
 
-			if(v) then
-				local info = GetPlayerInfo(v.Domain, v.Value);
-				local tooltip = GenerateToolTipFromPlayerInfo(info);
+			local caption = v.Name;
+			if(v.Invalid) then
+				local err = v.InvalidReason or "LOC_SETUP_ERROR_INVALID_OPTION";
+				caption = caption .. "[NEWLINE][COLOR_RED](" .. Locale.Lookup(err) .. ")[ENDCOLOR]";
+			end
 
-				if(civIcon) then
-					civIcon:SetIcon(info.CivilizationIcon);
-				end
-				if(leaderIcon) then
-					leaderIcon:SetIcon(info.LeaderIcon);
-				end
+			button:SetText(caption);
+				
+			local info = GetPlayerInfo(v.Domain, v.Value);
+			local tooltip = GenerateToolTipFromPlayerInfo(info);
+
+			if(civIcon) then
+				civIcon:SetIcon(info.CivilizationIcon);
+			end
+			if(leaderIcon) then
+				leaderIcon:SetIcon(info.LeaderIcon);
+			end
+
+			if(not tooltipControls.HasLeaderPlacard) then
+				button:RegisterCallback( Mouse.eMouseEnter, function() DisplayCivLeaderToolTip(info, tooltipControls, false); end);
+				button:RegisterCallback( Mouse.eMouseExit, function() DisplayCivLeaderToolTip(info, tooltipControls, true); end);
 			end
 		end,
 		UpdateValues = function(values)
 			control:ClearEntries();
 			for i,v in ipairs(values) do
-				if(v.Invalid ~= true) then
-					local info = GetPlayerInfo(v.Domain, v.Value);
-					local tooltip = GenerateToolTipFromPlayerInfo(info);
+				local info = GetPlayerInfo(v.Domain, v.Value);
+				local tooltip = GenerateToolTipFromPlayerInfo(info);
 
-					local entry = {};
-					control:BuildEntry( "InstanceOne", entry );
-					entry.Button:SetText(v.Name);
-					entry.CivIcon:SetIcon(info.CivilizationIcon);
-					entry.LeaderIcon:SetIcon(info.LeaderIcon);
-					entry.Button:SetToolTipString(tooltip);			
-					entry.Button:RegisterCallback(Mouse.eLClick, function()
-						local parameter = parameters.Parameters["PlayerLeader"];
-						parameters:SetParameterValue(parameter, v);
-					end);
+				local entry = {};
+				control:BuildEntry( "InstanceOne", entry );
+
+				local caption = v.Name;
+				if(v.Invalid) then 
+					local err = v.InvalidReason or "LOC_SETUP_ERROR_INVALID_OPTION";
+					caption = caption .. "[NEWLINE][COLOR_RED](" .. Locale.Lookup(err) .. ")[ENDCOLOR]";
 				end
+
+				entry.Button:SetText(caption);
+				entry.CivIcon:SetIcon(info.CivilizationIcon);
+				entry.LeaderIcon:SetIcon(info.LeaderIcon);
+				entry.Button:RegisterCallback( Mouse.eMouseEnter, function() DisplayCivLeaderToolTip(info, tooltipControls, false); end);
+				if(tooltipControls.HasLeaderPlacard) then
+					entry.Button:RegisterCallback( Mouse.eMouseExit, function() DisplayCivLeaderToolTip(m_currentInfo, tooltipControls, false); end);	-- When we mouse out, let's show what we currently have selected 
+				else
+					entry.Button:RegisterCallback( Mouse.eMouseExit, function() DisplayCivLeaderToolTip(m_currentInfo, tooltipControls, true); end);	-- Unless we are not showing the leader placard.. in which case, let's just dismiss
+				end
+				entry.Button:SetToolTipString(nil);			
+				entry.Button:RegisterCallback(Mouse.eLClick, function()
+					local parameter = parameters.Parameters["PlayerLeader"];
+					parameters:SetParameterValue(parameter, v);
+					if(playerId==0) then
+						m_currentInfo = info;
+					end
+				end);
 			end
 			control:CalculateInternals();
 		end,
@@ -458,6 +632,10 @@ function GameSetup_RefreshParameters()
 			g_NeedsAdditionalRefresh = false;
 			print("Refreshing again, to be sure.")
 			return GameSetup_RefreshParameters();
+		end
+
+		if(UI_PostRefreshParameters) then
+			UI_PostRefreshParameters();
 		end
 	end
 end

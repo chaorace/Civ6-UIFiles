@@ -260,12 +260,22 @@ function Resize()
 end
 
 -- ===========================================================================
+function OnUpdateUI( type:number, tag:string, iData1:number, iData2:number, strData1:string )   
+  if type == SystemUpdateUI.ScreenResize then
+    Resize();
+  end
+end
+
+
+-- ===========================================================================
 function Initialize()	
+
+	Resize();
 	
 	ContextPtr:SetShowHandler( OnShow );
 	ContextPtr:SetHideHandler( OnHide );
 	ContextPtr:SetInputHandler(InputHandler, true );
-	Resize();
+	
 	-- Static information we don't need to change later.
 	Controls.Leader1Portrait:SetIcon("ICON_LEADER_CLEOPATRA");
 	Controls.Leader2Portrait:SetIcon("ICON_LEADER_GILGAMESH");
@@ -274,5 +284,7 @@ function Initialize()
 	Controls.Leader2Start:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.CloseButton:RegisterCallback( Mouse.eLClick, OnBackButton );
 	Controls.CloseButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+
+	Events.SystemUpdateUI.Add( OnUpdateUI );
 end
 Initialize();

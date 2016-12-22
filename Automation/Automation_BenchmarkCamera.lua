@@ -103,6 +103,7 @@ function OnCombatVisBegin(combatMembers)
 end
 Events.CombatVisBegin.Add( OnCombatVisBegin );
 
+
 -------------------------------------------------------------------------------
 -- TODO consider adding more events to look at
 --		Improvement added
@@ -112,10 +113,52 @@ Events.CombatVisBegin.Add( OnCombatVisBegin );
 --		Great work completed
 --		City religion changed
 --		more?
-
 -------------------------------------------------------------------------------
 function OnAutomationGameStarted()
 	-- Look at the local observer's capitol
 	OnPlayerTurnActivated(Game:GetLocalObserver(), true);
 end
 LuaEvents.AutomationGameStarted.Add( OnAutomationGameStarted );
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+local OldTODSpeed : number = 0;
+local OldAmbientTOD : boolean = false;
+function OnBenchmarkStart()
+
+	OldTODSpeed = UI.GetAmbientTimeOfDaySpeed();
+	OldAmbientTOD = UI.IsAmbientTimeOfDayAnimating();
+
+	-- Enable TOD
+	UI.SetAmbientTimeOfDayAnimating( true );
+	UI.SetAmbientTimeOfDaySpeed(50);
+end
+Events.BenchmarkStart.Add( OnBenchmarkStart );
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+function OnBenchmarkEnd()
+	UI.SetAmbientTimeOfDaySpeed(OldTODSpeed);
+	UI.SetAmbientTimeOfDayAnimating(OldAmbientTOD);
+end
+Events.BenchmarkEnd.Add(OnBenchmarkEnd);
+
+-------------------------------------------------------------------------------
+-- Toggle the current lookat
+-------------------------------------------------------------------------------
+local g_Current : number = -1; --The ID of the next item to look at
+function OnBenchmarkToggleLookAt()
+	g_Current = g_Current + 1;
+	if( g_Current > #ms_VisibleCities ) then
+		g_Current = 0;
+	end
+
+	for i, v in ipairs(ms_VisibleCities) do
+		if( i == g_Current ) then
+			UI.LookAtPlot(v.x, v.y, ZOOM);
+			return;
+		end
+	end
+end
+Events.BenchmarkToggleLookAt.Add( OnBenchmarkToggleLookAt );
+

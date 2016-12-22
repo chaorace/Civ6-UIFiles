@@ -558,6 +558,16 @@ function SetSimpleInGameMenu(isSimple)	LuaEvents.TutorialUIRoot_SimpleInGameMenu
 
 
 -- ===========================================================================
+--	Next turn button clicking (mainly/only throught the action panel) should
+--	consume input for a frame or two in order for the tutorial to have a
+--	chance to raise any blockers.  
+-- ===========================================================================
+function SetSlowNextTurnEnable( isEnabled:boolean )
+	LuaEvents.Tutorial_SlowNextTurnEnable( isEnabled );
+end
+
+
+-- ===========================================================================
 -- (nil) Set the function called before every item is opened
 -- ===========================================================================
 function SetFunctionBeforeEveryOpen(func) 
@@ -1987,18 +1997,11 @@ function OnLocalPlayerTurnBegin()
 	local localPlayer = Game.GetLocalPlayer()
 	local player = Players[localPlayer]
 	local playerGpp = player:GetGreatPeoplePoints()
-
-	if 0 < playerGpp:GetPointsTotal(GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_GENERAL"].Index)
-	or 0 < playerGpp:GetPointsTotal(GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_ADMIRAL"].Index)
-	or 0 < playerGpp:GetPointsTotal(GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_ENGINEER"].Index)
-	or 0 < playerGpp:GetPointsTotal(GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_MERCHANT"].Index)
-	or 0 < playerGpp:GetPointsTotal(GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_PROPHET"].Index)
-	or 0 < playerGpp:GetPointsTotal(GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_SCIENTIST"].Index)
-	or 0 < playerGpp:GetPointsTotal(GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_WRITER"].Index)
-	or 0 < playerGpp:GetPointsTotal(GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_ARTIST"].Index)
-	or 0 < playerGpp:GetPointsTotal(GameInfo.GreatPersonClasses["GREAT_PERSON_CLASS_MUSICIAN"].Index)
-	then
-		TutorialCheck("GreatPersonPoint")
+	
+	for row in GameInfo.GreatPersonClasses() do
+		if(playerGpp:GetPointsTotal(row.Index) > 0) then
+			TutorialCheck("GreatPersonPoint");
+		end
 	end
 
 	-- If goals are used and set to auto-remove, now is the time to signal
@@ -2079,9 +2082,12 @@ end
 function OnDistrictAddedToMap( playerID: number, districtID : number, cityID :number, districtX : number, districtY : number, districtType:number, percentComplete:number )
 	local localPlayerID = Game.GetLocalPlayer();
 	if (playerID == localPlayerID) then
-		local eCampus = GameInfo.Districts["DISTRICT_CAMPUS"].Index;		
-		if (districtType == eCampus) then
-			TutorialCheck("CampusPlaced");
+		local campus = GameInfo.Districts["DISTRICT_CAMPUS"];
+		if(campus) then
+			local eCampus = campus.Index;		
+			if (districtType == eCampus) then
+				TutorialCheck("CampusPlaced");
+			end
 		end
 	end
 end

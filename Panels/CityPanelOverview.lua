@@ -481,6 +481,8 @@ function ViewPanelHousing( data:table )
 	local colorName:string = GetPercentGrowthColor( data.HousingMultiplier ) ;
 	Controls.HousingTotalNum:SetText( data.Housing );	
 	Controls.HousingTotalNum:SetColorByName( colorName );
+	Controls.HousingTotalNumLabel:SetText(Locale.Lookup("LOC_HUD_CITY_HOUSING_LABEL", data.Housing));
+
 	local uv:number;
 
 	if data.HousingMultiplier == 0 then
@@ -501,11 +503,8 @@ function ViewPanelHousing( data:table )
 	Controls.HousingPopulationStatus:SetColorByName( colorName );
 
 	Controls.CitizensNum:SetText( data.Population );
-	if data.Population <= 1 then
-		Controls.CitizensName:SetText(Locale.Lookup("LOC_HUD_CITY_CITIZEN"));
-	elseif data.Population > 1 then
-		Controls.CitizensName:SetText(Locale.Lookup("LOC_HUD_CITY_CITIZENS"));
-	end
+	Controls.CitizensName:SetText(Locale.Lookup("LOC_HUD_CITY_CITIZENS_LABEL", data.Population));
+	
 	Controls.HousingTotalNum2:SetText( data.Housing );
 	Controls.HousingTotalNum2:SetColorByName( colorName );
 		
@@ -703,6 +702,22 @@ function ViewPanelQueue( data:table )
 end
 
 -- ===========================================================================
+function RenameCity(city, new_name)
+	-- Do nothing if the city names match or new name is blank or invalid.
+	local old_name = city:GetName();
+	if(new_name == nil or new_name == old_name or new_name == Locale.Lookup(old_name)) then
+		return;
+	else
+		-- Send net message to change name.
+		local params = {};
+		params[CityCommandTypes.PARAM_NAME] = new_name;
+	
+		CityManager.RequestCommand(city, CityCommandTypes.NAME_CITY, params);
+	end
+end
+
+
+-- ===========================================================================
 function OnAddToProductionQueue()
 	-- LuaEvents.CityPanel_ProductionOpenForQueue(); --??TRON
 end
@@ -755,6 +770,23 @@ end
 function View(data)
 	if (m_isDirty) then
 		Controls.OverviewSubheader:SetText(Locale.ToUpper(Locale.Lookup(data.CityName)));
+
+		Controls.RenameCityButton:RegisterCallback(Mouse.eLClick, function()
+			Controls.OverviewSubheader:SetHide(true);
+
+			Controls.EditCityName:SetText(Controls.OverviewSubheader:GetText());
+			Controls.EditCityName:SetHide(false);
+			Controls.EditCityName:TakeFocus();
+		end);
+
+		local city = data.City;
+		Controls.EditCityName:RegisterCommitCallback(function(editBox)
+			local userInput:string = Controls.EditCityName:GetText();
+			RenameCity(city, userInput);
+			Controls.EditCityName:SetHide(true);
+			Controls.OverviewSubheader:SetHide(false);
+		end);
+
 		ViewPanelAmenities( data );
 		ViewPanelCitizensGrowth( data );
 		ViewPanelHousing( data );
@@ -786,7 +818,7 @@ end
 --	UI Event Handler
 -- ===========================================================================
 function KeyHandler( key:number )
-    if key == Keys.VK_ESCAPE then
+	if key == Keys.VK_ESCAPE then
 		if ( m_isShowingPanel ) then
 			LuaEvents.CityPanelOverview_CloseButton();
 			Close();
@@ -794,8 +826,8 @@ function KeyHandler( key:number )
 		else
 			return false;
 		end
-    end
-    return false;
+	end
+	return false;  
 end
 
 function OnInputHandler( pInputStruct:table )
@@ -820,6 +852,12 @@ function OnLiveCityDataChanged( data:table, isSelected:boolean)
 		m_isDirty = true;
 		ContextPtr:SetHide(false);
 		Refresh();
+	end
+end
+
+function OnCityNameChanged( playerID: number, cityID : number )
+	if(m_pCity and playerID == m_pCity:GetOwner() and cityID == m_pCity:GetID()) then
+		Controls.OverviewSubheader:SetText(Locale.ToUpper(Locale.Lookup(m_pCity:GetName())));
 	end
 end
 
@@ -888,6 +926,7 @@ function Initialize()
 	LuaEvents.CityPanel_LiveCityDataChanged.Add( OnLiveCityDataChanged )
 
 	Events.SystemUpdateUI.Add( OnUpdateUI );
+	Events.CityNameChanged.Add(OnCityNameChanged);
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
 	Events.ResearchCompleted.Add( OnResearchCompleted );
 	Events.GovernmentPolicyChanged.Add( OnPolicyChanged );

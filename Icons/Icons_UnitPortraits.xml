@@ -18,18 +18,26 @@
     <!-- Asian -->
     <Row Name="ICON_ATLAS_ASIAN_UNIT_PORTRAITS"   IconSize="70" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits70asi_1"/>
     <Row Name="ICON_ATLAS_ASIAN_UNIT_PORTRAITS_2" IconSize="70" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits70asi_2"/>
+    <Row Name="ICON_ATLAS_ASIAN_UNIT_PORTRAITS"   IconSize="95" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits95asi_1"/>
+    <Row Name="ICON_ATLAS_ASIAN_UNIT_PORTRAITS_2" IconSize="95" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits95asi_2"/>
 
     <!-- Mediterranean  -->
     <Row Name="ICON_ATLAS_MEDITERRANEAN_UNIT_PORTRAITS"   IconSize="70" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits70med_1"/>
     <Row Name="ICON_ATLAS_MEDITERRANEAN_UNIT_PORTRAITS_2" IconSize="70" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits70med_2"/>
+    <Row Name="ICON_ATLAS_MEDITERRANEAN_UNIT_PORTRAITS"   IconSize="95" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits95med_1"/>
+    <Row Name="ICON_ATLAS_MEDITERRANEAN_UNIT_PORTRAITS_2" IconSize="95" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits95med_2"/>
 
     <!-- South American  -->
     <Row Name="ICON_ATLAS_SOUTH_AMERICAN_UNIT_PORTRAITS"   IconSize="70" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits70sou_1"/>
     <Row Name="ICON_ATLAS_SOUTH_AMERICAN_UNIT_PORTRAITS_2" IconSize="70" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits70sou_2"/>
+    <Row Name="ICON_ATLAS_SOUTH_AMERICAN_UNIT_PORTRAITS"   IconSize="95" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits95sou_1"/>
+    <Row Name="ICON_ATLAS_SOUTH_AMERICAN_UNIT_PORTRAITS_2" IconSize="95" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits95sou_2"/>
 
     <!-- African  -->
     <Row Name="ICON_ATLAS_AFRICAN_UNIT_PORTRAITS"   IconSize="70" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits70afr_1"/>
     <Row Name="ICON_ATLAS_AFRICAN_UNIT_PORTRAITS_2" IconSize="70" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits70afr_2"/>
+    <Row Name="ICON_ATLAS_AFRICAN_UNIT_PORTRAITS"   IconSize="95" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits95afr_1"/>
+    <Row Name="ICON_ATLAS_AFRICAN_UNIT_PORTRAITS_2" IconSize="95" IconsPerRow="8" IconsPerColumn="8" Filename="UnitPortraits95afr_2"/>
     
   </IconTextureAtlases>
   <IconDefinitions>

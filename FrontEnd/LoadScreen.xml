@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<Context>
+<Context Name="LoadScreen">
 
 	<Box			ID="Background"				Color="0,0,0,255"				Anchor="C,C" Size="full,full" ConsumeMouse="1">
 

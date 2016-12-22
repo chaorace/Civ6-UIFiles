@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GameInfo>
 	<IconTextureAtlases>
+    <Row Name="ICON_ATLAS_ADVISORS" IconSize="22" IconsPerRow="8" IconsPerColumn="8" Filename="AdvisorRec22"/>
 		<Row Name="ICON_ATLAS_ADVISORS" IconSize="32" IconsPerRow="8" IconsPerColumn="8" Filename="Advisors32"/>
 		<Row Name="ICON_ATLAS_ADVISORS" IconSize="48" IconsPerRow="8" IconsPerColumn="8" Filename="Advisors48"/>
 		<Row Name="ICON_ATLAS_ADVISORS" IconSize="64" IconsPerRow="8" IconsPerColumn="8" Filename="Advisors64"/>
@@ -8,10 +9,10 @@
 		<Row Name="ICON_ATLAS_ADVISORS" IconSize="128" IconsPerRow="8" IconsPerColumn="8" Filename="Advisors128"/>
 	</IconTextureAtlases>
 	<IconDefinitions>
-		<Row Name="ADVISOR"																		 Atlas="ICON_ATLAS_ADVISORS" Index="0"/>
-		<Row Name="ADVISOR_ECONOMIC"													 Atlas="ICON_ATLAS_ADVISORS" Index="0"/>
-		<Row Name="ADVISOR_DIPLOMATIC"  											 Atlas="ICON_ATLAS_ADVISORS" Index="0"/>
-		<Row Name="ADVISOR_MILITARY"													 Atlas="ICON_ATLAS_ADVISORS" Index="0"/>
-		<Row Name="ADVISOR_SCIENCE"													   Atlas="ICON_ATLAS_ADVISORS" Index="0"/>
+		<Row Name="ADVISOR_GENERIC"														Atlas="ICON_ATLAS_ADVISORS" Index="0"/>
+		<Row Name="ADVISOR_CULTURE"													Atlas="ICON_ATLAS_ADVISORS" Index="1"/>
+		<Row Name="ADVISOR_TECHNOLOGY"  											Atlas="ICON_ATLAS_ADVISORS" Index="2"/>
+		<Row Name="ADVISOR_CONQUEST"													Atlas="ICON_ATLAS_ADVISORS" Index="3"/>
+		<Row Name="ADVISOR_RELIGIOUS"													Atlas="ICON_ATLAS_ADVISORS" Index="4"/>
 	</IconDefinitions>
 </GameInfo>

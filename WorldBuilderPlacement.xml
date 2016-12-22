@@ -14,7 +14,7 @@
         <Container ID="TabContainer" Size="parent,parent">
           
           <Container ID="PlaceTerrain" Size="parent,parent">
-            <SimplePullDown ID="TerrainPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+            <SimplePullDown ID="TerrainPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" AutoFlip="1" EntryInstance="InstanceOne"/>
           </Container>
 
           <Container ID="PlaceFeatures" Size="parent,parent">
@@ -71,7 +71,7 @@
           </Container>
 
           <Container ID="PlaceStartPos" Size="parent,parent">
-            <SimplePullDown ID="StartPosPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+            <SimplePullDown ID="StartPosPlayerPulldown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
           </Container>
 
           <Container ID="PlaceOwnership" Size="parent,parent">

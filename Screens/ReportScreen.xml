@@ -124,19 +124,21 @@
 				</Container>	
 		</Container>
 
-		<Container		ID="BottomResourceTotals"	Anchor="C,B"	Offset="0,0"		Size="parent-6,70" >
-			<Grid																	Anchor="C,T"	Offset="0,0"		Size="parent,8"					Style="Divider3Grid" />
-			<Image																Anchor="C,B"	Offset="0,10"		Size="parent-26,parent" Texture="Controls_Gradient" Color="255,255,255,32">
-
-				<Label															Anchor="R,T"	Offset="500,20" Style="ReportEndTotalText" String="LOC_HUD_REPORTS_STRATEGICS" />
-				<Label															Anchor="R,T"	Offset="500,45" Style="ReportEndTotalText" String="LOC_HUD_REPORTS_LUXURIES_AND_BONUSES" />
-				<Label		ID="StrategicResources"		Anchor="L,T"	Offset="500,20" Style="ReportEndTotalText" String="foo" />
-				<Label		ID="LuxuryResources"			Anchor="L,T"	Offset="500,45" Style="ReportEndTotalText" String="bar" />
-
-
-				<Grid													Anchor="C,B"	Offset="0,-4"		Size="parent+20,8" Style="DividerGrid" Color="47,63,76,255" />
-				<Box													Anchor="L,B"	Offset="-4,2"		Size="2,parent-18"	Color="46,70,95,128" />
-				<Box													Anchor="R,B"	Offset="-4,2"		Size="2,parent-18"	Color="46,70,95,128" />
+		<Container		ID="BottomResourceTotals"	Anchor="C,B"	Offset="0,0"		Size="parent-6,100" >
+			<Grid																	Anchor="C,T"	Offset="0,0"		Size="parent,8"							Style="Divider3Grid" />
+			<Image																Anchor="C,B"	Offset="0,2"		Size="parent,parent"				Texture="Controls_Gradient" Color="255,255,255,32">
+				<Grid			ID="StrategicGrid"											Offset="5,10"		Size="parent-515,40"				Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
+					<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_STRATEGICS" />
+					<Stack	ID="StrategicResources"		Anchor="L,C"	Offset="150,-9"	WrapWidth="340"	WrapGrowth="Down"	StackGrowth="Right" />
+				</Grid>				
+				<Grid			ID="BonusGrid"													Offset="510,10"	Size="parent-515,40"				Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
+					<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_BONUSES" />
+					<Stack	ID="BonusResources"				Anchor="L,C"	Offset="150,-9"	WrapWidth="340"	WrapGrowth="Down"	StackGrowth="Right" />
+				</Grid>
+				<Grid			ID="LuxuryGrid"													Offset="5,55"		Size="parent-10,40"					Style="SubContainer4"				Color="36,50,62,255" InnerPadding="2,2">
+					<Label																					Offset="5,0"																Style="ReportResourceText"	String="LOC_HUD_REPORTS_LUXURIES" />
+					<Stack	ID="LuxuryResources"			Anchor="L,C"	Offset="150,-9"	WrapWidth="840"	WrapGrowth="Down"	StackGrowth="Right" />
+				</Grid>
 			</Image>
 		</Container>
 		
@@ -155,11 +157,12 @@
 		</GridButton>
 	</Instance>
 
+	<!-- Non-Collapsable Rows -->
 	<Instance					Name="SimpleInstance">
 		<Stack					ID="Top"	StackGrowth="Down" />
 	</Instance>
 
-	<!-- Collapsable -->
+	<!-- Collapsable Row(s) area -->
 	<Instance						Name="GroupInstance">
 		<Container				ID="Top"																					Size="1003,10"	AutoSize="V">
 			<GridButton			ID="RowHeaderButton"								Offset="0,0"	Size="parent,30"		Style="RowButton"		String="$RowHeaderButton"  />
@@ -174,7 +177,6 @@
 
 	
 	<!-- CITY INCOME -->
-	
 	<Instance					Name="CityIncomeHeaderInstance">
 		<Container			ID="Top"														Offset="8,0" Size="1003,22" >
 			<Image																						Offset="4,0"	Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
@@ -547,13 +549,16 @@
 		</Container>
 	</Instance>
 
-	<Instance					Name="ResourcesFooterInstance">
-		<Container			ID="Top"														Offset="8,0" Size="1003,30">
+	<Instance							Name="ResourcesFooterInstance">
+		<Container					ID="Top"												Offset="8,0" Size="1003,30">
 			<Image																						Offset="4,0"	Size="parent-24,parent-2" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
+      <Grid             ID="AmenitiesContainer" Style="SubContainerSmall"  Size="48,24" Anchor="L,C" Offset="5,1" AutoSizePadding="3,0">
+        <Label          ID="Amenities"	Anchor="C,C"	Style="ReportTotalText"			String="[ICON_Amenities] 3 Cities"/>
+      </Grid>
 			<Stack	StackGrowth="Right" >
 				<Box																													Size="2,26"	Color="46,70,95,128" />
 				<Container																										Size="780,26">
-					<Label						Anchor="R,C"								Offset="5,1"	Style="ReportTotalText"			String="LOC_HUD_REPORTS_TOTALS"  />
+					<Label													Anchor="R,C"	Offset="5,1"	Style="ReportTotalText"			String="LOC_HUD_REPORTS_TOTALS"  />
 				</Container>
 				<Box																													Size="2,26"	Color="46,70,95,255" />
 				<Container																										Size="200,26">
@@ -564,6 +569,12 @@
 			<Grid												 Style="DividerGrid"	Offset="-10,22" Size="parent,8" Color="47,63,76,255" />
 		</Container>
 	</Instance>
+
+	<!-- Resource-->
+	<Instance					Name="ResourceAmountInstance">
+      <Label					ID="Info" Style="ReportResourceText" String="00" />
+	</Instance>
+
 
 
 

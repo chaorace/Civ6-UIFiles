@@ -74,11 +74,38 @@ local sectionId = page.SectionId;
 	local unique_to = {};
 	if(improvement.TraitType) then
 		local traitType = improvement.TraitType;
+
+		-- Index city-states
+		-- City states are always referenced by their civilization type and not leader type
+		-- despite game data referencing it that way.
+		local city_state_civilizations = {};
+		local city_state_leaders = {};
+		for row in GameInfo.Civilizations() do
+			if(row.StartingCivilizationLevelType == "CIVILIZATION_LEVEL_CITY_STATE") then
+				city_state_civilizations[row.CivilizationType] = true;
+			end
+		end
+
+		for row in GameInfo.CivilizationLeaders() do
+			if(city_state_civilizations[row.CivilizationType]) then
+				city_state_leaders[row.LeaderType] = row.CivilizationType;
+			end
+		end
+
 		for row in GameInfo.LeaderTraits() do
 			if(row.TraitType == traitType) then
 				local leader = GameInfo.Leaders[row.LeaderType];
 				if(leader) then
-					table.insert(unique_to, {"ICON_" .. row.LeaderType, leader.Name, row.LeaderType});
+					-- If this is a city state, use the civilization type.
+					local city_state_civilization = city_state_leaders[row.LeaderType];
+					if(city_state_civilization) then
+						local civ = GameInfo.Civilizations[city_state_civilization];
+						if(civ) then
+							table.insert(unique_to, {"ICON_" .. civ.CivilizationType, civ.Name, civ.CivilizationType});
+						end
+					else
+						table.insert(unique_to, {"ICON_" .. row.LeaderType, leader.Name, row.LeaderType});
+					end
 				end
 			end
 		end

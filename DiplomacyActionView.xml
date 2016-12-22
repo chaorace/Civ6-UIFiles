@@ -10,7 +10,76 @@
   <Container ID="ActionButtonContainer" Hidden="1"/>
 
 
-  <!-- An instance of a text label that can be added to make a list -->
+	<!--
+			...:::{ MAIN PLAYER PANEL }:::...	
+ 			An instance of a panel that displays what actions and reports a player can see. 
+	-->
+	<Instance Name="PlayerPanel">
+		<!-- The background of the panel, enclosing all contents -->
+		<Image ID="Root" Size="314,parent" StretchMode="Tile" Texture="Diplomacy_Banner">
+			<Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="R,T" Color="0,0,0,255" Rotate="270" Offset="-2,0"/>
+			<Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="L,T" Color="0,0,0,255" Rotate="90" Offset="-2,0"/>
+			<Image Texture="Controls_Gradient" Size="parent,150" Anchor="L,T" Color="0,0,0,255" Offset="0,-20"/>
+			<Image Texture="Controls_Gradient" Size="parent,100" Anchor="L,B" Color="0,0,0,255" Offset="0,0" FlipY="1"/>
+			<Grid ID="PlayerPanelWindow" Style="DiplomacyInfoWindowGrid" Size="parent,parent-80" Offset="0,75">
+				<!-- The leader icon and title -->
+				<Container Size="parent, 154" Offset="0,-68">
+					<Grid Style="DiplomacyInfoHeaderGrid" Anchor="C,B" Size="parent,88">
+						<Label ID="PlayerNameText" Anchor="C,C" Offset="0,-11" Align="C" Style="DiplomacyCivHeader"/>
+						<Label ID="CivNameText" Anchor="C,C" Offset="0,13" Align="C" Style="DiplomacyCivHeader"/>
+					</Grid>
+					<Image Texture="Diplomacy_PortraitBacking.dds" Anchor="C,B" Offset="0,86"/>
+					<Image Texture="Controls_CircleBacking68" Anchor="C,B" Offset="0,76" Size="80,80"/>
+					<Image Texture="Diplomacy_YouIndicatorLarge" Anchor="C,B" Offset="0,74"/>
+					<Image ID="LeaderIcon" Anchor="C,B" Offset="0,80" Size="64,64" Texture="Leaders64"/>
+				</Container>
+				<!-- The container for all the content below the header -->
+				<Container ID="ContentContainer" Size="parent, parent-108" Offset="0,88">
+					<!-- A stack to contain the Content -->
+					<Stack ID="RootStack" StackGrowth="Bottom" >
+						<!-- The content stack for the panel-->
+						<Stack ID="SubOptionsStack" StackGrowth="Bottom" Offset="7,-6" />
+						<Stack ID="ContentStack" StackGrowth="Bottom" Offset="0,-6" />
+					</Stack>
+				</Container>
+				<!--
+		  <Tutorial   ID="TutDiploDelegation"	Style="TutorialContainer"			Anchor="R,T"	Offset="20,116"	AnchorSide="O,I"  TriggerBy="TutorialDiploDelegation">
+			  <SlideAnim				Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
+				  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" FlipX="1" />  
+			  </SlideAnim>
+		  </Tutorial>
+
+		  <Tutorial   ID="TutDiploDenounce"	Style="TutorialContainer"			Anchor="R,T"	Offset="20,156"	AnchorSide="O,I"  TriggerBy="TutorialDiploDenounce">
+			  <SlideAnim				Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
+				  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" FlipX="1" />
+			  </SlideAnim>
+		  </Tutorial>
+
+		  <Tutorial   ID="TutDiploDeal"	Style="TutorialContainer"			Anchor="R,T"	Offset="20,232"	AnchorSide="O,I"  TriggerBy="TutorialDiploDeal">
+			  <SlideAnim				Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
+				  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" FlipX="1" />
+			  </SlideAnim>
+		  </Tutorial>
+
+		  <Tutorial   ID="TutDiploIntel"	Style="TutorialContainer"			Anchor="R,T"	Offset="20,332"	AnchorSide="O,I"  TriggerBy="TutorialDiploIntel">
+			  <SlideAnim				Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
+				  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" FlipX="1" />
+			  </SlideAnim>
+		  </Tutorial>
+
+		  <Tutorial   ID="TutDiploDetails"	Style="TutorialContainer"			Anchor="R,T"	Offset="20,494"	AnchorSide="O,I"  TriggerBy="TutorialDiploDetails">
+			  <SlideAnim				Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
+				  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" FlipX="1" />
+			  </SlideAnim>
+		  </Tutorial>
+		  -->
+			</Grid>
+		</Image>
+	</Instance>
+
+
+
+	<!-- An instance of a text label that can be added to make a list -->
   <Instance	Name="IconOnly">
     <Image ID="Icon" Anchor="L,C" Size="22,22" Texture="Agreements22" Color="255,255,255,255"/>
   </Instance>
@@ -151,7 +220,7 @@
   </Instance>
 
   <Instance	Name="IntelGossipHistoryPanel">
-    <Container ID="Background" Size="300,parent"	Offset="6,38">
+    <Container ID="Background" Size="300,parent"	Offset="6,38" >
       <Image Texture="Controls_Gradient" Size="parent+2, 150"  Anchor="L,B" Color="24,47,70,230"/>
       <ScrollPanel			ID="GossipScrollPanel"	Size="300, parent" 			Vertical="1" AutoScollbar="1">
         <ScrollBar										Anchor="R,C"									Size="5,14"				AnchorSide="O,I"  Texture="Controls_ScrollBarBacking2" StateOffsetIncrement="0,0" Vertical="1" SliceCorner="2,2" SliceTextureSize="5,5">
@@ -232,7 +301,7 @@
   </Instance>
 
   <Instance	Name="IntelRelationshipPanel">
-    <Container ID="Background" Size="300,parent"	Offset="6,38">
+    <Container ID="Background" Size="300,parent"	Offset="6,38" >
       <Image Texture="Controls_Gradient" Size="parent+2, 150"  Anchor="L,B" Color="24,47,70,230"/>
       <ScrollPanel			ID="RelationshipScrollPanel"	Size="300, parent" 			Vertical="1" AutoScollbar="1">
         <ScrollBar										Anchor="R,C"									Size="5,14"				AnchorSide="O,I"  Texture="Controls_ScrollBarBacking2" StateOffsetIncrement="0,0" Vertical="1" SliceCorner="2,2" SliceTextureSize="5,5">
@@ -333,7 +402,7 @@
   <!-- An instance of the vertical diplomacy ribbon -->
   <Instance Name="DiplomacyRibbonLeader">
     <Container ID="Root" Size="parent,64">
-      <Grid ID="SelectedBackground" Style="DiplomacySelectedLeaderBackgroundGrid" Offset="-5,-2" Size="75,67"/>
+      <Grid ID="SelectedBackground" Style="DiplomacySelectedLeaderBackgroundGrid" Offset="-5,-2" Size="75,67" />
       <BoxButton ID="SelectButton" Size="parent,parent" Color="0,0,0,0">
         <Stack StackGrowth="Right">
           <Container Size="68,68">
@@ -370,73 +439,6 @@
         <Stack ID="Leaders" Offset="0,20" StackGrowth="Bottom"/>
       </ScrollPanel>
     </Container>
-  </Instance>
-
-  <!-- An instance of a panel that displays what actions and reports a player can see. -->
-  <Instance Name="PlayerPanel">
-    <!-- The background of the panel, enclosing all contents -->
-    <Image ID="Root" Size="314,parent" StretchMode="Tile" Texture="Diplomacy_Banner">
-      <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="R,T" Color="0,0,0,255" Rotate="270" Offset="-2,0"/>
-      <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="L,T" Color="0,0,0,255" Rotate="90" Offset="-2,0"/>
-      <Image Texture="Controls_Gradient" Size="parent,150" Anchor="L,T" Color="0,0,0,255" Offset="0,-20"/>
-      <Image Texture="Controls_Gradient" Size="parent,100" Anchor="L,B" Color="0,0,0,255" Offset="0,0" FlipY="1"/>
-      <Grid ID="PlayerPanelWindow" Style="DiplomacyInfoWindowGrid" Size="parent,parent-120" Offset="0,75">
-        <!-- The leader icon and title -->
-        <Container Size="parent, 154" Offset="0,-68">
-          <Grid Style="DiplomacyInfoHeaderGrid" Anchor="C,B" Size="parent,88">
-            <Label ID="PlayerNameText" Anchor="C,C" Offset="0,-11" Align="C" Style="DiplomacyCivHeader"/>
-            <Label ID="CivNameText" Anchor="C,C" Offset="0,13" Align="C" Style="DiplomacyCivHeader"/>
-          </Grid>
-          <Image Texture="Diplomacy_PortraitBacking.dds" Anchor="C,B" Offset="0,86"/>
-          <Image Texture="Controls_CircleBacking68" Anchor="C,B" Offset="0,76" Size="80,80"/>
-          <Image Texture="Diplomacy_YouIndicatorLarge" Anchor="C,B" Offset="0,74"/>
-          <Image ID="LeaderIcon" Anchor="C,B" Offset="0,80" Size="64,64" Texture="Leaders64"/>
-        </Container>
-        <!-- The container for all the content below the header -->
-        <Container ID="ContentContainer" Size="parent, parent-108" Offset="0,88">
-          <!-- A stack to contain the Content -->
-          <Stack ID="RootStack" StackGrowth="Bottom" >
-            <!-- The content stack for the panel-->
-            <Stack ID="SubOptionsStack" StackGrowth="Bottom" Offset="7,-6" />
-						<Stack ID="ContentStack" StackGrowth="Bottom" Offset="0,-6" />
-          </Stack>
-        </Container>
-
-		  <!--
-		  <Tutorial   ID="TutDiploDelegation"	Style="TutorialContainer"			Anchor="R,T"	Offset="20,116"	AnchorSide="O,I"  TriggerBy="TutorialDiploDelegation">
-			  <SlideAnim				Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
-				  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" FlipX="1" />  
-			  </SlideAnim>
-		  </Tutorial>
-
-		  <Tutorial   ID="TutDiploDenounce"	Style="TutorialContainer"			Anchor="R,T"	Offset="20,156"	AnchorSide="O,I"  TriggerBy="TutorialDiploDenounce">
-			  <SlideAnim				Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
-				  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" FlipX="1" />
-			  </SlideAnim>
-		  </Tutorial>
-
-		  <Tutorial   ID="TutDiploDeal"	Style="TutorialContainer"			Anchor="R,T"	Offset="20,232"	AnchorSide="O,I"  TriggerBy="TutorialDiploDeal">
-			  <SlideAnim				Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
-				  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" FlipX="1" />
-			  </SlideAnim>
-		  </Tutorial>
-
-		  <Tutorial   ID="TutDiploIntel"	Style="TutorialContainer"			Anchor="R,T"	Offset="20,332"	AnchorSide="O,I"  TriggerBy="TutorialDiploIntel">
-			  <SlideAnim				Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
-				  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" FlipX="1" />
-			  </SlideAnim>
-		  </Tutorial>
-
-		  <Tutorial   ID="TutDiploDetails"	Style="TutorialContainer"			Anchor="R,T"	Offset="20,494"	AnchorSide="O,I"  TriggerBy="TutorialDiploDetails">
-			  <SlideAnim				Start="0,0"		EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" >
-				  <Image				Offset="0,0"	Size="58,44"		Texture="Tutorial_ArrowH" FlipX="1" />
-			  </SlideAnim>
-		  </Tutorial>
-		  -->
-		  
-      
-  </Grid>
-    </Image>
   </Instance>
 
   <!-- An instance of a conversation selection -->
@@ -500,16 +502,25 @@
 
   <!-- Controls for when the local player is in a diplomacy conversation, the other controls are hidden when these are visible. -->
   <Container ID="ConversationContainer" Size="Full,Full" Hidden="1">
-    <!-- The signature for a leader -->
     <AlphaAnim		ID="Signature_Alpha"					AlphaBegin="0"	AlphaEnd="1"	Speed="2" Function="Root" Cycle="Once" Size="full,full"  >
       <SlideAnim	ID="Signature_Slide"					Begin="-10,0"		End="0,0"			Speed="2" Function="Root" Cycle="Once" Size="full,full"  >
-        <Stack		StackGrowth="Left" Offset="10,10" Anchor="R,T">
-          <Stack		ID="SignatureStack" StackGrowth="Down" Padding="5" Offset="10,10" Anchor="L,T">
-            <Label	ID="SignatureText"	Offset="5,0" String="LOC_DIPLO_PERSON_CLEO" WrapWidth="400" Align="C" Style="FontBoldFlair18"	FontStyle="glow" Color0="130,130,130,255"	Color1="0,0,0,200"/>
+        <Stack		ID="SignatureStack" StackGrowth="Left" Offset="10,10" Anchor="R,T">
+          <Container Size="62,62">
+            <Image ID="CivBacking_Base" Texture="Circle44_Base" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+            <Image ID="CivBacking_Darker" Texture="Circle44_Darker" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+            <Image ID="CivBacking_Lighter" Texture="Circle44_Lighter" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+            <Image ID="CivBacking_None" Texture="Circle44_None" Size="44,44" Anchor="C,C"/>
+            <Image ID="CivIcon" Texture="CivSymbols36" Size="36,36" Anchor="C,C"/>
+            <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="-1,-1" Color="255,255,255,50"/>
+          </Container>
+          <Stack		StackGrowth="Down" Padding="5" Offset="10,10" Anchor="R,T">
+            <Label	ID="LeaderName"	String="CLEOPATRA"  WrapWidth="400" Align="R" Anchor="R,T" Style="FontBoldFlair18"	SmallCaps="22" FontStyle="glow" Color0="130,130,130,255"	Color1="0,0,0,200"/>
+            <Label	ID="CivName"	  String="EGYPT"      WrapWidth="400" Align="R" Anchor="R,T" Style="FontBoldFlair18"	SmallCaps="22" FontStyle="glow" Color0="130,130,130,255"	Color1="0,0,0,200"/>
           </Stack>
         </Stack>
       </SlideAnim>
     </AlphaAnim>
+    
 
     <AlphaAnim		ID="LeaderResponse_Alpha"			AlphaBegin="0"	AlphaEnd="1"	Speed="2" Function="Root" Cycle="Once" >
       <SlideAnim	ID="LeaderResponse_Slide"			Begin="-10,0"		End="0,0"			Speed="2" Function="Root" Cycle="Once" >
@@ -547,10 +558,22 @@
     </Container>
   </Container>
 
-	<!-- Custom popup dialog -->
-  <Box Style="PopupDialogBox"/>
+	<!-- (System) Close popup dialog -->
+	<Container				ID="QuitPopupDialog"															Size="Full,Full"	ConsumeMouse="1" Color="0,0,0,150" Hidden="1">
+		<Grid																	Anchor="C,C"								Size="500,250"    Style="DropShadow2"     Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25">
+			<Grid																Anchor="C,C"								Size="500,250"    Style="WindowFrameTitle" AutoSize="V" AutoSizePadding="0,10">
+				<Container												             Offset="0,4"		Size="parent,38">
+					<Label													Anchor="C,C"																	Style="WindowHeader"        String="{LOC_CONFIRM_CHOICE:upper}" />
+				</Container>								
+				<Label														Anchor="C,T" Offset="0,50"			Style="BodyTextDark18" Align="Center" WrapWidth="parent-20" String="LOC_CONFIRM_EXIT_TXT"/>
+				<GridButton   ID="NoButton"				Anchor="C,T" Offset="-100,100"		Size="200,41"			Style="MainButton" String="LOC_NO" />
+				<GridButton   ID="YesButton"			Anchor="C,T" Offset="100,100"		Size="200,41"			Style="ButtonRed" String="LOC_YES" />					
+				</Grid>
+		</Grid>
+	</Container>
 
-  <!--The fade-to-black stuff -->
+
+	<!--The fade-to-black stuff -->
   <Container ID="BlackFade" Hidden="1">
     <AlphaAnim ID="BlackFadeAnim" Begin="0" End="1" Cycle="Once" Stopped="1">
       <Box Color="0,0,0,255" Size="full,full" ConsumeMouse="0"/>
@@ -558,6 +581,9 @@
   </Container>
   <AlphaAnim ID="FadeTimerAnim" Begin="0" End="1" Cycle="Once" Stopped="1"/>
 
+	
+	
+	
   <Instance		Name="TextInfoInstance">
     <Stack		ID="Top"					StackGrowth="Bottom" StackPadding="4">
       <Label	ID="Header"				Style="FontFlair14"		WrapWidth="350" SmallCapsType="EveryWord" SmallCaps="20" String="$Header$"/>y

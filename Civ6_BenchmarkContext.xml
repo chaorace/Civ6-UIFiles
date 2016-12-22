@@ -2,10 +2,13 @@
 <Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
          Name="BenchmarkContext" FontStyle="Shadow" ColorSet="BodyTextCool" FontSize="20">
 
-  <Grid Style="WindowFrameHUD" Anchor="C,T" Offset="0,50" Size="640,230" ID="BenchmarkPanel">
-    <!--benchmarking data stack-->
+  <!--Empty modal panel to disable interaction while waiting-->
+  <Grid Size="320,240" ID="WaitingPanel" Anchor="C,T" Offset="0,100" Color="0,0,0,0" />
+  
+  <!--UI shown while the graphics benchmark is running-->
+  <Grid Style="WindowFrameHUD" Anchor="C,T" Offset="0,50" Size="640,230" ID="GraphicsBenchmarkPanel">
     <Container Size="260,230" Anchor="L,C">
-      <Stack StackPadding="8" StackGrowth="Down" Anchor="L,C" ID="BenchmarkStack" >
+      <Stack StackPadding="8" StackGrowth="Down" Anchor="L,C" >
         <Label String="LOC_BENCHMARK_TITLE" Anchor="C,C" />
         <Container Anchor="C,C" Size="parent-10,20">
           <Label String="LOC_BENCHMARK_FRAME" Anchor="L,C"/>
@@ -27,11 +30,64 @@
           <Label String="LOC_BENCHMARK_AVERAGE" Anchor="L,C"/>
           <Label ID="AvgText" Anchor="R,C"/>
         </Container>
-        <GridButton ID="CloseButton" Anchor="L,T" Size="parent-10,40" Style="MainButton" String="LOC_HUD_CLOSE" />
+        <GridButton ID="CloseGraphicsBenchmark" Anchor="L,T" Size="parent-10,40" Style="MainButton" String="LOC_HUD_CLOSE" />
       </Stack>
     </Container>
-    <!--benchmarking graph-->
     <Graph ID="FrameGraph" Size="365,210" Anchor="R,C" Offset="0,0" Domain="0,100" Range="0,33" TickInterval="0,5" NumberInterval="0,5" ShowTicks="0,1" ShowGridLines="1,1" ShowNumbers="0,1" ShowAxes="0,1" GridColor="Civ6Green" />
+  </Grid>
+  
+  <!--UI shown while the AI benchmark is running-->
+  <Grid Style="WindowFrameHUD" Anchor="C,T" Offset="0,50" Size="260,0" AutoSize="Vertical" ID="AIBenchmarkPanel">
+    <Stack StackPadding="8" StackGrowth="Down" Anchor="C,C" >
+      <Label String="LOC_BENCHMARK_TITLE" Anchor="C,C" />
+      <Container Anchor="C,C" Size="parent-10,20">
+        <Label String="LOC_BENCHMARK_TIME" Anchor="L,C"/>
+        <Label ID="TimeText" Anchor="R,C"/> <!--use LOC_KEY_TIME_MINS_SECONDS-->
+      </Container>
+      <Container Anchor="C,C" Size="parent-10,20">
+        <Label String="LOC_BENCHMARK_TURN" Anchor="L,C"/>
+        <Label ID="TurnsPassed" Anchor="R,C"/>
+      </Container>
+      <GridButton ID="CloseAIBenchmark" Anchor="C,T" Size="parent-10,40" Style="MainButton" String="LOC_HUD_CLOSE" />
+    </Stack>
+  </Grid>
+
+  <!--UI shown while the graphics benchmark is complete-->
+  <Grid Style="WindowFrameHUD" Anchor="C,C" Size="384,0" AutoSize="Vertical" ID="GraphicsResultsPanel">
+    <Stack StackPadding="8" StackGrowth="Down" Anchor="C,C" >
+      <Label String="LOC_BENCHMARK_RESULTS_TITLE" Anchor="C,T" />
+      <Container Anchor="C,C" Size="parent-10,20">
+        <Label String="LOC_BENCHMARK_FILE" Anchor="L,C"/>
+        <Label ID="GraphicsResultsFileText" Anchor="R,C"/>
+      </Container>
+      <Container Anchor="C,C" Size="parent-10,20">
+        <Label String="LOC_BENCHMARK_AVG_FRAME_TIME" Anchor="L,C"/>
+        <Label ID="ResultsAvgText" Anchor="R,C"/>
+      </Container>
+      <Container Anchor="C,C" Size="parent-10,20">
+        <Label String="LOC_BENCHMARK_99TH_PERCENTILE" Anchor="L,C"/>
+        <Label ID="Results99thText" Anchor="R,C"/>
+      </Container>
+      <Label String="LOC_FRAME_TIME_DISTRIBUTION" Anchor="C,T" />
+      <Graph ID="FrameDistribution" Size="parent-10,120" Anchor="C,C" Offset="0,0" Domain="0,40" Range="0,100" TickInterval="5,0" NumberInterval="5,0" ShowTicks="1,0" ShowGridLines="1,0" ShowNumbers="1,0" ShowAxes="1,0" GridColor="Civ6Green" />
+      <GridButton ID="CloseGraphicsResults" Anchor="C,T" Size="236,40" Style="MainButton" String="LOC_HUD_CLOSE" />
+    </Stack>
+  </Grid>
+
+  <!--UI shown while the AI benchmark is complete-->
+  <Grid Style="WindowFrameHUD" Anchor="C,C" Size="384,0" AutoSize="Vertical" ID="AIResultsPanel">
+    <Stack StackPadding="8" StackGrowth="Down" Anchor="C,C" >
+      <Label String="LOC_BENCHMARK_RESULTS_TITLE" Anchor="C,T" />
+      <Container Anchor="C,C" Size="parent-10,20">
+        <Label String="LOC_BENCHMARK_FILE" Anchor="L,C"/>
+        <Label ID="AIResultsFileText" Anchor="R,C"/>
+      </Container>
+      <Container Anchor="C,C" Size="parent-10,20">
+        <Label String="LOC_BENCHMARK_AVG_TURN_TIME" Anchor="L,C"/>
+        <Label ID="AIResultsAvg" Anchor="R,C"/>
+      </Container>
+      <GridButton ID="CloseAIResults" Anchor="C,T" Size="236,40" Style="MainButton" String="LOC_HUD_CLOSE" />
+    </Stack>
   </Grid>
 
 </Context>

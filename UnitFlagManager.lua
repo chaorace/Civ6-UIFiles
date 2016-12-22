@@ -369,7 +369,7 @@ function UnitFlag.UpdateAircraftCounter( self : UnitFlag )
 					self.m_Instance.UnitListPopup:BuildEntry( "UnitListEntry", unitEntry );
 
 					-- Update name
-					unitEntry.Button:SetText( Locale.ToUpper(unit:GetName()) );
+					unitEntry.UnitName:SetText( Locale.ToUpper(unit:GetName()) );
 
 					-- Update icon
 					local iconInfo:table, iconShadowInfo:table = GetUnitIconAndIconShadow(unit, 22, true);
@@ -381,6 +381,15 @@ function UnitFlag.UpdateAircraftCounter( self : UnitFlag )
 					unitEntry.Button:RegisterCallback( Mouse.eLClick, OnUnitSelected );
 					unitEntry.Button:SetVoid1(unit:GetOwner());
 					unitEntry.Button:SetVoid2(unit:GetID());
+
+					-- Fade out the button icon and text if the unit is not able to move
+					if unit:IsReadyToMove() then
+						unitEntry.UnitName:SetAlpha(1.0);
+						unitEntry.UnitTypeIcon:SetAlpha(1.0);
+					else
+						unitEntry.UnitName:SetAlpha(ALPHA_DIM);
+						unitEntry.UnitTypeIcon:SetAlpha(ALPHA_DIM);
+					end
 				end
 
 				-- If current air unit count is 0 then disabled popup
@@ -746,7 +755,7 @@ function UnitFlag.UpdateName( self : UnitFlag )
 		local unitName = pUnit:GetName();
 		local pPlayerCfg = PlayerConfigurations[ self.m_Player:GetID() ];
 		local nameString : string;
-		if(GameConfiguration.IsAnyMultiplayer() and self.m_Player:IsHuman()) then
+		if(GameConfiguration.IsAnyMultiplayer() and pPlayerCfg:IsHuman()) then
 			nameString = Locale.Lookup( pPlayerCfg:GetCivilizationShortDescription() ) .. " (" .. pPlayerCfg:GetPlayerName() .. ") - " .. Locale.Lookup( unitName );
 		else
 			nameString = Locale.Lookup( pPlayerCfg:GetCivilizationShortDescription() ) .. " - " .. Locale.Lookup( unitName );
@@ -1324,30 +1333,60 @@ function OnCameraUpdate( vFocusX:number, vFocusY:number, fZoomLevel:number )
 	for i, idTable:table in pairs(units) do
 		PositionFlagForUnitToView( idTable[1], idTable[2] ); 
 	end
-
-	--PositionFlagsToView();  
-	--Refresh();
 end
 
-------------------------------------------------------------------
-function OnPlayerTurnActivated(ePlayer, bFirstTimeThisTurn)
+-- ===========================================================================
+--	Game Engine Event
+-- ===========================================================================
+function OnPlayerTurnActivated( ePlayer:number, bFirstTimeThisTurn:boolean )
+
+	if ePlayer == -1 then
+		return;
+	end
+
+	local pPlayer = Players[ ePlayer ];
+	if pPlayer == nil then
+		return;
+	end
+	
+	if m_UnitFlagInstances[ ePlayer ]==nil then
+		return;
+	end
 
 	local idLocalPlayer = Game.GetLocalPlayer();
 	if (ePlayer == idLocalPlayer and bFirstTimeThisTurn) then
-		local pPlayer = Players[ idLocalPlayer ];
-		if (pPlayer ~= nil) then
-			if (m_UnitFlagInstances[ idLocalPlayer ] == nil) then
-				return;
-			end
 
-			local playerFlagInstances = m_UnitFlagInstances[ idLocalPlayer ];
-			for id, flag in pairs(playerFlagInstances) do
-				if (flag ~= nil) then
-					flag:UpdateStats();
-					flag:UpdateReadyState();
+		local playerFlagInstances = m_UnitFlagInstances[ idLocalPlayer ];
+		for id, flag in pairs(playerFlagInstances) do
+			if (flag ~= nil) then
+				flag:UpdateStats();
+				flag:UpdateReadyState();
+			end
+		end
+	else
+		-- If a barbarian, update any scout units that have been alerted.
+		if pPlayer:IsBarbarian() then			
+			local pPlayerUnits:table = pPlayer:GetUnits();
+			for i, pUnit in pPlayerUnits:Members() do	
+				local targetPlayer	:number		= pUnit:GetBarbarianTargetPlayer();
+				local unitID		:number		= pUnit:GetID();
+				local unitOwnerID	:number		= pUnit:GetOwner();
+				local flag			:UnitFlag	= GetUnitFlag( unitOwnerID, unitID );
+
+				if targetPlayer ~= -1 and targetPlayer == idLocalPlayer then				
+					if flag.m_Instance.FlagRoot["AttentionInstance"] == nil then
+						local pInstance		:table = {};
+						ContextPtr:BuildInstanceForControl( "AttentionMarkerInstance", pInstance, flag.m_Instance.FlagRoot );
+						flag.m_Instance.FlagRoot["AttentionInstance"] = pInstance;
+					end
+				else
+					if flag.m_Instance.FlagRoot["AttentionInstance"] ~= nil then
+						flag.m_Instance.FlagRoot:DestroyChild( flag.m_Instance.FlagRoot["AttentionInstance"] );
+						flag.m_Instance.FlagRoot["AttentionInstance"] = nil;
+					end					
 				end
 			end
-	    end
+		end
 	end
 end
 
@@ -1691,7 +1730,7 @@ function OnLevyCounterChanged( originalOwnerID : number )
     end
 end
 
-----------------------------------------------------------------
+-- ===========================================================================
 function OnLocalPlayerChanged()
 
 	-- Hide all the flags, we will get updates later
@@ -1706,14 +1745,13 @@ function OnLocalPlayerChanged()
 	m_DirtyComponents:Clear();
 end
 
-----------------------------------------------------------------
+-- ===========================================================================
 function RegisterDirtyEvents()
 	m_DirtyComponents = DirtyComponentsManager.Create();
 	m_DirtyComponents:AddEvent("UNIT_OPERATION_DEACTIVATED");
 	m_DirtyComponents:AddEvent("UNIT_ACTIVITY_CHANGED");
 	m_DirtyComponents:AddEvent("UNIT_MOVEMENT_POINTS_CHANGED");
 end
-
 
 -- ===========================================================================
 --	LUA Event
@@ -1760,10 +1798,11 @@ function Initialize()
 	Events.LensLayerOn.Add(	OnLensLayerOn );
 	Events.LensLayerOff.Add( OnLensLayerOff );
 	Events.LevyCounterChanged.Add( OnLevyCounterChanged );
-	Events.LocalPlayerChanged.Add(OnLocalPlayerChanged);
-	Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );
+	Events.LocalPlayerChanged.Add(OnLocalPlayerChanged);	
 	Events.MultiplayerPlayerConnected.Add( OnPlayerConnectChanged );
 	Events.MultiplayerPostPlayerDisconnected.Add( OnPlayerConnectChanged );
+	Events.ObjectPairing.Add(OnObjectPairingChanged);
+	Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );
 	Events.UnitAddedToMap.Add( OnUnitAddedToMap );
 	Events.UnitDamageChanged.Add( OnUnitDamageChanged );
 	Events.UnitEnterFormation.Add( OnEnterFormation );
@@ -1781,7 +1820,6 @@ function Initialize()
 	Events.UnitUpgraded.Add( OnUnitUpgraded );
 	Events.WorldRenderViewChanged.Add(PositionFlagsToView);
 	Events.UnitPromoted.Add(OnUnitPromotionChanged);
-	Events.ObjectPairing.Add(OnObjectPairingChanged);
 	--Events.UnitActivityChanged.Add(OnUnitActivityChanged); --Currently only needed for debugging.
 
 	LuaEvents.Tutorial_DisableMapSelect.Add( OnTutorial_DisableMapSelect );

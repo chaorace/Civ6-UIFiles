@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Name="EndDemo">
+
+	<Box Size="full,full" Color="0,0,0,150" ConsumeMouse="1"  />
+
+	<Image Anchor="C,C" Texture="EndGame_DemoFrame" ConsumeMouse="1" StretchMode="Auto" >
+		<Label			ID="PopupTitle"					Anchor="C,T" Offset="0,12"										Style="WindowHeader"		String="{LOC_DEMO_DIALOG_TITLE:upper}"  />
+		<Stack				ID="StackContents"		Anchor="C,B" Offset="0,20"	Size="parent,50"	StackGrowth="Top" StackPadding="5" InnerPadding="0,10">
+			<GridButton		ID="MenuButton"			Anchor="C,T"								Size="366,42"			Style="MainButton"		String="LOC_DEMO_DIALOG_EXIT" ToolTipString="LOC_DEMO_DIALOG_EXIT_TT"/>
+			<GridButton		ID="StoreButton"		Anchor="C,T"								Size="366,42"			Style="ButtonConfirm" String="LOC_DEMO_DIALOG_BUY" ToolTipString="LOC_DEMO_DIALOG_BUY_TT" />
+			<Container		Size="10,10"/>
+			<!-- Adds some padding between text and buttons -->
+			<Label        ID="Text"						Anchor="C,T" Align="Center" Style="BodyFont16"  Color0="221,221,221,255" Color1="4,30,50,229" FontStyle="glow" String="LOC_DEMO_DIALOG_TEXT" WrapWidth="400" />			
+    </Stack>
+	</Image>
+</Context>

@@ -3,6 +3,7 @@
 	<IconTextureAtlases>
 		<Row Name="ICON_ATLAS_VICTORIES" IconSize="64" IconsPerRow="4" IconsPerColumn="4" Filename="Victories64"/>
 		<Row Name="ICON_ATLAS_VICTORIES" IconSize="80" IconsPerRow="4" IconsPerColumn="4" Filename="Victories80"/>
+    <Row Name="ICON_ATLAS_VICTORIES" IconSize="130" IconsPerRow="4" IconsPerColumn="4" Filename="Victories130"/>
 		<Row Name="ICON_ATLAS_VICTORIES" IconSize="220" IconsPerRow="4" IconsPerColumn="4" Filename="Victories220"/>
 	</IconTextureAtlases>
 	<IconDefinitions>

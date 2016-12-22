@@ -408,6 +408,14 @@ end
 function OnMissionSelected(operation:table, instance:table)
 	LuaEvents.EspionageChooser_ShowMissionBriefing(operation.Hash, m_spy:GetID());
 
+	-- Hide all selection borders before selecting another
+	for i=1, m_MissionStackIM.m_iCount, 1 do
+		local otherInstances:table = m_MissionStackIM:GetAllocatedInstance(i);
+		if otherInstances then
+			otherInstances.SelectorBrace:SetColor(0x00000000);
+		end
+	end
+
 	-- Show selected border over instance
 	instance.SelectorBrace:SetColor(0xFFFFFFFF);
 end

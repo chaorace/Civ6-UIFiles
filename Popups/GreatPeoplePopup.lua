@@ -5,7 +5,7 @@
 include("InstanceManager");
 include("TabSupport");
 include("SupportFunctions");
-
+include("ModalScreen_PlayerYieldsHelper");
 
 -- ===========================================================================
 --	CONSTANTS
@@ -31,7 +31,71 @@ local m_ToggleGreatPeopleId;
 local m_activeBiographyID	:number	= -1;	-- Only allow one open at a time (or very quick exceed font allocation)
 local m_tabs				:table;
 local m_defaultPastRowHeight		:number = -1;	-- Default/mix height (from XML) for a previously recruited row 
+local m_displayPlayerID		:number = -1; -- What player are we displaying.  Used for looking at different players in autoplay
 
+-- ===========================================================================
+function ChangeDisplayPlayerID(bBackward)
+	
+	if (bBackward == nil) then
+		bBackward = false;
+	end
+
+	local aPlayers = PlayerManager.GetAliveMajors();
+	local playerCount = #aPlayers;
+
+	-- Anything set yet?
+	if (m_displayPlayerID ~= -1) then
+		-- Loop and find the current player and skip to the next
+		for i, pPlayer in ipairs(aPlayers) do
+			if (pPlayer:GetID() == m_displayPlayerID) then
+
+				if (bBackward) then
+					-- Have a previous one?
+					if (i >= 2) then
+						-- Yes
+						m_displayPlayerID = aPlayers[ playerCount ]:GetID();
+					else
+						-- Go to the end
+						m_displayPlayerID = aPlayers[1]:GetID();
+					end
+				else
+					-- Have a next one?
+					if (#aPlayer > i) then
+						-- Yes
+						m_displayPlayerID = aPlayers[i + 1]:GetID();
+					else
+						-- Back to the beginning
+						m_displayPlayerID = aPlayers[1]:GetID();
+					end
+				end
+
+				return m_displayPlayerID;
+			end
+		end
+
+	end
+
+	-- No player, or didn't find the previous player, start from the beginning.
+	if (playerCount > 0) then
+		m_displayPlayerID = aPlayers[1]:GetID();
+	end
+
+	return m_displayPlayerID;
+end
+				
+-- ===========================================================================
+function GetDisplayPlayerID()
+
+	if Automation.IsActive() then
+		if (m_displayPlayerID ~= -1) then
+			return m_displayPlayerID;
+		end
+
+		return ChangeDisplayPlayerID();
+	end
+
+	return Game.GetLocalPlayer();
+end
 
 -- ===========================================================================
 function GetActivationEffectTextByGreatPersonClass( greatPersonClassID:number )
@@ -90,7 +154,8 @@ function ViewCurrent( data:table )
 	Controls.PeopleScroller:SetHide(false);
 	Controls.RecruitedArea:SetHide(true);	
 
-	local firstAvailableIndex :number = 0;
+	local kInstanceToShow:table = nil;
+
 	for i, kPerson:table in ipairs(data.Timeline) do	
 		
 		local instance		:table = m_greatPersonPanelIM:GetInstance();
@@ -125,6 +190,7 @@ function ViewCurrent( data:table )
 				textureSheet = "GreatPeopleClass90";
 			end
 			instance.ClassImage:SetTexture( textureOffsetX, textureOffsetY, textureSheet );
+			instance.BiographyClassImage:SetTexture( textureOffsetX, textureOffsetY, textureSheet );
 		end
 
 		-- Grab icon of the great person themselves; first try a specific image, if it doesn't exist
@@ -140,6 +206,8 @@ function ViewCurrent( data:table )
 			local isValid = instance.Portrait:SetIcon(portrait);
 			if (not isValid) then
 				UI.DataError("Could not find icon for "..portrait);
+			else
+				instance.BiographyPortrait:SetIcon(portrait);
 			end
 		end
 		
@@ -228,6 +296,11 @@ function ViewCurrent( data:table )
 				instance.RecruitButton:SetVoid1(kPerson.IndividualID);
 				instance.RecruitButton:RegisterCallback(Mouse.eLClick, OnRecruitButtonClick);
 				instance.RecruitButton:SetHide(false);
+
+				-- Auto scroll to first recruitable person.
+				if kInstanceToShow==nil then
+					kInstanceToShow = instance;
+				end
 			else
 				instance.RecruitButton:SetHide(true);
 			end
@@ -318,6 +391,18 @@ function ViewCurrent( data:table )
 	
 	Controls.PopupContainer:SetSizeX( popupContainerX );
 	Controls.ModalFrame:SetSizeX( popupContainerX );	
+
+	-- Has an instance been set to auto scroll to?
+	Controls.PeopleScroller:SetScrollValue( 0 );		-- Either way reset scroll first (mostly for hot seat)
+	if kInstanceToShow ~= nil then
+		local contentWidth		:number = kInstanceToShow.Content:GetSizeX();
+		local contentOffsetx	:number = kInstanceToShow.Content:GetScreenOffset();	-- Obtaining normal offset would yield 0, but since modal is as wide as the window, this works.
+		local offsetx			:number = contentOffsetx + (contentWidth * 0.5) + (popupContainerX * 0.5);	-- Middle of screen
+		local totalWidth		:number = Controls.PeopleScroller:GetSizeX();
+		local scrollAmt			:number =  offsetx / totalWidth;
+		scrollAmt = math.clamp( scrollAmt, 0, 1);
+		Controls.PeopleScroller:SetScrollValue( scrollAmt );
+	end
 end
 
 
@@ -334,8 +419,8 @@ function ViewPast( data:table )
 	Controls.PeopleScroller:SetHide(true);
 	Controls.RecruitedArea:SetHide(false);	
 
-	local firstAvailableIndex			:number = 0;
 	local localPlayerID					:number = Game.GetLocalPlayer();	
+
 	local PADDING_FOR_SPACE_AROUND_TEXT	:number = 20;
 
 	for i, kPerson:table in ipairs(data.Timeline) do	
@@ -375,7 +460,7 @@ function ViewPast( data:table )
 					instance.RecruitedImage:SetHide(false);
 					instance.YouIndicator:SetHide(false);
 
-				elseif (localPlayer ~= nil and localPlayer:GetDiplomacy() ~= nil and localPlayer:GetDiplomacy():HasMet(kPerson.ClaimantID)) then
+				elseif (Game.GetLocalObserver() == PlayerTypes.OBSERVER or (localPlayer ~= nil and localPlayer:GetDiplomacy() ~= nil and localPlayer:GetDiplomacy():HasMet(kPerson.ClaimantID))) then
 					instance.RecruitedImage:SetIcon(iconName, 55);
 					instance.RecruitedImage:SetToolTipString( Locale.Lookup(playerConfig:GetPlayerName()) );
 					instance.RecruitedImage:SetHide(false);
@@ -524,7 +609,11 @@ function PopulateData( data:table, isPast:boolean )
 		return;
 	end
 	
-	local localPlayerID :number = Game.GetLocalPlayer();
+	local displayPlayerID :number = GetDisplayPlayerID();
+	if (displayPlayerID == -1) then
+		return;
+	end
+
 	local pGreatPeople	:table  = Game.GetGreatPeople();
 	if pGreatPeople == nil then
 		UI.DataError("GreatPeoplePopup received NIL great people object.");
@@ -556,19 +645,19 @@ function PopulateData( data:table, isPast:boolean )
 		local rejectCost			:number = nil;
 		local earnConditions		:string = nil;
 		if (entry.Individual ~= nil) then
-			if (Players[localPlayerID] ~= nil) then
-				canRecruit = pGreatPeople:CanRecruitPerson(localPlayerID, entry.Individual);
+			if (Players[displayPlayerID] ~= nil) then
+				canRecruit = pGreatPeople:CanRecruitPerson(displayPlayerID, entry.Individual);
 				if (not isPast) then
-					canReject = pGreatPeople:CanRejectPerson(localPlayerID, entry.Individual);
+					canReject = pGreatPeople:CanRejectPerson(displayPlayerID, entry.Individual);
 					if (canReject) then
-						rejectCost = pGreatPeople:GetRejectCost(localPlayerID, entry.Individual);
+						rejectCost = pGreatPeople:GetRejectCost(displayPlayerID, entry.Individual);
 					end
 				end
-				canPatronizeWithGold = pGreatPeople:CanPatronizePerson(localPlayerID, entry.Individual, YieldTypes.GOLD);
-				patronizeWithGoldCost = pGreatPeople:GetPatronizeCost(localPlayerID, entry.Individual, YieldTypes.GOLD);
-				canPatronizeWithFaith = pGreatPeople:CanPatronizePerson(localPlayerID, entry.Individual, YieldTypes.FAITH);
-				patronizeWithFaithCost = pGreatPeople:GetPatronizeCost(localPlayerID, entry.Individual, YieldTypes.FAITH);
-				earnConditions = pGreatPeople:GetEarnConditionsText(localPlayerID, entry.Individual);
+				canPatronizeWithGold = pGreatPeople:CanPatronizePerson(displayPlayerID, entry.Individual, YieldTypes.GOLD);
+				patronizeWithGoldCost = pGreatPeople:GetPatronizeCost(displayPlayerID, entry.Individual, YieldTypes.GOLD);
+				canPatronizeWithFaith = pGreatPeople:CanPatronizePerson(displayPlayerID, entry.Individual, YieldTypes.FAITH);
+				patronizeWithFaithCost = pGreatPeople:GetPatronizeCost(displayPlayerID, entry.Individual, YieldTypes.FAITH);
+				earnConditions = pGreatPeople:GetEarnConditionsText(displayPlayerID, entry.Individual);
 			end
 			local individualInfo = GameInfo.GreatPersonIndividuals[entry.Individual];
 			actionCharges = individualInfo.ActionCharges;
@@ -626,10 +715,10 @@ function PopulateData( data:table, isPast:boolean )
 		for i, player in ipairs(players) do
 			local playerName = "";
 			local isPlayer:boolean = false;
-			if (player:GetID() == localPlayerID) then
+			if (player:GetID() == displayPlayerID) then
 				playerName = playerName .. Locale.Lookup(PlayerConfigurations[player:GetID()]:GetCivilizationShortDescription());
 				isPlayer = true;
-			elseif (Players[localPlayerID]:GetDiplomacy():HasMet(player:GetID())) then
+			elseif (Game.GetLocalObserver() == PlayerTypes.OBSERVER or Players[displayPlayerID]:GetDiplomacy():HasMet(player:GetID())) then
 				playerName = playerName .. Locale.Lookup(PlayerConfigurations[player:GetID()]:GetCivilizationShortDescription());
 			else
 				playerName = playerName .. Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER");
@@ -664,6 +753,9 @@ function Open()
 	ContextPtr:SetHide(false);
 	Refresh();
 	UI.PlaySound("UI_Screen_Open");
+
+	-- From ModalScreen_PlayerYieldsHelper
+	RefreshYields();
 
 	-- From Civ6_styles: FullScreenVignetteConsumer
 	Controls.ScreenAnimIn:SetToBeginning();
@@ -777,7 +869,7 @@ end
 --	Game Engine Event
 -- ===========================================================================
 function OnUnitGreatPersonActivated( unitOwner:number, unitID:number, greatPersonClassID:number, greatPersonIndividualID:number )
-	if (unitOwner == Game.GetLocalPlayer()) then
+	if (unitOwner == Game.GetLocalObserver() or Game.GetLocalObserver() == PlayerTypes.OBSERVER) then
 		local player = Players[unitOwner];
 		if (player ~= nil) then
 			local unit = player:GetUnits():FindID(unitID);
@@ -884,7 +976,6 @@ function OnGameDebugReturn( context:string, contextTable:table )
 	local isHidden:boolean = contextTable["isHidden"]; 
 	if not isHidden then 
 		local isPreviouslyRecruited:boolean = contextTable["isPreviousTab"];
-		-- Open(); 
 		if isPreviouslyRecruited then
 			m_tabs.SelectTab( Controls.ButtonPreviouslyRecruited );
 		else
@@ -917,9 +1008,7 @@ function Initialize()
 	m_tabs.AddTab( Controls.ButtonGreatPeople,			OnGreatPeopleClick );
 	m_tabs.AddTab( Controls.ButtonPreviouslyRecruited,	OnPreviousRecruitedClick );
 	m_tabs.CenterAlignTabs(-10);
-	if Game.GetLocalPlayer() ~= -1 then
-		m_tabs.SelectTab( Controls.ButtonGreatPeople );
-	end
+	m_tabs.SelectTab( Controls.ButtonGreatPeople );
 
 	-- UI Events
 	ContextPtr:SetInitHandler( OnInit );
@@ -943,7 +1032,7 @@ function Initialize()
 	LuaEvents.GameDebug_Return.Add(							OnGameDebugReturn );
 	LuaEvents.LaunchBar_OpenGreatPeoplePopup.Add(			OnOpenViaLaunchBar );
 	LuaEvents.NotificationPanel_OpenGreatPeoplePopup.Add(	OnOpenViaNotification );
-	LuaEvents.LaunchBar_CloseGreatPeoplePopup.Add(OnClose);
+	LuaEvents.LaunchBar_CloseGreatPeoplePopup.Add(			OnClose );
 	
     -- Audio Events
 	Controls.ButtonGreatPeople:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);

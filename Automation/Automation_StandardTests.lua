@@ -73,7 +73,7 @@ function ReadUserConfigOptions()
 
 	local quickCombat = Automation.GetSetParameter("CurrentTest", "QuickCombat");
 	if (quickCombat ~= nil) then		
-		UserConfiguration.SetLockedValue("QuickCombat", GetTrueOrFalse(quickMoves));
+		UserConfiguration.SetLockedValue("QuickCombat", GetTrueOrFalse(quickCombat));
 	end
 
 end
@@ -109,6 +109,15 @@ Tests["PlayGame"].Run = function()
 		UpdatePlayerCounts();
 	end
 
+	-- Did they have a handicap/difficulty level?
+	local handicap = Automation.GetSetParameter("CurrentTest", "Handicap");
+	if (handicap == nil) then		
+		handicap = Automation.GetSetParameter("CurrentTest", "Difficulty");		-- Letting them use an alias
+	end
+	if (handicap ~= nil) then		
+		GameConfiguration.SetHandicapType(handicap);
+	end
+
 	-- Did they have a map size?
 	local mapSize = Automation.GetSetParameter("CurrentTest", "MapSize");
 	if (mapSize ~= nil) then		
@@ -139,6 +148,14 @@ Tests["PlayGame"].Run = function()
 	if (gameStartEra ~= nil) then
 		GameConfiguration.SetStartEra(gameStartEra);
 	end
+
+	-- Or Max Turns?  This is Max turns for a Score victory, not the number of turns for the test.
+	local maxTurns = Automation.GetSetParameter("CurrentTest", "MaxTurns");
+	if (maxTurns ~= nil and maxTurns >= 1) then
+		GameConfiguration.SetMaxTurns(maxTurns);
+		GameConfiguration.SetTurnLimitType(TurnLimitTypes.CUSTOM);
+	end
+	
 	
 	ReadUserConfigOptions();
 
@@ -193,6 +210,8 @@ Tests["PlayGame"].Stop = function()
 
 	Events.SaveComplete.Remove( PlayGame_OnSaveComplete );
 
+	AutoplayManager.SetActive(false);		-- Make sure this is off
+
 	RestoreUserConfigOptions();
 
 end
@@ -238,6 +257,8 @@ Tests["LoadGame"].Run = function()
 		if (saveDirectory ~= nil) then
 			loadGame.Directory = saveDirectory;
 		end
+		
+		ReadUserConfigOptions();
 
 		local bResult = Network.LoadGame(loadGame, ServerType.SERVER_TYPE_NONE);
 		if (bResult == false) then
@@ -287,6 +308,12 @@ Tests["LoadGame"].GameStarted = function()
 		-- Look at who we are going to play.
 		StartupObserverCamera(observeAs);
 	end
+
+end
+
+Tests["LoadGame"].Stop = function()
+
+	RestoreUserConfigOptions();
 
 end
 

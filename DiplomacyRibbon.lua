@@ -483,6 +483,7 @@ function Initialize()
 	Events.LocalPlayerChanged.Add(UpdateLeaders);
 	Events.PlayerInfoChanged.Add(UpdateLeaders);
 	Events.PlayerDefeat.Add(UpdateLeaders);
+	Events.PlayerRestored.Add(UpdateLeaders);
 
 	LuaEvents.ChatPanel_OnChatReceived.Add(OnChatReceived);
 	LuaEvents.WorldTracker_OnChatShown.Add(OnChatPanelShown);

@@ -44,6 +44,8 @@ VisitActivity.Unit		= 1;
 VisitActivity.City		= 2;
 VisitActivity.Plot		= 3;
 VisitActivity.Combat	= 4;
+VisitActivity.Wonder	= 5;
+VisitActivity.District	= 6;
 
 -- A definition of an activity
 hstructure Activity
@@ -91,6 +93,17 @@ end
 
 -- The current activity
 local CurrentActivity : Activity = hmake Activity { started = false, tracking = false, lingering = false, type = VisitActivity.None, startTime = 0, duration = 0, x = 0, y = 0 };
+
+-------------------------------------------------------------------------------
+function CanSeePlot(x, y)
+
+	local pPlayerVis = PlayerVisibilityManager.GetPlayerVisibility(Game.GetLocalObserver());
+	if (pPlayerVis ~= nil) then
+		return pPlayerVis:IsVisible(x, y);
+	end
+
+	return false;
+end	
 
 -------------------------------------------------------------------------------
 -- What percentage is the current activity at?
@@ -173,6 +186,26 @@ end
 -------------------------------------------------------------------------------
 ActivityHandlers[VisitActivity.Combat] = {};
 ActivityHandlers[VisitActivity.Combat].Start = function(activity : Activity)
+
+	local iValue = Automation.GetRandomNumber(8);
+	local zoom = 0.2 + (iValue * 0.05);
+	UI.LookAtPlot(activity.x, activity.y, zoom);
+
+end
+
+-------------------------------------------------------------------------------
+ActivityHandlers[VisitActivity.Wonder] = {};
+ActivityHandlers[VisitActivity.Wonder].Start = function(activity : Activity)
+
+	local iValue = Automation.GetRandomNumber(4);
+	local zoom = 0.3 + (iValue * 0.1);
+	UI.LookAtPlot(activity.x, activity.y, zoom);
+
+end
+
+-------------------------------------------------------------------------------
+ActivityHandlers[VisitActivity.District] = {};
+ActivityHandlers[VisitActivity.District].Start = function(activity : Activity)
 
 	local iValue = Automation.GetRandomNumber(8);
 	local zoom = 0.2 + (iValue * 0.05);
@@ -483,7 +516,8 @@ Events.PlayerTurnActivated.Add( OnPlayerTurnActivated );
 function OnCombatVisBegin(combatMembers)
 	
 	if (CurrentActivity.started == false or CurrentActivity.type ~= VisitActivity.Combat or CurrentActivity.lingering == true) then	-- Don't interrupt looking at some other combat, unless we are in the 'linger' time
-		if (CurrentActivityPercentComplete() >= 50.0 or CurrentActivityElapsed() >= 5.0) then	-- Looking at our current activity for more than 50 percent of its duration or more than 5 seconds?
+		if (CurrentActivityPercentComplete() >= 50.0 or CurrentActivityElapsed() >= 3.0		-- Looking at our current activity for more than 50 percent of its duration or more than a few seconds?
+			or CurrentActivity.type == VisitActivity.City) then								-- Or are we just looking at a city?
 			-- We are bored with that, lets look at something new
 			local attacker = combatMembers[1];
 			if (attacker.componentType == ComponentType.UNIT) then
@@ -519,10 +553,104 @@ end
 Events.CombatVisEnd.Add( OnCombatVisEnd );
 
 -------------------------------------------------------------------------------
+function OnUnitActivate(owner, unitID, x, y, eReason, bVisibleToLocalPlayer)
+
+	if (bVisibleToLocalPlayer) then
+		if (eReason == EventSubTypes.FOUND_CITY) then
+
+			ClearCurrentActivity();
+
+			-- Look at the location
+			CurrentActivity.type = VisitActivity.City;
+			CurrentActivity.startTime = Automation.GetTime();
+			CurrentActivity.duration = ms_CityViewDuration;
+			CurrentActivity.x = x;
+			CurrentActivity.y = y;
+
+			StartCurrentActivity();
+		end
+	end
+end
+Events.UnitActivate.Add( OnUnitActivate );
+
+-------------------------------------------------------------------------------
+function OnWonderCompleted(x, y)
+
+	if (CanSeePlot(x, y)) then
+		local plot = Map.GetPlot(x, y);
+		if (plot ~= nil) then
+			if (CurrentActivity.started == false or CurrentActivity.lingering == true or CurrentActivity.type ~= VisitActivity.Wonder) then	-- Don't interrupt looking at some other wonder complete, unless we are in the 'linger' time
+				-- Wonders are important, so interrupt anything else
+				ClearCurrentActivity();
+
+				CurrentActivity.type = VisitActivity.Wonder;
+				CurrentActivity.startTime = Automation.GetTime();
+				CurrentActivity.duration = 5.0;
+				CurrentActivity.x = x;
+				CurrentActivity.y = y;
+
+				StartCurrentActivity();
+			end
+		end
+	end
+end
+Events.WonderCompleted.Add( OnWonderCompleted );
+
+-------------------------------------------------------------------------------
+function OnDistrictBuildProgressChanged(owner, districtID, cityID, x, y, districtType, era, civilization, percentComplete, appeal, isPillaged)
+
+	if (percentComplete >= 100) then	
+		if (CanSeePlot(x, y)) then
+			local plot = Map.GetPlot(x, y);
+			if (plot ~= nil) then
+				if (CurrentActivity.started == false or CurrentActivity.lingering == true or (CurrentActivity.type ~= VisitActivity.District and CurrentActivity.type ~= VisitActivity.Combat) ) then
+
+					ClearCurrentActivity();
+
+					CurrentActivity.type = VisitActivity.District;
+					CurrentActivity.startTime = Automation.GetTime();
+					CurrentActivity.duration = 5.0;
+					CurrentActivity.x = x;
+					CurrentActivity.y = y;
+
+					StartCurrentActivity();
+				end
+			end
+		end
+	end
+end
+Events.DistrictBuildProgressChanged.Add( OnDistrictBuildProgressChanged );
+
+-------------------------------------------------------------------------------
+function OnDistrictPillaged(owner, districtID, cityID, x, y, districtType, percentComplete, isPillaged)
+
+	if (CanSeePlot(x, y)) then
+		local plot = Map.GetPlot(x, y);
+		if (plot ~= nil) then
+			if (CurrentActivity.started == false or CurrentActivity.lingering == true or (CurrentActivity.type ~= VisitActivity.District and CurrentActivity.type ~= VisitActivity.Combat) ) then
+
+				ClearCurrentActivity();
+
+				CurrentActivity.type = VisitActivity.District;
+				CurrentActivity.startTime = Automation.GetTime();
+				CurrentActivity.duration = 5.0;
+				CurrentActivity.x = x;
+				CurrentActivity.y = y;
+
+				StartCurrentActivity();
+			end
+		end
+	end
+end
+Events.DistrictPillaged.Add( OnDistrictPillaged );
+
+-------------------------------------------------------------------------------
 -- Poll our activity.
 function OnAutomationAppUpdateComplete()
 	if (ms_bInitialized == true) then
-		CheckActivityComplete();
+		if (not Automation.IsPaused()) then
+			CheckActivityComplete();
+		end
 	end
 end
 

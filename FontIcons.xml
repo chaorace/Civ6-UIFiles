@@ -257,10 +257,11 @@
   <Icon Name="PressureHigh"                                 Start="88,440" 	  Size="22,22" Advance="22" Baseline="0,4"/>
   <Icon Name="PressureMedium"                               Start="110,440" 	Size="22,22" Advance="22" Baseline="0,4"/>
   <Icon Name="PressureLow"                                  Start="132,440" 	Size="22,22" Advance="22" Baseline="0,4"/>
-  <!--  <Icon Name=""                                       Start="154,418" 	Size="22,22" Advance="22" Baseline="0,4"/>
-  <Icon Name=""                                             Start="176,418" 	Size="22,22" Advance="22" Baseline="0,6"/>
-  <Icon Name=""                                             Start="198,418" 	Size="22,22" Advance="22" Baseline="0,4"/>
-  <Icon Name=""                                             Start="220,418" 	Size="22,22" Advance="22" Baseline="0,4"/>-->
+  <Icon Name="GoingTo"                                      Start="154,440" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Therefore"                                    Start="154,440" 	Size="22,22" Advance="22" Baseline="0,6"/>
+   <!-- <Icon Name=""                                             Start="176,440" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name=""                                             Start="198,440" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="220,440" 	Size="22,22" Advance="22" Baseline="0,4"/>-->
 
   <Icon Name="Bombard_Large"                                Start="0,   462" 	Size="22,22" Advance="22" Baseline="0,4"/>
   <Icon Name="Charges_Large"                                Start="22,  462" 	Size="22,22" Advance="22" Baseline="0,4"/>

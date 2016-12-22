@@ -20,7 +20,7 @@ include( "SupportFunctions" );
 include( "Civ6Common" );			-- Tutorial check support
 include( "TechAndCivicSupport" );
 include( "TechFilterFunctions" );
-
+include( "ModalScreen_PlayerYieldsHelper" );
 
 -- ===========================================================================
 --	DEBUG
@@ -775,6 +775,14 @@ function View( playerTechData:table )
 		else
 			node.FilteredOut:SetHide( false );
 		end
+
+		-- Show/Hide Recommended Icon
+		if live.IsRecommended and live.AdvisorType ~= nil then
+			node.RecommendedIcon:SetIcon(live.AdvisorType);
+			node.RecommendedIcon:SetHide(false);
+		else
+			node.RecommendedIcon:SetHide(true);
+		end
 	end
 
 	-- Fill in where the markers (representing players) are at:
@@ -936,6 +944,15 @@ function GetLivePlayerData( ePlayer:number, eCompletedCivic:number )
 		print("------------------------------ --- ---------- --------- --- ---------------- --------------------------");
 	end
 
+	-- Get recommendations
+	local civicRecommendations:table = {};
+	local kGrandAI:table = kPlayer:GetGrandStrategicAI();
+	if kGrandAI then
+		for i,recommendation in pairs(kGrandAI:GetCivicsRecommendations()) do
+			civicRecommendations[recommendation.CivicHash] = recommendation.CivicScore;
+		end
+	end
+
 	-- Loop through all items and place in appropriate buckets as well
 	-- read in the associated information for it.
 	for type,item in pairs(m_kItemDefaults) do
@@ -960,6 +977,14 @@ function GetLivePlayerData( ePlayer:number, eCompletedCivic:number )
 			Status		= status,
 			Turns		= turnsLeft
 		}
+
+		-- Determine if tech is recommended
+		if civicRecommendations[item.Hash] then
+			data[DATA_FIELD_LIVEDATA][type].AdvisorType = GameInfo.Civics[item.Type].AdvisorType;
+			data[DATA_FIELD_LIVEDATA][type].IsRecommended = true;
+		else
+			data[DATA_FIELD_LIVEDATA][type].IsRecommended = false;
+		end
 
 		-- DEBUG: Output to console detailed information about the tech.
 		if m_debugOutputTechInfo then
@@ -1413,6 +1438,9 @@ function OnOpen()
 	UI.PlaySound("UI_Screen_Open");
 	View( m_kCurrentData );
 	ContextPtr:SetHide(false);
+
+	-- From ModalScreen_PlayerYieldsHelper
+	RefreshYields();
 
 	-- From Civ6_styles: FullScreenVignetteConsumer
 	Controls.ScreenAnimIn:SetToBeginning();

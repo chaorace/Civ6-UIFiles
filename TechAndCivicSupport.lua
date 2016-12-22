@@ -541,6 +541,17 @@ function RealizeCurrentResearch( playerID:number, kData:table, kControl:table )
 		if numUnlockables ~= nil and kControl ~= nil then
 			HandleOverflow(numUnlockables, kControl);
 		end
+
+		-- Show/Hide Recommended Icon
+		if kControl.RecommendedIcon then
+			if kData.IsRecommended and kData.AdvisorType ~= nil then
+				kControl.RecommendedIcon:SetIcon(kData.AdvisorType);
+				kControl.RecommendedIcon:SetHide(false);
+				kControl.TitleStack:ReprocessAnchoring();
+			else
+				kControl.RecommendedIcon:SetHide(true);
+			end
+		end
 	else
 		-- Nothing has been researched yet.
 		kControl.TitleButton:ClearCallback(Mouse.eRClick);
@@ -641,6 +652,17 @@ function RealizeCurrentCivic( playerID:number, kData:table, kControl:table )
 		numUnlockables = PopulateUnlockablesForCivic( playerID, kData.ID, techUnlockIM, nil );
 		if numUnlockables ~= nil then
 			HandleOverflow(numUnlockables, kControl);
+		end
+
+		-- Show/Hide Recommended Icon
+		if kControl.RecommendedIcon then
+			if kData.IsRecommended then
+				kControl.RecommendedIcon:SetIcon(kData.AdvisorType);
+				kControl.RecommendedIcon:SetHide(false);
+				kControl.TitleStack:ReprocessAnchoring();
+			else
+				kControl.RecommendedIcon:SetHide(true);
+			end
 		end
 	else
 		-- Nothing has been researched yet.

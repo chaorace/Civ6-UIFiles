@@ -80,7 +80,7 @@ function ShowPopup( kData:table )
 	if kData.Description ~= nil then
 		Controls.WonderIcon:SetToolTipString( kData.Description );
 	end
-
+	Controls.QuoteContainer:DoAutoSize();
 	Controls.DropShadow:ReprocessAnchoring();
 end
 
@@ -175,6 +175,6 @@ function Initialize()
 	Controls.WonderRevealedHeader:SetText( Locale.ToUpper( Locale.Lookup("LOC_UI_FEATURE_NATURAL_WONDER_DISCOVERY")) )
 	
 	Events.NaturalWonderRevealed.Add(OnNaturalWonderRevealed);
-	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
+	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );	
 end
 Initialize();

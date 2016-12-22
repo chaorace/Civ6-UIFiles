@@ -9,7 +9,7 @@
     
   <Grid ID="HeaderGrid" Texture="Controls_LensHeaderSmall" Offset="0,29" SliceTextureSize="71,49" SliceCorner="20,24" Size="full,49" Color="255,255,255,255">
     <Image ID="HeaderDropshadow" Texture="Controls_GradientSmall" Size="full,22"  Color="0,0,0,255" Anchor="L,B" AnchorSide="I,O"/>
-    <Label ID="LensText" String="{LOC_HUD_RELIGION_LENS:upper}" Style="PanelText" Anchor="L,C" Offset="25,0"/>
+    <Label ID="LensText" String="{LOC_HUD_RELIGION_LENS:upper}"  Style="FontFlair22" SmallCaps="26" FontStyle="glow" ColorSet="WonderHeader" Anchor="L,C" Offset="25,0"/>
     <Button ID="CloseButton" Texture="Controls_CloseButtonAlt" Size="32,32" Anchor="R,C" Offset="2,0"/>
   </Grid>
   

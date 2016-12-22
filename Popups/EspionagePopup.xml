@@ -28,6 +28,67 @@
         </Grid>
       </Container>
 
+      <!-- Mission Outcome -->
+      <Container ID="MissionOutcomeContainer" AutoSize="1">
+        <Label Anchor="C,T" Style="FontFlair20" SmallCaps="26" SmallCapsType="EveryWord" Color="EspionagePopup_Header" String="LOC_ESPIONAGEPOPUP_MISSION_OUTCOME"/>
+        <Grid Anchor="L,T" Size="parent-250,80" AutoSize="Vertical" AutoSizePadding="0,15" Offset="0,26" Color="EspionagePopup_Deco" Texture="Controls_DecoFaded" SliceCorner="36,58" SliceSize="1,3" SliceTextureSize="73,73">
+          <Image Offset="6,6" Size="64,64" Texture="Controls_Circle" Color="EspionagePopup_Deco">
+            <Image ID="MissionOutcomeIcon" Anchor="C,C" Size="64,64" Texture="Consequences64" Icon="ICON_CONSEQUENCE_SUCCESS" IconSize="64"/>
+          </Image>
+          <Label ID="MissionOutcomeLabel" Anchor="L,T" Offset="76,6" Style="FontFlair26" Color="EspionagePopup_Header" Align="Left" WrapWidth="parent-15"/>
+          <Label ID="MissionOutcomeDescription" Anchor="L,T" Offset="76,34" Style="FontNormal14" Color="EspionagePopup_Body" Align="Left" WrapWidth="parent-80"/>
+        </Grid>
+      </Container>
+      
+      <!-- Mission Rewards -->
+      <Container ID="MissionRewardsContainer" AutoSize="1">
+        <Label Anchor="C,T" Style="FontFlair20" SmallCaps="26" SmallCapsType="EveryWord" Color="EspionagePopup_Header" String="LOC_ESPIONAGEPOPUP_REWARDS"/>
+        <Stack StackGrowth="Down" Offset="0,26">
+          <!-- Agent Promotion Available -->
+          <Grid Anchor="L,T" Size="parent-250,40" AutoSize="Vertical" AutoSizePadding="0,8" Color="EspionagePopup_Deco" Texture="Controls_DecoFaded" SliceCorner="36,58" SliceSize="1,3" SliceTextureSize="73,73">
+            <Image Offset="6,6" Size="64,64" Texture="Controls_Circle" Color="EspionagePopup_Deco">
+              <Image Anchor="C,C" Size="64,64" Texture="Consequences64" Icon="ICON_CONSEQUENCE_SUCCESS" IconSize="64"/>
+            </Image>
+            <Label ID="SpyPromotionLabel" Anchor="L,T" Offset="76,8" Style="FontNormal14" Color="EspionagePopup_Header" Align="Left" WrapWidth="parent-15"/>
+            <Label ID="SpyPromotionDescription" Anchor="L,T" Offset="76,30" Style="FontNormal14" Color="EspionagePopup_Body" Align="Left" WrapWidth="parent-80"/>
+          </Grid>
+
+          <!-- Loot Aquired -->
+          <Grid Anchor="L,T" Size="parent-250,80" AutoSize="Vertical" AutoSizePadding="0,8" Color="EspionagePopup_Deco" Texture="Controls_DecoFaded" SliceCorner="36,58" SliceSize="1,3" SliceTextureSize="73,73">
+            <Image Offset="6,6" Size="64,64" Texture="Controls_Circle" Color="EspionagePopup_Deco">
+              <Image Anchor="C,C" Size="64,64" Texture="Consequences64" Icon="ICON_CONSEQUENCE_SUCCESS" IconSize="64"/>
+            </Image>
+            <Label ID="SpyLootRewardLabel" Anchor="L,T" Offset="76,8" Style="FontNormal14" Color="EspionagePopup_Header" Align="Left" WrapWidth="parent-15"/>
+            <Label ID="SpyLootRewardDescription" Anchor="L,T" Offset="76,30" Style="FontNormal14" Color="EspionagePopup_Body" Align="Left" WrapWidth="parent-80"/>
+          </Grid>
+        </Stack>
+      </Container>
+
+      <!-- Mission Consequences -->
+      <Container ID="MissionConsequencesContainer" AutoSize="1">
+        <Label Anchor="C,T" Style="FontFlair20" SmallCaps="26" SmallCapsType="EveryWord" Color="EspionagePopup_Header" String="LOC_ESPIONAGEPOPUP_CONSEQUENCES"/>
+        <Stack StackGrowth="Down" Offset="0,26">
+          <!-- Relationship Damage -->
+          <Grid Anchor="L,T" Size="parent-250,40" AutoSize="Vertical" AutoSizePadding="0,8" Color="EspionagePopup_Deco" Texture="Controls_DecoFaded" SliceCorner="36,58" SliceSize="1,3" SliceTextureSize="73,73">
+            <Image Offset="6,6" Size="64,64" Texture="Controls_Circle" Color="EspionagePopup_Deco">
+              <Image Anchor="C,C" Size="64,64" Icon="ICON_CONSEQUENCE_DOWNGRADE" IconSize="64"/>
+            </Image>
+            <Label ID="RelationshipDamageTitle" Anchor="L,T" Offset="76,8" Style="FontNormal14" Color="EspionagePopup_Header" Align="Left" WrapWidth="parent-15" String="LOC_ESPIONAGEPOPUP_RELATIONSHIP_DAMAGED_TITLE"/>
+            <Label ID="RelationshipDamageDescription" Anchor="L,T" Offset="76,30" Style="FontNormal14" Color="EspionagePopup_Body" Align="Left" WrapWidth="parent-80" String="LOC_ESPIONAGEPOPUP_RELATIONSHIP_DAMAGED_DESC"/>
+          </Grid>
+
+          <!-- Lost Agent -->
+          <Grid ID="LostAgentGrid" Anchor="L,T" Size="parent-250,80" AutoSize="Vertical" AutoSizePadding="0,8" Color="EspionagePopup_Deco" Texture="Controls_DecoFaded" SliceCorner="36,58" SliceSize="1,3" SliceTextureSize="73,73">
+            <Image Offset="6,6" Size="64,64" Texture="Controls_Circle" Color="EspionagePopup_Deco">
+              <Image ID="LostAgentIcon" Anchor="C,C" Size="64,64" Icon="ICON_CONSEQUENCE_SPY_CAPTURED" IconSize="64"/>
+            </Image>
+            <Label ID="LostAgentTitle" Anchor="L,T" Offset="76,8" Style="FontNormal14" Color="EspionagePopup_Header" Align="Left" WrapWidth="parent-15"/>
+            <Label ID="LostAgentDescription" Anchor="L,T" Offset="76,30" Style="FontNormal14" Color="EspionagePopup_Body" Align="Left" WrapWidth="parent-80"/>
+          </Grid>
+        </Stack>
+      </Container>
+
+
       <!-- Mission Duration -->
       <Container ID="MissionDurationContainer" AutoSize="1">
         <Label Anchor="C,T" Style="FontFlair20" SmallCaps="26" SmallCapsType="EveryWord" Color="EspionagePopup_Header" String="LOC_ESPIONAGEPOPUP_MISSION_DURATION"/>
@@ -59,6 +120,18 @@
     <!-- Cancel Button -->
     <GridButton ID="CancelButton" Size="180,24" Offset="-120,5" Anchor="C,B" String="LOC_ESPIONAGEPOPUP_CANCEL" Style="FontFlair14" FontStyle="Shadows" TextOffset="0,2" EffectColor="0,0,0,255" SmallCaps="20" SmallCapsType="EveryWord">
       <GridData Style="ButtonLightWeightGrid"/>
+    </GridButton>
+
+    <!-- Mission Succeed Button -->
+    <GridButton ID="MissionSucceedButton" Size="180,24" Offset="0,5" Anchor="C,B" AutoSize="H" AutoSizePadding="20,0" MinSize="150,0">
+      <GridData Style="ButtonLightWeightGrid"/>
+      <Label Anchor="C,C" Offset="0,2" String="LOC_ESPIONAGEPOPUP_SUCCESSBUTTON" Style="FontFlair14" FontStyle="Shadows" TextOffset="0,2" EffectColor="0,0,0,255" SmallCaps="20" SmallCapsType="EveryWord"/>
+    </GridButton>
+
+    <!-- Mission Failure Button -->
+    <GridButton ID="MissionFailureButton" Size="180,24" Offset="0,5" Anchor="C,B" AutoSize="H" AutoSizePadding="20,0" MinSize="150,0">
+      <GridData Style="ButtonLightWeightGrid"/>
+      <Label Anchor="C,C" Offset="0,2" String="LOC_ESPIONAGEPOPUP_FAILUREBUTTON" Style="FontFlair14" FontStyle="Shadows" TextOffset="0,2" EffectColor="0,0,0,255" SmallCaps="20" SmallCapsType="EveryWord"/>
     </GridButton>
   </Grid>
 

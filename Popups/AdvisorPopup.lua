@@ -411,6 +411,7 @@ function OnShutdown()
 	if ms_eventID ~= 0 then
 		ReleaseGameCoreEvent(ms_eventID);
 	end
+	UITutorialManager:SetActiveAlways( false );
 	
 	LuaEvents.GameDebug_AddValue(RELOAD_CACHE_ID, "isHidden", ContextPtr:IsHidden() );
 	LuaEvents.GameDebug_AddValue(RELOAD_CACHE_ID, "m_isDiplomacyUp", m_isDiplomacyUp );	

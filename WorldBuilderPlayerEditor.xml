@@ -38,8 +38,14 @@
           <SimplePullDown ID="LeaderPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
 
         </Stack>
-      
-        <Stack StackGrowth="Right" Anchor="L,T" StackPadding="15" Offset="0,-30">
+
+		  <Stack StackGrowth="Right" Anchor="L,T" StackPadding="15" Offset="0,-30">
+
+			  <SimplePullDown ID="CivLevelPullDown"  Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+
+		  </Stack>
+
+		  <Stack StackGrowth="Right" Anchor="L,T" StackPadding="15" Offset="0,-30">
 
           <SimplePullDown ID="EraPullDown" Style="MainPullDown" ScrollThreshold="400" Size="200,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
         

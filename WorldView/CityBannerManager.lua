@@ -323,7 +323,7 @@ function CityBanner.UpdateAerodromeBanner( self : CityBanner )
 				self.m_Instance.UnitListPopup:BuildEntry( "UnitListEntry", unitEntry );
 
 				-- Update name
-				unitEntry.Button:SetText( Locale.ToUpper(unit:GetName()) );
+				unitEntry.UnitName:SetText( Locale.ToUpper(unit:GetName()) );
 
 				-- Update icon
 				local iconInfo:table, iconShadowInfo:table = GetUnitIconAndIconShadow(unit, 22, true);
@@ -338,6 +338,15 @@ function CityBanner.UpdateAerodromeBanner( self : CityBanner )
 
 				-- Increment count
 				iAirUnitCount = iAirUnitCount + 1;
+
+				-- Fade out the button icon and text if the unit is not able to move
+				if unit:IsReadyToMove() then
+					unitEntry.UnitName:SetAlpha(1.0);
+					unitEntry.UnitTypeIcon:SetAlpha(1.0);
+				else
+					unitEntry.UnitName:SetAlpha(ALPHA_DIM);
+					unitEntry.UnitTypeIcon:SetAlpha(ALPHA_DIM);
+				end
 			end
 		end
 	else
@@ -356,7 +365,7 @@ function CityBanner.UpdateAerodromeBanner( self : CityBanner )
 				self.m_Instance.UnitListPopup:BuildEntry( "UnitListEntry", unitEntry );
 
 				-- Update name
-				unitEntry.Button:SetText( Locale.ToUpper(unit:GetName()) );
+				unitEntry.UnitName:SetText( Locale.ToUpper(unit:GetName()) );
 
 				-- Update icon
 				local iconInfo:table, iconShadowInfo:table = GetUnitIconAndIconShadow(unit, 22, true);
@@ -371,6 +380,15 @@ function CityBanner.UpdateAerodromeBanner( self : CityBanner )
 
 				-- Increment count
 				iAirUnitCount = iAirUnitCount + 1;
+
+				-- Fade out the button icon and text if the unit is not able to move
+				if unit:IsReadyToMove() then
+					unitEntry.UnitName:SetAlpha(1.0);
+					unitEntry.UnitTypeIcon:SetAlpha(1.0);
+				else
+					unitEntry.UnitName:SetAlpha(ALPHA_DIM);
+					unitEntry.UnitTypeIcon:SetAlpha(ALPHA_DIM);
+				end
 			end
 		end
 	end
@@ -943,6 +961,38 @@ function CityBanner.UpdateStats( self : CityBanner)
 			self.m_Instance.DefenseStack:ReprocessAnchoring();
 			self.m_Instance.BannerStrengthBacking:SetSizeX(self.m_Instance.DefenseStack:GetSizeX()+30);
 			self.m_Instance.BannerStrengthBacking:SetToolTipString(defTooltip);
+
+			-- Update under siege icon
+			if pDistrict:IsUnderSiege() then
+				self.m_Instance.CityUnderSiegeIcon:SetHide(false);
+			else
+				self.m_Instance.CityUnderSiegeIcon:SetHide(true);
+			end
+
+			-- Update occupied icon
+			if pCity:IsOccupied() then
+				self.m_Instance.CityOccupiedIcon:SetHide(false);
+			else
+				self.m_Instance.CityOccupiedIcon:SetHide(true);
+			end
+
+			-- Update insufficient housing icon
+			if self.m_Instance.CityHousingInsufficientIcon ~= nil then
+				if pCityGrowth:GetHousing() < pCity:GetPopulation() then
+					self.m_Instance.CityHousingInsufficientIcon:SetHide(false);
+				else
+					self.m_Instance.CityHousingInsufficientIcon:SetHide(true);
+				end
+			end
+
+			-- Update insufficient amenities icon
+			if self.m_Instance.CityAmenitiesInsufficientIcon ~= nil then
+				if pCityGrowth:GetAmenitiesNeeded() > pCityGrowth:GetAmenities() then
+					self.m_Instance.CityAmenitiesInsufficientIcon:SetHide(false);
+				else
+					self.m_Instance.CityAmenitiesInsufficientIcon:SetHide(true);
+				end
+			end
 			--------------------------------------
 		else -- it should be a miniBanner
 			
@@ -1149,34 +1199,6 @@ function CityBanner.UpdateName( self : CityBanner )
 				end
 			end
 
-			-- Update under siege icon
-			local pDistrict:table = self:GetDistrict();
-			if pDistrict and pDistrict:IsUnderSiege() then
-				self.m_Instance.CityUnderSiegeIcon:SetHide(false);
-			else
-				self.m_Instance.CityUnderSiegeIcon:SetHide(true);
-			end
-
-			-- Update insufficient housing icon
-			if self.m_Instance.CityHousingInsufficientIcon ~= nil then
-				local pCityGrowth:table = pCity:GetGrowth();
-				if pCityGrowth and pCityGrowth:GetHousing() < pCity:GetPopulation() then
-					self.m_Instance.CityHousingInsufficientIcon:SetHide(false);
-				else
-					self.m_Instance.CityHousingInsufficientIcon:SetHide(true);
-				end
-			end
-
-			-- Update insufficient amenities icon
-			if self.m_Instance.CityAmenitiesInsufficientIcon ~= nil then
-				local pCityGrowth:table = pCity:GetGrowth();
-				if pCityGrowth and pCityGrowth:GetAmenitiesNeeded() > pCityGrowth:GetAmenities() then
-					self.m_Instance.CityAmenitiesInsufficientIcon:SetHide(false);
-				else
-					self.m_Instance.CityAmenitiesInsufficientIcon:SetHide(true);
-				end
-			end
-
 			self.m_Instance.CityQuestIcon:SetToolTipString(questTooltip);
 			self.m_Instance.CityQuestIcon:SetText(statusString);
 			self.m_Instance.CityName:SetText( cityName );
@@ -1194,6 +1216,7 @@ function CityBanner.UpdateReligion( self : CityBanner )
 	local pCity				:table = self:GetCity();
 	local pCityReligion		:table = pCity:GetReligion();
 	local eMajorityReligion	:number = pCityReligion:GetMajorityReligion();
+	local religionsInCity	:table = pCityReligion:GetReligionsInCity();
 	self.m_eMajorityReligion = eMajorityReligion;
 
 	if (eMajorityReligion > 0) then
@@ -1221,7 +1244,7 @@ function CityBanner.UpdateReligion( self : CityBanner )
 	end
 
 	-- Hide the meter and bail out if the religion lens isn't active
-	if(not m_isReligionLensActive or eMajorityReligion < 0) then
+	if(not m_isReligionLensActive or table.count(religionsInCity) == 0) then
 		cityInst.ReligionMeter:SetHide(true);
 		return;
 	end
@@ -1441,10 +1464,9 @@ function SpawnHolySiteIconAtLocation( locX : number, locY:number, label:string )
 
 	local worldX:number, worldY:number, worldZ:number = UI.GridToWorld( locX, locY );
 	iconInst.Anchor:SetWorldPositionVal( worldX + xOffset, worldY + yOffset, worldZ + zOffset );
-	iconInst.HolySiteLabel:SetText(label);
-	iconInst.HolySiteIcon:SetTexture(198, 88, "FontIcons");
+	iconInst.HolySiteLabel:SetText("[ICON_FaithLarge]"..label);
+	iconInst.Anchor:SetSizeX(iconInst.HolySiteBacking:GetSizeX());
 
-	iconInst.Anchor:SetSizeX(iconInst.HolySiteIcon:GetSizeX() + iconInst.HolySiteLabel:GetSizeX());
 	iconInst.Anchor:SetToolTipString(Locale.Lookup("LOC_UI_RELIGION_HOLY_SITE_BONUS_TT", label));
 end
 
@@ -1913,6 +1935,7 @@ function OnImprovementAddedToMap(locX, locY, eImprovementType, eOwner)
 				end
 			else
 				miniBanner.UpdateStats();
+				miniBanner.SetColor();
 			end
 		end
 	end
@@ -1968,6 +1991,11 @@ function OnCityVisibilityChanged( playerID: number, cityID : number, eVisibility
 	if (bannerInstance ~= nil) then
 		bannerInstance:SetFogState( eVisibility );
     end
+end
+
+-- ===========================================================================
+function OnCityOccupationChanged( playerID: number, cityID : number )
+	RefreshBanner( playerID, cityID );
 end
 
 -- ===========================================================================
@@ -2029,6 +2057,16 @@ function OnBuildingChanged( plotX:number, plotY:number, buildingIndex:number, pl
 			end
 		end
 	end
+
+end
+
+-- ===========================================================================
+function OnCityNameChange( playerID: number, cityID : number)
+	
+	local banner:CityBanner = GetCityBanner( playerID, cityID );
+	if (banner ~= nil ) then
+		banner:UpdateName();   
+    end
 
 end
 
@@ -2754,6 +2792,7 @@ function Initialize()
 	Events.CityAddedToMap.Add(					OnCityAddedToMap );
 	Events.CityDefenseStatusChanged.Add(		OnCityDefenseStatusChanged );
 	Events.CityFocusChanged.Add(				OnCityFocusChange );
+	Events.CityNameChanged.Add(					OnCityNameChange );
 	Events.CityProductionChanged.Add(			OnCityProductionChanged);
 	Events.CityProductionUpdated.Add(			OnCityProductionUpdate); 
 	Events.CityProductionCompleted.Add(			OnCityProductionCompleted);
@@ -2763,6 +2802,7 @@ function Initialize()
 	Events.CitySelectionChanged.Add(			OnSelectionChanged );
 	Events.CityUnitsChanged.Add(                OnCityUnitsChanged );
 	Events.CityVisibilityChanged.Add(			OnCityVisibilityChanged );
+	Events.CityOccupationChanged.Add(			OnCityOccupationChanged );
 	Events.DiplomacyDeclareWar.Add(				OnDiplomacyDeclareWar );
 	Events.DiplomacyMakePeace.Add(				OnDiplomacyMakePeace );
 	Events.DistrictAddedToMap.Add(				OnDistrictAddedToMap );

@@ -31,6 +31,13 @@ local g_GridLinesIM = InstanceManager:new( "HorizontalGridLine", "Control", Cont
 local m_gameSetupParameterIM = InstanceManager:new( "GameSetupParameter", "Root", nil );
 local m_kPopupDialog:table;
 
+-- Reusable tooltip control
+local m_CivTooltip:table = {};
+ContextPtr:BuildInstanceForControl("CivToolTip", m_CivTooltip, Controls.TooltipContainer);
+m_CivTooltip.UniqueIconIM = InstanceManager:new("IconInfoInstance",	"Top", m_CivTooltip.InfoStack);
+m_CivTooltip.HeaderIconIM = InstanceManager:new("IconInstance", "Top", m_CivTooltip.InfoStack);
+m_CivTooltip.HeaderIM = InstanceManager:new("HeaderInstance", "Top", m_CivTooltip.InfoStack);
+
 -- Game launch blockers
 local m_bTeamsValid = true;						-- Are the teams valid for game start?
 local g_everyoneConnected = true;				-- Is everyone network connected to the game?
@@ -38,6 +45,8 @@ local g_badPlayerForMapSize = false;			-- Are there too many active civs for thi
 local g_notEnoughPlayers = false;				-- Is there at least two players in the game?
 local g_everyoneReady = false;					-- Is everyone ready to play?
 local g_everyoneModReady = true;				-- Does everyone have the mods for this game?
+local g_duplicateLeaders = false;				-- Are there duplicate leaders blocking launch?
+												-- Note:  This only applies if No Duplicate Leaders parameter is set.
 local g_viewingGameSummary = true;
 local g_hotseatNumHumanPlayers = 0;
 local g_hotseatNumAIPlayers = 0;
@@ -75,7 +84,7 @@ local g_steamFriendActionsNoInvite =
 	{ name ="LOC_FRIEND_ACTION_CHAT",		tooltip = "LOC_FRIEND_ACTION_CHAT_TT",		action = "chat" },	
 };
 
-local g_currentMaxPlayers = math.min(MapConfiguration.GetMaxMajorPlayers(), 12);
+local g_currentMaxPlayers = math.min(MapConfiguration.GetMaxMajorPlayers(), 12);	
 	
 local PlayerConnectedChatStr = Locale.Lookup( "LOC_MP_PLAYER_CONNECTED_CHAT" );
 local PlayerDisconnectedChatStr = Locale.Lookup( "LOC_MP_PLAYER_DISCONNECTED_CHAT" );
@@ -94,10 +103,10 @@ local UnsupportedTextTT = Locale.Lookup("LOC_READY_UNSUPPORTED_TT");
 
 local COLOR_GREEN				:number = 0xFF00FF00;
 local COLOR_RED					:number = 0xFF0000FF;
-local PLAYER_LIST_SIZE_DEFAULT	:number = 310;
-local PLAYER_LIST_SIZE_HOTSEAT	:number = 520;
+local PLAYER_LIST_SIZE_DEFAULT	:number = 325;
+local PLAYER_LIST_SIZE_HOTSEAT	:number = 535;
 local GRID_LINE_WIDTH			:number = 1020;
-local GRID_LINE_HEIGHT			:number = 47;
+local GRID_LINE_HEIGHT			:number = 51;
 local NUM_COLUMNS				:number = 5;
 -------------------------------------------------
 -- Localized Constants
@@ -141,6 +150,7 @@ function OnGameConfigChanged()
 	if(ContextPtr:IsHidden() == false) then
 		RealizeGameSetup(); -- Rebuild the game settings UI.
 		SetLocalReady(false);  -- unready so player can acknowledge the new settings.
+		CheckGameAutoStart();  -- Toggling "No Duplicate Leaders" can affect the start countdown.
 	end
 	OnMapMaxMajorPlayersChanged(MapConfiguration.GetMaxMajorPlayers());	
 end
@@ -564,6 +574,17 @@ function OnAddPlayer(playerID)
 end
 
 -------------------------------------------------
+-- OnPlayerEntryReady
+-------------------------------------------------
+function OnPlayerEntryReady(playerID)
+	-- Every player entry ready button has this callback, but it only does something if this is for the local player.
+	local localPlayerID = Network.GetLocalPlayerID();
+	if(playerID == localPlayerID) then
+		OnReadyButton();
+	end
+end
+
+-------------------------------------------------
 -- OnJoinTeamButton
 -------------------------------------------------
 function OnTeamPull( playerID :number, teamID :number)
@@ -664,9 +685,11 @@ function CheckGameAutoStart()
 		g_badPlayerForMapSize = false;
 		g_notEnoughPlayers = false;
 		g_everyoneModReady = true;
+		g_duplicateLeaders = false;
 
 		-- Count players and check to see if a human player isn't ready.
 		local totalPlayers = 0;
+		local noDupLeaders = GameConfiguration.GetValue("NO_DUPLICATE_LEADERS");
 		local player_ids = GameConfiguration.GetMultiplayerPlayerIDs();
 		for i, iPlayer in ipairs(player_ids) do	
 			local curPlayerConfig = PlayerConfigurations[iPlayer];
@@ -692,6 +715,15 @@ function CheckGameAutoStart()
 					print("CheckGameAutoStart: Can't start game because player " .. iPlayer .. " is in an invalid slot for this map size.");
 					startCountdown = false;
 					g_badPlayerForMapSize = true;
+				end
+
+				-- Check for duplicate leader blocker
+				if(noDupLeaders) then
+					local err = GetPlayerParameterError(iPlayer)
+					if(err and err.Id == "InvalidDomainValue" and err.Reason == "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS") then
+						startCountdown = false;
+						g_duplicateLeaders = true;
+					end
 				end
 			end
 		end
@@ -773,7 +805,19 @@ function GetPlayerEntry(playerID)
 		playerEntry = m_playersIM:GetInstance();
 
 		SetupTeamPulldown( playerID, playerEntry.TeamPullDown );
-		SetupLeaderPulldown(playerID, playerEntry,"PlayerPullDown");
+
+		local civTooltipData : table = {
+			InfoStack			= m_CivTooltip.InfoStack,
+			InfoScrollPanel		= m_CivTooltip.InfoScrollPanel;
+			CivToolTipSlide		= m_CivTooltip.CivToolTipSlide;
+			CivToolTipAlpha		= m_CivTooltip.CivToolTipAlpha;
+			UniqueIconIM		= m_CivTooltip.UniqueIconIM;		
+			HeaderIconIM		= m_CivTooltip.HeaderIconIM;
+			HeaderIM			= m_CivTooltip.HeaderIM;
+			HasLeaderPlacard	= false;
+		};
+
+		SetupLeaderPulldown(playerID, playerEntry,"PlayerPullDown",nil,nil,civTooltipData);
 		SetupHandicapPulldown(playerID, playerEntry.HandicapPullDown);
 		--playerEntry.PlayerCard:RegisterCallback( Mouse.eLClick, OnSwapButton );
 		--playerEntry.PlayerCard:SetVoid1(playerID);
@@ -782,6 +826,8 @@ function GetPlayerEntry(playerID)
 		playerEntry.AddPlayerButton:RegisterCallback( Mouse.eLClick, OnAddPlayer );
 		playerEntry.AddPlayerButton:SetVoid1(playerID);
 		playerEntry.PlayerModProgressStack:SetHide(true);
+		playerEntry.ReadyImage:RegisterCallback( Mouse.eLClick, OnPlayerEntryReady );
+		playerEntry.ReadyImage:SetVoid1(playerID);
 
 		g_PlayerEntries[playerID] = playerEntry;
 		g_PlayerRootToPlayerID[tostring(playerEntry.Root)] = playerID;
@@ -1058,9 +1104,10 @@ function UpdatePlayerEntry(playerID)
 				end
 			end
 
-			if(GetPlayerParameterError(playerID)) then
-				-- TEMPORARY! ASSUME ERROR IS MONTEZUMA.
-				statusString = statusString .. "[NEWLINE][COLOR_Red]" .. Locale.Lookup("LOC_LEADER_MONTEZUMA_NAME") .. "[ENDCOLOR]";
+			local err = GetPlayerParameterError(playerID)
+			if(err) then
+				local reason = err.Reason or "LOC_SETUP_PLAYER_PARAMETER_ERROR";
+				statusString = statusString .. "[NEWLINE][COLOR_Red]" .. Locale.Lookup(reason) .. "[ENDCOLOR]";
 			end
 
 			playerEntry.StatusLabel:SetText(statusString);
@@ -1288,22 +1335,27 @@ function UpdateReadyButton()
 		return;
 	end
 
+	local localPlayerEntry = GetPlayerEntry(localPlayerID);
+	local localPlayerButton = localPlayerEntry.ReadyImage;
 	if(g_fCountdownTimer ~= -1) then
 		-- Countdown is active, just show that.
 		local intTime = math.floor(g_fCountdownTimer);
-		Controls.StartLabel:LocalizeAndSetText( "LOC_GAMESTART_COUNTDOWN_FORMAT" );
+		Controls.StartLabel:SetText( Locale.ToUpper(Locale.Lookup("LOC_GAMESTART_COUNTDOWN_FORMAT")) );
 		Controls.ReadyButton:LocalizeAndSetText(  intTime );
 		Controls.ReadyButton:LocalizeAndSetToolTip( "" );
+		Controls.ReadyCheck:LocalizeAndSetToolTip( "" );
+		localPlayerButton:LocalizeAndSetToolTip( "" );
 	elseif(not g_everyoneReady) then
 		-- Local player hasn't readied up yet, just show "Ready"
-		Controls.StartLabel:LocalizeAndSetText( "LOC_ARE_YOU_READY" );
+		Controls.StartLabel:SetText( Locale.ToUpper(Locale.Lookup( "LOC_ARE_YOU_READY" )));
 		Controls.ReadyButton:SetText("");
 		Controls.ReadyButton:LocalizeAndSetToolTip( "" );
-
+		Controls.ReadyCheck:LocalizeAndSetToolTip( "" );
+		localPlayerButton:LocalizeAndSetToolTip( "" );
 	-- Local player is ready, show why we're not in the countdown yet!
 	elseif(not g_everyoneConnected) then
 		-- Waiting for a player to finish connecting to the game.
-		Controls.StartLabel:LocalizeAndSetText("LOC_READY_BLOCKED_PLAYERS_CONNECTING");
+		Controls.StartLabel:SetText( Locale.ToUpper(Locale.Lookup("LOC_READY_BLOCKED_PLAYERS_CONNECTING")));
 
 		local waitingForJoinersTooltip : string = Locale.Lookup("LOC_READY_BLOCKED_PLAYERS_CONNECTING_TT");
 		local player_ids = GameConfiguration.GetMultiplayerPlayerIDs();
@@ -1315,15 +1367,23 @@ function UpdateReadyButton()
 			end
 		end
 		Controls.ReadyButton:SetToolTipString( waitingForJoinersTooltip );
+		Controls.ReadyCheck:SetToolTipString( waitingForJoinersTooltip );
+		localPlayerButton:SetToolTipString( waitingForJoinersTooltip );
 	elseif(g_notEnoughPlayers) then
 		Controls.StartLabel:LocalizeAndSetText("LOC_READY_BLOCKED_NOT_ENOUGH_PLAYERS");
 		Controls.ReadyButton:LocalizeAndSetToolTip( "LOC_READY_BLOCKED_NOT_ENOUGH_PLAYERS_TT");
+		Controls.ReadyCheck:LocalizeAndSetToolTip( "LOC_READY_BLOCKED_NOT_ENOUGH_PLAYERS_TT");
+		localPlayerButton:LocalizeAndSetToolTip( "LOC_READY_BLOCKED_NOT_ENOUGH_PLAYERS_TT");
 	elseif(not m_bTeamsValid) then
 		Controls.StartLabel:LocalizeAndSetText("LOC_READY_BLOCKED_TEAMS_INVALID");
 		Controls.ReadyButton:LocalizeAndSetToolTip( "LOC_READY_BLOCKED_TEAMS_INVALID_TT" );
+		Controls.ReadyCheck:LocalizeAndSetToolTip( "LOC_READY_BLOCKED_TEAMS_INVALID_TT" );
+		localPlayerButton:LocalizeAndSetToolTip( "LOC_READY_BLOCKED_TEAMS_INVALID_TT" );
 	elseif(g_badPlayerForMapSize) then
 		Controls.StartLabel:LocalizeAndSetText("LOC_READY_BLOCKED_PLAYER_MAP_SIZE");
 		Controls.ReadyButton:LocalizeAndSetToolTip( "LOC_READY_BLOCKED_PLAYER_MAP_SIZE_TT", g_currentMaxPlayers);
+		Controls.ReadyCheck:LocalizeAndSetToolTip( "LOC_READY_BLOCKED_PLAYER_MAP_SIZE_TT", g_currentMaxPlayers);
+		localPlayerButton:LocalizeAndSetToolTip( "LOC_READY_BLOCKED_PLAYER_MAP_SIZE_TT", g_currentMaxPlayers);
 	elseif(not g_everyoneModReady) then
 		-- A player doesn't have the mods required for this game.
 		Controls.StartLabel:LocalizeAndSetText("LOC_READY_BLOCKED_PLAYERS_NOT_MOD_READY");
@@ -1338,15 +1398,29 @@ function UpdateReadyButton()
 			end
 		end
 		Controls.ReadyButton:SetToolTipString( waitingForModReadyTooltip );
+		Controls.ReadyCheck:SetToolTipString( waitingForModReadyTooltip );
+		localPlayerButton:SetToolTipString( waitingForModReadyTooltip );
+	elseif(g_duplicateLeaders) then
+		Controls.StartLabel:LocalizeAndSetText("LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS");
+		Controls.ReadyButton:LocalizeAndSetToolTip("LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS");
+		Controls.ReadyCheck:LocalizeAndSetToolTip( "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS");
+		localPlayerButton:LocalizeAndSetToolTip( "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS");
 	end
 
-	if(GetPlayerParameterError(localPlayerID)) then
-		Controls.StartLabel:SetText("[COLOR_RED]" .. Locale.Lookup("LOC_LEADER_MONTEZUMA_NAME") .. "[ENDCOLOR]");
+	local err = GetPlayerParameterError(localPlayerID);
+	-- Block ready up when there is a civ ownership issue.  
+	-- We have to do this because ownership is not communicated to the host.
+	if(err and err.Id == "InvalidDomainValue" and err.Reason == "LOC_SETUP_ERROR_LEADER_NOT_OWNED") then
+		local reason = err.Reason or "LOC_SETUP_PLAYER_PARAMETER_ERROR";
+
+		Controls.StartLabel:SetText("[COLOR_RED]" .. Locale.Lookup(reason) .. "[ENDCOLOR]");
 		Controls.ReadyButton:SetDisabled(true)
 		Controls.ReadyCheck:SetDisabled(true);
+		localPlayerButton:SetDisabled(true);
 	else
 		Controls.ReadyButton:SetDisabled(false);
 		Controls.ReadyCheck:SetDisabled(false);
+		localPlayerButton:SetDisabled(false);
 	end
 end
 

@@ -20,31 +20,33 @@ local EspionagePopupStates:table = {
 -- ===========================================================================
 local m_currentPopupState:number = -1;
 
-local m_spy			:table = nil;
-local m_city		:table = nil;
-local m_operation	:table = nil;
+local m_spy				:table = nil;
+local m_city			:table = nil;
+local m_operation		:table = nil;
+local m_missionHistory	:table = nil;
 
 -- Instance managers
 local m_OutcomePercentIM	:table = InstanceManager:new("OutcomePercentInstance",	"Top",			Controls.OutcomeStack);
 local m_OutcomeLabelIM		:table = InstanceManager:new("OutcomeLabelInstance",	"OutcomeLabel",	Controls.OutcomeStack);
 
+-- Internal popup quque used when multiple popups of this type happen at the same time
+local m_internalPopupQueue:table = {};
+
 -- ===========================================================================
 function Refresh()
-	if not m_operation or not m_spy or not m_city then
-		return
-	end
+	if m_operation then
+		-- Update Misison Title
+		if m_currentPopupState == EspionagePopupStates.MISSION_BRIEFING then
+			Controls.MissionTitle:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_MISSION_BRIEFING", Locale.ToUpper(m_operation.Description)));
+		else
+			Controls.MissionTitle:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_CURRENT_MISSION", Locale.ToUpper(m_operation.Description)));
+		end
 
-	-- Update Misison Title
-	if m_currentPopupState == EspionagePopupStates.MISSION_BRIEFING then
-		Controls.MissionTitle:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_MISSION_BRIEFING", Locale.ToUpper(m_operation.Description)));
-	else
-		Controls.MissionTitle:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_CURRENT_MISSION", Locale.ToUpper(m_operation.Description)));
+		-- Update Mission Icon
+		local operationInfo:table = GameInfo.UnitOperations[m_operation.Hash];
+		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(operationInfo.Icon,200);
+		Controls.MissionIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
 	end
-
-	-- Update Mission Icon
-	local operationInfo:table = GameInfo.UnitOperations[m_operation.Hash];
-	local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(operationInfo.Icon,200);
-	Controls.MissionIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
 
 	-- Refresh Info Stack
 	RefreshStack();
@@ -52,8 +54,19 @@ end
 
 -- ===========================================================================
 function RefreshStack()
-	-- Update Mission Objective
-	Controls.MissionObjectiveLabel:SetText(GetFormattedOperationDetailText(m_operation, m_spy, m_city));
+	if m_spy and m_currentPopupState ~= EspionagePopupStates.MISSION_COMPLETED then
+		-- Update Mission Objective
+		Controls.MissionObjectiveLabel:SetText(GetFormattedOperationDetailText(m_operation, m_spy, m_city));
+		Controls.MissionObjectiveContainer:SetHide(false);
+		Controls.MissionOutcomeContainer:SetHide(true);
+		Controls.MissionRewardsContainer:SetHide(true);
+		Controls.MissionConsequencesContainer:SetHide(true);
+	else
+		-- Refresh Outcome if mission is completed
+		RefreshMissionOutcome();
+		Controls.MissionObjectiveContainer:SetHide(true);
+		Controls.MissionOutcomeContainer:SetHide(false);
+	end
 
 	-- Get operation index
 	local eOperation:number = GameInfo.UnitOperations[m_operation.Hash].Index;
@@ -61,16 +74,129 @@ function RefreshStack()
 	-- Update Mission Duration
 	if m_currentPopupState == EspionagePopupStates.MISSION_BRIEFING then
 		Controls.MissionDurationLabel:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_TURNS", UnitManager.GetTimeToComplete(eOperation, m_spy)));
-	else
+		Controls.MissionDurationContainer:SetHide(false);
+	elseif m_currentPopupState == EspionagePopupStates.ABORT_MISSION then
 		local remainingTurns = m_spy:GetSpyOperationEndTurn() - Game.GetCurrentGameTurn();
 		Controls.MissionDurationLabel:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_TURNS_REMAINING", remainingTurns));
+		Controls.MissionDurationContainer:SetHide(false);
+	elseif m_currentPopupState == EspionagePopupStates.MISSION_COMPLETED then
+		Controls.MissionDurationContainer:SetHide(true);
 	end
 
-	-- Update Possible Outcomes
+	if m_currentPopupState ~= EspionagePopupStates.MISSION_COMPLETED then
+		RefreshPossibleOutcomes();
+		Controls.PossibleOutcomesContainer:SetHide(false);
+	else
+		Controls.PossibleOutcomesContainer:SetHide(true);
+	end
+
+	-- Only show appropriate buttons
+	if m_currentPopupState == EspionagePopupStates.MISSION_BRIEFING then
+		Controls.AcceptButton:SetHide(false);
+		Controls.AbortButton:SetHide(true);
+		Controls.CancelButton:SetHide(false);
+		Controls.MissionSucceedButton:SetHide(true)
+		Controls.MissionFailureButton:SetHide(true);
+	elseif m_currentPopupState == EspionagePopupStates.MISSION_BRIEFING then
+		Controls.AcceptButton:SetHide(true);
+		Controls.AbortButton:SetHide(false);
+		Controls.CancelButton:SetHide(false);
+		Controls.MissionSucceedButton:SetHide(true)
+		Controls.MissionFailureButton:SetHide(true);
+	else
+		Controls.AcceptButton:SetHide(true);
+		Controls.AbortButton:SetHide(true);
+		Controls.CancelButton:SetHide(true);
+
+		-- Show proper button depending on mission outcome
+		local missionWasSuccess:boolean = false;
+		if m_missionHistory then
+			local outcomeDetails:table = GetMissionOutcomeDetails(m_missionHistory);
+			if outcomeDetails and outcomeDetails.Success then
+				missionWasSuccess = true;
+			end
+		end
+
+		if missionWasSuccess then
+			Controls.MissionSucceedButton:SetHide(false);
+			Controls.MissionFailureButton:SetHide(true);		
+		else
+			Controls.MissionSucceedButton:SetHide(true);
+			Controls.MissionFailureButton:SetHide(false);
+		end
+	end
+
+	Controls.OutcomeStack:CalculateSize();
+	Controls.OutcomeStack:ReprocessAnchoring();
+	Controls.OperationInfoStack:ReprocessAnchoring();
+end
+
+-- ===========================================================================
+function RefreshMissionOutcome()
+	if m_missionHistory then
+		local outcomeDetails:table = GetMissionOutcomeDetails(m_missionHistory);
+		if outcomeDetails then
+			if outcomeDetails.Success then
+				Controls.MissionOutcomeLabel:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_SUCCESS"));
+				Controls.MissionOutcomeIcon:SetIcon("ICON_CONSEQUENCE_SUCCESS");
+
+				-- Show promotion reward
+				Controls.SpyPromotionLabel:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_PROMOTIONREADY", Locale.ToUpper(GetSpyRankNameByLevel(m_missionHistory.LevelAfter))));
+				Controls.SpyPromotionDescription:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_AGENTREADYFORPROMOTION", Locale.Lookup(m_missionHistory.Name)));
+				
+				-- Show loot reward
+				Controls.SpyLootRewardLabel:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_LOOTREWARD_TITLE", GetMissionLootString(m_missionHistory)));
+				Controls.SpyLootRewardDescription:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_LOOTREWARD_DESCRIPTION", GetMissionLootString(m_missionHistory)));
+
+				Controls.MissionRewardsContainer:SetHide(false);
+				Controls.MissionConsequencesContainer:SetHide(true);
+			else
+				Controls.MissionOutcomeLabel:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_FAILURE"));
+				Controls.MissionOutcomeIcon:SetIcon("ICON_CONSEQUENCE_FAILURE");
+
+				-- Show agent lost consequence if agent was captured or killed
+				if m_missionHistory.InitialResult == EspionageResultTypes.KILLED or m_missionHistory.EscapeResult == EspionageResultTypes.KILLED then
+					Controls.LostAgentIcon:SetIcon("ICON_CONSEQUENCE_SPY_LOST");
+					Controls.LostAgentTitle:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_AGENT_KILLED_TITLE"));
+					Controls.LostAgentDescription:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_AGENT_KILLED_DESC", Locale.Lookup(m_missionHistory.Name), Locale.Lookup(m_missionHistory.CityName)));
+					Controls.LostAgentGrid:SetHide(false);
+				elseif m_missionHistory.InitialResult == EspionageResultTypes.CAPTURED or m_missionHistory.EscapeResult == EspionageResultTypes.CAPTURED then
+					Controls.LostAgentIcon:SetIcon("ICON_CONSEQUENCE_SPY_CAPTURED");
+					Controls.LostAgentTitle:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_AGENT_CAPTURED_TITLE"));
+					Controls.LostAgentDescription:SetText(Locale.Lookup("LOC_ESPIONAGEPOPUP_AGENT_CAPTURED_DESC", Locale.Lookup(m_missionHistory.Name), Locale.Lookup(m_missionHistory.CityName)));
+					Controls.LostAgentGrid:SetHide(false);
+				else
+					Controls.LostAgentGrid:SetHide(true);
+				end
+
+				-- Don't show the relationship damaged box if we escaped undetected
+				if m_missionHistory.InitialResult == EspionageResultTypes.FAIL_MUST_ESCAPE and m_missionHistory.EscapeResult == EspionageResultTypes.FAIL_MUST_ESCAPE then
+					Controls.MissionConsequencesContainer:SetHide(true);
+				else
+					Controls.MissionConsequencesContainer:SetHide(false);
+				end
+
+				Controls.MissionRewardsContainer:SetHide(true);
+			end
+
+			Controls.MissionOutcomeDescription:SetText(outcomeDetails.Description);
+		end
+	end
+
+	Controls.MissionOutcomeContainer:ReprocessAnchoring();
+end
+
+-- ===========================================================================
+function RefreshPossibleOutcomes()
 	m_OutcomePercentIM:ResetInstances();
 	m_OutcomeLabelIM:ResetInstances();
 
+	if m_city == nil then
+		return;
+	end
+
 	local cityPlot:table = Map.GetPlot(m_city:GetX(), m_city:GetY());
+	local eOperation:number = GameInfo.UnitOperations[m_operation.Hash].Index;
 	local resultProbability:table = UnitManager.GetResultProbability(eOperation, m_spy, cityPlot);
 	if resultProbability["ESPIONAGE_SUCCESS_UNDETECTED"] then
 		local successProbability:number = resultProbability["ESPIONAGE_SUCCESS_UNDETECTED"];
@@ -113,18 +239,6 @@ function RefreshStack()
 			AddOutcomeLabel(Locale.Lookup("LOC_ESPIONAGEPOPUP_DISCOVERED_WARNING", targetPlayerConfiguration:GetPlayerName()));
 		end
 	end
-
-	-- Only show appropriate buttons
-	if m_currentPopupState == EspionagePopupStates.MISSION_BRIEFING then
-		Controls.AcceptButton:SetHide(false);
-		Controls.AbortButton:SetHide(true);
-	else
-		Controls.AcceptButton:SetHide(true);
-		Controls.AbortButton:SetHide(false);
-	end
-
-	Controls.OutcomeStack:CalculateSize();
-	Controls.OutcomeStack:ReprocessAnchoring();
 end
 
 -- ===========================================================================
@@ -142,6 +256,10 @@ end
 
 -- ===========================================================================
 function OnShowMissionBriefing(operationHash:number, spyID:number)
+	if Game.GetLocalPlayer() == -1 then
+		return;
+	end
+
 	-- Cache spy unit
 	local localPlayer:table = Players[Game.GetLocalPlayer()];
 	local playerUnits:table = localPlayer:GetUnits();
@@ -161,7 +279,66 @@ function OnShowMissionBriefing(operationHash:number, spyID:number)
 end
 
 -- ===========================================================================
+function ShowMissionCompletedPopup(playerID:number, missionID:number)
+	-- Find the mission in the mission history
+	local mission:table = nil;
+	local pPlayer:table = Players[playerID];
+	if pPlayer then
+		local pPlayerDiplomacy:table = pPlayer:GetDiplomacy();
+		if pPlayerDiplomacy then
+			mission = pPlayerDiplomacy:GetMission(playerID, missionID);
+			if mission == 0 then
+				UI.DataError("Unable to show misison completed popup for mission ID: " .. tostring(missionID));
+				return
+			end
+		end
+	end
+
+	-- Clear spy reference since not needed for mission completed popup
+	m_spy = nil;
+	
+	-- Clear city reference since not needed for mission completed popup
+	m_city = nil;
+
+	-- Cache mission history
+	m_missionHistory = mission;
+	
+	-- Cache operation
+	m_operation = GameInfo.UnitOperations[mission.Operation];
+
+	m_currentPopupState = EspionagePopupStates.MISSION_COMPLETED;
+
+	Open();
+	UI.PlaySound("UI_Screen_Open");
+end
+
+-- ===========================================================================
+function OnSpyMissionCompleted( playerID:number, missionID:number )
+	local localPlayerID:number = Game.GetLocalPlayer();
+	if localPlayerID == -1 or localPlayerID ~= playerID then
+		return;
+	end
+
+	if UIManager:IsInPopupQueue( ContextPtr ) then
+		-- If the popup is currently queue then save this popup to be shown later
+		local queuedPopup:table = {};
+		queuedPopup.PopupState = EspionagePopupStates.MISSION_COMPLETED;
+		queuedPopup.PlayerID = playerID;
+		queuedPopup.MissionID = missionID;
+
+		table.insert(m_internalPopupQueue, queuedPopup);
+	else
+		-- Show popup immediately if this popup isn't queued
+		ShowMissionCompletedPopup(playerID, missionID);
+	end
+end
+
+-- ===========================================================================
 function OnShowMissionAbort(spyID:number)
+	if Game.GetLocalPlayer() == -1 then
+		return;
+	end
+
 	-- Cache spy unit
 	local localPlayer:table = Players[Game.GetLocalPlayer()];
 	local playerUnits:table = localPlayer:GetUnits();
@@ -220,10 +397,28 @@ function Close()
 	-- Callback to chooser so it can unselect any selected mission
 	LuaEvents.EspionagePopup_MissionBriefingClosed();
 	UI.PlaySound("UI_Screen_Close");
+
+	-- Check if we have any popups queued internally and show those if necessary
+	local queuedPopup:table = table.remove(m_internalPopupQueue);
+	if queuedPopup then
+		if queuedPopup.PopupState == EspionagePopupStates.MISSION_COMPLETED then
+			ShowMissionCompletedPopup(queuedPopup.PlayerID, queuedPopup.MissionID);
+		end
+	end
 end
 
 -- ===========================================================================
 function OnCancel()
+	Close();
+end
+
+-- ===========================================================================
+function OnMissionSucceedButton()
+	Close();
+end
+
+-- ===========================================================================
+function OnMissionFailureButton()
 	Close();
 end
 
@@ -299,6 +494,7 @@ function Initialize()
 
 	-- Game Engine Events
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
+	Events.SpyMissionCompleted.Add( OnSpyMissionCompleted );
 
 	-- Control Events
 	Controls.AcceptButton:RegisterCallback( Mouse.eLClick, OnAccept );
@@ -307,6 +503,10 @@ function Initialize()
 	Controls.AbortButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.CancelButton:RegisterCallback( Mouse.eLClick, OnCancel );
 	Controls.CancelButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	Controls.MissionSucceedButton:RegisterCallback( Mouse.eLClick, OnMissionSucceedButton );
+	Controls.MissionSucceedButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	Controls.MissionFailureButton:RegisterCallback( Mouse.eLClick, OnMissionFailureButton );
+	Controls.MissionFailureButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
 	-- Hot-Reload Events
 	ContextPtr:SetInitHandler(OnInit);

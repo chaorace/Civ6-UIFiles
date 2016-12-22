@@ -4,8 +4,8 @@
 
   <AlphaAnim        ID="PauseWindowClose"  AlphaBegin="0"  AlphaEnd="1"  Speed="3" Function="Root" Cycle="Once" Stopped="1"/>
 
-  <AlphaAnim        ID="AlphaIn"      Size="parent,parent"  AlphaBegin="0"  AlphaEnd="1"  Speed="3" Function="Root" Cycle="Once">
-    <SlideAnim      ID="SlideIn"      Size="parent,parent"  Start="0,-20"   End="0,0"     Speed="3" Function="Root" Cycle="Once">
+  <AlphaAnim        ID="AlphaIn"      Size="parent,parent"  AlphaBegin="0"  AlphaEnd="1"  Speed="9" Function="Root" Cycle="Once">
+    <SlideAnim      ID="SlideIn"      Size="parent,parent"  Start="0,-20"   End="0,0"     Speed="9" Function="Root" Cycle="Once">
       <Grid         ID="PauseWindow"  Size="500,250"              Anchor="C,C" Offset="0,0" Style="DropShadow2"     Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25" ConsumeMouse="1">
         <Box Color="21,46,75,200" Size="290,620" Anchor="C,C" AutoSize="V" AutoSizePadding="10,-5">
           <Grid Size="300,630" Anchor="C,C" Style="WindowFrameAlpha" AutoSize="V" AutoSizePadding="0,58">

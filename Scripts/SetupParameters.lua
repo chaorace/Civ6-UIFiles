@@ -292,11 +292,6 @@ function SetupParameters:Config_CanWriteParameter(parameter)
 		return false;
 	end
 
-	-- The PrivateGame setting is a special snowflake that can't be changed once the game has been hosted.
-	if(Network.IsInSession() and parameter.ConfigurationId == "PRIVATE_GAME") then
-		return false;
-	end
-
 	if (not Network.IsInSession() or Network.IsHost() or self.PlayerId == Network.GetLocalPlayerID()) then
 
 		-- As long as this isn't hot seat, Human players will provide their own settings (including filtered domains)
@@ -375,7 +370,7 @@ function SetupParameters:Config_Write(group, id, value)
 	if(self.ConfigurationUpdates) then
 		for i,v in ipairs(self.ConfigurationUpdates) do
 			if(v.SourceGroup == group and v.SourceId == id) then
-				if(value == v.SourceValue or value == DB.MakeHash(v.SourceValue)) then
+				if(value == v.SourceValue or value == DB.MakeHash(v.SourceValue) or (type(value) == "boolean" and value == false and v.SourceValue == 0) or (type(value) == "boolean" and value == true and v.SourceValue == 1)) then
 					local update_value = v.Hash and DB.MakeHash(v.TargetValue) or v.TargetValue;
 					print("Writing additional config values - " .. tostring(v.TargetId) .. " = " .. tostring(v.TargetValue));
 					self:Config_Write(v.TargetGroup, v.TargetId, update_value);
@@ -510,17 +505,22 @@ function SetupParameters:Data_DiscoverParameters()
 		end
 	end
 
+	local domain_override_queries = {};
+	for i, row in ipairs(CachedQuery("SELECT * from DomainOverrideQueries")) do
+		table.insert(domain_override_queries, row);
+	end
+
 	local domain_value_union_queries = {};
 	local domain_value_intersect_queries = {};
 	local domain_value_difference_queries = {};
 
 	for i, row in ipairs(CachedQuery("SELECT * from DomainValueQueries")) do
 		if(row.Set == "union") then
-			domain_value_union_queries[row.DomainValueQueryId] = row;
+			table.insert(domain_value_union_queries, row);
 		elseif(row.Set == "intersect") then
-			domain_value_intersect_queries[row.DomainValueQueryId] = row;
+			table.insert(domain_value_intersect_queries, row);
 		elseif(row.Set == "difference") then
-			domain_value_difference_queries[row.DomainValueQueryId] = row;
+			table.insert(domain_value_difference_queries, row);
 		end
 	end
 
@@ -643,7 +643,7 @@ function SetupParameters:Data_DiscoverParameters()
 	local domains = {};
 
 	-- Query for Domain Values.
-	for dvqid, dvq in pairs(domain_value_union_queries) do
+	for _, dvq in ipairs(domain_value_union_queries) do
 		local q = queries[dvq.QueryId];
 		if(q) then
 			
@@ -675,7 +675,7 @@ function SetupParameters:Data_DiscoverParameters()
 
 	-- Populate intersect values per domain
 	local intersect_values = {};
-	for dvqid, dvq in pairs(domain_value_intersect_queries) do
+	for _, dvq in ipairs(domain_value_intersect_queries) do
 		local q = queries[dvq.QueryId];
 		if(q) then
 			
@@ -698,7 +698,7 @@ function SetupParameters:Data_DiscoverParameters()
 
 	-- Populate difference values per domain	
 	local difference_values = {};
-	for dvqid, dvq in pairs(domain_value_difference_queries) do
+	for _, dvq in ipairs(domain_value_difference_queries) do
 		local q = queries[dvq.QueryId];
 		if(q) then		
 			for i, row in ipairs(self:Data_Query(q)) do
@@ -750,8 +750,25 @@ function SetupParameters:Data_DiscoverParameters()
 		domains[domain] = new_values;
 	end
 
+	local domain_overrides = {};
+	for _, doq in ipairs(domain_override_queries) do
+		local q = queries[doq.QueryId];
+		if(q) then
+			for i, row in ipairs(self:Data_Query(q)) do
+				local pid = row[doq.ParameterIdField];
+				local domain = row[doq.DomainField]
+				if(pid and domain and domains[domain]) then
+					domain_overrides[pid] = domain;
+				end
+			end
+		end
+	end
+
 	for pid, p in pairs(parameters) do
 		
+		-- Override, if necessary.
+		p.Domain = domain_overrides[pid] or p.Domain;
+
 		-- Is this a multi-value domain?
 		if(pod_domains[p.Domain] == nil) then
 			
@@ -799,7 +816,11 @@ function SetupParameters:Data_Query(query)
 		for i = 1, 4, 1 do
 			local p = parameters[i];
 			if(p ~= nil) then
-				args[i] = self:Config_Read(p.ConfigurationGroup, p.ConfigurationId);
+				if(p.ConfigurationGroup == "Player" and p.ConfigurationId == "PLAYER_ID" and self.PlayerId) then
+					args[i] = self.PlayerId;
+				else			
+					args[i] = self:Config_Read(p.ConfigurationGroup, p.ConfigurationId);
+				end
 			end
 		end
 	end
@@ -813,9 +834,43 @@ end
 -------------------------------------------------------------------------------
 function SetupParameters:Parameter_FilterValues(parameter, values)
 	if(parameter.ParameterId == "PlayerLeader") then
+		local unique_leaders = GameConfiguration.GetValue("NO_DUPLICATE_LEADERS");
+		local leaders_in_use;
+
+		-- Populate a table of current leader selections (excluding current player).
+		if(unique_leaders) then
+			leaders_in_use = {};
+
+			local player_ids = GameConfiguration.GetParticipatingPlayerIDs();
+			for i, player_id in ipairs(player_ids) do	
+				if(player_id ~= self.PlayerId) then
+					local playerConfig = PlayerConfigurations[player_id];
+					if(playerConfig) then
+						local status = playerConfig:GetSlotStatus();
+						local leader = playerConfig:GetLeaderTypeName();
+						if(type(leader) == "string") then
+							leaders_in_use[leader] = true;
+						end
+					end
+				end
+			end
+		end
+
 		local new_values = {};
 		for i,v in ipairs(values) do
-			if(Modding.IsLeaderAllowed(self.PlayerId, v.Value)) then
+			local reason;
+			if(not Modding.IsLeaderAllowed(self.PlayerId, v.Value)) then
+				reason = "LOC_SETUP_ERROR_LEADER_NOT_OWNED";
+			else
+				if(leaders_in_use) then
+					-- Test whether this leader is in use.
+					if(leaders_in_use[v.Value]) then
+						reason = "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS";
+					end	
+				end
+			end
+
+			if(reason == nil) then
 				table.insert(new_values, v);
 			else
 				local new_value = {};
@@ -827,13 +882,13 @@ function SetupParameters:Parameter_FilterValues(parameter, values)
 
 				-- Mark value as invalid.
 				new_value.Invalid = true;
+				new_value.InvalidReason = reason;
 				table.insert(new_values, new_value);
 			end
 		end
 		return new_values;
 	else
 		return values;
-
 	end
 end
 
@@ -852,11 +907,6 @@ function SetupParameters:Parameter_GetEnabled(parameter)
 	-- Check ChangeableAfterGameStart state.
 	local gameState = GameConfiguration.GetGameState(); 
 	if(not parameter.ChangeableAfterGameStart and gameState ~= GameStateTypes.GAMESTATE_PREGAME) then
-		return false;
-	end
-
-	-- The PrivateGame setting is a special snowflake that can't be changed once the game has been hosted.
-	if(Network.IsInSession() and parameter.ConfigurationId == "PRIVATE_GAME") then
 		return false;
 	end
 
@@ -1023,7 +1073,10 @@ function SetupParameters:Parameter_SyncConfigurationValues(parameter)
 						parameter.Value = v;
 
 						if(v.Invalid) then
-							parameter.Error = "InvalidDomainValue";
+							parameter.Error = {
+								Id = "InvalidDomainValue",
+								Reason = v.InvalidReason
+							}
 						end
 
 						return self:Parameter_SyncAuxConfigurationValues(parameter); 
@@ -1047,7 +1100,7 @@ function SetupParameters:Parameter_SyncConfigurationValues(parameter)
 			return true;
 		else
 			-- We're in an error state :(
-			parameter.Error = "MissingDomainValue";
+			parameter.Error = {Id = "MissingDomainValue"};
 			return false;
 		end
 	else		

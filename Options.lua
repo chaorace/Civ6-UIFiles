@@ -179,24 +179,27 @@ function OnConfirm()
 		UserConfiguration.SetValue("TutorialLevel", Options.GetUserOption("Gameplay", "TutorialLevel"));
 		UserConfiguration.SetValue("EdgePan", Options.GetUserOption("Gameplay", "EdgePan"));
         
+		UserConfiguration.SetValue("AutoUnitCycle", Options.GetUserOption("Gameplay", "AutoUnitCycle"));
+		UserConfiguration.SetValue("PlotTooltipDelay", Options.GetUserOption("Interface", "PlotTooltipDelay"));
+
         -- Apply the graphics options (modifies in-memory values and modifies the engine, but does not save to disk)
-        Options.ApplyGraphicsOptions();
+        local bSuccess = Options.ApplyGraphicsOptions();
+
+        -- Re-populate the graphics options to update any settings that the engine had to modify from the user's selected values
+	    PopulateGraphicsOptions();
 
         -- Show the resolution acknowledgment pop-up
-        if(_PromptResolutionAck) then
-			-- Re-populate the graphics options to update any settings that the engine had to modify from the user's selected values
-			PopulateGraphicsOptions();
-
-            _kPopupDialog:AddText(Locale.Lookup("LOC_OPTIONS_RESOLUTION_OK"));
+        if(bSuccess and _PromptResolutionAck) then
+		    _kPopupDialog:AddText(Locale.Lookup("LOC_OPTIONS_RESOLUTION_OK"));
             _kPopupDialog:AddButton(Locale.Lookup("LOC_OPTIONS_RESET_OPTIONS_POPUP_NO"), function() RevertGraphicsChanges(); end);
 		    _kPopupDialog:AddButton(Locale.Lookup("LOC_OPTIONS_RESET_OPTIONS_POPUP_YES"), function() KeepGraphicsChanges(); end); 
             _kPopupDialog:AddCountDown(15, function() RevertGraphicsChanges(); end );
 		    _kPopupDialog:Open();
-            
-            _PromptResolutionAck = false;
         else
             KeepGraphicsChanges();
         end
+
+        _PromptResolutionAck = false;
     end
     
 	local isInGame = false;
@@ -281,6 +284,28 @@ function PopulateCheckBox(control, current_value, check_handler, is_locked)
 			    local selected = not control:IsSelected();
 			    control:SetSelected(selected);
                 check_handler(selected);
+            end
+        );
+    end
+
+end
+
+-------------------------------------------------------------------------------
+--
+-------------------------------------------------------------------------------
+function PopulateEditBox(control, current_value, commit_handler, is_locked)
+    
+    if (is_locked == nil) then
+		is_locked = false;
+	end
+
+	control:SetText(current_value);
+    control:SetDisabled(is_locked ~= false);
+
+    if(commit_handler) then
+        control:RegisterCommitCallback( 
+            function(editString)
+                commit_handler(editString);
             end
         );
     end
@@ -537,6 +562,20 @@ function PopulateGraphicsOptions()
 		end
 	);
 
+    -- Multi-GPU        
+    local bMGPUValue = 0;
+    if Options.GetGraphicsOption("DX12", "EnableSplitScreenMultiGPU") == 1 then
+        bMGPUValue = 1;
+    end
+
+    PopulateCheckBox(Controls.MultiGPUCheckbox, bMGPUValue,
+        function(option)
+            Options.SetGraphicsOption("DX12", "EnableSplitScreenMultiGPU", option);
+            _PromptRestartApp = true;
+        end
+    );
+    Controls.MultiGPUCheckbox:SetDisabled( Options.IsMultiNodeGPU() == 0 );
+
     -- Resolution
 	local named_modes = {};
 	local modes = Options.GetAvailableDisplayModes();
@@ -773,7 +812,6 @@ function PopulateGraphicsOptions()
 
     PopulateComboBox(Controls.MSAAPullDown, availableMSAAOptions, msaaValue,
         function(option)
-            Controls.PerformanceSlider:SetStepAndCall(performance_customStep);  -- It's enough to set just one of the Impact sliders to "custom", the logic sets the other one
             Options.SetGraphicsOption("Video", "MSAA", option[1]);              -- First set the sliders to "custom", then set the new value, otherwise ProcessExternally() will overwrite the new value with a preset
             Options.SetGraphicsOption("Video", "MSAAQuality", option[2]);
 	    end
@@ -1129,6 +1167,13 @@ function TemporaryHardCodedGoodness()
     end
     );
 
+	PopulateEditBox(Controls.LANPlayerNameEdit, Options.GetUserOption("Multiplayer", "LANPlayerName"), function(option)
+		UserConfiguration.SetValue("LANPlayerName", option);
+		Options.SetUserOption("Multiplayer", "LANPlayerName", option);
+	end,
+	UserConfiguration.IsValueLocked("LANPlayerName"));	
+	
+
 	-- Interface
 	PopulateComboBox(Controls.ClockFormat, clock_options, Options.GetUserOption("Interface", "ClockFormat"), function(option)
 		UserConfiguration.SetValue("ClockFormat", option);
@@ -1230,19 +1275,32 @@ function TemporaryHardCodedGoodness()
     PopulateComboBox(Controls.MouseGrabPullDown, grab_options, Options.GetAppOption("Video", "MouseGrab"), function(option)
 		Options.SetAppOption("Video", "MouseGrab", option);
         _PromptRestartApp = true;
-	end
-    );
+	end);
+
 	PopulateComboBox(Controls.EdgeScrollPullDown, boolean_options, Options.GetUserOption("Gameplay", "EdgePan"), function(option)
 		Options.SetUserOption("Gameplay", "EdgePan", option);
         OnOptionChangeRequiresAppRestart();
 	end, 
 	UserConfiguration.IsValueLocked("EdgePan"));
 
+	PopulateComboBox(Controls.UnitCyclingPullDown, boolean_options, Options.GetUserOption("Gameplay", "AutoUnitCycle"), function(option)
+		Options.SetUserOption("Gameplay", "AutoUnitCycle", option);
+	end,
+	UserConfiguration.IsValueLocked("AutoUnitCycle"));
+
+	local plotTooltipDelay = Options.GetUserOption("Interface", "PlotTooltipDelay") or 0.2;
+	Controls.PlotToolTipDelaySlider:SetValue(plotTooltipDelay / 2);
+	Controls.PlotToolTipDelayValue:LocalizeAndSetText("LOC_OPTIONS_PLOT_TOOLTIP_DELAY_VALUE", plotTooltipDelay);
+	Controls.PlotToolTipDelaySlider:RegisterSliderCallback(function(value)
+		local adjustedValue = value * 2;
+		Options.SetUserOption("Interface", "PlotTooltipDelay", adjustedValue);
+		Controls.PlotToolTipDelayValue:LocalizeAndSetText("LOC_OPTIONS_PLOT_TOOLTIP_DELAY_VALUE", adjustedValue);
+	end);
+	
     -- Application
     PopulateComboBox(Controls.ShowIntroPullDown, boolean_options, Options.GetAppOption("Video", "PlayIntroVideo"), function(option)
         Options.SetAppOption("Video", "PlayIntroVideo", option);
-    end
-    );
+    end);
 end
 
 ----------------------------------------------------------------        

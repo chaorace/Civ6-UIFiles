@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ContextDefaults ColorSet="Beige_Black" Style="FontNormal22" FontStyle="Stroke" Name="StagingRoom" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\ForgeUI_Assets\Controls.xsd">
+<ContextDefaults ColorSet="BodyTextCool" Style="FontNormal22" FontStyle="Glow" Name="StagingRoom" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\ForgeUI_Assets\Controls.xsd">
 	
 	<Box ID="MainGrid" Style="ShellBGBox">
 
@@ -16,9 +16,10 @@
 			
 			<!-- Players Stack -->
 			<Stack ID="PrimaryPanelStack" StackGrowth="Bottom" Anchor="L,T" Offset="3,114">
-				<Grid ID="PrimaryStackGrid" Style="SubContainer" Size="1020,310" Anchor="C,T" Offset="0,2">
-					<ScrollPanel ID="PlayersScrollPanel" Anchor="C,T"  Vertical="1" Size="parent,parent-10" Offset="5,2">
-						<Container ID="GridContainer" Size="1024,parent">
+				<Grid ID="PrimaryStackGrid" Style="SubContainer" Size="1020,310" Anchor="C,T" Offset="0,-15">
+          <Box Color="0,0,0,50 " Size="parent,parent-15" Anchor="C,T" />
+					<ScrollPanel ID="PlayersScrollPanel" Anchor="L,T"  Vertical="1" Size="parent,parent-35" Offset="0,20">
+						<Container ID="GridContainer" Size="parent-10,parent" Anchor="C,T">
 							<!-- Vertical Grid Lines, Horizontal lines are generated in Lua -->
 							<Line ID="GridLine_1" Start="218,0" End="218,parent" Width="2" Color="20,55,70,255" />
 							<Line ID="GridLine_2" Start="287,0" End="287,parent" Width="2" Color="20,55,70,255" />
@@ -27,11 +28,10 @@
 							<Line ID="GridLine_5" Start="928,0" End="928,parent" Width="2" Color="20,55,70,255" />
 						</Container>
 						<!-- Scroll Controls -->
-						<ScrollBar Style="Slider_Blue" Length="parent" Offset="5,0" Anchor="R,T" AnchorSide="I,I" />
-						<Stack ID="PlayerListStack" StackGrowth="Bottom" Anchor="L,T" Offset="10,0" Padding="1" />
+						<ScrollBar Style="Slider_Blue" Length="parent" Offset="-3,0" Anchor="R,T" AnchorSide="O,I" />
+						<Stack ID="PlayerListStack" StackGrowth="Bottom" Anchor="L,T" Offset="4,0" Padding="1"/>
 					</ScrollPanel>
-					
-					<Image Anchor="C,B" Offset="0,5" Size="parent,4" Texture="Controls_DecoMapScale" StretchMode="Tile" Color="20,55,70,255"/>
+					<Image Anchor="C,B" Offset="0,11" Size="parent+2,4" Texture="Controls_DecoMapScale" StretchMode="Tile" Color="20,55,70,255"/>
 				</Grid>
 			</Stack>
 
@@ -68,7 +68,6 @@
 			<!-- Chat Panel -->
 			<Container ID="ChatContainer" Anchor="R,B" Offset="10,10" Size="452,310">
 				<Container ID="ChatBackground" Anchor="R,B" Offset="0,20" Size="parent,parent">
-					<Grid Style="SubContainerFill" Anchor="R,B" Size="parent,parent" Color="19,47,77,255"/>
 					<Grid Style="SubContainer" Anchor="R,B" Offset="-2,0" Size="parent+4,parent"/>
 				</Container>
 
@@ -77,8 +76,8 @@
 				<Image Anchor="R,T" Offset="15,-7" Size="27,18" Texture="Controls_Deco3" Color="20,55,70,255"/>
 				<Image Offset="0,19" Size="parent-4,4" Texture="Controls_DecoMapScale" StretchMode="Tile" Color="20,55,70,255"/>
 
-				<ScrollPanel		ID="ChatScroll"	Anchor="L,T" Offset="20,-7" Size="parent-40,parent-55"  Vertical="1" AutoScrollBar="1" >
-					<ScrollBar Anchor="R,C" Offset="3,10" Style="Slider_Blue" Length="290" AnchorSide="O,I"/>
+				<ScrollPanel		ID="ChatScroll"	Anchor="C,T" Offset="0,25" Size="parent-40,parent-82"  Vertical="1" AutoScrollBar="1" >
+					<ScrollBar Anchor="R,C" Style="Slider_Blue" Length="290" AnchorSide="O,I"/>
 					<Stack			ID="ChatStack" StackGrowth="B" Anchor="L,B" />
 				</ScrollPanel>
 
@@ -91,23 +90,23 @@
 			<!-- Friends Panel -->
 			<Container ID="InfoContainer" Anchor="L,B" Offset="10,10" Size="452,310">
 				<Container ID="InfoBackground" Anchor="L,B" Offset="0,20" Size="parent,parent">
-					<Grid Style="SubContainerFill" Anchor="L,B" Size="parent,parent" Color="19,47,77,255"/>
 					<Grid Style="SubContainer" Anchor="L,B" Offset="-2,0" Size="parent+4,parent"/>
 				</Container>
 				
 				<Image Offset="0,19" Size="parent-4,4" Texture="Controls_DecoMapScale" StretchMode="Tile" Color="20,55,70,255"/>
 
 				<Container ID="Friends" Size="parent,parent" Hidden="1">
-					<ScrollPanel ID="FriendsScrollPanel" Offset="8,25" Size="437,parent-80" Vertical="1" AutoScrollBar="1">
-						<ScrollBar Style="Slider_Blue" Offset="-9,0" Anchor="R,T"/>
+					<ScrollPanel ID="FriendsScrollPanel" Offset="8,25" Size="437,parent-65" Vertical="1" AutoScrollBar="1">
 						<Stack ID="FriendsStack" Anchor="L,T" Size="parent" StackPadding="0" StackGrowth="Right" WrapWidth="472" />
+            <ScrollBar Style="Slider_Blue" Offset="-9,0" Anchor="R,T"/>
+            <Image Anchor="C,B" AnchorSide="I,O" Size="parent+14,4" Texture="Controls_DecoMapScale" StretchMode="Tile" Color="20,55,70,255"/>
 					</ScrollPanel>
 					<!-- Invite Button -->
 					<GridButton ID="InviteButton" Offset="0,27" Size="175,25" Anchor="C,B" Style="ShellButton" String="LOC_INVITE_BUTTON" ToolTip="LOC_INVITE_BUTTON_TT"/>
 				</Container>
 
 				<!-- Parameters Panel -->
-				<ScrollPanel ID="ParametersScrollPanel" Offset="8,25" Size="437,parent-50" Vertical="1" AutoScrollBar="1" Hidden="0">
+				<ScrollPanel ID="ParametersScrollPanel" Offset="8,25" Size="437,parent-65" Vertical="1" AutoScrollBar="1" Hidden="0">
 
 					<!-- Scroll Controls -->
 					<ScrollBar Style="Slider_Blue" Length="420" Offset="-4,0" Anchor="R,T"/>
@@ -137,42 +136,45 @@
 						-->
 						<Stack Anchor="C,T" Padding="0" StackGrowth="Bottom" ID="SecondaryParametersStack"/>
 					</Stack>
+
+          <Image Anchor="C,B" AnchorSide="I,O" Size="parent+14,4" Texture="Controls_DecoMapScale" StretchMode="Tile" Color="20,55,70,255"/>
 				</ScrollPanel>
 				
 				<!-- Friends / Game Setup Tabs -->
 				<Stack ID="InfoTabs" Anchor="C,T" Offset="0,-14" StackGrowth="Right" Size="940,70" Padding="10"/>
 			</Container>
+
+      <!-- Ready Button  -->
+      <AlphaAnim			ID="FadeAnim"						Anchor="C,C"								Size="parent,parent"	AlphaBegin="0" AlphaEnd="1" Cycle="Once" Speed=".5" Stopped="0" Pause="1" Function="Root">
+        <Container ID="ReadyContainer"						Anchor="C,B" Offset="0,-5"	Size="300,130" Hidden="0">
+          <Image															Anchor="C,B" Offset="0,35"	Size="130,23"	Texture="Diplomacy_PortraitBacking" />
+          <Image															Anchor="C,B" Offset="0,0" Size="305,58" Texture="Controls_BannerBlueSmall">
+            <Label		ID="StartLabel"					Anchor="C,C" Offset="0,6" Align="Center" String="{LOC_START:upper}" Style="BannerHeaderText" />
+          </Image>
+
+          <Container  ID="StartButtonContainer" Size="300,130" Hidden="1">
+            <Image	 ID="TurnTimerHotseatBG"		Anchor="C,C" Offset="0,-17"		Size="91,92"	Texture="Shell_BeginButtonBacking"/>
+            <Image	 ID="TurnTimerBG"						Anchor="C,C" Offset="0,-17"		Size="109,110"	Texture="Shell_CountdownTimerBacking"/>
+            <Meter ID="TurnTimerMeter" Anchor="C,C" Offset="0,-19"	Size="93,94" Texture="Shell_CountdownTimerFill" Speed="0"/>
+            <!-- Making this into a grid button so that I can set the size of the font - can't do that with a normal button right now-->
+            <GridButton		ID="ReadyButton"				SliceCorner="40,40" SliceTextureSize="80,80" Anchor="C,C" Offset="0,-16"	Size="80,80"	Texture="Shell_BeginButton" StateOffsetIncrement="0,80" FontSize="40"/>
+          </Container>
+
+          <Container  ID="ReadyButtonContainer" Size="300,130" Hidden="0">
+            <Button		ID="ReadyCheck"		Anchor="C,C" Offset="-1,-13"	Size="80,80"	Texture="Shell_ReadyCheckboxLarge" StateOffsetIncrement="0,80"/>
+          </Container>
+
+        </Container>
+      </AlphaAnim>
+
+      <Container ID="TooltipContainer" Size="340,670" Anchor="R,C" Offset="55,20"/>
 		</Container>
 	</Box>
 	
 	<!-- Hotseat bottom deco -->
 	<Image ID="HotseatDeco" Anchor="C,B" Size="963,45" Offset="0,55" Texture="Controls_BorderDeco" StretchMode="Tile" Color="255,255,255,20"/>
 
-  <!-- Ready Button  -->
-  <AlphaAnim			ID="FadeAnim"						Anchor="C,C"								Size="parent,parent"	AlphaBegin="0" AlphaEnd="1" Cycle="Once" Speed=".5" Stopped="0" Pause="1" Function="Root">
-    <Container ID="ReadyContainer"						Anchor="C,B" Offset="0,-5"	Size="300,130" Hidden="0">
-      <Image															Anchor="C,B" Offset="0,35"	Size="130,23"	Texture="Diplomacy_PortraitBacking" />
-      <Image															Anchor="C,B" Offset="0,0" Size="305,58" Texture="Controls_BannerBlueSmall">
-        <Label		ID="StartLabel"					Anchor="C,C" Offset="0,6" Align="Center" String="{LOC_START:upper}" Style="BannerHeaderText" />
-      </Image>
-     
-			<Container  ID="StartButtonContainer" Size="300,130" Hidden="1">
-				<Image	 ID="TurnTimerHotseatBG"		Anchor="C,C" Offset="0,-17"		Size="91,92"	Texture="Shell_BeginButtonBacking"/>
-				<Image	 ID="TurnTimerBG"						Anchor="C,C" Offset="0,-17"		Size="109,110"	Texture="Shell_CountdownTimerBacking"/>
-				<Meter ID="TurnTimerMeter" Anchor="C,C" Offset="0,-19"	Size="93,94" Texture="Shell_CountdownTimerFill" Speed="0"/>
-				<Button		ID="ReadyButton"				Anchor="C,C" Offset="0,-16"	Size="80,80"	Texture="Shell_BeginButton" StateOffsetIncrement="0,80"/>
-			</Container>
-			
-			<Container  ID="ReadyButtonContainer" Size="300,130" Hidden="0">
-				<Button		ID="ReadyCheck"		Anchor="C,C" Offset="-1,-13"	Size="80,80"	Texture="Shell_ReadyCheckboxLarge" StateOffsetIncrement="0,80"/>
-			</Container>
-
-      <!-- ??tron REMOVE: -->
-      <SlideAnim		ID="SlideAnim"					Anchor="C,C"								Size="parent,parent"	Start="0,100" End="0,0"			Cycle="Once" Speed=".9" Stopped="0" Pause="1" Function="Root" >
-      </SlideAnim>
-    </Container>
-			
-  </AlphaAnim>
+  
 
 
 	<!-- Children Contexts -->
@@ -235,13 +237,13 @@
 
 	<!-- Player List Instances -->
 	<Instance Name="PlayerListEntry">
-		<Container ID="Root" Size="1024,46">
+		<Container ID="Root" Size="1016,50" Offset="12,0">
 			
 			<!-- Player Name -->
-			<Box ID="PlayerNameBox" Color="0,255,0,0" Anchor="L,C" Offset="-12,0" Size="218,46">
+			<Box ID="PlayerNameBox" Color="0,255,0,0" Anchor="L,C" Offset="-12,0" Size="218,50">
 				<!-- Overlapping slot type pulldown for when the entry isn't occupied by an active civ. -->
 				<PullDown ID="SlotTypePulldown" Style="PullDownPlayerSlot" ScrollThreshold="110" Hidden="0">
-					<Label ID="ConnectionStatus" Anchor="L,T" Offset="4,3" String="[ICON_OnlinePip]"/>
+					<Label ID="ConnectionStatus" Anchor="L,T" Offset="4,3" String="[ICON_OnlinePip]" Style="FontNormal22"/>
 					<Label ID="PlayerName" Anchor="C,T" Offset="0,7" Style="WhiteSemiBold14" String="PlayerName" TruncateWidth="210"/>
 					<Label ID="PlayerStatus" Anchor="L,B" Offset="10,7" Style="WhiteSemiBold12" String="PlayerStatus"/>
 				</PullDown>
@@ -262,7 +264,7 @@
 			<PullDown ID="PlayerPullDown" Offset="279,0" Anchor="L,C" Style="PlayerSelectPullDown" ScrollThreshold="350" Size="325,46" AutoSizePopUp="1" SpaceForScroll="1"/>
 
 			<!-- Difficulty -->
-			<PullDown ID="HandicapPullDown" Hidden="1" Offset="608,0" Anchor="L,C" Style="PullDownBlue" ScrollThreshold="400" Size="140,24" AutoSizePopUp="1" SpaceForScroll="1"/>
+			<PullDown ID="HandicapPullDown" Hidden="1" Offset="608,0" Anchor="L,C" Style="PullDownBlue" ScrollThreshold="400" Size="140,24" AutoSizePopUp="1"/>
 
 			<!-- Host Icon -->
 
@@ -295,7 +297,7 @@
         <Image Anchor="R,C" Offset="25,0" Texture="Shell_Add" Size="37,37" ConsumeMouse="0"/>
       </GridButton>
 
-			<Grid ID="YouIndicatorLine" Size="parent-2,parent+4" Offset="-20,-3" Hidden="1" SliceTextureSize="60,60" SliceCorner="20,20" SliceSize="20,20" Texture="Controls_YouIndicatorLine"/>
+			<Grid ID="YouIndicatorLine" Size="parent-3,parent+4" Offset="-20,-3" Hidden="1" SliceTextureSize="60,60" SliceCorner="20,20" SliceSize="20,20" Texture="Controls_YouIndicatorLine"/>
       
 		</Container>
 	</Instance>
@@ -346,5 +348,48 @@
 	<Instance				Name="RowInstance">
 		<Stack        ID="Row"			Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
 	</Instance>
-	
+
+  <Instance			Name="IconInfoInstance">
+    <Container	ID="Top"					Size="340,40" AutoSize="V">
+      <Image    Texture="Controls_CircleCompass" Size="52,53" Offset="0,-2" Color="34,58,80,150">
+        <Image		ID="Icon"					Size="38,38" Anchor="C,C" />
+      </Image>
+      <Stack		ID="TextStack"		StackGrowth="Bottom" StackPadding="4" Offset="55,0">
+        <Label	ID="Header"				WrapWidth="255" SmallCapsType="EveryWord" SmallCaps="20" Style="FontFlair14"		String="$Header$" ColorSet="ShellHeader"/>
+        <Label	ID="Description"	WrapWidth="255"	Style="DawnText"	String="$Description$"/>
+      </Stack>
+    </Container>
+  </Instance>
+
+  <Instance		Name="HeaderInstance">
+    <Grid     ID="Top" Style="DivHeader" Anchor="C,T">
+      <Label  ID="Header"    Style="FontFlair18" FontStyle="glow" ColorSet="ShellHeader" SmallCaps="22" SmallCapsLeading="0" SmallCapsType="EveryWord" Anchor="C,C" Align="Center" Offset="0,1"/>
+    </Grid>
+  </Instance>
+
+  <Instance			Name="IconInstance">
+    <Container	ID="Top"					Size="340,40" AutoSize="V">
+      <Image    Texture="Controls_CircleBacking45" Size="51,51" Offset="0,-2">
+        <Image		ID="Icon"					Size="45,45" Anchor="C,C" Offset="0,-1" />
+      </Image>
+      <Stack		ID="TextStack"		StackGrowth="Bottom" StackPadding="4" Offset="55,0">
+        <Label	ID="Header"				WrapWidth="255" SmallCapsType="EveryWord" SmallCaps="20" Style="FontFlair14"		String="$Header$" ColorSet="ShellHeader"/>
+        <Label	ID="Description"	WrapWidth="255"	Style="DawnText"	String="$Description$"/>
+      </Stack>
+    </Container>
+  </Instance>
+  
+  <Instance Name="CivToolTip">
+    <AlphaAnim    ID="CivToolTipAlpha" AlphaBegin="0" AlphaEnd="1" Speed="4" Function="Root" Cycle="Once" Size="340,670" Stopped="1">
+      <SlideAnim  ID="CivToolTipSlide" Start="-20,0" End="0,0" Speed="4" Function="Root" Cycle="Once" Size="parent,parent">
+        <Grid Style="EnhancedToolTip" Size="parent,parent">
+          <ScrollPanel  ID="InfoScrollPanel" Vertical="1" Size="parent-12,parent-25" AutoScrollBar="1" Anchor="C,T" Offset="0,9">
+            <Stack ID="InfoStack" StackGrowth="Down" Padding="8"  Anchor="C,T" Offset="10,25"/>
+            <ScrollBar Style="Slider_Light" Anchor="R,C" Offset="2,0" />
+          </ScrollPanel>
+        </Grid>
+      </SlideAnim>
+    </AlphaAnim>
+  </Instance>
+
 </ContextDefaults>

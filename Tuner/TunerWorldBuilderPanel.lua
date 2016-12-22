@@ -191,7 +191,7 @@ g_StartingPlotPlacement =
 	Remove =
 	function(plot)
 		if (g_PlacementSettings.Player ~= -1) then
-			WorldBuilder.PlayerManager():ClearPlayerStartingPositionAt(plot:GetX(), plot:GetY());
+			WorldBuilder.PlayerManager():ClearStartingPosition(plot:GetX(), plot:GetY());
 		end
 	end
 }

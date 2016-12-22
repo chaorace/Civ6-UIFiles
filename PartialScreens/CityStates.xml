@@ -3,22 +3,22 @@
 		
 	<SlideAnim						ID="SlideAnim"					Anchor="R,T"									Size="514,full"				Start="-514,27" End="-1,27" Cycle="Once"	Speed="3.4" Function="OutSine" Stopped="1" >
 
-    <Image																			Anchor="R,T"									Size="parent,parent+5"	Texture="Controls_BannerWide" StretchMode="Tile" ConsumeMouse="1">
+    <Grid																				Anchor="R,T"									Size="parent,parent+5"	Texture="Controls_BannerWide" SliceTextureSize="514,Sli" StretchMode="Tile" ConsumeMouse="1" >
       <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="L,T" Color="0,0,0,255" Rotate="90" Offset="-2,0"/>
-    </Image>
+    </Grid>
 
 		<!-- List view of CityStates -->
 		<Container					ID="ListOfCityStates"																	Size="parent,parent">
 			<Grid							ID="HeaderBG"																					Size="parent,165"			Texture="Controls_TitleBarDark" SliceCorner="21,17" SliceTextureSize="42,34">
 				<Image																																Size="parent,parent"	Texture="Controls_Gradient_HalfRadial" Color="170,176,180,90" FlipY="1" />
 				<Grid																		Anchor="C,T"	Offset="22,60"	Size="396,58"					Texture="Controls_DecoFrame" SliceCorner="20,19" SliceTextureSize="40,38" Color="30,43,52,255">
-					<Label				ID="Header"							Anchor="C,C"  Offset="0,-7"												Style="CityStateHeaderText"		String="{LOC_CITY_STATES_OVERVIEW:upper}" />
-					<Label				ID="EnvoyDetails"				Anchor="C,C"	Offset="0,14"	                      Style="CityStateColumnHeaderText" String=""/>
-					<Container		ID="Envoys" Size="24,24" Anchor="R,C" AutoSize="H" ToolTip="LOC_TOP_PANEL_INFLUENCE" Offset="5,2">
-						<Stack			ID="EnvoysStack"				Anchor="L,C"	Offset="0,-2" StackGrowth="Right" >
-							<Image	  ID="EnvoysBacking" Size="24,24" Texture="Controls_MeterTinyBacking">
-								<Label	Offset="1,1" Anchor="L,C"	Style="FontNormal14" ColorSet="TopBarValueCS" String="[ICON_Envoy]" />
-								<Meter  ID="EnvoysMeter" Size="24,24" Texture="Controls_MeterTinyFill" Speed="1" Follow="1"/>
+					<Label				ID="Header"							Anchor="C,C"  Offset="0,-7"													Style="CityStateHeaderText"		String="{LOC_CITY_STATES_OVERVIEW:upper}" />
+					<Label				ID="EnvoyDetails"				Anchor="C,C"	Offset="0,14"													Style="CityStateColumnHeaderText" String=""/>
+					<Container		ID="Envoys"						  Anchor="R,C"	AutoSize="H"		Size="24,24"					ToolTip="LOC_TOP_PANEL_INFLUENCE" Offset="5,2">
+						<Stack			ID="EnvoysStack"				Anchor="L,C"	Offset="0,-2"		StackGrowth="Right" >
+							<Image	  ID="EnvoysBacking"																		Size="24,24"					Texture="Controls_MeterTinyBacking">
+								<Label													Anchor="L,C"	Offset="1,1"		Style="FontNormal14"	ColorSet="TopBarValueCS" String="[ICON_Envoy]" />
+								<Meter  ID="EnvoysMeter"				Speed="1" Follow="1"					Size="24,24"					Texture="Controls_MeterTinyFill" />
 							</Image>
 						</Stack>
 					</Container>
@@ -164,7 +164,10 @@
 				<Image		ID="DiplomacyPip"					Anchor="L,B"	Offset="-10,-6"	Size="23,23"								Texture="Diplomacy_RelationshipPips" />
 				<Label    ID="QuestIcon"            Anchor="L,T"  Offset="-9,0"  String="[ICON_CityStateQuest]" />
 			</BoxButton>
-			<TextButton	ID="NameLabel"						Anchor="L,C"	Offset="50,0"													Style="FontFlair18"							String="Name"/>
+
+			<GridButton ID="NameButton"													Offset="42,9"		Size="126,33" Texture="Controls_CityBannerSmall" SliceCorner="14,9" SliceSize="5,4" SliceTextureSize="33,28" Color="50,50,50,255">
+				<Label		ID="NameLabel"						Anchor="C,C"	Offset="0,-2"		Style="FontFlair11"		SmallCaps="16" SmallCapsStyle="EveryWord"					String="Name"/>
+			</GridButton>
 
 			<Image      ID="Envoy"								Anchor="L,C"	Offset="190,0"	Size="40,40"					Texture="Controls_CircleRim40">
 				<Button		ID="EnvoyLessButton"			Anchor="L,C"	Offset="-6,0"		Size="34,34"					Texture="Controls_Stepper" AnchorSide="O,I" FlipX="1" />

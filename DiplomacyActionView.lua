@@ -6,7 +6,6 @@ include( "SupportFunctions" );
 include( "Civ6Common" );
 include( "LeaderSupport" );
 include( "DiplomacyStatementSupport" );
-include( "PopupDialogSupport" );
 
 -- ===========================================================================
 --	CONSTANTS
@@ -113,7 +112,7 @@ local m_isInHotload = false;
 local m_bCloseSessionOnFadeComplete = false;
 
 local m_bottomPanelHeight = 0;
-local PADDING_FOR_SCROLLPANEL = 266;
+local PADDING_FOR_SCROLLPANEL = 220;
 local m_GossipThisTurnCount = 0;
 local m_firstOpened = true;
 local m_LeaderCoordinates		:table = {};
@@ -674,6 +673,57 @@ function ApplyStatement(handler : table, statementTypeName : string, statementSu
 
 end
 
+-- ==========================================================================================================================
+--	Displays the leader's name (with screen name if you are a human in a multiplayer game), along with the civ name,
+--	and the icon of the civ with civ colors.  When you mouse over the civ icon, you should see a full list of all cities.
+--	This should help players differentiate between duplicate civs.
+function PopulateSignatureArea(player:table)
+	-- Set colors for the Civ icon
+	if (player ~= nil) then
+		m_primaryColor, m_secondaryColor  = UI.GetPlayerColors( player:GetID() );
+		local darkerBackColor = DarkenLightenColor(m_primaryColor,(-85),100);
+		local brighterBackColor = DarkenLightenColor(m_primaryColor,90,255);
+		Controls.CivBacking_Base:SetColor(m_primaryColor);
+		Controls.CivBacking_Lighter:SetColor(brighterBackColor);
+		Controls.CivBacking_Darker:SetColor(darkerBackColor);
+		Controls.CivIcon:SetColor(m_secondaryColor);
+	end
+
+	-- Set the leader name, civ name, and civ icon data
+	local leader:string = PlayerConfigurations[player:GetID()]:GetLeaderTypeName();
+	if GameInfo.CivilizationLeaders[leader] == nil then
+		UI.DataError("Banners found a leader \""..leader.."\" which is not/no longer in the game; icon may be whack.");
+	else
+		if(GameInfo.CivilizationLeaders[leader].CivilizationType ~= nil) then
+			local civTypeName = GameInfo.CivilizationLeaders[leader].CivilizationType
+			local civIconName = "ICON_"..civTypeName;
+			Controls.CivIcon:SetIcon(civIconName);
+			Controls.CivName:SetText(Locale.ToUpper(Locale.Lookup(GameInfo.Civilizations[civTypeName].Name)));
+			local leaderName = Locale.ToUpper(Locale.Lookup(GameInfo.Leaders[leader].Name))
+			local playerName = PlayerConfigurations[player:GetID()]:GetPlayerName();
+			if GameConfiguration.IsAnyMultiplayer() and player:IsHuman() then
+				leaderName = leaderName .. " ("..Locale.ToUpper(playerName)..")"
+			end
+			Controls.LeaderName:SetText(leaderName);
+
+			--Create a tooltip which shows a list of this Civ's cities
+			local civTooltip = Locale.Lookup(GameInfo.Civilizations[civTypeName].Name);
+			local pPlayerConfig = PlayerConfigurations[player:GetID()];
+			local playerName = pPlayerConfig:GetPlayerName();
+			local playerCities = player:GetCities();
+			if(playerCities ~= nil) then
+				civTooltip = civTooltip .. "[NEWLINE]"..Locale.Lookup("LOC_PEDIA_CONCEPTS_PAGEGROUP_CITIES_NAME").. ":[NEWLINE]----------";
+				for i,city in playerCities:Members() do
+					civTooltip = civTooltip.. "[NEWLINE]".. Locale.Lookup(city:GetName());
+				end
+			end
+			Controls.CivIcon:SetToolTipString(Locale.Lookup(civTooltip));
+		end
+	end
+	Controls.SignatureStack:CalculateSize();
+	Controls.SignatureStack:ReprocessAnchoring();
+end
+
 -- ===========================================================================
 function PopulateStatementList( options: table, rootControl: table, isSubList: boolean )
 	local buttonIM:table;
@@ -933,41 +983,34 @@ function OnActivateIntelRelationshipPanel(rootControl : table)
 	intelSubPanel.RelationshipBar:SetPercent(relationshipPercent);
 	intelSubPanel.RelationshipIcon:SetOffsetX(relationshipPercent*intelSubPanel.RelationshipBar:GetSizeX());
 	intelSubPanel.RelationshipIcon:SetVisState( GetVisStateFromDiplomaticState(iState) );
-	-- Set the reasons for our score.
-	local szRelationshipReasons = "";
-	selectedPlayerDiplomaticAI:GenerateToolTips(ms_LocalPlayerID);
-	local iNum = selectedPlayerDiplomaticAI:GetNumToolTips();
+	
+	local toolTips = selectedPlayerDiplomaticAI:GetDiplomaticModifiers(ms_LocalPlayerID);
 	ms_IntelRelationshipReasonIM:ResetInstances();
-	for i=0, iNum-1, 1 do
-		-- HACK:	I'm doing some string parsing here because our number data is buried in a string right now.
-		--			This checks to see whether or not the reason actually has a value.
-		local isUnknown : boolean = false;
-		local tooltip : string = selectedPlayerDiplomaticAI:GetToolTip(i);
-		local unknownKeywords :string = Locale.Lookup("LOC_TOOLTIP_DIPLOMACY_UNKNOWN_REASON");
-		local unknownTest = string.match(tooltip, unknownKeywords);	-- Test the unlocalized string to see if the reason is unknown
-		if (unknownTest ~= nil) then
-			isUnknown = true;
-		end
-		local parseTooltip = string.gsub(tooltip, "[%a]","");			--Delete characters from tooltip
-		parseTooltip = string.gsub(parseTooltip, "[%s]","");			--Delete spaces from tooltip		- The result should only be a number and possibly a negative symbol
-		local scoreAmount = tonumber(parseTooltip);						--Convert the score to a number
-		if(scoreAmount ~= 0 and scoreAmount ~= nil) then
-			parseTooltip = string.gsub(tooltip, "[%d]","");				--Remove digits from tooltip
-			parseTooltip = string.gsub(parseTooltip, "[%p]","");		--Remove punctuation from tooltip	- The result should be only characters and spaces 
-			local textColor = "";
-			if(scoreAmount > 0) then
-				textColor = "[COLOR_Civ6Green]";
-			else
-				textColor = "[COLOR_Civ6Red]";
+
+	if(toolTips) then
+		for i, tip in ipairs(toolTips) do
+			local score = tip.Score;
+			local text = tip.Text;
+
+			if(score ~= 0) then
+				local relationshipReason = ms_IntelRelationshipReasonIM:GetInstance(intelSubPanel.RelationshipReasonStack);
+			
+				local scoreText = Locale.Lookup("{1_Score : number +#,###.##;-#,###.##}", score);
+				if(score > 0) then
+					relationshipReason.Score:SetText("[COLOR_Civ6Green]" .. scoreText .. "[ENDCOLOR]");
+				else
+					relationshipReason.Score:SetText("[COLOR_Civ6Red]" .. scoreText .. "[ENDCOLOR]");			
+				end
+
+				if(text == "LOC_TOOLTIP_DIPLOMACY_UNKNOWN_REASON") then
+					relationshipReason.Text:SetText("[COLOR_Grey]" .. Locale.Lookup(text) .. "[ENDCOLOR]");
+				else
+					relationshipReason.Text:SetText(Locale.Lookup(text));
+				end
 			end
-			local relationshipReason = ms_IntelRelationshipReasonIM:GetInstance(intelSubPanel.RelationshipReasonStack);
-			relationshipReason.Score:SetText(textColor..scoreAmount.."[ENDCOLOR]");
-			if(isUnknown) then
-				parseTooltip = "[COLOR_Grey]"..parseTooltip.."[ENDCOLOR]";
-			end
-			relationshipReason.Text:SetText(parseTooltip);				--String is already localized
 		end
 	end
+
 	intelSubPanel.RelationshipReasonStack:CalculateSize();
 	intelSubPanel.RelationshipReasonStack:ReprocessAnchoring();
 	if(intelSubPanel.RelationshipReasonStack:GetSizeY()==0) then
@@ -1555,14 +1598,15 @@ end
 -- ===========================================================================
 function SetConversationMode(player : table)
 
-	if (player ~= nil) then
-		local playerConfig = PlayerConfigurations[player:GetID()];
-		if (playerConfig ~= nil) then
-			-- Set the leader name
-			local leaderDesc = playerConfig:GetLeaderName();
-			Controls.SignatureText:LocalizeAndSetText("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, playerConfig:GetCivilizationDescription());
-		end
-	end
+	--if (player ~= nil) then
+	--	local playerConfig = PlayerConfigurations[player:GetID()];
+	--	if (playerConfig ~= nil) then
+	--		-- Set the leader name
+	--		local leaderDesc = playerConfig:GetLeaderName();
+	--		Controls.SignatureText:LocalizeAndSetText("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, playerConfig:GetCivilizationDescription());
+	--	end
+	--end
+	PopulateSignatureArea(player);
 	
 	Controls.ConversationContainer:SetHide(false);
 	Controls.Signature_Alpha:Play();
@@ -2623,17 +2667,32 @@ function OnLocalPlayerTurnEnd()
 	end
 end
 
+
 -- ===========================================================================
---	Context CTOR
+--	Engine Event
 -- ===========================================================================
---function OnInit( isHotload )
---	CreatePanels();
---
---	if (isHotload and not ContextPtr:IsHidden()) then
---		OnShow();
---		print("we hotloaded");
---	end
---end
+function OnUserRequestClose()
+	-- Is this showing; if so then it needs to raise dialog to handle close
+	if ContextPtr:IsHidden()==false then
+		if Controls.QuitPopupDialog:IsHidden() then
+			Controls.QuitPopupDialog:SetHide( false );
+		end
+	end
+end
+
+-- ===========================================================================
+--	UI Callback
+-- ===========================================================================
+function OnQuitYes()
+	Events.UserConfirmedClose();
+end
+
+-- ===========================================================================
+--	UI Callback
+-- ===========================================================================
+function OnQuitNo()
+	Controls.QuitPopupDialog:SetHide( true );
+end
 
 -- ===========================================================================
 --	HOTLOADING UI EVENTS
@@ -2674,7 +2733,8 @@ function Initialize()
 	Events.DiplomacySessionClosed.Add( OnDiplomacySessionClosed );
 	Events.DiplomacyStatement.Add( OnDiplomacyStatement );
 	Events.DiplomacyMakePeace.Add( OnDiplomacyMakePeace );
-	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
+	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );	
+	Events.UserRequestClose.Add( OnUserRequestClose );
 
 	-- LUA Events
 	LuaEvents.CityBannerManager_TalkToLeader.Add(OnTalkToLeader);
@@ -2690,6 +2750,8 @@ function Initialize()
 
 	Controls.CloseButton:RegisterCallback( Mouse.eLClick, OnClose );
 	Controls.CloseButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	Controls.YesButton:RegisterCallback( Mouse.eLClick, OnQuitYes );
+	Controls.NoButton:RegisterCallback( Mouse.eLClick, OnQuitNo );
 	
 	-- Size controls for screen:
 	local screenX, screenY:number = UIManager:GetScreenSizeVal();

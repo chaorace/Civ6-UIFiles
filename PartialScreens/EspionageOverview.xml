@@ -52,10 +52,24 @@
     <!--	Mission History Tab																											-->
     <!-- ==================================================================	-->
     <Container ID="MissionHistoryTabContainer" Anchor="C,B" Size="parent-2,parent-88" Offset="0,8">
-      <Stack StackGrowth="Down">
+      <Stack ID="MissionHistoryTabStack" StackGrowth="Down">
         <Container ID="CapturedEnemyOperativeContainer" Size="parent,100" AutoSize="Vertical" AutoSizePadding="0,4">
           <Label Offset="12,2" Style="FontFlair22" SmallCaps="28" SmallCapsType="EveryWord" String="LOC_ESPIONAGEOVERVIEW_CAPTURED_SPIES"/>
           <Stack ID="CapturedEnemyOperativeStack" Anchor="C,T" Offset="0,30" StackGrowth="Down" StackPadding="4"/>
+        </Container>
+        <Container ID="MissionHistoryContainer" Size="parent,100" AutoSize="Vertical" AutoSizePadding="0,4">
+          <Grid Anchor="C,T" Size="Parent-2,40" Texture="Controls_TitleBarDark" SliceCorner="14,11" SliceSize="14, 12" SliceTextureSize="42,34">
+            <Label Anchor="C,C" Offset="0,2" Style="FontFlair22" SmallCaps="28" SmallCapsType="EveryWord" String="LOC_ESPIONAGEOVERVIEW_MISSION_HISTORY_SUBHEADER"/>
+          </Grid>
+          
+          <!-- Mission History Stack -->
+          <ScrollPanel ID="MissionHistoryScrollPanel" Anchor="C,T" Size="parent-22,400" Offset="0,42" Vertical="1" AutoScrollBar="1">
+            <ScrollBar Anchor="R,C" AnchorSide="O,I"  Offset="-2,0" Style="ScrollVerticalBar"/>
+            <Stack ID="MissionHistoryStack" StackGrowth="Down" StackPadding="4"/>
+          </ScrollPanel>
+
+          <!-- No Recent Missions Label -->
+          <Label ID="NoRecentMissonsLabel" Anchor="C,B" AnchorSide="I,O" Offset="0,10" Style="FontNormal18" String="LOC_ESPIONAGEOVERVIEW_NOMISSIONHISTORY"/>
         </Container>
       </Stack>
     </Container>
@@ -76,11 +90,11 @@
             <GridButton Size="parent+4,parent" Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
           </AlphaAnim>
         </GridButton>
-        <!--<GridButton	ID="MissionHistoryTabButton" Size="130,34" Style="TabButton" FontSize="14" TextOffset="0,2" String="LOC_ESPIONAGEOVERVIEW_MISSION_HISTORY_HEADER">
+        <GridButton	ID="MissionHistoryTabButton" Size="130,34" Style="TabButton" FontSize="14" TextOffset="0,2" String="LOC_ESPIONAGEOVERVIEW_MISSION_HISTORY_HEADER">
           <AlphaAnim ID="MissionHistoryTabButtonSelected" Offset="-2,0" Size="parent,parent" Speed="4" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
             <GridButton Size="parent+4,parent" Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
           </AlphaAnim>
-        </GridButton>-->
+        </GridButton>
       </Grid>
     </Container>
 
@@ -189,6 +203,52 @@
       
       <Label Anchor="R,C" Offset="10,0" Style="FontNormal18" String="LOC_ESPIONAGEOVERVIEW_OFFER_TRADE"/>
     </GridButton>
+  </Instance>
+  
+  <!-- Mission History Instance -->
+  <Instance Name="MissionHistoryInstance">
+    <Grid ID="Top" Size="489,73" AutoSize="Vertical" AutoSizePadding="0,4" Texture="Espionage_Item" SliceCorner="13,36" SliceSize="463,25" SliceTextureSize="489,73" NoStateChange="1">
+      <!-- Operative Name -->
+      <Label ID="OperativeName" Offset="12,10" Style="FontFlair18" SmallCaps="24" SmallCapsType="EveryWord" String="NANCY DREW"/>
+
+      <!-- Operative Rank --> 
+      <Label ID="OperativeRank" Anchor="R,T" Offset="12,9" Style="FontNormal16" Color="Grey" String="Spy Recruit"/>
+
+      <Stack StackGrowth="Down" StackPadding="3" Offset="5,35">
+        <Container Size="parent-10,40">
+          <Grid Size="parent,parent" Texture="Espionage_Container" SliceCorner="2,2" SliceSize="28,28">
+            <Image ID="MissionGradient" Size="160,parent" Texture="Controls_Gradient" Color="Green" Rotate="90" Alpha="0.3"/>
+            <Stack StackGrowth="Right" Anchor="L,T" Offset="4,1">
+              <!-- Mission Outcome and Outcome Icon -->
+              <Label ID="MissionOutcomeText"      Anchor="L,C" Style="FontNormal16" Color="0,150,50,255" GradientColor="White"/>
+              <Label ID="MissionOutcomeFontIcon"  Anchor="L,C" Offset="0,3" Style="FontNormal16" String="[ICON_CheckFail]"/>
+              <Label ID="MissionOutcomeSpyStatus"      Anchor="L,C" Style="FontNormal16" Color="0,150,50,255" GradientColor="White"/>
+            </Stack>
+            <!-- Mission Name -->
+            <Label ID="MissionName" Anchor="L,B" Offset="4,2" Style="FontNormal16" String="Great Works Heist"/>
+            <!-- Turns since mission completed -->
+            <Label ID="TurnsSinceMission" Anchor="R,B" Offset="6,4" Style="FontNormal14" String="1 turn ago"/>
+          </Grid>
+        </Container>
+
+        <Container ID="OperationDetailsContainer" Size="Parent-10,48" AutoSize="V">
+          <!-- Operation Icon -->
+          <Grid ID="OperationIconGrid" Size="46,46" Offset="0,0" Texture="Espionage_Container" SliceCorner="2,2" SliceSize="28,28">
+            <Image ID="OperationIcon" Anchor="C,C" Size="40,40" Color="Grey" Texture="EspionageMissions40"/>
+          </Grid>
+
+          <!-- Operation Details -->
+          <Grid Anchor="C,T" Size="381,46" AutoSize="V" MinSize="100,46" AutoSizePadding="0,4" Offset="0,0" Texture="Espionage_Container" SliceCorner="2,2" SliceSize="28,28">
+            <Label ID="OperationDetails" Anchor="C,C" Offset="0,0" Style="FontNormal16" Align="Center" WrapWidth="parent-6" String="This is a test string. This is a test string. This is a test string. This is a test string. This is a test string. This is a test string."/>
+          </Grid>
+
+          <!-- Operation District Icon -->
+          <Grid ID="OperationDistrictIconGrid" Anchor="R,T" Size="46,46" Offset="0,0" Texture="Espionage_Container" SliceCorner="2,2" SliceSize="28,28">
+            <Image ID="OperationDistrictIcon" Anchor="C,C" Size="32,32" Texture="Districts32"/>
+          </Grid>
+        </Container>
+      </Stack>
+    </Grid>
   </Instance>
   
   <!-- City Instance -->

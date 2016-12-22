@@ -279,8 +279,9 @@ end
 
 -----------------------------------------------------------------------------------------------------------------------
 function PopulateInspectorData(fileInfo : table, fileName)
-		if(fileName ~= nil) then
-			Controls.FileName:SetText(fileName);
+		local name = fileInfo.DisplayName or fileName;
+		if(name ~= nil) then
+			Controls.FileName:SetText(name);
 		else
 			-- Set default file data for save game...
 			local defaultFileName: string = "";

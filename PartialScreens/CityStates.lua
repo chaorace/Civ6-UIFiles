@@ -371,7 +371,7 @@ end
 --	Go back to the main list view.
 -- ===========================================================================
 function OnBackClose()
-	if m_kPlayerData.EnvoyTokens > 0 then
+	if m_kPlayerData.EnvoyTokens ~= nil and m_kPlayerData.EnvoyTokens > 0 then
 		m_mode = MODE.SendEnvoys;
 	else
 		m_mode = MODE.Overview;
@@ -735,10 +735,16 @@ function AddCityStateRow( kCityState:table )
 	local textureSheet		:string;
 	local questToolTip		:string = Locale.Lookup("LOC_CITY_STATES_QUESTS");
 	local numQuests			:number = 0;
+	local cityStateName		:string = Locale.ToUpper( Locale.Lookup(kCityState.Name) .. (kCityState.isAlive and "" or "("..Locale.Lookup("LOC_CITY_STATES_DESTROYED")..")") );
 
-	kInst.NameLabel:SetText( Locale.Lookup(kCityState.Name) .. (kCityState.isAlive and "" or "("..Locale.Lookup("LOC_CITY_STATES_DESTROYED")..")") );
+	-- Set name, truncate if necessary
+	kInst.NameLabel:SetText( cityStateName );
+	local targetSize:number = (kInst.NameButton:GetSizeX() - 12);
+	TruncateStringWithTooltip(kInst.NameLabel, targetSize, cityStateName);
+
 	kInst.NameLabel:SetColor( kCityState.ColorSecondary );
-	kInst.NameLabel:RegisterCallback( Mouse.eLClick, function() OpenSingleViewCityState( kCityState.iPlayer ) end );
+	kInst.NameButton:SetColor( Mouse.eLClick, function() OpenSingleViewCityState( kCityState.iPlayer ) end );
+	kInst.NameButton:RegisterCallback( Mouse.eLClick, function() OpenSingleViewCityState( kCityState.iPlayer ) end );
 
 	textureOffsetX, textureOffsetY, textureSheet, tooltip = GetRelationshipPipAtlasPieces( kCityState );
 	kInst.DiplomacyPip:SetTexture( textureOffsetX, textureOffsetY, textureSheet );
@@ -963,7 +969,17 @@ function ViewCityState( iPlayer:number )
 	end
 	Controls.CityStateIconStack:CalculateSize();
 
+	-- Grab city state, and then sanity check.  (We did have an error where a liberated city wasn't updated in the
+	-- cache and so if a player clicked the banner it would immediately bail.)
 	local kCityState:table= m_kCityStates[iPlayer];
+	if kCityState == nil then
+		UI.DataError("Attempt to show details for CityState player #"..tostring(iPlayer)..", but that doesn't exist!");
+		
+		-- Best attempt to salvage error is to show the list view.
+		m_mode = MODE.Overview;
+		ViewList();	
+		return;
+	end
 
 	Controls.ListOfCityStates:SetHide( true);
 	Controls.SingleCityState:SetHide( false );
@@ -1206,7 +1222,7 @@ function GetData()
 		-- For all players (other than ourselves) and can receive influence (only CityStates)...
 		if iPlayer ~= pLocalPlayer:GetID() and isCanReceiveInfluence then
 			local primaryColor, secondaryColor = UI.GetPlayerColors( iPlayer );			
-
+			
 			local suzerainName:string = Locale.Lookup("LOC_CITY_STATES_NONE");
 			if suzerainID ~=-1 then
 				if (suzerainID == localPlayerID) then
@@ -1248,6 +1264,7 @@ function GetData()
 			if iPlayerDiploState ~= -1 then
 				diplomaticState = GameInfo.DiplomaticStates[iPlayerDiploState].StateType;
 			end
+
 
 			local kCityState :table		= {
 				iPlayer					= pPlayer:GetID(),

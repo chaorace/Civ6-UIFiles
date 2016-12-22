@@ -91,7 +91,9 @@
 					<Image																			Anchor="C,C"																				Texture="ActionPanel_EndTurnFlash.dds" />
 				</AlphaAnim>				
 			</BoxButton>
-     
+
+			<AlphaAnim		ID="TutorialSlowTurnEnableAnim"			Anchor="R,B" Speed="0.5" Offset="-20,0" Size="180,220" AlphaStart="1" AlphaEnd="1" Cycle="Once" ConsumeAllMouse="1" Hidden="1" />
+			
 		</Image>
 		
 		<Tutorial	   			ID="TutNotificationPointer"	Style="TutorialContainer"			Anchor="L,T"	Offset="-40,0"	TriggerBy="TutorialNotificationPointer" >

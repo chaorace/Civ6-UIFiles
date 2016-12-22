@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context>
+	<!-- Force to always render on "tutorial" graphics stream 'layer' so it's on top even when no tutorial controls are active. -->
+
+	<Container						ID="AdvisorBase"													Size="full,full" >
+		<AlphaAnim					ID="AdvisorAlpha"						Anchor="C,T"  Size="full,full" Speed="6" Cycle="Once" AlphaStart="0" AlphaEnd="1" Function="Root" Pause="0.5">
+			<SlideAnim				ID="AdvisorAnim"						Anchor="C,T"  Size="full,full" Speed="6" Cycle="Once" Start="0,-20" End="0,0"    Function="Root" Pause="0.5">
+				<Grid						ID="Window"									Anchor="C,T"	Offset="0,50" Texture="Advisor_WordBubble" SliceCorner="28,44" SliceTextureSize="72,64" Size="529,208" Color="255,255,255,200">
+					<Container Size="parent-35, parent-15" Anchor="C,T"  Offset="-10,10">
+						<Grid Style="DecoGrid" Size="parent-5,parent-8" Anchor="C,T" Offset="0,2" Color="120,126,134">
+							<Image                                    Anchor="C,T"                Texture="Controls_Gradient_HalfRadial" FlipY="1" Size="parent-5,parent-5"/>
+							<Image                                    Anchor="C,B"                Texture="Controls_Gradient_HalfRadial"           Size="parent-5,parent-5"/>
+							<Stack				ID="WindowContentStack"			Anchor="C,C"	Offset="0,0" StackGrowth="Down" Padding="10">
+								<Label			ID="TitleText"							Anchor="C,T"	Offset="0,10"	String="LOC_ADVISOR_HEAD" Color0="19,38,67,200" Color1="19,38,67,30" FontStyle="Glow" Style="FontBoldFlair18" FontSize="16" Align="Center" SmallCaps="22" SmallCapsType="FirstWord"/>
+								<Image			ID="InfoImage"							Anchor="C,T"	StretchMode="Auto" Hidden="1" />
+								<Label			ID="InfoString"							  Anchor="C,T"	Align="left"	Style="FontNormalMedium16" Color0="19,38,67,255" Color1="19,38,67,30" FontStyle="Glow" WrapWidth="400"/>
+								<Stack			ID="ButtonStack"						Anchor="C,T" Offset="0,0" StackGrowth="Right" StackPadding="10"/>
+							</Stack>
+							<Image    ID="AdvisorPortrait"        Anchor="R,T"	Offset="-30,-45"	 Hidden="1" AnchorSide="O,I" Texture="Controls_Glow" Color="0,0,0,255" Size="200,200">
+								<Image Texture="Controls_CircleBacking" Size="134,134" Anchor="C,C" StretchMode="Fill">
+									<Image		                          Anchor="C,C" Size="128,128" Texture="Advisors128" Offset="2,3"/>
+								</Image>
+							</Image>
+						</Grid>
+					</Container>
+				</Grid>
+			</SlideAnim>
+		</AlphaAnim>
+		<AlphaAnim	ID="AdvisorTimer"						Anchor="C,T"  Size="full,full" Speed="6" Cycle="Once" AlphaStart="0" AlphaEnd="1" Function="Root"/>
+	</Container>
+
+	<Container						ID="MetaBase"								Anchor="C,T" Size="full,full">
+		<AlphaAnim					ID="MetaAlpha"							Anchor="C,T" Size="full,full"	Speed="6" Cycle="Once" AlphaStart="0" AlphaEnd="1" Pause="0.5">
+			<SlideAnim 				ID="MetaAnim"								Anchor="C,T" Size="full,full"	Speed="6" Start="0,-20" End="0,0"  Cycle="Once" Pause="0.5" >
+				<Container			ID="MetaWindow"							Anchor="C,T" Size="500,208" Offset="0,50">
+					<Grid					ID="MetaShadowGrid"					Anchor="C,T" Size="parent,parent"  Style="DropShadow3" Color="255,255,255,200" />
+					<Grid																		  Anchor="C,C" Size="parent-35,parent-35" Offset="0,0" Color="0,0,0,170" Style="SubContainer4" >
+						<!-- Data Stack-->
+						<Stack			ID="MetaWindowContentStack" Anchor="C,T"	Offset="0,0" StackGrowth="Down" Padding="10" >
+							<Label		ID="MetaTitleText"					Anchor="C,T"	Offset="0,10" Style="TutorialHeaderText"/>
+							<Image		ID="MetaInfoImage"					Anchor="C,T" StretchMode="Auto" Hidden="1" />
+							<Label	 	ID="MetaInfoString"					Anchor="C,T" Align="left" Offset="0,10" Style="TutorialBodyText" WrapWidth="400"/>
+							<Stack		ID="MetaButtonStack"				Anchor="C,T" StackGrowth="Right" StackPadding="10"/>
+						</Stack>
+					</Grid>
+				</Container>
+			</SlideAnim>
+		</AlphaAnim>
+		<AlphaAnim	ID="MetaTimer"						Anchor="C,T"  Size="full,full" Speed="6" Cycle="Once" AlphaStart="0" AlphaEnd="1" Function="Root"/>
+	</Container>
+
+
+	<!-- =========================== Tutorial IDS ========================== -->
+	<WorldAnchor	ID="Anchor" >
+		<Tutorial		ID="TutSelectUnit"	Style="TutorialContainer"		TriggerBy="TutorialSelectUnit" AnchorSide="O,O"  Offset="0,150">
+			<Grid													Style="TutorialCalloutGrid" >
+				<Label	ID="CalloutHeader"	Style="TutorialHeaderText"	String="LOC_TUTORIAL_HEADER_SELECT_SETTLER" />
+				<Label	ID="CalloutBody"		Style="TutorialBodyText"		String="LOC_TUTORIAL_MESSAGE_SELECT_SETTLER" />
+			</Grid>
+			<SlideAnim Start="0,0" EndOffset="0,-20" Cycle="Bounce" Function="OutQuad" Anchor="C,B">
+				<Image Texture="Tutorial_ArrowV" Offset="-22,-35" Size="44,58" />
+			</SlideAnim>
+		</Tutorial>
+	</WorldAnchor>
+
+
+	<!-- =========================== Instances ========================== -->
+	<Instance Name="DialogButtonInstance">
+		<GridButton ID="DialogButton"			Anchor="C,T" Size="200,41" Style="MainButton" FontStyle="Shadow" String="Ok" />
+	</Instance>
+
+</Context>

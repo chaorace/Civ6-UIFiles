@@ -6,7 +6,12 @@
 
 		<Grid						ID="MainPanel"																Offset="-5,27"	Size="296,95"	Texture="CivicPanel_Frame" SliceCorner="80,80" SliceSize="1,1" SliceTextureSize="110,88" ConsumeMouseOver="1">
 			<FlipAnim			ID="MainGearAnim"																														Texture="CivicPanel_MeterFrameAnim" FrameCount="3" Columns="3" Speed="10" Size="40,40" Stopped="1" />
-			<TextButton		ID="TitleButton"															Offset="65,8"		Size="200,40"	Style="PanelHeaderText" String="$ChangeCivic$" />
+      <Stack        ID="TitleStack"     Offset="65,8" StackGrowth="Right" StackPadding="4">
+        <TextButton		ID="TitleButton"		Size="200,40"	Style="PanelHeaderText" String="$ChangeCivic$" />
+        <Image      ID="RecommendedIcon"  Offset="0,-4" Size="22,22" Texture="AdvisorRec22" ConsumeMouse="1" ToolTip="LOC_TECH_FILTER_RECOMMENDED" Hidden="1">
+          <FlipAnim       Texture="AdvisorRecAnim22"  Size="26,26" Anchor="C,C" FrameCount="12" Columns="4" Speed="14" EndPause="3" Color="255,255,255,200"/>
+        </Image>
+      </Stack>
 			<Image				ID="ResearchGearFrame"																											Texture="CivicPanel_MeterFrame">
 				<Button			ID="IconButton"									Anchor="C,C"									Size="44,44"	Texture="CivicPanel_Button" >
 					<Image		ID="Icon"												Anchor="C,C"									Size="38,38"	Texture="Tech38" />
@@ -48,8 +53,13 @@
 			  <Image			ID="IconCanBeBoosted"		Anchor="L,B"	Offset="-4,-8" 							Texture="CivicPanel_BoostIconAvailable.dds" />
 			  <Label			ID="BoostLabel"					Anchor="L,B"	Offset="28,5"								Color0="150,150,150,155" Style="FontNormal12" />
 			  <Image			ID="IconHasBeenBoosted"	Anchor="L,B"	Offset="-4,-8"							Texture="CivicPanel_BoostIconBoosted.dds" />
-			  <Label			ID="TechName"						Anchor="L,T"	Offset="48,5"								Style="FontNormal14" FontStyle="Stroke" ColorSet="BodyTextCool" Color1="0,0,0,100"/>
-			  <Label			ID="TurnsLeft"					Anchor="L,B"	Offset="4,18"								Style="FontNormal12" String="[ICON_Turn]" />
+        <Stack      Offset="48,5"           StackGrowth="Right" StackPadding="4">
+          <Label			ID="TechName"					Style="FontNormal14" FontStyle="Stroke" ColorSet="BodyTextCool" Color1="0,0,0,100"/>
+          <Image      ID="RecommendedIcon"  Offset="0,-4" Size="22,22" Texture="AdvisorRec22" ConsumeMouse="1" ToolTip="LOC_TECH_FILTER_RECOMMENDED" Hidden="1">
+            <FlipAnim       Texture="AdvisorRecAnim22"  Size="26,26" Anchor="C,C" FrameCount="12" Columns="4" Speed="14" EndPause="3" Color="255,255,255,200"/>
+          </Image>
+        </Stack>
+        <Label			ID="TurnsLeft"					Anchor="L,B"	Offset="4,18"								Style="FontNormal12" String="[ICON_Turn]" />
         <Image      ID="QueueBadge"                       Offset="-22,-18"  Size="54,58" Texture="Tree_QueueBadge.dds" Hidden="1"/>
         <Label      ID="NodeNumber"												Offset="-22,-2" Style="FontFlair12" String="99" Hidden="1"/>
         <Stack			ID="UnlockStack"											Offset="46,22"							StackGrowth="Right" StackPadding="-1"/>

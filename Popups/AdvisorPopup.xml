@@ -4,8 +4,8 @@
 	
 		
 	<Container						ID="AdvisorBase"													Size="full,full" >
-		<AlphaAnim					ID="AdvisorAlpha"						Anchor="C,T"  Size="full,full" Speed="4" Cycle="Once" AlphaStart="0" AlphaEnd="1" Function="Root" Pause="0.5">
-			<SlideAnim				ID="AdvisorAnim"						Anchor="C,T"  Size="full,full" Speed="4" Cycle="Once" Start="0,-100" End="0,0"    Function="Root" Pause="0.5">
+		<AlphaAnim					ID="AdvisorAlpha"						Anchor="C,T"  Size="full,full" Speed="6" Cycle="Once" AlphaStart="0" AlphaEnd="1" Function="Root" Pause="0.5">
+			<SlideAnim				ID="AdvisorAnim"						Anchor="C,T"  Size="full,full" Speed="6" Cycle="Once" Start="0,-20" End="0,0"    Function="Root" Pause="0.5">
 				<Grid						ID="Window"									Anchor="C,T"	Offset="0,50" Texture="Advisor_WordBubble" SliceCorner="28,44" SliceTextureSize="72,64" Size="529,208" Color="255,255,255,200">
           <Container Size="parent-35, parent-15" Anchor="C,T"  Offset="-10,10">
             <Grid Style="DecoGrid" Size="parent-5,parent-8" Anchor="C,T" Offset="0,2" Color="120,126,134">
@@ -31,7 +31,7 @@
   
   <Container						ID="MetaBase"								Anchor="C,T" Size="full,full">
 		<AlphaAnim					ID="MetaAlpha"							Anchor="C,T" Size="full,full"	Speed="6" Cycle="Once" AlphaStart="0" AlphaEnd="1" Pause="0.5">
-			<SlideAnim 				ID="MetaAnim"								Anchor="C,T" Size="full,full"	Speed="6" Start="0,-100" End="0,0"  Cycle="Once" Pause="0.5" >
+			<SlideAnim 				ID="MetaAnim"								Anchor="C,T" Size="full,full"	Speed="6" Start="0,-20" End="0,0"  Cycle="Once" Pause="0.5" >
 				<Container			ID="MetaWindow"							Anchor="C,T" Size="500,208" Offset="0,50">
 					<Grid					ID="MetaShadowGrid"					Anchor="C,T" Size="parent,parent"  Style="DropShadow3" Color="255,255,255,200" />         
           <Grid																		  Anchor="C,C" Size="parent-35,parent-35" Offset="0,0" Color="0,0,0,170" Style="SubContainer4" >

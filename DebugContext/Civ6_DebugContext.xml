@@ -78,6 +78,7 @@
 							<Label ID="RenderTargetSets" String="Blank" />
               <Label ID="DescriptorTableSets" String="Blank" />
               <Label ID="RootSigSets" String="Blank" />
+              <Label ID="DescriptorsCopied" String="Blank" />
 							<Label ID="FenceCount" String="Blank" />
 							<Label ID="AvgTurnTime" String="Blank" />
 							<Label ID="TotalTurnTime" String="Blank" />

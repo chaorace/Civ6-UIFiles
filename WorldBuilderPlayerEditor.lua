@@ -13,11 +13,67 @@ local m_LeaderEntries      : table = {};
 local m_EraEntries         : table = {};
 local m_TechEntries        : table = {};
 local m_CivicEntries       : table = {};
+local m_CivLevelEntries	   : table = {};
 
 -- ===========================================================================
 --	FUNCTIONS
 -- ===========================================================================
 
+-- ===========================================================================
+--	Get the index if the CivEntry that matches the civ type.
+--  This can also be one of the special keys, such as RANDOM or UNDEFINED
+-- ===========================================================================
+function GetCivEntryIndexByType(civType)
+	for i, civEntry in ipairs(m_CivEntries) do
+		if civEntry ~= nil and civEntry.Type == civType then
+			return i;
+		end
+	end
+
+	return 0;
+end
+
+-- ===========================================================================
+--	Set the default leader for our indexed civ list from a game info entry
+-- ===========================================================================
+function SetCivDefaultLeader(civLeaderEntry)
+	for _, civEntry in ipairs(m_CivEntries) do
+		if civEntry ~= nil and civEntry.Type == civLeaderEntry.CivilizationType then
+			civEntry.DefaultLeader = civLeaderEntry.LeaderType;
+		end
+	end
+end
+
+-- ===========================================================================
+--	Get the index if the LeaderEntry that matches the leader type.
+--  This can also be one of the special keys, such as RANDOM or UNDEFINED
+-- ===========================================================================
+function GetLeaderEntryIndexByType(leaderType)
+	for i, leaderEntry in ipairs(m_LeaderEntries) do
+		if leaderEntry ~= nil and leaderEntry.Type == leaderType then
+			return i;
+		end
+	end
+
+	return 0;
+end
+
+-- ===========================================================================
+--	Get the index if the CivLevelEntry that matches the level type.
+-- ===========================================================================
+function GetCivLevelEntryIndexByType(civLevelType)
+	for i, civLevelEntry in ipairs(m_CivLevelEntries) do
+		if civLevelEntry ~= nil and civLevelEntry.Type == civLevelType then
+			return i;
+		end
+	end
+
+	return 0;
+end
+
+-- ===========================================================================
+--	Handler for when a player is selected.
+-- ===========================================================================
 function OnPlayerSelected(entry)
 
 	m_SelectedPlayer = entry;
@@ -25,8 +81,9 @@ function OnPlayerSelected(entry)
 
 	if playerSelected then
 
-		Controls.CivPullDown:SetSelectedIndex( entry.Civ+2, false );
-		Controls.LeaderPullDown:SetSelectedIndex( entry.Leader+2, false );
+		Controls.CivPullDown:SetSelectedIndex( GetCivEntryIndexByType( entry.Civ ), false );
+		Controls.LeaderPullDown:SetSelectedIndex( GetLeaderEntryIndexByType( entry.Leader ), false );
+		Controls.CivLevelPullDown:SetSelectedIndex( GetCivLevelEntryIndexByType( entry.CivLevel ), false );
 		Controls.EraPullDown:SetSelectedIndex( entry.Era+1, false );
 
 		local goldText = Controls.GoldEdit:GetText();
@@ -65,8 +122,9 @@ function UpdatePlayerEntry(playerEntry)
 	local playerConfig = WorldBuilder.PlayerManager():GetPlayerConfig(playerEntry.Index);
 
 	playerEntry.Config = playerConfig;
-	playerEntry.Leader = playerConfig.Leader ~= nil and GameInfo.Leaders[ playerConfig.Leader ].Index or -1;
-	playerEntry.Civ    = playerConfig.Civ ~= nil and GameInfo.Civilizations[ playerConfig.Civ ].Index or -1;
+	playerEntry.Leader = playerConfig.Leader ~= nil and playerConfig.Leader or "UNDEFINED";
+	playerEntry.Civ    = playerConfig.Civ ~= nil and playerConfig.Civ or "UNDEFINED";
+	playerEntry.CivLevel = playerConfig.CivLevel ~= nil and playerConfig.CivLevel or "UNDEFINED";
 	playerEntry.Era    = GameInfo.Eras[ playerConfig.Era ] ~= nil and GameInfo.Eras[ playerConfig.Era ].Index or 0;
 	playerEntry.Text   = string.format("%s - %s", playerConfig.IsHuman and "Human" or "AI", Locale.Lookup(playerConfig.Name));
 	playerEntry.Gold   = playerConfig.Gold;
@@ -216,7 +274,7 @@ end
 function OnCivSelected(entry)
 
 	if m_SelectedPlayer ~= nil then
-		WorldBuilder.PlayerManager():SetPlayerLeader(m_SelectedPlayer.Index, entry.DefaultLeader, entry.Index);
+		WorldBuilder.PlayerManager():SetPlayerLeader(m_SelectedPlayer.Index, entry.DefaultLeader, entry.Type, m_SelectedPlayer.CivLevel);
 	end
 end
 
@@ -224,7 +282,15 @@ end
 function OnLeaderSelected(entry)
 
 	if m_SelectedPlayer ~= nil then
-		WorldBuilder.PlayerManager():SetPlayerLeader(m_SelectedPlayer.Index, entry.Index, m_SelectedPlayer.Civ);
+		WorldBuilder.PlayerManager():SetPlayerLeader(m_SelectedPlayer.Index, entry.Type, m_SelectedPlayer.Civ, m_SelectedPlayer.CivLevel);
+	end
+end
+
+-- ===========================================================================
+function OnCivLevelSelected(entry)
+
+	if m_SelectedPlayer ~= nil then
+		WorldBuilder.PlayerManager():SetPlayerLeader(m_SelectedPlayer.Index, m_SelectedPlayer.Leader, m_SelectedPlayer.Civ, entry.Type);
 	end
 end
 
@@ -296,10 +362,23 @@ function OnInit()
 	Controls.EraPullDown:SetEntries( m_EraEntries, 1 );
 	Controls.EraPullDown:SetEntrySelectedCallback( OnEraSelected );
 
+	-- CivLevelPullDown
+	for type in GameInfo.CivilizationLevels() do
+		local name = type.Name ~= nil and type.Name or type.CivilizationLevelType;
+		table.insert(m_CivLevelEntries, { Text=name, Type=type.CivilizationLevelType });
+	end
+	Controls.CivLevelPullDown:SetEntries( m_CivLevelEntries, 1 );
+	Controls.CivLevelPullDown:SetEntrySelectedCallback( OnCivLevelSelected );
+
 	-- CivPullDown
-	table.insert(m_CivEntries, { Text="Random", Index=-1, DefaultLeader=-1 });
+
+	-- Intialize the m_CivEntries table.  This must use a simple index for the key, the pull down control will access it directly.
+	-- The first two entries are special
+	table.insert(m_CivEntries, { Text="Random", Type="RANDOM", DefaultLeader="RANDOM" });
+	table.insert(m_CivEntries, { Text="Any", Type="UNDEFINED", DefaultLeader="UNDEFINED" });
+	-- Fill in the civs
 	for type in GameInfo.Civilizations() do
-		table.insert(m_CivEntries, { Text=type.Name, Index=type.Index, DefaultLeader=-1 });
+		table.insert(m_CivEntries, { Text=type.Name, Type=type.CivilizationType, DefaultLeader=-1 });
 	end
 	Controls.CivPullDown:SetEntries( m_CivEntries, 1 );
 	Controls.CivPullDown:SetEntrySelectedCallback( OnCivSelected );
@@ -308,18 +387,15 @@ function OnInit()
 	for entry in GameInfo.CivilizationLeaders() do
 		local civ = GameInfo.Civilizations[entry.CivilizationType];
 		if civ ~= nil then
-			local civIndex = GameInfo.Civilizations[entry.CivilizationType].Index;
-			local civEntry = m_CivEntries[civIndex+2];
-			if civEntry ~= nil then
-				civEntry.DefaultLeader = entry.LeaderType;
-			end
+			SetCivDefaultLeader(entry);
 		end
 	end
 
 	-- LeaderPullDown
-	table.insert(m_LeaderEntries, { Text="Random", Index=-1 });
+	table.insert(m_LeaderEntries, { Text="Random", Type="RANDOM" });
+	table.insert(m_LeaderEntries, { Text="Any", Type="UNDEFINED" });
 	for type in GameInfo.Leaders() do
-		table.insert(m_LeaderEntries, { Text=type.Name, Index=type.Index });
+		table.insert(m_LeaderEntries, { Text=type.Name, Type=type.LeaderType });
 	end
 	Controls.LeaderPullDown:SetEntries( m_LeaderEntries, 1 );
 	Controls.LeaderPullDown:SetEntrySelectedCallback( OnLeaderSelected );

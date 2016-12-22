@@ -118,7 +118,9 @@ function OnMy2KLogin()
 end
 
 -- ===========================================================================
-function OnExitToDesktop()
+--	Engine Event
+-- ===========================================================================
+function OnUserRequestClose()
     if ( not m_kPopupDialog:IsOpen()) then
 		m_kPopupDialog:AddText(Locale.Lookup("LOC_CONFIRM_EXIT_TXT"));
 		m_kPopupDialog:AddTitle(Locale.ToUpper(Locale.Lookup("LOC_MAIN_MENU_EXIT_TO_DESKTOP")), Controls.PopupTitle);
@@ -131,7 +133,13 @@ end
 -- ===========================================================================
 function ExitOK()
 	m_kPopupDialog:Close();
-    Steam.ClearRichPresence();
+
+	if (Steam ~= nil) then
+		Steam.ClearRichPresence();
+	else
+		print("TODO: Steam.ClearRichPresence() not present non-Steam platform");
+	end
+
 	Events.UserConfirmedClose();
 end    
 
@@ -141,8 +149,12 @@ function ExitCancel()
 end
 
     -- ===========================================================================
-function OnBenchmark()
-	Benchmark.Run("Benchmark.Civ6Save");
+function OnGraphicsBenchmark()
+	Benchmark.RunGraphicsBenchmark("GraphicsBenchmark.Civ6Save");
+end
+
+function OnAIBenchmark()
+	Benchmark.RunAIBenchmark("AIBenchmark.Civ6Save");
 end
 
 -- ===========================================================================
@@ -341,6 +353,10 @@ function OnMultiPlayer( optionIndex:number, submenu:table )
 	ToggleOption(optionIndex, submenu);
 end
 
+function OnBenchmark( optionIndex:number, submenu:table )	
+	ToggleOption(optionIndex, submenu);
+end
+
 
 
 -- *******************************************************************************
@@ -371,6 +387,11 @@ local m_MultiPlayerSubMenu :table = {
 								--{label = "LOC_MULTIPLAYER_CLOUD_GAME",		callback = OnCloud,		tooltip = "LOC_MULTIPLAYER_CLOUD_GAME_TT"},
 							};
 
+local m_BenchmarkSubMenu :table = {
+								{label = "LOC_BENCHMARK_GRAPHICS",			callback = OnGraphicsBenchmark,	tooltip = "LOC_BENCHMARK_GRAPHICS_TT"},
+								{label = "LOC_BENCHMARK_AI",				callback = OnAIBenchmark,		tooltip = "LOC_BENCHMARK_AI_TT"},
+							};
+
 -- ===========================================================================
 --	Main Menu Option Tables
 --	--------------------------------------------------------------------------
@@ -378,16 +399,16 @@ local m_MultiPlayerSubMenu :table = {
 --	callback - the function to call from this button
 --	submenu - the submenu table to open for this button (defined above)
 -- ===========================================================================
-local m_preSaveMainMenuOptions :table = {	{label = "LOC_PLAY_CIVILIZATION_6",			callback = OnPlayCiv6}}; 
+local m_preSaveMainMenuOptions :table = {	{label = "LOC_PLAY_CIVILIZATION_6",			callback = OnPlayCiv6}};  
 local m_defaultMainMenuOptions :table = {	
 								{label = "LOC_SINGLE_PLAYER",				callback = OnSinglePlayer,	tooltip = "LOC_MAINMENU_SINGLE_PLAYER_TT",	submenu = m_SinglePlayerSubMenu}, 
 								{label = "LOC_PLAY_MULTIPLAYER",			callback = OnMultiPlayer,	tooltip = "LOC_MAINMENU_MULTIPLAYER_TT",	submenu = m_MultiPlayerSubMenu},
 								{label = "LOC_MAIN_MENU_OPTIONS",			callback = OnOptions,	tooltip = "LOC_MAINMENU_GAME_OPTIONS_TT"},
 								{label = "LOC_MAIN_MENU_ADDITIONAL_CONTENT",				callback = OnMods,	tooltip = "LOC_MAIN_MENU_ADDITIONAL_CONTENT_TT"},
 								{label = "LOC_MAIN_MENU_TUTORIAL",			callback = OnTutorial,	tooltip = "LOC_MAINMENU_TUTORIAL_TT"},
-								{label = "LOC_MAIN_MENU_BENCH",				callback = OnBenchmark,	tooltip = "LOC_MAINMENU_BENCHMARK_TT"},
+								{label = "LOC_MAIN_MENU_BENCH",				callback = OnBenchmark,	tooltip = "LOC_MAINMENU_BENCHMARK_TT",			submenu = m_BenchmarkSubMenu},
 								{label = "LOC_MAIN_MENU_CREDITS",			callback = OnCredits,	tooltip = "LOC_MAINMENU_CREDITS_TT"},
-								{label = "LOC_MAIN_MENU_EXIT_TO_DESKTOP",	callback = OnExitToDesktop,	tooltip = "LOC_MAINMENU_EXIT_GAME_TT"}
+								{label = "LOC_MAIN_MENU_EXIT_TO_DESKTOP",	callback = OnUserRequestClose,	tooltip = "LOC_MAINMENU_EXIT_GAME_TT"}
 							};
 
 
@@ -649,7 +670,11 @@ function OnShow()
 	UI.SetSoundStateValue("Game_Views", "Main_Menu");
 	LuaEvents.UpdateFiraxisLiveState();
 
-	Steam.SetRichPresence("location", "LOC_PRESENCE_IN_SHELL");
+	if (Steam ~= nil) then
+		Steam.SetRichPresence("location", "LOC_PRESENCE_IN_SHELL");
+	else
+		print("TODO: Steam.SetRichPresence not present for non-Steam platform");
+	end
 
 	local gameType = SaveTypes.SINGLE_PLAYER;
 	local saveLocation = SaveLocations.LOCAL_STORAGE;
@@ -699,6 +724,8 @@ function Initialize()
 	m_kPopupDialog:SetOpenAnimationControls( Controls.PopupAlphaIn, Controls.PopupSlideIn );
 	m_kPopupDialog:SetSize(400,200);
 
+	UI.CheckUserSetup();
+
 	ContextPtr:SetShowHandler( OnShow );
 	ContextPtr:SetInputHandler( InputHandler );
 	Controls.VersionLabel:SetText( UI.GetAppVersion() );
@@ -710,7 +737,7 @@ function Initialize()
 	Events.SteamServersDisconnected.Add( UpdateInternetButton );
 	Events.MultiplayerGameLaunched.Add( OnGameLaunched );
 	Events.SystemUpdateUI.Add( OnUpdateUI );
-    Events.UserRequestClose.Add( OnExitToDesktop );
+    Events.UserRequestClose.Add( OnUserRequestClose );
 
 	-- LUA Events
 	LuaEvents.FileListQueryResults.Add( OnFileListQueryResults );

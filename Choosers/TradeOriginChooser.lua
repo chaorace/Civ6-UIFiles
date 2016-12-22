@@ -175,6 +175,8 @@ end
 --	INIT
 -- ===========================================================================
 function Initialize()
+	Controls.Title:SetText(Locale.ToUpper(Locale.Lookup("LOC_UNITOPERATION_MOVE_TO_DESCRIPTION")));
+
 	-- Hot-reload events
 	ContextPtr:SetInitHandler(OnInit);
 	ContextPtr:SetShutdown(OnShutdown);

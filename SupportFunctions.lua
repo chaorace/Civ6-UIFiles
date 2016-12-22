@@ -68,7 +68,7 @@ function TruncateString(control, resultSize, longStr, trailingText)
 			control:SetText(newString .. ellipsis .. trailingText);
 		end
 	else
-		print("ERROR: Attempt to TruncateString but NIL control passed in!. string=", longStr);
+		UI.DataError("Attempt to TruncateString but NIL control passed in!. string=", longStr);
 	end
 	return isTruncated;
 end

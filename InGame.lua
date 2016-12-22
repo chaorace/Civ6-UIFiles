@@ -26,7 +26,7 @@ local m_QuicksaveId;
 --	Open up the TopOptionsMenu with the utmost priority.
 -- ===========================================================================
 function OpenInGameOptionsMenu()
-	UIManager:QueuePopup( Controls.TopOptionsMenu, PopupPriority.Utmost );
+	LuaEvents.InGame_OpenInGameOptionsMenu();
 end
 
 -- ===========================================================================

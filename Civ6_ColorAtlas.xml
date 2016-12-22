@@ -159,7 +159,7 @@
 	<ColorSet Name="OperationChance_Orange"			  Color0="200,146,52,255"  Color1="0,0,0,100"/>
 	<ColorSet Name="OperationChance_Red"			    Color0="200,62,52,255"   Color1="0,0,0,100"/>
 
-  <ColorSet Name="ShellHeader"									Color0="255,255,255,255" Color1="10,137,173,255"		Color2="255,255,255,255" />
+  <ColorSet Name="ShellHeader"									Color0="158,171,179,255" Color1="10,137,173,200" Color2="219,226,232,255"/>
   <ColorSet Name="ShellOptionText"							Color0="22,157,152,255"	 Color1="0,0,0,50"/>
   <ColorSet Name="BlueGlow"											Color0="214,215,218"		 Color1="5,85,138"/>
   <Color    Name="ShellControl"									Color="20,144,140,100" />

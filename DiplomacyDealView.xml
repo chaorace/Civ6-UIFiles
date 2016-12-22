@@ -57,38 +57,6 @@
 			</Stack>
 		</Stack>
 	</Instance>
-
-	<!-- An instance of a panel that displays what a player has available for the deal. -->
-	<Instance Name="PlayerAvailablePanel">
-		<!-- The background of the panel, enclosing all contents -->
-		<Grid ID="Root" Style="DiplomacyInfoWindowGrid" Anchor="L,T" Size="parent,parent-68" Offset="0,68">
-      
-      <!-- The leader icon and title -->
-      <Container Size="parent, 154" Offset="0,-68">
-        <Grid Style="DiplomacyInfoHeaderGrid" Anchor="C,B" Size="parent,88">
-
-		   <Label ID="PlayerNameText" Anchor="C,C" Offset="0,-15" Align="C" Style="DiplomacyCivHeader"/>
-		   <Label ID="Of" Anchor="C,C" Offset="0,0" Align="C" Style="FontFlair11" String="LOC_DIPLOMACY_OF"/>
-		   <Label ID="CivNameText" Anchor="C,C" Offset="0,16" Align="C" Style="DiplomacyCivHeader"/>
-		  <!--<Label ID="TitleHeaderText" Anchor="C,C" Offset="0,0" Align="C" Style="DiplomacyNameHeader"/>-->
-
-        </Grid>
-        <Image Texture="Diplomacy_PortraitBacking.dds" Anchor="C,B" Offset="0,86"/>
-        <Image ID="LeaderIcon" Anchor="C,B" Offset="0,72" Size="80,80"/>
-        <Image Texture="Diplomacy_YouIndicatorLarge.dds" Anchor="C,B" Offset="0,74"/>
-      </Container>
-
-      <!-- The container for all the content below the header -->
-      <Container ID="ContentContainer" Size="parent-12, parent-108" Offset="6,88">
-        <!-- A stack to contain the Title and Content -->
-	  		<Stack ID="RootStack" StackGrowth="Bottom">
-				  <!-- The content stack for the panel-->
-					<Stack ID="ContentStack" StackGrowth="Bottom">
-					</Stack>
-        </Stack>
-      </Container>
-    </Grid>
-	</Instance>
   
   <Container ID="TradePanel" Size="full,full">
     <!-- The background of the panel, enclosing all contents -->
@@ -257,6 +225,26 @@
             <Label		ID="TradeRoutesActive"									Offset="0,-1" Style="FontNormal14" ColorSet="TopBarValueCS" String="?"	WrapWidth="45" />
             <Label																						Offset="0,-1" Style="FontNormal14" ColorSet="TopBarValueCS" String="/"	WrapWidth="45" />
             <Label		ID="TradeRoutesCapacity"								Offset="0,-1"	Style="FontNormal14" ColorSet="TopBarValueCS" String="?"	WrapWidth="45" />
+          </Stack>
+        </Stack>
+      </SlideAnim>
+    </AlphaAnim>
+    
+    <!-- Signature area -->
+    <AlphaAnim		ID="Signature_Alpha"					AlphaBegin="0"	AlphaEnd="1"	Speed="2" Function="Root" Cycle="Once" Size="full,full"  >
+      <SlideAnim	ID="Signature_Slide"					Begin="-10,0"		End="0,0"			Speed="2" Function="Root" Cycle="Once" Size="full,full"  >
+        <Stack		ID="SignatureStack" StackGrowth="Left" Offset="10,20" Anchor="R,T">
+          <Container Size="62,62">
+            <Image ID="CivBacking_Base" Texture="Circle44_Base" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+            <Image ID="CivBacking_Darker" Texture="Circle44_Darker" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+            <Image ID="CivBacking_Lighter" Texture="Circle44_Lighter" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+            <Image ID="CivBacking_None" Texture="Circle44_None" Size="44,44" Anchor="C,C"/>
+            <Image ID="CivIcon" Texture="CivSymbols36" Size="36,36" Anchor="C,C"/>
+            <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="-1,-1" Color="255,255,255,50"/>
+          </Container>
+          <Stack		StackGrowth="Down" Padding="5" Offset="10,10" Anchor="R,T">
+            <Label	ID="LeaderName"	String="CLEOPATRA"  WrapWidth="400" Align="R" Anchor="R,T" Style="FontBoldFlair18"	SmallCaps="22" FontStyle="glow" Color0="130,130,130,255"	Color1="0,0,0,200"/>
+            <Label	ID="CivName"	  String="EGYPT"      WrapWidth="400" Align="R" Anchor="R,T" Style="FontBoldFlair18"	SmallCaps="22" FontStyle="glow" Color0="130,130,130,255"	Color1="0,0,0,200"/>
           </Stack>
         </Stack>
       </SlideAnim>

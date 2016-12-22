@@ -647,6 +647,8 @@ function PopulateList(data, listMode, listIM)
 			end
 			districtListing.Button:SetDisabled(item.Disabled);
 			districtListing.Button:RegisterCallback( Mouse.eLClick, function()
+            districtListing.Button:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+
 				ZoneDistrict(data.City, item);
 				Close();
 			end);
@@ -668,9 +670,11 @@ function PopulateList(data, listMode, listIM)
 			districtList.Header:RegisterCallback( Mouse.eLClick, function()
 				OnExpand(dL);					
 				end);
+            districtList.Header:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 			districtList.HeaderOn:RegisterCallback( Mouse.eLClick, function()
 				OnCollapse(dL);					
 				end);
+            districtList.HeaderOn:RegisterCallback(	Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 		end
 
 		prodDistrictList = dL;
@@ -734,6 +738,7 @@ function PopulateList(data, listMode, listIM)
 						buildingListing.Button:SetColor(0xffffffff);
 					end
 					buildingListing.Button:SetDisabled(buildingItem.Disabled);
+                    buildingListing.Button:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 					buildingListing.Button:RegisterCallback( Mouse.eLClick, function()
 						BuildBuilding(data.City, buildingItem);
 						Close();
@@ -807,6 +812,7 @@ function PopulateList(data, listMode, listIM)
 					wonderListing.Button:SetColor(0xffffffff);
 				end
 				wonderListing.Button:SetDisabled(item.Disabled);
+                wonderListing.Button:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 				wonderListing.Button:RegisterCallback( Mouse.eLClick, function()
 					BuildBuilding(data.City, item);
 					Close();
@@ -827,9 +833,11 @@ function PopulateList(data, listMode, listIM)
 			wonderList.Top:SetHide(true);
 		else
 			m_maxProductionSize = m_maxProductionSize + HEADER_Y + SEPARATOR_Y;		
+            wonderList.Header:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 			wonderList.Header:RegisterCallback( Mouse.eLClick, function()
 				OnExpand(wL);					
 				end);
+            wonderList.HeaderOn:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 			wonderList.HeaderOn:RegisterCallback( Mouse.eLClick, function()
 				OnCollapse(wL);					
 				end);
@@ -892,6 +900,8 @@ function PopulateList(data, listMode, listIM)
 					LuaEvents.OpenCivilopedia(item.Type);
 				end);
 
+                buildingListing.Button:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+
 				buildingListing.Button:RegisterCallback( Mouse.eLClick, function()
 						PurchaseBuilding(data.City, item);
 						Close();
@@ -906,9 +916,11 @@ function PopulateList(data, listMode, listIM)
 			buildingList.Top:SetHide(true);
 		else
 			m_maxPurchaseSize = m_maxPurchaseSize + HEADER_Y + SEPARATOR_Y;
+            buildingList.Header:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 			buildingList.Header:RegisterCallback( Mouse.eLClick, function()
 				OnExpand(bL);					
 				end);
+            buildingList.HeaderOn:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 			buildingList.HeaderOn:RegisterCallback( Mouse.eLClick, function()
 				OnCollapse(bL);					
 				end);
@@ -1049,6 +1061,7 @@ function PopulateList(data, listMode, listIM)
 				unitListing.TrainUnit:SetColor(0xffffffff);
 			end
 			unitListing.TrainUnit:SetDisabled(item.Disabled);
+            unitListing.TrainUnit:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 			if (listMode == LISTMODE.PRODUCTION) then
 				unitListing.TrainUnit:RegisterCallback( Mouse.eLClick, function()
 					BuildUnit(data.City, item);
@@ -2034,6 +2047,14 @@ function CreateCorrectTabs()
 	local tabArrowControl;
 	local tabSizeX;
 	local tabSizeY;
+
+    Controls.ProductionTab:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+    Controls.PurchaseTab:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+    Controls.PurchaseFaithTab:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+    Controls.MiniProductionTab:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+    Controls.MiniPurchaseTab:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+    Controls.MiniPurchaseFaithTab:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+
 	Controls.MiniProductionTab:SetHide(true);
 	Controls.MiniPurchaseTab:SetHide(true);
 	Controls.MiniPurchaseFaithTab:SetHide(true);

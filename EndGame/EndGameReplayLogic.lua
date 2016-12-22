@@ -210,13 +210,17 @@ function ReplayGraphDrawGraph()
 	-- Using pairs here because there may be intentional "holes" in the data.
 	if(graphData) then
 		for player, turnData in pairs(graphData) do
-			for turn, value in pairs(turnData) do
-				if(value > maxScore) then
-					maxScore = value;
-				end
+			-- Ignore barbarian data.
+			local playerInfo = Players[player];
+			if(playerInfo and not playerInfo:IsBarbarian()) then
+				for turn, value in pairs(turnData) do
+					if(value > maxScore) then
+						maxScore = value;
+					end
 
-				if(minScore == nil or value < minScore) then
-					minScore = value;
+					if(minScore == nil or value < minScore) then
+						minScore = value;
+					end
 				end
 			end
 		end

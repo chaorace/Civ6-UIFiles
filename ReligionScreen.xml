@@ -16,6 +16,42 @@
       
     </Container>
 
+    <!-- Minispec Yields -->
+    <Grid ID="YieldsContainer" Anchor="R,T" AutoSize="1" AutoSizePadding="20,5" Offset="0,0" Texture="TopBar_YieldFrame" SliceCorner="60,25" SliceSize="1,1" SliceTextureSize="64,54" Hidden="0">
+      <Stack                                    Offset="37,1" StackGrowth="Right" Padding="-1">
+        <Stack				                          StackGrowth="Down" Padding="-1">
+          <Grid	ID="ScienceBacking"							Size="40,24"	Style="YieldBacking" Color="24,156,216,150"	ToolTip="LOC_TOP_PANEL_SCIENCE_YIELD">
+            <Stack		ID="ScienceStack"					Anchor="L,C" Offset="0,2"	StackGrowth="Right">
+              <Label														Anchor="L,B" Offset="0,4"	String="[ICON_ScienceLarge]"/>
+              <Label	ID="SciencePerTurn"				Anchor="C,T"																Style="FontNormal18" ColorSet="ResScienceLabelCS" FontStyle="Stroke" String="0"/>
+            </Stack>
+          </Grid>
+          <Grid				ID="GoldBacking"					Size="40,24" Style="YieldBacking" Color="185,176,70,150">
+            <Stack		ID="GoldStack"						Anchor="L,C" Offset="0,2"	StackGrowth="Right" >
+              <Label														Anchor="L,B" Offset="0,4"	String="[ICON_GoldLarge]"/>
+              <Label	ID="GoldBalance"					Anchor="C,T"								Style="FontNormal18" ColorSet="ResGoldLabelCS" String="?"	/>
+              <Label	ID="GoldPerTurn"											 Offset="2,-2"									Style="FontNormal14" ColorSet="ResGoldLabelCS" FontStyle="Stroke" String="0" />
+            </Stack>
+          </Grid>
+        </Stack>
+        <Stack				                          StackGrowth="Down" Padding="-1">
+          <Grid	ID="CultureBacking"																		Size="40,24"		Style="YieldBacking" Color="254,42,237,100"	ToolTip="LOC_TOP_PANEL_CULTURE_YIELD">
+            <Stack		ID="CultureStack"					Anchor="L,C" Offset="0,2"	StackGrowth="Right">
+              <Label														Anchor="L,B" Offset="0,4"	String="[ICON_CultureLarge]"/>
+              <Label	ID="CulturePerTurn"				Anchor="C,T"																Style="FontNormal18" ColorSet="ResCultureLabelCS" FontStyle="Stroke" String="0"/>
+            </Stack>
+          </Grid>
+          <Grid	ID="FaithBacking"																			Size="40,24"		Style="YieldBacking" Color="99,114,159,200"	ToolTip="LOC_TOP_PANEL_FAITH">
+            <Stack		ID="FaithStack"						Anchor="L,C" Offset="0,2"	StackGrowth="Right">
+              <Label														Anchor="L,B" Offset="0,4"	String="[ICON_FaithLarge]"/>
+              <Label	ID="FaithBalance"					Anchor="C,T"							Style="FontNormal18" ColorSet="ResFaithLabelCS" String="?" />
+              <Label	ID="FaithPerTurn"					Offset="2,-2"																Style="FontNormal14" ColorSet="ResFaithLabelCS" FontStyle="Stroke" String="0"	/>
+            </Stack>
+          </Grid>
+        </Stack>
+      </Stack>
+    </Grid>
+
     <!-- ==================================================================	-->
     <!--	Displays until player creates a religion                          -->
     <!-- ==================================================================	-->

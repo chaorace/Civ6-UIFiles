@@ -6,30 +6,34 @@
 			<Label	ID="String"			Anchor="L,C" Offset="0,0" WrapWidth="1004" Color1="0,0,0,150" Style="FontNormal12" />
 		</Box>
 	</Instance>
-  
+
 	<!-- Background -->
 	<Box ID="BackgroundFill" Size="full,full" Color="0,0,0,255" ConsumeMouse="1">
 		<Image ID="Background" size="parent,parent" StretchMode="Fill" Anchor="C,C" Texture="EndGame_BG_Time" />
 	</Box>
 
 	<!-- Ribbon -->
-	<Image ID="RibbonTile" Texture="EndGame_RibbonTile_Domination" Size="parent,200" Offset="512,14" StretchMode="Tile"/>
-	<Image ID="Ribbon" Texture="EndGame_Ribbon_Domination" Size="512,200" Offset="0,14"/>
+  
+  
+	<Image ID="RibbonTile" Texture="EndGame_RibbonTile_Domination" Size="parent,132" Offset="392,20" StretchMode="Tile"/>
+	<Image ID="Ribbon" Texture="EndGame_Ribbon_Domination" Size="512,132" Offset="-120,20"/>
 	<!--<Image Texture="EndGame_RibbonGlow" Size="612,152" Anchor="L,T" Offset="500,17" />-->
-	<Image ID="RibbonIcon" Size="220,220" Icon="ICON_VICTORY_DOMINATION" Offset="40,20" />
-	<Label ID="VictoryName" Style="FontFlair22" FontStyle="glow" Color0="208,212,217,255"	Color1="0,0,0,200" FontSize="40" Offset="300,70" String="Domination Victory" />
 
-	<!-- Player Info -->
-	<Container Size="1024,80" Offset="300,100">
-		<Image ID="PlayerIcon" Size="80,80" Icon="ICON_CIVILIZATION_ARABIA" Offset="0,0" />
-		<Label ID="PlayerName" Offset="80,0" Anchor="L,C" Style="FlairShadow28" String="Steve (Saladin)" />
+  <!-- Player Info -->
+	<Container Size="1024,250" Anchor="C,T" Offset="0,30">
+    <Container Size="parent,parent" Anchor="L,T">
+      <Image ID="RibbonIcon"  Offset="8,0" Size="130,130" Icon="ICON_VICTORY_DOMINATION"/>
+	    <Label ID="VictoryName" Offset="155,26" Style="VictoryHeader" String="Domination Victory" />
+	    <Image ID="PlayerIcon" Size="44,44"Offset="150,56" Icon="ICON_CIVILIZATION_ARABIA"  Color="229,219,198,255" />
+	    <Label ID="PlayerName" Offset="198,66" Style="VictorySubHeader" String="Steve (Saladin)" />
+    </Container>
 	</Container>
 
-	<Grid Texture="EndGame_Frame" SliceCorner="3,55" SliceSize="1,1" SliceTextureSize="6,190" Anchor="L,T" Offset="0,200" Size="full,parent-220">
+	<Grid Texture="EndGame_Frame" SliceCorner="3,55" SliceSize="1,1" SliceTextureSize="6,190" Anchor="L,T" Offset="0,155" Size="full,parent-180">
 		<Box ID="MainPanel" Size="1000,parent" Color="120,0,120,0" Anchor="C,T">
 
 			<!-- Tab Buttons -->
-			<Stack Anchor="L,T" Offset="150,0" Padding="20" StackGrowth="Right">
+			<Stack Anchor="L,T" Offset="150,2" Padding="20" StackGrowth="Right">
 
 				<Container Size="150,32">
 					<GridButton ID="InfoButton" Style="ShellTab" Size="parent,parent" String="LOC_UI_ENDGAME_VICTORY_INFO" />
@@ -52,81 +56,98 @@
 					</AlphaAnim>
 				</Container>
 
-        <Container Size="150,32">
-          <GridButton ID="ChatButton" Style="ShellTab" Size="parent,parent" String="LOC_UI_ENDGAME_CHAT" />
-          <AlphaAnim ID="ChatButtonSelected" Speed="5" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
-            <GridButton ID="ChatButtonSelectedButton" Style="ShellTabSelected" Size="parent,parent" String="LOC_UI_ENDGAME_CHAT"/>
-          </AlphaAnim>
-        </Container>
+				<Container Size="150,32">
+					<GridButton ID="ChatButton" Style="ShellTab" Size="parent,parent" String="LOC_UI_ENDGAME_CHAT" />
+					<AlphaAnim ID="ChatButtonSelected" Speed="5" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
+						<GridButton ID="ChatButtonSelectedButton" Style="ShellTabSelected" Size="parent,parent" String="LOC_UI_ENDGAME_CHAT"/>
+					</AlphaAnim>
+				</Container>
 			</Stack>
 		</Box>
 
 		<!-- Content Area-->
-		<Container Offset="0,34" Size="parent,parent-100">
-			<Container ID="InfoPanel"  Anchor="L,T" Size="1024,parent">
-				<Label ID="Blurb" Style="FlairShadow28" Anchor="C,C" Offset="0,0" WrapWidth="parent-500" String="Bacon ipsum dolor amet shank bacon capicola biltong drumstick shoulder. Andouille doner pork belly landjaeger swine sirloin short loin pork. Doner cupim pastrami brisket sirloin pig pork chop short ribs, hamburger landjaeger biltong ham hock spare ribs. Boudin short loin filet mignon, beef ribs swine tenderloin pastrami capicola short ribs corned beef meatball. Landjaeger tri-tip hamburger corned beef filet mignon pork chop. T-bone ball tip leberkas, porchetta jerky venison brisket cow. Cow prosciutto tail venison short ribs turkey andouille beef short loin."/>
-			</Container>
+		<Container Offset="0,34" Size="parent,parent">
+			<Container ID="InfoPanel"  Anchor="C,T" Size="1024,parent">
+        <Container Anchor="L,C" Offset="16,-50" Size="999,452" >
+          <Grid  Texture="Controls_SubContainerFill" Size="parent,parent"  SliceCorner="11,11" SliceSize="0,0" Color="0,0,0,50"/>
+          <Grid  Texture="Controls_SubContainer3" Size="parent,parent"  SliceCorner="20,20" SliceSize="0,0" Color="0,0,0,100"/>
+          <Grid  Texture="Controls_Deco" Size="parent-16,parent-16" Offset="8,8" SliceCorner="20,25" SliceSize="0,0" Color="255,255,255,30"/>
+          <Label ID="Blurb" Anchor="L,C" Offset="30,0" Style="FlairShadow22" Color="208,212,217,255" WrapWidth="parent-500" String="Bacon ipsum dolor amet shank bacon capicola biltong drumstick shoulder. Andouille doner pork belly landjaeger swine sirloin short loin pork. Doner cupim pastrami brisket sirloin pig pork chop short ribs, hamburger landjaeger biltong ham hock spare ribs. Boudin short loin filet mignon, beef ribs swine tenderloin pastrami capicola short ribs corned beef meatball. Landjaeger tri-tip hamburger corned beef filet mignon pork chop. T-bone ball tip leberkas, porchetta jerky venison brisket cow. Cow prosciutto tail venison short ribs turkey andouille beef short loin."/>
+        </Container>
+      </Container>
 
-			<Container ID="RankingPanel" Anchor="C,T" Size="1024,parent" Hidden="1">
-				<Label ID="RankingTitle" Anchor="L,T" Offset="100,5" FontSize="22" String="LOC_UI_ENDGAME_LEADER_NAME" />
+			<Container ID="RankingPanel" Anchor="C,T" Size="1024,parent-92" Hidden="1">
+				<Label ID="RankingTitle" Style="WhiteSemiBold18" Anchor="L,T" Offset="66,8" String="LOC_UI_ENDGAME_LEADER_NAME" />
 
 				<Container Size="parent,32" Offset="0,32">
 					<Stack StackGrowth="Right" Padding="10">
-						<Grid  Texture="Controls_HeaderMetal" Offset="0,3" Size="500,32" Anchor="L,T" SliceCorner="30,20" SliceSize="9,10" SliceTextureSize="69,42">
-							<Label Anchor="L,C" Offset="50,0" Style="FontNormal14" String="LOC_UI_ENDGAME_LEADER_NAME" />
+						<Grid  Texture="Controls_ColumnHeader" Offset="15,0" Size="485,32" Anchor="L,T" SliceCorner="14,14" SliceSize="0,0" Color="0,0,0,45">
+							<Label Anchor="L,C" Offset="52,0" Style="WhiteSemiBold18" String="LOC_UI_ENDGAME_LEADER_NAME" />
 						</Grid>
-						<Grid  Texture="Controls_HeaderMetal" Offset="0,3" Size="parent-520,32" Anchor="L,T" SliceCorner="30,20" SliceSize="9,10" SliceTextureSize="69,42">
-							<Label Anchor="L,C" Offset="20,0" Style="FontNormal14" String="LOC_UI_ENDGAME_POP_SCORE" />
+						<Grid  Texture="Controls_ColumnHeader" Offset="0,0" Size="parent-520,32" Anchor="L,T" SliceCorner="14,14" SliceSize="0,0" Color=" 0,0,0,45">
+							<Label Anchor="L,C" Offset="15,0" Style="WhiteSemiBold18" String="LOC_UI_ENDGAME_POP_SCORE" />
 						</Grid>
 					</Stack>
 				</Container>
-				<ScrollPanel  ID="RankingScrollPanel" Anchor="L,T" Vertical="1" Size="parent,parent-70" Offset="0,70" AutoScrollBar="1">
-					<ScrollBar Style="Slider_Blue" Anchor="L,C"/>
-					<Stack ID="RankingStack" Offset="15,0" Padding="5" />
+				<ScrollPanel  ID="RankingScrollPanel" Anchor="L,T" Vertical="1" Size="parent,parent-62" Offset="0,64" AutoScrollBar="1">
+					<ScrollBar Style="Slider_Light" Anchor="L,C" Offset="2,0" />
+					<Stack ID="RankingStack" Offset="15,2" Padding="2" />
 				</ScrollPanel>
 			</Container>
 
-			<Container ID="GraphPanel"  Anchor="C,C" Size="1024,parent" Hidden="1">
-				<ScrollPanel Anchor="L,T" AutoScrollBar="1" Size="180,parent-50" Offset="0,50" Vertical="1" ID="GraphLegendScrollPanel" >
-					<ScrollBar Style="Slider_Blue" Anchor="L,C" />
-					<Stack Anchor="L,T" Offset="0,0" StackGrowth="Bottom" Padding="2" ID="GraphLegendStack" />
-				</ScrollPanel>
+			<Container ID="GraphPanel"  Anchor="C,C" Size="1024,parent" Hidden="1" Offset="0,32">
+        <Grid  Texture="Controls_SubContainer3" Offset="190,0" Size="824,452"  SliceCorner="20,20" SliceSize="0,0" Color="0,0,0,100">
 
-				<Graph ID="ResultsGraph" Size="720,360" Anchor="L,T" Offset="180,50" FontStyle="ButtonText14" Domain="0,100" Range="0,100" TickInterval="5,10" NumberInterval="10,20" ShowTicks="1,1" ShowGridLines="0,0" ShowNumbers="1,1" ShowAxes="1,1" Background="0,0,0,200">
+          <Grid  Texture="Controls_SubContainerFill" Size="parent,parent"  SliceCorner="11,11" SliceSize="0,0" Color="0,0,0,50"/>
+
+
+          
+          <Image Texture="Controls_Deco3" Size="27,18" Anchor="L,T" Offset="18,16" Color=" 255,255,255,25"/>
+          <Image Texture="Controls_Deco3" Size="27,18" Anchor="R,T" Offset="18,16" Color=" 255,255,255,25"/>
+        </Grid>
+        <Image Texture="Controls_Glow" Size="500,500" Anchor="C,T" Offset="30,-20" Color=" 255,255,255,25"/>
+
+				<ScrollPanel Anchor="L,T" AutoScrollBar="1" Size="180,parent-122" Vertical="1" ID="GraphLegendScrollPanel" >
+					<ScrollBar Style="Slider_Light" Anchor="L,C" Offset="2,0"/>
+					<Stack Anchor="L,T" Offset="2,0" StackGrowth="Bottom" Padding="2" ID="GraphLegendStack" />
+				</ScrollPanel>
+      
+				<Graph ID="ResultsGraph" Size="800,380" Anchor="L,T" Offset="198,54" FontStyle="ButtonText14" Domain="0,100" Range="0,100" TickInterval="5,10" NumberInterval="10,20" ShowTicks="1,1" ShowGridLines="0,0" ShowNumbers="1,1" ShowAxes="1,1" Background="0,0,0,100">
 					<Label Anchor="C,C" Style="ButtonText20" ID="NoGraphData" String="LOC_UI_ENDGAME_REPLAY_NOGRAPHDATA" Hidden="1"/>
+  
 				</Graph>
 
-				<PullDown  Anchor="L,T" Style="PullDownBlue" Size="400,24" Offset="0,10" ID="GraphDataSetPulldown" />
+				<PullDown  Anchor="C,T" Style="PullDownBlue" Size="720,24" Offset="90,12" ID="GraphDataSetPulldown" />
 			</Container>
+      
+      <!-- Chat Panel -->
+      <Container ID="ChatPanel" Offset="0,52" Anchor="C,T" Size="1000,parent-134" Hidden="1">
+        <Container ID="ChatBackground" Anchor="R,B" Offset="0,20" Size="parent,parent">
+          <Grid Style="SubContainer" Anchor="R,B" Offset="-2,0" Size="parent+4,parent"/>
+        </Container>
 
-			<!-- Chat Panel -->
-			<Container ID="ChatPanel" Offset="0,20" Anchor="C,C" Size="1024,parent-20" Hidden="1">
-				<Container ID="ChatBackground" Anchor="R,B" Offset="0,20" Size="parent,parent">
-					<Grid Style="SubContainerFill" Anchor="R,B" Size="parent,parent" Color="19,47,77,255"/>
-					<Grid Style="SubContainer" Anchor="R,B" Offset="-2,0" Size="parent+4,parent"/>
-				</Container>
+        <ScrollPanel		ID="ChatScroll"	Anchor="L,T" Offset="10,-7" Size="parent-20,parent-55"  Vertical="1" AutoScrollBar="1">
+          <ScrollBar Anchor="R,C" Offset="3,10" Style="Slider_Blue" Length="290" AnchorSide="O,I"/>
+          <Stack			ID="ChatStack" StackGrowth="B" Anchor="L,B" />
+        </ScrollPanel>
 
-				<ScrollPanel		ID="ChatScroll"	Anchor="L,T" Offset="10,-7" Size="parent-20,parent-55"  Vertical="1" AutoScrollBar="1">
-					  <ScrollBar Anchor="R,C" Offset="3,10" Style="Slider_Blue" Length="290" AnchorSide="O,I"/>
-					  <Stack			ID="ChatStack" StackGrowth="B" Anchor="L,B" />
-				</ScrollPanel>
+        <!-- Text Chat Input -->
+        <Container							Anchor="L,B"	Offset="7,30"	Size="978,28" Color="80,96,130,255">
+          <PullDown		ID="ChatPull"		Anchor="L,C"	Offset="0,0"	Size="984,26"		Style="VictoryChatPullDown" AutoFlip="1"/>
+        </Container>
+      </Container>
+    </Container>
+  </Grid>
 
-				<!-- Text Chat Input -->
-				<Container							Anchor="L,B"	Offset="15,30"	Size="parent-40,28" Color="80,96,130,255">
-				  <PullDown		ID="ChatPull"		Anchor="L,C"	Offset="0,0"	Size="parent,parent"		Style="StagingRoomPullDown" AutoFlip="1"/>
-				</Container>
-			</Container>
-		</Container>
-	</Grid>
 
-	<Container Size="1024,parent-250" Anchor="C,B">
+  <Container Size="1024,parent-250" Anchor="C,B">
 		<Image ID="PlayerPortrait" Texture="LEADER_GILGAMESH_NEUTRAL" StretchMode="Auto" Anchor="R,B" AnchorSide="O.I" Offset="-420,0" Hidden="0" />
 	</Container>
 
 
 	<!--<Box Size="1024,parent" Color="120,0,120,0" Anchor="C,T">-->
 		<!-- Bottom Buttons -->
-		<Stack Anchor="C,B"  Offset="0,20" Padding="40" StackGrowth="Right" ID="ButtonStack">
+		<Stack Anchor="C,B"  Offset="0,32" Padding="4" StackGrowth="Right" ID="ButtonStack">
 			<GridButton ID="ReplayMovieButton" Style="MainButton" String="LOC_UI_ENDGAME_REPLAY_MOVIE" />
 			<GridButton ID="MainMenuButton" Style="MainButton" String="LOC_UI_ENDGAME_MAIN_MENU" />
 			<GridButton ID="NextPlayerButton" Style="MainButton" String="LOC_UI_ENDGAME_MP_PLAYER_CHANGE_CONTINUE" />
@@ -143,34 +164,41 @@
 	</Box>
 
 	<BoxButton	ID="MovieFill" Size="full,full" Color="0,0,0,255" Hidden="1" ConsumeAllMouse="1">
-		<Movie ID="Movie" Anchor="C,C" Size="parent,parent" LoopMovie="0" StretchMode="UniformToFill"/>
+		<Movie ID="Movie" Size="full,full" LoopMovie="0" StretchMode="UniformToFill"/>
 	</BoxButton>
-	
+
 	<Instance Name="RankEntry" >
-		<Stack ID="Root" StackGrowth="Right" Padding="10">
+		<Stack ID="Root" StackGrowth="Right" Padding="0">
 			<Stack StackGrowth="Bottom">
-				<Container Size="500,24">
-					<Box Anchor="L,T" Size="30,24" Color="0,0,0,0">
-						<Label ID="Number" FontSize="18" Anchor="R,C" />
+				<Container Size="500,34">
+          <Grid  Texture="Controls_SubContainer4" Offset="1,0" Size="485,34" Anchor="L,T" SliceCorner="9,9" SliceSize="0,0" Color="0,0,0,45">
+					<Box Anchor="L,T" Size="30,34" Offset="7,2" Color="0,0,0,0">
+						<Label ID="Number" Style="FontFlair30" FontStyle="shadow"	Color0="208,212,217,255"	Color1="0,0,0,200"/> Anchor="R,C" />
 					</Box>
-					<Box Anchor="L,T" Size="230,24" Offset="40,0" Color="0,0,0,0">
-						<Label ID="LeaderName" FontSize="18" Anchor="L,C" />
+					<Box Anchor="L,T" Size="234,34" Offset="52,0" Color="0,0,0,0">
+						<Label ID="LeaderName" Style="WhiteSemiBold18" Anchor="L,C" />
 					</Box>
+          </Grid>
 				</Container>
-				<Label ID="LeaderQuote" Style="FontNormal14" Anchor="L,T" Offset="40,0" WrapWidth="450" Hidden="1"/>
+				<Label ID="LeaderQuote" Style="WhiteSemiBold14" Anchor="L,T" Offset="50,0" WrapWidth="450" Hidden="1"/>
 			</Stack>
 			<Box Anchor="L,T" Size="parent-520,32" Color="0,0,220,0" >
-				<Label ID="LeaderScore" FontSize="22" Anchor="L,C" />
+        <Grid  Texture="Controls_SubContainer4" Offset="-5,0" Size="504,34" Anchor="L,T" SliceCorner="9,9" SliceSize="0,0" Color=" 0,0,0,45">
+			  	<Label ID="LeaderScore" FontSize="22" Offset="14,0"  Anchor="L,C" FontStyle="shadow"	Color0="208,212,217,255"	Color1="0,0,0,200"/>
+        </Grid>
 			</Box>
 		</Stack>
 	</Instance>
 
 	<Instance Name="GraphLegendInstance" >
-		<Box Anchor="L,T" Size="160,30" Offset="10,0" Color="0,0,0,0" ID="GraphLegend">
-			<Image Anchor="L,C" Size="24,24" Texture="Controls_Pin24"  ID="LegendIcon"/>
-			<Label Offset="26,0" WrapWidth="parent-46" String="America" Style="ButtonText14" Anchor="L,C" ID="LegendName" Hidden="0"/>
+		<Box Anchor="L,T" Size="168,30" Offset="14,0" Color="0,0,0,0" ID="GraphLegend">
+      <Image Anchor="L,C" Offset="6,0" Size="16,16" Texture="Controls_ItemContainer" Color="255,255,255,128" />
+			<Image Anchor="L,C" Offset="7,0" Size="14,19" Texture="Controls_LocationPip"  ID="LegendIcon"/>
 
-			<CheckBox ID="ShowHide" Anchor="R,C" Style="MainCheckBox" IsChecked="1"  ConsumeMouse="1"  />
+      <Grid  Texture="Controls_SubContainer4" Offset="0,0" Size="parent,parent" Anchor="L,T" SliceCorner="9,9" SliceSize="0,0" Color=" 0,0,0,45">
+		  	<Label Offset="26,0" WrapWidth="parent-46" String="America" Style="ButtonText14" Anchor="L,C" ID="LegendName" Hidden="0"/>
+      </Grid>
+			<CheckBox ID="ShowHide" Anchor="R,C" Offset="4,0" Style="MainCheckBox" IsChecked="1"  ConsumeMouse="1"  />
 		</Box>
 	</Instance>
 

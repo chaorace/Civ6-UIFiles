@@ -224,12 +224,25 @@ function OnLoadScreenContentReady()
 	end
 	Controls.CivName:SetText( Locale.ToUpper( Locale.Lookup(playerConfig:GetCivilizationDescription())) );
 
-	Controls.CivName:SetText( Locale.ToUpper( Locale.Lookup(playerConfig:GetCivilizationDescription())) );
-	local debug = GameConfiguration.GetStartEra();
+
 	local startEra = GameInfo.Eras[ GameConfiguration.GetStartEra() ];
-	if startEra ~= nil then
+	
+	if (GameConfiguration.IsSavedGame()) then
+		-- Returns a list of 1 entry...
+		local metaData = UI.GetSaveGameMetaData();
+		if(metaData and #metaData == 1) then
+			local item = metaData[1];
+			local saveEra = GameInfo.Eras[ item.HostEra ];
+			if(saveEra) then
+				startEra = saveEra;
+			end
+		end
+	end
+
+	if (startEra ~= nil) then
 		Controls.EraInfo:SetText( Locale.Lookup(startEra.Description) );
 	end
+	
 	local kLeader	:table = GameInfo.Leaders[leaderType];
 	if kLeader ~= nil then
 		local leaderName:string = Locale.ToUpper(Locale.Lookup( kLeader.Name ));
@@ -255,7 +268,7 @@ function OnLoadScreenContentReady()
     if not m_isResyncLoad then
         UI.SetSoundSwitchValue("Leader_Screen_Civilization", UI.GetCivilizationSoundSwitchValueByLeader(leaderID));
         UI.SetSoundSwitchValue("Civilization", UI.GetCivilizationSoundSwitchValueByLeader(leaderID));
-        UI.SetSoundSwitchValue("Era_DawnOfMan", UI.GetEraSoundSwitchValue(GameConfiguration.GetStartEra()));
+        UI.SetSoundSwitchValue("Era_DawnOfMan", UI.GetEraSoundSwitchValue(startEra.Hash));
         UI.PlaySound("Play_DawnOfMan_Speech");
     end
 

@@ -506,7 +506,7 @@ function View(icon, name, blurb, playerIcon, playerName, playerPortrait, style)
 	SetIcon(Controls.RibbonIcon, icon);
 	SetIcon(Controls.PlayerIcon, playerIcon);
 
-	Controls.VictoryName:LocalizeAndSetText(name);
+	Controls.VictoryName:SetText(Locale.ToUpper(Locale.Lookup(name)));
 	Controls.Blurb:LocalizeAndSetText(blurb);
 
 	print(style.Background);

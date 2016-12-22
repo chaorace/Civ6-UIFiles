@@ -241,7 +241,10 @@ end
 function Refresh()
 	local localPlayer :number = Game.GetLocalPlayer();
 	if localPlayer < 0 then
+		ToggleAll(true);
 		return;
+	else
+		ToggleAll(false);
 	end
 
 	local pPlayerTechs :table = Players[localPlayer]:GetTechs();

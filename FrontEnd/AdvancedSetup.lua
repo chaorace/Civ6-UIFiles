@@ -13,8 +13,6 @@ local m_NonLocalPlayerSlotManager	:table = InstanceManager:new("NonLocalPlayerSl
 local m_singlePlayerID				:number = 0;			-- The player ID of the human player in singleplayer.
 local m_AdvancedMode				:boolean = false;
 
-
-
 -- ===========================================================================
 -- Input Handler
 -- ===========================================================================
@@ -156,10 +154,50 @@ function RefreshPlayerSlots()
 	Controls.AddAIButton:SetHide(not can_add);
 
 	print("There are " .. #player_ids .. " participating players.");
+
+	Controls.BasicTooltipContainer:DestroyAllChildren();
+	Controls.BasicPlacardContainer:DestroyAllChildren();
+	Controls.AdvancedTooltipContainer:DestroyAllChildren();
+
+	local basicTooltip	:table = {};	
+	ContextPtr:BuildInstanceForControl( "CivToolTip", basicTooltip, Controls.BasicTooltipContainer );
+	local basicPlacard	:table = {};
+	ContextPtr:BuildInstanceForControl( "LeaderPlacard", basicPlacard, Controls.BasicPlacardContainer );
+
+	local basicTooltipData : table = {
+		InfoStack			= basicTooltip.InfoStack,
+		InfoScrollPanel		= basicTooltip.InfoScrollPanel;
+		CivToolTipSlide		= basicTooltip.CivToolTipSlide;
+		CivToolTipAlpha		= basicTooltip.CivToolTipAlpha;
+		UniqueIconIM		= InstanceManager:new("IconInfoInstance",	"Top",	basicTooltip.InfoStack );		
+		HeaderIconIM		= InstanceManager:new("IconInstance",		"Top",	basicTooltip.InfoStack );
+		HeaderIM			= InstanceManager:new("HeaderInstance",		"Top",	basicTooltip.InfoStack );
+		HasLeaderPlacard	= true;
+		LeaderBG			= basicPlacard.LeaderBG;
+		LeaderImage			= basicPlacard.LeaderImage;
+		DummyImage			= basicPlacard.DummyImage;
+		CivLeaderSlide		= basicPlacard.CivLeaderSlide;
+		CivLeaderAlpha		= basicPlacard.CivLeaderAlpha;
+	};
+
+	local advancedTooltip	:table = {};
+	ContextPtr:BuildInstanceForControl( "CivToolTip", advancedTooltip, Controls.AdvancedTooltipContainer );
+
+	local advancedTooltipData : table = {
+		InfoStack			= advancedTooltip.InfoStack,
+		InfoScrollPanel		= advancedTooltip.InfoScrollPanel;
+		CivToolTipSlide		= advancedTooltip.CivToolTipSlide;
+		CivToolTipAlpha		= advancedTooltip.CivToolTipAlpha;
+		UniqueIconIM		= InstanceManager:new("IconInfoInstance",	"Top",	advancedTooltip.InfoStack );		
+		HeaderIconIM		= InstanceManager:new("IconInstance",		"Top",	advancedTooltip.InfoStack );
+		HeaderIM			= InstanceManager:new("HeaderInstance",		"Top",	advancedTooltip.InfoStack );
+		HasLeaderPlacard	= false;
+	};
+
 	for i, player_id in ipairs(player_ids) do	
 		if(m_singlePlayerID == player_id) then
-			SetupLeaderPulldown(player_id, Controls, "Basic_LocalPlayerPulldown", "Basic_LocalPlayerCivIcon", "Basic_LocalPlayerLeaderIcon");
-			SetupLeaderPulldown(player_id, Controls, "Advanced_LocalPlayerPulldown", "Advanced_LocalPlayerCivIcon", "Advanced_LocalPlayerLeaderIcon");
+			SetupLeaderPulldown(player_id, Controls, "Basic_LocalPlayerPulldown", "Basic_LocalPlayerCivIcon", "Basic_LocalPlayerLeaderIcon", basicTooltipData);
+			SetupLeaderPulldown(player_id, Controls, "Advanced_LocalPlayerPulldown", "Advanced_LocalPlayerCivIcon", "Advanced_LocalPlayerLeaderIcon", advancedTooltipData);
 		else
 			local ui_instance = m_NonLocalPlayerSlotManager:GetInstance();
 			
@@ -170,7 +208,7 @@ function RefreshPlayerSlots()
 			end
 			ui_instance.RemoveButton:SetHide(not can_remove);
 			
-			SetupLeaderPulldown(player_id, ui_instance,"PlayerPullDown");
+			SetupLeaderPulldown(player_id, ui_instance,"PlayerPullDown",nil,nil,advancedTooltipData);
 		end
 	end
 
@@ -182,6 +220,29 @@ function RefreshPlayerSlots()
 	Controls.NonLocalPlayersPanel:CalculateInternalSize();
 	GameSetup_RefreshParameters();
 end
+
+-- ===========================================================================
+-- Called every time parameters have been refreshed.
+-- This is a useful spot to perform validation.
+function UI_PostRefreshParameters()
+	-- Most of the options self-heal due to the setup parameter logic.
+	-- However, player options are allowed to be in an 'invalid' state for UI
+	-- This way, instead of hiding/preventing the user from selecting an invalid player
+	-- we can allow it, but display an error message explaining why it's invalid.
+
+	-- This is primarily used to present ownership errors and custom constraint errors.
+	Controls.StartButton:SetDisabled(false);
+	Controls.StartButton:SetToolTipString(nil);
+	local player_ids = GameConfiguration.GetParticipatingPlayerIDs();
+	for i, player_id in ipairs(player_ids) do	
+		local err = GetPlayerParameterError(player_id);
+		if(err) then
+			Controls.StartButton:SetDisabled(true);
+			Controls.StartButton:LocalizeAndSetToolTip("LOC_SETUP_PLAYER_PARAMETER_ERROR");
+		end
+	end
+end
+
 
 -- ===========================================================================
 function OnPlayerCountChanged()
@@ -285,6 +346,7 @@ function OnBackButton()
 	if(m_AdvancedMode) then
 		Controls.CreateGameWindow:SetHide(false);
 		Controls.AdvancedOptionsWindow:SetHide(true);
+		UpdateCivLeaderToolTip();					-- Need to make sure we update our placard/flyout card if we make a change in advanced setup and then come back
 		m_AdvancedMode = false;		
 	else
 		UIManager:DequeuePopup( ContextPtr );

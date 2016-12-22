@@ -347,9 +347,9 @@ end
 function GetCivNameAndIcon(playerID:number, bColorUnmetPlayer:boolean)
 	local name:string, icon:string;
 	local playerConfig:table = PlayerConfigurations[playerID];
-	if(playerID == m_LocalPlayerID or playerConfig:IsHuman() or m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
+	if(playerID == m_LocalPlayerID or playerConfig:IsHuman() or m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
 		name = Locale.Lookup(playerConfig:GetPlayerName());
-		if playerID == m_LocalPlayerID or m_LocalPlayer:GetDiplomacy():HasMet(playerID) then
+		if playerID == m_LocalPlayerID or m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerID) then
 			icon = "ICON_" .. playerConfig:GetCivilizationTypeName();
 		else
 			icon = ICON_UNKNOWN_CIV;
@@ -362,7 +362,7 @@ function GetCivNameAndIcon(playerID:number, bColorUnmetPlayer:boolean)
 end
 
 function ColorCivIcon(instance:table, playerID:number)
-	if(playerID == m_LocalPlayerID or m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
+	if(playerID == m_LocalPlayerID or m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
 		local backColor, frontColor = UI.GetPlayerColors(playerID);
 		local darkerBackColor = DarkenLightenColor(backColor,(-55),230);
 		local brighterBackColor = DarkenLightenColor(backColor,80,255);
@@ -684,7 +684,7 @@ function PopulateOverallInstance(instance:table, victoryType:string, typeText:st
 
 			-- Set top player position text
 			local topCivName:string;
-			if(m_LocalPlayer:GetDiplomacy():HasMet(topPlayer)) then
+			if(m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(topPlayer)) then
 				topCivName = Locale.Lookup(GameInfo.Civilizations[PlayerConfigurations[topPlayer]:GetCivilizationTypeID()].Name);
 			else
 				topCivName = LOC_UNKNOWN_CIV;
@@ -728,7 +728,7 @@ end
 function SetLeaderTooltip(instance:table, playerID:number, details:string)
 	local pPlayer:table = Players[playerID];
 	local playerConfig:table = PlayerConfigurations[playerID];
-	if(playerID ~= m_LocalPlayerID and not m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
+	if(playerID ~= m_LocalPlayerID and m_LocalPlayer ~= nil and not m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
 		instance.CivIcon:SetToolTipType();
 		instance.CivIcon:ClearToolTipCallback();
 		if GameConfiguration.IsAnyMultiplayer() and pPlayer:IsHuman() then
@@ -880,61 +880,63 @@ function ViewScience()
 	local finishedProjects:table = { {}, {}, {} };
 	
 	local bHasSpaceport:boolean = false;
-	for _,district in m_LocalPlayer:GetDistricts():Members() do
-		if (district ~= nil and district:IsComplete() and district:GetType() == SPACE_PORT_DISTRICT_INFO.Index) then
-			bHasSpaceport = true;
-			break;
-		end
-	end
-
-	local pPlayerStats:table = m_LocalPlayer:GetStats();
-	local pPlayerCities:table = m_LocalPlayer:GetCities();
-	for _, city in pPlayerCities:Members() do
-		local pBuildQueue:table = city:GetBuildQueue();
-		-- 1st milestone - satelite launch
-		totalCost = 0;
-		currentProgress = 0;
-		for i, projectInfo in ipairs(EARTH_SATELLITE_PROJECT_INFOS) do
-			local projectCost:number = pBuildQueue:GetProjectCost(projectInfo.Index);
-			local projectProgress:number = projectCost;
-			if pPlayerStats:GetNumProjectsAdvanced(projectInfo.Index) == 0 then
-				projectProgress = pBuildQueue:GetProjectProgress(projectInfo.Index);
+	if (m_LocalPlayer ~= nil) then
+		for _,district in m_LocalPlayer:GetDistricts():Members() do
+			if (district ~= nil and district:IsComplete() and district:GetType() == SPACE_PORT_DISTRICT_INFO.Index) then
+				bHasSpaceport = true;
+				break;
 			end
-			totalCost = totalCost + projectCost;
-			currentProgress = currentProgress + projectProgress;
-			finishedProjects[1][i] = projectProgress == projectCost;
 		end
-		progressResults[1] = currentProgress / totalCost;
 
-		-- 2nd milestone - moon landing
-		totalCost = 0;
-		currentProgress = 0;
-		for i, projectInfo in ipairs(MOON_LANDING_PROJECT_INFOS) do
-			local projectCost:number = pBuildQueue:GetProjectCost(projectInfo.Index);
-			local projectProgress:number = projectCost;
-			if pPlayerStats:GetNumProjectsAdvanced(projectInfo.Index) == 0 then
-				projectProgress = pBuildQueue:GetProjectProgress(projectInfo.Index);
+		local pPlayerStats:table = m_LocalPlayer:GetStats();
+		local pPlayerCities:table = m_LocalPlayer:GetCities();
+		for _, city in pPlayerCities:Members() do
+			local pBuildQueue:table = city:GetBuildQueue();
+			-- 1st milestone - satelite launch
+			totalCost = 0;
+			currentProgress = 0;
+			for i, projectInfo in ipairs(EARTH_SATELLITE_PROJECT_INFOS) do
+				local projectCost:number = pBuildQueue:GetProjectCost(projectInfo.Index);
+				local projectProgress:number = projectCost;
+				if pPlayerStats:GetNumProjectsAdvanced(projectInfo.Index) == 0 then
+					projectProgress = pBuildQueue:GetProjectProgress(projectInfo.Index);
+				end
+				totalCost = totalCost + projectCost;
+				currentProgress = currentProgress + projectProgress;
+				finishedProjects[1][i] = projectProgress == projectCost;
 			end
-			totalCost = totalCost + projectCost;
-			currentProgress = currentProgress + projectProgress;
-			finishedProjects[2][i] = projectProgress == projectCost;
-		end
-		progressResults[2] = currentProgress / totalCost;
+			progressResults[1] = currentProgress / totalCost;
+
+			-- 2nd milestone - moon landing
+			totalCost = 0;
+			currentProgress = 0;
+			for i, projectInfo in ipairs(MOON_LANDING_PROJECT_INFOS) do
+				local projectCost:number = pBuildQueue:GetProjectCost(projectInfo.Index);
+				local projectProgress:number = projectCost;
+				if pPlayerStats:GetNumProjectsAdvanced(projectInfo.Index) == 0 then
+					projectProgress = pBuildQueue:GetProjectProgress(projectInfo.Index);
+				end
+				totalCost = totalCost + projectCost;
+				currentProgress = currentProgress + projectProgress;
+				finishedProjects[2][i] = projectProgress == projectCost;
+			end
+			progressResults[2] = currentProgress / totalCost;
 		
-		-- 3rd milestone - mars landing
-		totalCost = 0;
-		currentProgress = 0;
-		for i, projectInfo in ipairs(MARS_COLONY_PROJECT_INFOS) do
-			local projectCost:number = pBuildQueue:GetProjectCost(projectInfo.Index);
-			local projectProgress:number = projectCost;
-			if pPlayerStats:GetNumProjectsAdvanced(projectInfo.Index) == 0 then
-				projectProgress = pBuildQueue:GetProjectProgress(projectInfo.Index);
+			-- 3rd milestone - mars landing
+			totalCost = 0;
+			currentProgress = 0;
+			for i, projectInfo in ipairs(MARS_COLONY_PROJECT_INFOS) do
+				local projectCost:number = pBuildQueue:GetProjectCost(projectInfo.Index);
+				local projectProgress:number = projectCost;
+				if pPlayerStats:GetNumProjectsAdvanced(projectInfo.Index) == 0 then
+					projectProgress = pBuildQueue:GetProjectProgress(projectInfo.Index);
+				end
+				totalCost = totalCost + projectCost;
+				currentProgress = currentProgress + projectProgress;
+				finishedProjects[3][i] = projectProgress == projectCost;
 			end
-			totalCost = totalCost + projectCost;
-			currentProgress = currentProgress + projectProgress;
-			finishedProjects[3][i] = projectProgress == projectCost;
+			progressResults[3] = currentProgress / totalCost;
 		end
-		progressResults[3] = currentProgress / totalCost;
 	end
 
 	local nextStep:string = "";
@@ -1006,7 +1008,7 @@ function PopulateScienceInstance(instance:table, pPlayer:table)
 	TruncateStringWithTooltip(instance.CivName, 180, civName); 
 	instance.LocalPlayer:SetHide(pPlayer ~= m_LocalPlayer);
 
-	local bHasMet = m_LocalPlayer:GetDiplomacy():HasMet(playerID);
+	local bHasMet = m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerID);
 	if (bHasMet == true or playerID == Game.GetLocalPlayer()) then
 
 		local bHasSpaceport:boolean = false;
@@ -1276,16 +1278,18 @@ function PopulateCultureInstance(instance:table, pPlayer:table, iTouristsNeededF
 	end
 	local backColor, _ = UI.GetPlayerColors(playerID);
 	local brighterBackColor = DarkenLightenColor(backColor,35,255);
-	if(playerID == m_LocalPlayerID or m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
+	if(playerID == m_LocalPlayerID or m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
 		instance.DomesticTouristsIcon:SetColor(brighterBackColor);
 	else
 		instance.DomesticTouristsIcon:SetColor(RGBAValuesToABGRHex(1, 1, 1, 0.35));
 	end
 	instance.DomesticTourists:SetText(pPlayer:GetCulture():GetStaycationers());
 
-	instance.VisitingUsTourists:SetText(m_LocalPlayer:GetCulture():GetTouristsFrom(playerID));
-	instance.VisitingUsTourists:SetToolTipString(m_LocalPlayer:GetCulture():GetTouristsFromTooltip(playerID));
-	instance.VisitingUsIcon:SetToolTipString(m_LocalPlayer:GetCulture():GetTouristsFromTooltip(playerID));
+	if (m_LocalPlayer ~= nil) then
+		instance.VisitingUsTourists:SetText(m_LocalPlayer:GetCulture():GetTouristsFrom(playerID));
+		instance.VisitingUsTourists:SetToolTipString(m_LocalPlayer:GetCulture():GetTouristsFromTooltip(playerID));
+		instance.VisitingUsIcon:SetToolTipString(m_LocalPlayer:GetCulture():GetTouristsFromTooltip(playerID));
+	end
 end
 
 function RealizeCultureStackSize()
@@ -1619,34 +1623,39 @@ function PopulateGenericInstance(instance:table, pPlayer:table, victoryType:stri
 	ColorCivIcon(instance, playerID);
 	instance.CivName:SetText(civName);
 	instance.LocalPlayer:SetHide(pPlayer ~= g_LocalPlayer);
-
+	
 	local requirementSetID:number = Game.GetVictoryRequirements(playerID, victoryType);
-	local innerRequirements:table = GameEffects.GetRequirementSetInnerRequirements(requirementSetID);
+	if requirementSetID ~= nil and requirementSetID ~= -1 then
 
-	local detailsText:string = "";
-	for _, requirementID in ipairs(innerRequirements) do
+		local detailsText:string = "";
+		local innerRequirements:table = GameEffects.GetRequirementSetInnerRequirements(requirementSetID);
+	
+		for _, requirementID in ipairs(innerRequirements) do
 
-		if detailsText ~= "" then
-			detailsText = detailsText .. "[NEWLINE]";
-		end
-
-		local requirementKey:string = GameEffects.GetRequirementTextKey(requirementID, REQUIREMENT_CONTEXT);
-		local requirementText:string = GameEffects.GetRequirementText(requirementID, requirementKey);
-
-		if requirementText ~= nil then
-			detailsText = detailsText .. requirementText;
-		else
-			local requirementState:string = GameEffects.GetRequirementState(requirementID);
-			local requirementDetails:table = GameEffects.GetRequirementDefinition(requirementID);
-			if requirementState == "Met" or requirementState == "AlwaysMet" then
-				detailsText = detailsText .. "[ICON_CheckmarkBlue] ";
-			else
-				detailsText = detailsText .. "[ICON_Bolt]";
+			if detailsText ~= "" then
+				detailsText = detailsText .. "[NEWLINE]";
 			end
-			detailsText = detailsText .. requirementDetails.ID;
+
+			local requirementKey:string = GameEffects.GetRequirementTextKey(requirementID, REQUIREMENT_CONTEXT);
+			local requirementText:string = GameEffects.GetRequirementText(requirementID, requirementKey);
+
+			if requirementText ~= nil then
+				detailsText = detailsText .. requirementText;
+			else
+				local requirementState:string = GameEffects.GetRequirementState(requirementID);
+				local requirementDetails:table = GameEffects.GetRequirementDefinition(requirementID);
+				if requirementState == "Met" or requirementState == "AlwaysMet" then
+					detailsText = detailsText .. "[ICON_CheckmarkBlue] ";
+				else
+					detailsText = detailsText .. "[ICON_Bolt]";
+				end
+				detailsText = detailsText .. requirementDetails.ID;
+			end
 		end
+		instance.Details:SetText(detailsText);
+	else
+		instance.Details:LocalizeAndSetText("LOC_OPTIONS_DISABLED");
 	end
-	instance.Details:SetText(detailsText);
 
 	local itemSize:number = instance.Details:GetSizeY() + PADDING_GENERIC_ITEM_BG;
 	if itemSize < SIZE_GENERIC_ITEM_MIN_Y then
@@ -1695,6 +1704,9 @@ function UpdatePlayerData()
 	if (Game.GetLocalPlayer() ~= -1) then
 		m_LocalPlayer = Players[Game.GetLocalPlayer()];
 		m_LocalPlayerID = m_LocalPlayer:GetID();
+	else
+		m_LocalPlayer = nil;
+		m_LocalPlayerID = -1;
 	end
 end
 function UpdateData()
@@ -1851,9 +1863,7 @@ function Initialize()
 	LuaEvents.PartialScreenHooks_CloseWorldRankings.Add(Close);
 	LuaEvents.PartialScreenHooks_CloseAllExcept.Add(OnCloseAllExcept);
 
-	if Game.GetLocalPlayer() ~= -1 then
-		UpdatePlayerData();
-		PopulateTabs();
-	end
+	UpdatePlayerData();
+	PopulateTabs();
 end
 Initialize();

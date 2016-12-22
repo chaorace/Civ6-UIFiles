@@ -267,13 +267,14 @@ function GetNonEmptyAt(plotIndex, state)
 			-- Starting plot?
 			if pPlot:IsStartingPlot() and WorldBuilder.IsActive() then
 				pInstance = GetInstanceAt(plotIndex);
-				pInstance.RecommendationIconTexture:SetTexture( IconManager:FindIconAtlas("ICON_UNITOPERATION_FOUND_CITY", 43) );	
+				pInstance.RecommendationIconTexture:SetTexture( IconManager:FindIconAtlas("ICON_UNITOPERATION_FOUND_CITY", 38) );
+				pInstance.RecommendationIconText:SetHide( false );
+
 				local iPlayer = GetStartingPlotPlayer( pPlot );
 				if (iPlayer >= 0) then
-					pInstance.RecommendationIconText:SetText( tostring(iPlayer) );	
-					pInstance.RecommendationIconText:SetHide( false );
+					pInstance.RecommendationIconText:SetText( tostring(iPlayer + 1) );
 				else
-					pInstance.RecommendationIconText:SetHide( true );
+					pInstance.RecommendationIconText:SetText( "" );
 				end
 			else
 				UnloadRecommendationIconAt(plotIndex);

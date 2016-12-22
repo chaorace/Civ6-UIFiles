@@ -40,9 +40,16 @@
 
     <CheckBox ID="RoutePillagedCheck" Style="MainMenuCheck" Offset="15,-40" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="Route Pillaged:"/>
 
-    <Stack StackGrowth="Right" Padding="5" Offset="0,-10">
-      <Label FontSize="18" Size="125,29" String="Start Position:"/>
-      <SimplePullDown ID="StartPosPulldown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+    <Label FontSize="18" Size="125,29" String="Start Position:"/>
+    <Stack StackGrowth="Right" Padding="5">
+      <SimplePullDown ID="StartPosPulldown" Style="MainPullDown" ScrollThreshold="400" Size="100,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+      <TabControl ID="StartPosTabControl" Size="200,30">
+        <Container ID="TabContainer" Size="parent,parent">
+          <SimplePullDown ID="StartPosPlayerPulldown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+          <SimplePullDown ID="StartPosLeaderPulldown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+          <SimplePullDown ID="StartPosCivPulldown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+        </Container>
+      </TabControl>
     </Stack>
 
     <Stack StackGrowth="Right" Padding="5" Offset="0,-40">

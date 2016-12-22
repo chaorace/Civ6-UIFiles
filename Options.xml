@@ -71,6 +71,12 @@
               <Stack Anchor="R,T" StackGrowth="Left" Padding="5">
                 <GridButton ID="TimeOfDayCheckbox" Anchor="L,C" Offset="0,0" Size="300,24" Style="CheckBoxControl" String="LOC_OPTIONS_TIME_OF_DAY_TEXT" />
               </Stack>
+				<Stack Anchor="R,T" StackGrowth="Left" Padding="5">
+					<Grid Style="EditTextArea" Size="300,30">
+						<EditBox ID="LANPlayerNameEdit" Anchor="L,C" Offset="6,0" Size="343,23" EditMode="1" Style="FontNormal14" ColorSet="BodyTextCool" FontStyle="stroke" MaxLength="22"/>
+					</Grid>
+					<Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_LAN_PLAYER_NAME"/>
+				</Stack>
             </Stack>
           </Container>
 
@@ -86,6 +92,9 @@
                   <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_VIDEO_ADAPTER_TEXT"/>
                 </Stack>
                 <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
+                  <GridButton ID="MultiGPUCheckbox" Anchor="L,L" Offset="5,0" Size="300,24" Style="CheckBoxControl" String="LOC_OPTIONS_VIDEO_MULTI_GPU_TEXT" ToolTip="LOC_OPTIONS_VIDEO_MULTI_GPU_TOOLTIP"/>
+                </Stack>
+                <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
                   <PullDown ID="ResolutionPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_VIDEO_RESOLUTION_TOOLTIP"/>
                   <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_VIDEO_RESOLUTION_TEXT"/>
                 </Stack>
@@ -95,6 +104,10 @@
                 <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
                   <PullDown ID="FullScreenPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_VIDEO_WINDOW_MODE_TOOLTIP"/>
                   <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_VIDEO_WINDOW_MODE_TEXT"/>
+                </Stack>
+                <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
+                  <PullDown ID="MSAAPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_VIDEO_MSAA_TOOLTIP"/>
+                  <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_VIDEO_MSAA_TEXT"/>
                 </Stack>
                 <Stack Anchor="R,T" StackGrowth="Right" Padding="5" Offset="175,0">
                   <Label  Style="ShellOptionText" String="LOC_OPTIONS_VIDEO_PERFORMANCE_TEXT"/>
@@ -131,10 +144,6 @@
                     <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
                       <PullDown ID="TickIntervalPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_PERFORMANCE_TICK_INTERVAL_TOOLTIP"/>
                       <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_PERFORMANCE_TICK_INTERVAL_TEXT"/>
-                    </Stack>
-                    <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
-                      <PullDown ID="MSAAPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_VIDEO_MSAA_TOOLTIP"/>
-                      <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_VIDEO_MSAA_TEXT"/>
                     </Stack>
                     <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
                       <GridButton ID="AssetTextureResolutionCheckbox" Anchor="L,L" Offset="5,0" Size="300,24" Style="CheckBoxControl" String="LOC_OPTIONS_VIDEO_HIGH_RESOLUTION_ASSET_TEXTURES_TEXT" ToolTip="LOC_OPTIONS_VIDEO_HIGH_RESOLUTION_ASSET_TEXTURES_TOOLTIP"/>
@@ -316,6 +325,17 @@
               <Stack Anchor="R,T" StackGrowth="Left" Padding="5">
                 <PullDown ID="EdgeScrollPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0"/>
                 <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_INTERFACE_EDGE_SCROLL"/>
+              </Stack>
+              <Stack Anchor="R,T" StackGrowth="Left" Padding="5">
+                <PullDown ID="UnitCyclingPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0"/>
+                <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_AUTO_UNIT_CYCLING"/>
+              </Stack>
+              <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+                <Label  Style="ShellOptionText" String="LOC_OPTIONS_PLOT_TOOLTIP_DELAY"/>
+                <Slider ID="PlotToolTipDelaySlider" Style="SliderControl" Offset="5,0" Size="300,13" Steps="10" />
+                <Container Size="60,18">
+                  <Label  ID="PlotToolTipDelayValue" Style="ShellOptionText" String="UNSET" />
+                </Container>
               </Stack>
             </Stack>
           </Container>

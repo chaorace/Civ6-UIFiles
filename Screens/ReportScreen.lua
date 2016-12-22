@@ -14,7 +14,10 @@ include("TabSupport");
 --	DEBUG
 --	Toggle these for temporary debugging help.
 -- ===========================================================================
-local m_debugFullHeight		:boolean = false;		-- (false) if the screen area should resize to full height of the available space.
+local m_debugFullHeight				:boolean = true;		-- (false) if the screen area should resize to full height of the available space.
+local m_debugNumResourcesStrategic	:number = 0;			-- (0) number of extra strategics to show for screen testing.
+local m_debugNumBonuses				:number = 0;			-- (0) number of extra bonuses to show for screen testing.
+local m_debugNumResourcesLuxuries	:number = 0;			-- (0) number of extra luxuries to show for screen testing.
 
 
 -- ===========================================================================
@@ -38,16 +41,20 @@ end
 --	VARIABLES
 -- ===========================================================================
 
-local m_groupIM			:table = InstanceManager:new("GroupInstance",	"Top", Controls.Stack);				-- Collapsable
-local m_simpleIM		:table = InstanceManager:new("SimpleInstance",	"Top", Controls.Stack);				-- Non-Collapsable, simple
-local m_tabIM			:table = InstanceManager:new("TabInstance",		"Button", Controls.TabContainer);
-local m_tabs			:table;
-local m_kCityData		:table = nil;
-local m_kCityTotalData	:table = nil;
-local m_kUnitData		:table = nil;	-- TODO: Show units by promotion class
-local m_kResourceData	:table = nil;
-local m_kDealData		:table = nil;
-local m_uiGroups		:table = nil;	-- Track the groups on-screen for collapse all action.
+local m_groupIM				:table = InstanceManager:new("GroupInstance",			"Top",		Controls.Stack);				-- Collapsable
+local m_simpleIM			:table = InstanceManager:new("SimpleInstance",			"Top",		Controls.Stack);				-- Non-Collapsable, simple
+local m_tabIM				:table = InstanceManager:new("TabInstance",				"Button",	Controls.TabContainer);
+local m_bonusResourcesIM	:table = InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.BonusResources);
+local m_luxuryResourcesIM	:table = InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.LuxuryResources);
+local m_strategicResourcesIM:table = InstanceManager:new("ResourceAmountInstance",	"Info",		Controls.StrategicResources);
+
+local m_tabs				:table;
+local m_kCityData			:table = nil;
+local m_kCityTotalData		:table = nil;
+local m_kUnitData			:table = nil;	-- TODO: Show units by promotion class
+local m_kResourceData		:table = nil;
+local m_kDealData			:table = nil;
+local m_uiGroups			:table = nil;	-- Track the groups on-screen for collapse all action.
 
 
 -- ===========================================================================
@@ -148,7 +155,8 @@ function GetData()
 	local pCulture	:table	= player:GetCulture();
 	local pTreasury	:table	= player:GetTreasury();
 	local pReligion	:table	= player:GetReligion();
-	local pScience	:table	= player:GetTechs();		
+	local pScience	:table	= player:GetTechs();
+	local pResources:table	= player:GetResources();		
 
 	local pCities = player:GetCities();
 	for i, pCity in pCities:Members() do	
@@ -171,22 +179,41 @@ function GetData()
 		kCityData[cityName] = data;
 
 		-- Add resources
-		for eResourceType,amount in pairs(data.Resources) do
-			if kResources[eResourceType] == nil then
-				kResources[eResourceType] = {
-					CityList	= {},
-					Icon		= "[ICON_"..GameInfo.Resources[eResourceType].ResourceType.."]",
-					IsStrategic	= GameInfo.Resources[eResourceType].ResourceClassType == "RESOURCECLASS_STRATEGIC",
-					Total		= 0
+		if m_debugNumResourcesStrategic > 0 or m_debugNumResourcesLuxuries > 0 or m_debugNumBonuses > 0 then
+			for debugRes=1,m_debugNumResourcesStrategic,1 do
+				kResources[debugRes] = {
+					CityList	= { CityName="Kangaroo", Amount=(10+debugRes) },
+					Icon		= "[ICON_"..GameInfo.Resources[debugRes].ResourceType.."]",
+					IsStrategic	= true,
+					IsLuxury	= false,
+					IsBonus		= false,
+					Total		= 88
 				};
 			end
-			table.insert( kResources[eResourceType].CityList, 
-			{
-				CityName = cityName,
-				Amount	 = amount,					
-			});
+			for debugRes=1,m_debugNumResourcesLuxuries,1 do
+				kResources[debugRes] = {
+					CityList	= { CityName="Kangaroo", Amount=(10+debugRes) },
+					Icon		= "[ICON_"..GameInfo.Resources[debugRes].ResourceType.."]",
+					IsStrategic	= false,
+					IsLuxury	= true,
+					IsBonus		= false,
+					Total		= 88
+				};
+			end
+			for debugRes=1,m_debugNumBonuses,1 do
+				kResources[debugRes] = {
+					CityList	= { CityName="Kangaroo", Amount=(10+debugRes) },
+					Icon		= "[ICON_"..GameInfo.Resources[debugRes].ResourceType.."]",
+					IsStrategic	= false,
+					IsLuxury	= false,
+					IsBonus		= true,
+					Total		= 88
+				};
+			end
+		end
 
-			kResources[eResourceType].Total = kResources[eResourceType].Total + amount;
+		for eResourceType,amount in pairs(data.Resources) do
+			AddResourceData(kResources, eResourceType, cityName, "LOC_HUD_REPORTS_TRADE_OWNED", amount);
 		end
 	end
 
@@ -225,13 +252,15 @@ function GetData()
 			if pDeals ~= nil then
 				for i,pDeal in ipairs(pDeals) do
 					if pDeal:IsValid() then
+						-- Add outgoing gold deals
 						local pOutgoingDeal :table	= pDeal:FindItemsByType(DealItemTypes.GOLD, DealItemSubTypes.NONE, playerID);
 						if pOutgoingDeal ~= nil then
 							for i,pDealItem in ipairs(pOutgoingDeal) do
 								local duration		:number = pDealItem:GetDuration();
 								if duration ~= 0 then
-									local gold :number = pDealItem:GetAmount()
+									local gold :number = pDealItem:GetAmount();
 									table.insert( kDealData, {
+										Type		= DealItemTypes.GOLD,
 										Amount		= gold,
 										Duration	= duration,
 										IsOutgoing	= true,
@@ -241,7 +270,32 @@ function GetData()
 								end
 							end
 						end
+
+						-- Add outgoing resource deals
+						pOutgoingDeal = pDeal:FindItemsByType(DealItemTypes.RESOURCES, DealItemSubTypes.NONE, playerID);
+						if pOutgoingDeal ~= nil then
+							for i,pDealItem in ipairs(pOutgoingDeal) do
+								local duration		:number = pDealItem:GetDuration();
+								if duration ~= 0 then
+									local amount		:number = pDealItem:GetAmount();
+									local resourceType	:number = pDealItem:GetValueType();
+									table.insert( kDealData, {
+										Type			= DealItemTypes.RESOURCES,
+										ResourceType	= resourceType,
+										Amount			= amount,
+										Duration		= duration,
+										IsOutgoing		= true,
+										PlayerID		= otherID,
+										Name			= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
+									});
+									
+									local entryString:string = Locale.Lookup("LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS") .. " (" .. Locale.Lookup(pPlayerConfig:GetPlayerName()) .. ")";
+									AddResourceData(kResources, resourceType, entryString, "LOC_HUD_REPORTS_TRADE_EXPORTED", -1 * amount);				
+								end
+							end
+						end
 					
+						-- Add incoming gold deals
 						local pIncomingDeal :table = pDeal:FindItemsByType(DealItemTypes.GOLD, DealItemSubTypes.NONE, otherID);
 						if pIncomingDeal ~= nil then
 							for i,pDealItem in ipairs(pIncomingDeal) do
@@ -249,12 +303,37 @@ function GetData()
 								if duration ~= 0 then
 									local gold :number = pDealItem:GetAmount()
 									table.insert( kDealData, {
+										Type		= DealItemTypes.GOLD;
 										Amount		= gold,
 										Duration	= duration,
 										IsOutgoing	= false,
 										PlayerID	= otherID,
 										Name		= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
 									});						
+								end
+							end
+						end
+
+						-- Add incoming resource deals
+						pIncomingDeal = pDeal:FindItemsByType(DealItemTypes.RESOURCES, DealItemSubTypes.NONE, otherID);
+						if pIncomingDeal ~= nil then
+							for i,pDealItem in ipairs(pIncomingDeal) do
+								local duration		:number = pDealItem:GetDuration();
+								if duration ~= 0 then
+									local amount		:number = pDealItem:GetAmount();
+									local resourceType	:number = pDealItem:GetValueType();
+									table.insert( kDealData, {
+										Type			= DealItemTypes.RESOURCES,
+										ResourceType	= resourceType,
+										Amount			= amount,
+										Duration		= duration,
+										IsOutgoing		= false,
+										PlayerID		= otherID,
+										Name			= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
+									});
+									
+									local entryString:string = Locale.Lookup("LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS") .. " (" .. Locale.Lookup(pPlayerConfig:GetPlayerName()) .. ")";
+									AddResourceData(kResources, resourceType, entryString, "LOC_HUD_REPORTS_TRADE_IMPORTED", amount);				
 								end
 							end
 						end
@@ -265,11 +344,67 @@ function GetData()
 		end
 	end
 
-	--print("Debug stuff: ", table.count(kDealData) );
+	-- Add resources provided by city states
+	for i, pMinorPlayer in ipairs(PlayerManager.GetAliveMinors()) do
+		local pMinorPlayerInfluence:table = pMinorPlayer:GetInfluence();		
+		if pMinorPlayerInfluence ~= nil then
+			local suzerainID:number = pMinorPlayerInfluence:GetSuzerain();
+			if suzerainID == playerID then
+				for row in GameInfo.Resources() do
+					local resourceAmount:number =  pMinorPlayer:GetResources():GetExportedResourceAmount(row.Index);
+					if resourceAmount > 0 then
+						local pMinorPlayerConfig:table = PlayerConfigurations[pMinorPlayer:GetID()];
+						local entryString:string = Locale.Lookup("LOC_HUD_REPORTS_CITY_STATE") .. " (" .. Locale.Lookup(pMinorPlayerConfig:GetPlayerName()) .. ")";
+						AddResourceData(kResources, row.Index, entryString, "LOC_CITY_STATES_SUZERAIN", resourceAmount);
+					end
+				end
+			end
+		end
+	end
+
+	-- Assume that resources not yet accounted for have come from Great People
+	if pResources then
+		for row in GameInfo.Resources() do
+			local internalResourceAmount:number = pResources:GetResourceAmount(row.Index);
+			if (internalResourceAmount > 0) then
+				if (kResources[row.Index] ~= nil) then
+					if (internalResourceAmount > kResources[row.Index].Total) then
+						AddResourceData(kResources, row.Index, "LOC_GOVT_FILTER_GREAT_PERSON", "-", internalResourceAmount - kResources[row.Index].Total);
+					end
+				else
+					AddResourceData(kResources, row.Index, "LOC_GOVT_FILTER_GREAT_PERSON", "-", internalResourceAmount);
+				end
+			end
+		end
+	end
 
 	return kCityData, kCityTotalData, kResources, kUnitData, kDealData;
 end
 
+-- ===========================================================================
+function AddResourceData( kResources:table, eResourceType:number, EntryString:string, ControlString:string, InAmount:number)
+	local kResource :table = GameInfo.Resources[eResourceType];
+
+	if kResources[eResourceType] == nil then
+		kResources[eResourceType] = {
+			EntryList	= {},
+			Icon		= "[ICON_"..kResource.ResourceType.."]",
+			IsStrategic	= kResource.ResourceClassType == "RESOURCECLASS_STRATEGIC",
+			IsLuxury	= GameInfo.Resources[eResourceType].ResourceClassType == "RESOURCECLASS_LUXURY",
+			IsBonus		= GameInfo.Resources[eResourceType].ResourceClassType == "RESOURCECLASS_BONUS",
+			Total		= 0
+		};
+	end
+
+	table.insert( kResources[eResourceType].EntryList, 
+	{
+		EntryText	= EntryString,
+		ControlText = ControlString,
+		Amount		= InAmount,					
+	});
+
+	kResources[eResourceType].Total = kResources[eResourceType].Total + InAmount;
+end
 
 -- ===========================================================================
 --	Obtain the total resources for a given city.
@@ -640,17 +775,19 @@ function ViewYieldsPage()
 
 	local iTotalDealGold :number = 0;
 	for i,kDeal in ipairs(m_kDealData) do
-		local pDealInstance:table = {};		
-		ContextPtr:BuildInstanceForControl( "DealEntryInstance", pDealInstance, instance.ContentStack ) ;		
+		if kDeal.Type == DealItemTypes.GOLD then
+			local pDealInstance:table = {};		
+			ContextPtr:BuildInstanceForControl( "DealEntryInstance", pDealInstance, instance.ContentStack ) ;		
 
-		pDealInstance.Civilization:SetText( kDeal.Name );
-		pDealInstance.Duration:SetText( kDeal.Duration );
-		if kDeal.IsOutgoing then
-			pDealInstance.Gold:SetText( "-"..tostring(kDeal.Amount) );
-			iTotalDealGold = iTotalDealGold - kDeal.Amount;
-		else
-			pDealInstance.Gold:SetText( "+"..tostring(kDeal.Amount) );
-			iTotalDealGold = iTotalDealGold + kDeal.Amount;
+			pDealInstance.Civilization:SetText( kDeal.Name );
+			pDealInstance.Duration:SetText( kDeal.Duration );
+			if kDeal.IsOutgoing then
+				pDealInstance.Gold:SetText( "-"..tostring(kDeal.Amount) );
+				iTotalDealGold = iTotalDealGold - kDeal.Amount;
+			else
+				pDealInstance.Gold:SetText( "+"..tostring(kDeal.Amount) );
+				iTotalDealGold = iTotalDealGold + kDeal.Amount;
+			end
 		end
 	end
 	local pDealFooterInstance:table = {};		
@@ -698,6 +835,10 @@ function ViewResourcesPage()
 
 	local strategicResources:string = "";
 	local luxuryResources	:string = "";
+	local kBonuses			:table	= {};
+	local kLuxuries			:table	= {};
+	local kStrategics		:table	= {};
+	
 
 	for eResourceType,kSingleResourceData in pairs(m_kResourceData) do
 		
@@ -709,32 +850,81 @@ function ViewResourcesPage()
 		local pHeaderInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "ResourcesHeaderInstance", pHeaderInstance, instance.ContentStack ) ;
 
-		local kCitiesAmount:table = kSingleResourceData.CityList;
-		for i,kCityAmount in ipairs(kCitiesAmount) do
-			local pCityInstance:table = {};
-			ContextPtr:BuildInstanceForControl( "ResourcesEntryInstance", pCityInstance, instance.ContentStack ) ;
-			pCityInstance.CityName:SetText( Locale.Lookup(kCityAmount.CityName) );
-			pCityInstance.Control:SetText("-");	--??TRON TODO:
-			pCityInstance.Amount:SetText( (kCityAmount.Amount==0) and "0" or "+"..tostring(kCityAmount.Amount) );
+		local kResourceEntries:table = kSingleResourceData.EntryList;
+		for i,kEntry in ipairs(kResourceEntries) do
+			local pEntryInstance:table = {};
+			ContextPtr:BuildInstanceForControl( "ResourcesEntryInstance", pEntryInstance, instance.ContentStack ) ;
+			pEntryInstance.CityName:SetText( Locale.Lookup(kEntry.EntryText) );
+			pEntryInstance.Control:SetText( Locale.Lookup(kEntry.ControlText) );
+			pEntryInstance.Amount:SetText( (kEntry.Amount<=0) and tostring(kEntry.Amount) or "+"..tostring(kEntry.Amount) );
 		end
 
 		local pFooterInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "ResourcesFooterInstance", pFooterInstance, instance.ContentStack ) ;
 		pFooterInstance.Amount:SetText( tostring(kSingleResourceData.Total) );		
 
-		if kSingleResourceData.IsStrategic then
-			strategicResources = strategicResources .. kSingleResourceData.Icon .. tostring( kSingleResourceData.Total );
+		-- Show how many of this resource are being allocated to what cities
+		local localPlayerID = Game.GetLocalPlayer();
+		local localPlayer = Players[localPlayerID];
+		local citiesProvidedTo: table = localPlayer:GetResources():GetResourceAllocationCities(GameInfo.Resources[kResource.ResourceType].Index);
+		local numCitiesProvidingTo: number = table.count(citiesProvidedTo);
+		if (numCitiesProvidingTo > 0) then
+			pFooterInstance.AmenitiesContainer:SetHide(false);
+			pFooterInstance.Amenities:SetText("[ICON_Amenities][ICON_GoingTo]"..numCitiesProvidingTo.." "..Locale.Lookup("LOC_PEDIA_CONCEPTS_PAGEGROUP_CITIES_NAME"));
+			local amenitiesTooltip: string = "";
+			local playerCities = localPlayer:GetCities();
+			for i,city in ipairs(citiesProvidedTo) do
+				local cityName = Locale.Lookup(playerCities:FindID(city.CityID):GetName());
+				if i ~=1 then
+					amenitiesTooltip = amenitiesTooltip.. "[NEWLINE]";
+				end
+				amenitiesTooltip = amenitiesTooltip.. city.AllocationAmount.." [ICON_".. kResource.ResourceType.."] [Icon_GoingTo] " ..cityName;
+			end
+			pFooterInstance.Amenities:SetToolTipString(amenitiesTooltip);
 		else
-			luxuryResources = luxuryResources .. kSingleResourceData.Icon .. tostring( kSingleResourceData.Total );			
+			pFooterInstance.AmenitiesContainer:SetHide(true);
+		end
+
+		if kSingleResourceData.IsStrategic then
+			--strategicResources = strategicResources .. kSingleResourceData.Icon .. tostring( kSingleResourceData.Total );
+			table.insert(kStrategics, kSingleResourceData.Icon .. tostring( kSingleResourceData.Total ) );
+		elseif kSingleResourceData.IsLuxury then			
+			--luxuryResources = luxuryResources .. kSingleResourceData.Icon .. tostring( kSingleResourceData.Total );			
+			table.insert(kLuxuries, kSingleResourceData.Icon .. tostring( kSingleResourceData.Total ) );
+		else
+			table.insert(kBonuses, kSingleResourceData.Icon .. tostring( kSingleResourceData.Total ) );
 		end
 
 		SetGroupCollapsePadding(instance, pFooterInstance.Top:GetSizeY() );
 		RealizeGroup( instance );
 	end
+	
+	m_strategicResourcesIM:ResetInstances();
+	for i,v in ipairs(kStrategics) do
+		local resourceInstance:table = m_strategicResourcesIM:GetInstance();	
+		resourceInstance.Info:SetText( v );
+	end
+	Controls.StrategicResources:CalculateSize();
+	Controls.StrategicGrid:ReprocessAnchoring();
 
-	Controls.StrategicResources:SetText( strategicResources );
-	Controls.LuxuryResources:SetText( luxuryResources );
+	m_bonusResourcesIM:ResetInstances();
+	for i,v in ipairs(kBonuses) do
+		local resourceInstance:table = m_bonusResourcesIM:GetInstance();	
+		resourceInstance.Info:SetText( v );
+	end
+	Controls.BonusResources:CalculateSize();
+	Controls.BonusGrid:ReprocessAnchoring();
 
+	m_luxuryResourcesIM:ResetInstances();
+	for i,v in ipairs(kLuxuries) do
+		local resourceInstance:table = m_luxuryResourcesIM:GetInstance();	
+		resourceInstance.Info:SetText( v );
+	end
+	
+	Controls.LuxuryResources:CalculateSize();
+	Controls.LuxuryResources:ReprocessAnchoring();
+	Controls.LuxuryGrid:ReprocessAnchoring();
+	
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 

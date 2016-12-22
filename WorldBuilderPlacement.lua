@@ -170,7 +170,7 @@ function UpdatePlayerEntries()
 	local hasPlayers = m_PlayerEntries[1] ~= nil;
 	local hasScenarioPlayers = m_ScenarioPlayerEntries[1] ~= nil;
 
-	Controls.StartPosPullDown:SetEntries( m_PlayerEntries, hasPlayers and 1 or 0 );
+	Controls.StartPosPlayerPulldown:SetEntries( m_PlayerEntries, hasPlayers and 1 or 0 );
 	Controls.CityOwnerPullDown:SetEntries( m_ScenarioPlayerEntries, hasScenarioPlayers and 1 or 0 );
 	Controls.UnitOwnerPullDown:SetEntries( m_ScenarioPlayerEntries, hasScenarioPlayers and 1 or 0 );
 	Controls.VisibilityPullDown:SetEntries( m_ScenarioPlayerEntries, hasScenarioPlayers and 1 or 0 );
@@ -223,7 +223,7 @@ function PlaceContinent(plot, edge, bAdd)
 
 	if bAdd then
 		local entry = Controls.ContinentPullDown:GetSelectedEntry();
-		WorldBuilder.MapManager():SetContinentType( plot, entry.Type.RowId );
+		WorldBuilder.MapManager():SetContinentType( plot, entry.Type.Index );
 	end
 end
 
@@ -328,7 +328,7 @@ end
 function PlaceStartPos(plot, edge, bAdd)
 
 	if bAdd then
-		local entry = Controls.StartPosPullDown:GetSelectedEntry();
+		local entry = Controls.StartPosPlayerPulldown:GetSelectedEntry();
 		if entry ~= nil then
 			WorldBuilder.PlayerManager():SetPlayerStartingPosition( entry.PlayerIndex, plot );
 		end
@@ -383,7 +383,7 @@ local m_ContinentPlots : table = {};
 -- ===========================================================================
 function OnContinentToolEntered()
 
-	local continentType = Controls.ContinentPullDown:GetSelectedEntry().Type.RowId;
+	local continentType = Controls.ContinentPullDown:GetSelectedEntry().Type.Index;
 	m_ContinentPlots = WorldBuilder.MapManager():GetContinentPlots(continentType);
 	UI.HighlightPlots(PlotHighlightTypes.PLACEMENT, true, m_ContinentPlots);
 	LuaEvents.WorldBuilder_ContinentTypeEdited.Add(OnContinentTypeEdited);
@@ -400,7 +400,7 @@ function OnContinentTypeSelected( entry )
 
 	if m_Mode ~= nil and m_Mode.Tab == Controls.PlaceContinent then
 		UI.HighlightPlots(PlotHighlightTypes.PLACEMENT, false);
-		m_ContinentPlots = WorldBuilder.MapManager():GetContinentPlots(entry.Type.RowId);
+		m_ContinentPlots = WorldBuilder.MapManager():GetContinentPlots(entry.Type.Index);
 		UI.HighlightPlots(PlotHighlightTypes.PLACEMENT, true, m_ContinentPlots);
 	end
 end
@@ -408,7 +408,7 @@ end
 -- ===========================================================================
 function OnContinentTypeEdited( plotID, continentType )
 
-	if continentType == Controls.ContinentPullDown:GetSelectedEntry().Type.RowId then
+	if continentType == Controls.ContinentPullDown:GetSelectedEntry().Type.Index then
 		table.insert(m_ContinentPlots, plotID);
 		UI.HighlightPlots(PlotHighlightTypes.PLACEMENT, true, { plotID } );
 	else
@@ -431,7 +431,7 @@ local m_PlacementModes : table =
 	{ Text="Terrain",         Tab=Controls.PlaceTerrain,      PlacementFunc=PlaceTerrain,     PlacementValid=nil                   },
 	{ Text="Features",        Tab=Controls.PlaceFeatures,     PlacementFunc=PlaceFeature,     PlacementValid=PlaceFeature_Valid    },
 	{ Text="Continent",       Tab=Controls.PlaceContinent,    PlacementFunc=PlaceContinent,   PlacementValid=PlaceContinent_Valid, OnEntered=OnContinentToolEntered, OnLeft=OnContinentToolLeft, NoMouseOverHighlight=true },
-	{ Text="Rivers",          Tab=Controls.PlaceRivers,       PlacementFunc=PlaceRiver,       PlacementValid=nil                   },
+	{ Text="Rivers",          Tab=Controls.PlaceRivers,       PlacementFunc=PlaceRiver,       PlacementValid=nil,                  NoMouseOverHighlight=true },
 	{ Text="Cliffs",          Tab=Controls.PlaceCliffs,       PlacementFunc=PlaceCliff,       PlacementValid=nil                   },
 	{ Text="Resources",       Tab=Controls.PlaceResources,    PlacementFunc=PlaceResource,    PlacementValid=PlaceResource_Valid   },
 	{ Text="City",            Tab=Controls.PlaceCity,         PlacementFunc=PlaceCity,        PlacementValid=nil                   },
