@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContextDefaults ColorSet="Beige_Black" Style="FontNormal22" FontStyle="Stroke" Name="MainMenu" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\ForgeUI_Assets\Controls.xsd">
+
+	<Stack				Anchor="C,C" Offset="0,150" Padding="5" WrapWidth="200" WrapGrowth="Right" >
+		<GridButton ID="NewWorldBuilderMap" Style="MainButton" Size="300,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_WORLD_BUILDER_START_NEW" />
+		<GridButton ID="LoadWorldBuilderMap" Style="MainButton" Size="300,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_WORLD_BUILDER_LOAD" />
+		<GridButton ID="BackButton"	Style="MainButton" Size="300,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MENU_BACK"/>
+	</Stack>
+
+</ContextDefaults>

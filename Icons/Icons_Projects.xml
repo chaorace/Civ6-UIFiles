@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+	<IconTextureAtlases>
+		<Row Name="ICON_ATLAS_PROJECTS" IconSize="30"   IconsPerRow="8" IconsPerColumn="8" Filename="Projects30"/>
+    	<Row Name="ICON_ATLAS_PROJECTS" IconSize="32"   IconsPerRow="8" IconsPerColumn="8" Filename="Projects32"/>
+	    <Row Name="ICON_ATLAS_PROJECTS" IconSize="38"   IconsPerRow="8" IconsPerColumn="8" Filename="Projects38"/>
+    	<Row Name="ICON_ATLAS_PROJECTS" IconSize="50"   IconsPerRow="8" IconsPerColumn="8" Filename="Projects50"/>
+      <Row Name="ICON_ATLAS_PROJECTS" IconSize="70"   IconsPerRow="8" IconsPerColumn="8" Filename="Projects70"/>
+	    <Row Name="ICON_ATLAS_PROJECTS" IconSize="80"   IconsPerRow="8" IconsPerColumn="8" Filename="Projects80"/>
+    	<Row Name="ICON_ATLAS_PROJECTS" IconSize="256"  IconsPerRow="8" IconsPerColumn="8" Filename="Projects256"/>
+
+	    <Row Name="ICON_ATLAS_ROAD" IconSize="30" IconsPerRow="1" IconsPerColumn="1" Filename="Road"/>
+	</IconTextureAtlases>
+	<IconDefinitions>
+    <Row Name="ICON_PROJECT_CARNIVAL"               				Atlas="ICON_ATLAS_PROJECTS" Index="10"/>
+	<Row Name="ICON_PROJECT_ENHANCE_DISTRICT_ENCAMPMENT"            Atlas="ICON_ATLAS_PROJECTS" Index="11"/>
+    <Row Name="ICON_PROJECT_ENHANCE_DISTRICT_HARBOR"                Atlas="ICON_ATLAS_PROJECTS" Index="12"/>
+    <Row Name="ICON_PROJECT_ENHANCE_DISTRICT_INDUSTRIAL_ZONE"       Atlas="ICON_ATLAS_PROJECTS" Index="13"/>
+    <Row Name="ICON_PROJECT_ENHANCE_DISTRICT_COMMERCIAL_HUB"        Atlas="ICON_ATLAS_PROJECTS" Index="14"/>
+    <Row Name="ICON_PROJECT_ENHANCE_DISTRICT_HOLY_SITE"             Atlas="ICON_ATLAS_PROJECTS" Index="15"/>
+    <Row Name="ICON_PROJECT_ENHANCE_DISTRICT_CAMPUS"                Atlas="ICON_ATLAS_PROJECTS" Index="16"/>
+    <Row Name="ICON_PROJECT_ENHANCE_DISTRICT_THEATER"               Atlas="ICON_ATLAS_PROJECTS" Index="17"/>
+    <Row Name="ICON_PROJECT_REPAIR_OUTER_DEFENSES"                         Atlas="ICON_ATLAS_PROJECTS" Index="0"/>
+    <Row Name="ICON_PROJECT_LAUNCH_EARTH_SATELLITE"                 Atlas="ICON_ATLAS_PROJECTS" Index="1"/>
+    <Row Name="ICON_PROJECT_LAUNCH_MOON_LANDING"                    Atlas="ICON_ATLAS_PROJECTS" Index="2"/>
+    <Row Name="ICON_PROJECT_LAUNCH_MARS_REACTOR"                    Atlas="ICON_ATLAS_PROJECTS" Index="3"/>
+    <Row Name="ICON_PROJECT_LAUNCH_MARS_HABITATION"                 Atlas="ICON_ATLAS_PROJECTS" Index="4"/>
+    <Row Name="ICON_PROJECT_LAUNCH_MARS_HYDROPONICS"                Atlas="ICON_ATLAS_PROJECTS" Index="5"/>
+    <Row Name="ICON_PROJECT_MANHATTAN_PROJECT"                      Atlas="ICON_ATLAS_PROJECTS" Index="6"/>
+    <Row Name="ICON_PROJECT_OPERATION_IVY"                          Atlas="ICON_ATLAS_PROJECTS" Index="7"/>
+    <Row Name="ICON_PROJECT_BUILD_NUCLEAR_DEVICE"                   Atlas="ICON_ATLAS_PROJECTS" Index="8"/>
+    <Row Name="ICON_PROJECT_BUILD_THERMONUCLEAR_DEVICE"             Atlas="ICON_ATLAS_PROJECTS" Index="9"/>
+
+    <Row Name="ICON_ROUTE_MEDIEVAL_ROAD"					              Index="0"   Atlas="ICON_ATLAS_ROAD" />
+    <Row Name="ICON_ROUTE_INDUSTRIAL_ROAD"					            Index="0"   Atlas="ICON_ATLAS_ROAD" />
+    <Row Name="ICON_ROUTE_MODERN_ROAD"					                Index="0"   Atlas="ICON_ATLAS_ROAD" />
+  
+	</IconDefinitions>
+</GameInfo>

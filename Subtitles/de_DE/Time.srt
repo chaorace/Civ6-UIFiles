@@ -1,0 +1,12 @@
+﻿1
+00:00:00,160 --> 00:00:05,353
+Jeder Herrscher hofft, eine Zivilisation aufzubauen, die sich bewährt.
+
+2
+00:00:07,903 --> 00:00:12,000
+Dank Euch, Großer Anführer, ist unsere Geschichte Legende ...
+
+3
+00:00:12,300 --> 00:00:16,650
+... und unsere unmittelbare Zukunft ein Leuchtfeuer für die Welt.
+

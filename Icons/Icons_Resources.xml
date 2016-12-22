@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_RESOURCES" IconSize="64" IconsPerRow="8" IconsPerColumn="8" Filename="Resources.dds"/>
+    <Row Name="ICON_ATLAS_RESOURCES" IconSize="38" IconsPerRow="8" IconsPerColumn="8" Filename="Resources38.dds"/>
+	<Row Name="ICON_ATLAS_RESOURCES" IconSize="50" IconsPerRow="8" IconsPerColumn="8" Filename="Resources50.dds"/>
+	<Row Name="ICON_ATLAS_RESOURCES" IconSize="256" IconsPerRow="8" IconsPerColumn="8" Filename="Resources256.dds"/>
+    <Row Name="ICON_ATLAS_RESOURCES_FOW" IconSize="64" IconsPerRow="8" IconsPerColumn="8" Filename="Resources_FOW.dds"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+    <Row Name="ICON_RESOURCE_BANANAS"        Atlas="ICON_ATLAS_RESOURCES" Index="0"/>
+    <Row Name="ICON_RESOURCE_CATTLE"         Atlas="ICON_ATLAS_RESOURCES" Index="1"/>
+    <Row Name="ICON_RESOURCE_COPPER"         Atlas="ICON_ATLAS_RESOURCES" Index="2"/>
+    <Row Name="ICON_RESOURCE_CRABS"          Atlas="ICON_ATLAS_RESOURCES" Index="3"/>
+    <Row Name="ICON_RESOURCE_DEER"           Atlas="ICON_ATLAS_RESOURCES" Index="4"/>
+    <Row Name="ICON_RESOURCE_FISH"           Atlas="ICON_ATLAS_RESOURCES" Index="5"/>
+    <Row Name="ICON_RESOURCE_RICE"           Atlas="ICON_ATLAS_RESOURCES" Index="6"/>
+    <Row Name="ICON_RESOURCE_SHEEP"          Atlas="ICON_ATLAS_RESOURCES" Index="7"/>
+    <Row Name="ICON_RESOURCE_STONE"          Atlas="ICON_ATLAS_RESOURCES" Index="8"/>
+    <Row Name="ICON_RESOURCE_WHEAT"          Atlas="ICON_ATLAS_RESOURCES" Index="9"/>
+    <Row Name="ICON_RESOURCE_CITRUS"         Atlas="ICON_ATLAS_RESOURCES" Index="10"/>
+    <Row Name="ICON_RESOURCE_COCOA"          Atlas="ICON_ATLAS_RESOURCES" Index="11"/>
+    <Row Name="ICON_RESOURCE_COFFEE"         Atlas="ICON_ATLAS_RESOURCES" Index="12"/>
+    <Row Name="ICON_RESOURCE_COTTON"         Atlas="ICON_ATLAS_RESOURCES" Index="13"/>
+    <Row Name="ICON_RESOURCE_DIAMONDS"       Atlas="ICON_ATLAS_RESOURCES" Index="14"/>
+    <Row Name="ICON_RESOURCE_DYES"           Atlas="ICON_ATLAS_RESOURCES" Index="15"/>
+    <Row Name="ICON_RESOURCE_FURS"           Atlas="ICON_ATLAS_RESOURCES" Index="16"/>
+    <Row Name="ICON_RESOURCE_GYPSUM"         Atlas="ICON_ATLAS_RESOURCES" Index="17"/>
+    <Row Name="ICON_RESOURCE_INCENSE"        Atlas="ICON_ATLAS_RESOURCES" Index="18"/>
+    <Row Name="ICON_RESOURCE_IVORY"          Atlas="ICON_ATLAS_RESOURCES" Index="19"/>
+    <Row Name="ICON_RESOURCE_JADE"           Atlas="ICON_ATLAS_RESOURCES" Index="20"/>
+    <Row Name="ICON_RESOURCE_MARBLE"         Atlas="ICON_ATLAS_RESOURCES" Index="21"/>
+    <Row Name="ICON_RESOURCE_MERCURY"        Atlas="ICON_ATLAS_RESOURCES" Index="22"/>
+    <Row Name="ICON_RESOURCE_PEARLS"         Atlas="ICON_ATLAS_RESOURCES" Index="23"/>
+    <Row Name="ICON_RESOURCE_SALT"           Atlas="ICON_ATLAS_RESOURCES" Index="24"/>
+    <Row Name="ICON_RESOURCE_SILK"           Atlas="ICON_ATLAS_RESOURCES" Index="25"/>
+    <Row Name="ICON_RESOURCE_SILVER"         Atlas="ICON_ATLAS_RESOURCES" Index="26"/>
+    <Row Name="ICON_RESOURCE_SPICES"         Atlas="ICON_ATLAS_RESOURCES" Index="27"/>
+    <Row Name="ICON_RESOURCE_SUGAR"          Atlas="ICON_ATLAS_RESOURCES" Index="28"/>
+    <Row Name="ICON_RESOURCE_TEA"            Atlas="ICON_ATLAS_RESOURCES" Index="29"/>
+    <Row Name="ICON_RESOURCE_TOBACCO"        Atlas="ICON_ATLAS_RESOURCES" Index="30"/>
+    <Row Name="ICON_RESOURCE_TRUFFLES"       Atlas="ICON_ATLAS_RESOURCES" Index="31"/>
+    <Row Name="ICON_RESOURCE_WHALES"         Atlas="ICON_ATLAS_RESOURCES" Index="32"/>
+    <Row Name="ICON_RESOURCE_WINE"           Atlas="ICON_ATLAS_RESOURCES" Index="33"/>
+    <Row Name="ICON_RESOURCE_JEANS"          Atlas="ICON_ATLAS_RESOURCES" Index="34"/>
+    <Row Name="ICON_RESOURCE_PERFUME"        Atlas="ICON_ATLAS_RESOURCES" Index="35"/>
+    <Row Name="ICON_RESOURCE_COSMETICS"      Atlas="ICON_ATLAS_RESOURCES" Index="36"/>
+    <Row Name="ICON_RESOURCE_TOYS"           Atlas="ICON_ATLAS_RESOURCES" Index="37"/>
+    <Row Name="ICON_RESOURCE_CINNAMON"       Atlas="ICON_ATLAS_RESOURCES" Index="38"/>
+    <Row Name="ICON_RESOURCE_CLOVES"         Atlas="ICON_ATLAS_RESOURCES" Index="39"/>
+    <Row Name="ICON_RESOURCE_ALUMINUM"       Atlas="ICON_ATLAS_RESOURCES" Index="40"/>
+    <Row Name="ICON_RESOURCE_COAL"           Atlas="ICON_ATLAS_RESOURCES" Index="41"/>
+    <Row Name="ICON_RESOURCE_HORSES"         Atlas="ICON_ATLAS_RESOURCES" Index="42"/>
+    <Row Name="ICON_RESOURCE_IRON"           Atlas="ICON_ATLAS_RESOURCES" Index="43"/>
+    <Row Name="ICON_RESOURCE_NITER"          Atlas="ICON_ATLAS_RESOURCES" Index="44"/>
+    <Row Name="ICON_RESOURCE_OIL"            Atlas="ICON_ATLAS_RESOURCES" Index="45"/>
+    <Row Name="ICON_RESOURCE_URANIUM"        Atlas="ICON_ATLAS_RESOURCES" Index="46"/>
+    <Row Name="ICON_RESOURCE_ANTIQUITY_SITE" Atlas="ICON_ATLAS_RESOURCES" Index="47"/>
+    <Row Name="ICON_RESOURCE_SHIPWRECK"      Atlas="ICON_ATLAS_RESOURCES" Index="48"/>
+
+    <Row Name="ICON_RESOURCE_BANANAS_FOW"         Atlas="ICON_ATLAS_RESOURCES_FOW" Index="0"/>
+    <Row Name="ICON_RESOURCE_CATTLE_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="1"/>
+    <Row Name="ICON_RESOURCE_COPPER_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="2"/>
+    <Row Name="ICON_RESOURCE_CRABS_FOW"           Atlas="ICON_ATLAS_RESOURCES_FOW" Index="3"/>
+    <Row Name="ICON_RESOURCE_DEER_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="4"/>
+    <Row Name="ICON_RESOURCE_FISH_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="5"/>
+    <Row Name="ICON_RESOURCE_RICE_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="6"/>
+    <Row Name="ICON_RESOURCE_SHEEP_FOW"           Atlas="ICON_ATLAS_RESOURCES_FOW" Index="7"/>
+    <Row Name="ICON_RESOURCE_STONE_FOW"           Atlas="ICON_ATLAS_RESOURCES_FOW" Index="8"/>
+    <Row Name="ICON_RESOURCE_WHEAT_FOW"           Atlas="ICON_ATLAS_RESOURCES_FOW" Index="9"/>
+    <Row Name="ICON_RESOURCE_CITRUS_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="10"/>
+    <Row Name="ICON_RESOURCE_COCOA_FOW"           Atlas="ICON_ATLAS_RESOURCES_FOW" Index="11"/>
+    <Row Name="ICON_RESOURCE_COFFEE_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="12"/>
+    <Row Name="ICON_RESOURCE_COTTON_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="13"/>
+    <Row Name="ICON_RESOURCE_DIAMONDS_FOW"        Atlas="ICON_ATLAS_RESOURCES_FOW" Index="14"/>
+    <Row Name="ICON_RESOURCE_DYES_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="15"/>
+    <Row Name="ICON_RESOURCE_FURS_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="16"/>
+    <Row Name="ICON_RESOURCE_GYPSUM_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="17"/>
+    <Row Name="ICON_RESOURCE_INCENSE_FOW"         Atlas="ICON_ATLAS_RESOURCES_FOW" Index="18"/>
+    <Row Name="ICON_RESOURCE_IVORY_FOW"           Atlas="ICON_ATLAS_RESOURCES_FOW" Index="19"/>
+    <Row Name="ICON_RESOURCE_JADE_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="20"/>
+    <Row Name="ICON_RESOURCE_MARBLE_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="21"/>
+    <Row Name="ICON_RESOURCE_MERCURY_FOW"         Atlas="ICON_ATLAS_RESOURCES_FOW" Index="22"/>
+    <Row Name="ICON_RESOURCE_PEARLS_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="23"/>
+    <Row Name="ICON_RESOURCE_SALT_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="24"/>
+    <Row Name="ICON_RESOURCE_SILK_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="25"/>
+    <Row Name="ICON_RESOURCE_SILVER_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="26"/>
+    <Row Name="ICON_RESOURCE_SPICES_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="27"/>
+    <Row Name="ICON_RESOURCE_SUGAR_FOW"           Atlas="ICON_ATLAS_RESOURCES_FOW" Index="28"/>
+    <Row Name="ICON_RESOURCE_TEA_FOW"             Atlas="ICON_ATLAS_RESOURCES_FOW" Index="29"/>
+    <Row Name="ICON_RESOURCE_TOBACCO_FOW"         Atlas="ICON_ATLAS_RESOURCES_FOW" Index="30"/>
+    <Row Name="ICON_RESOURCE_TRUFFLES_FOW"        Atlas="ICON_ATLAS_RESOURCES_FOW" Index="31"/>
+    <Row Name="ICON_RESOURCE_WHALES_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="32"/>
+    <Row Name="ICON_RESOURCE_WINE_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="33"/>
+    <Row Name="ICON_RESOURCE_JEANS_FOW"           Atlas="ICON_ATLAS_RESOURCES_FOW" Index="34"/>
+    <Row Name="ICON_RESOURCE_PERFUME_FOW"         Atlas="ICON_ATLAS_RESOURCES_FOW" Index="35"/>
+    <Row Name="ICON_RESOURCE_COSMETICS_FOW"       Atlas="ICON_ATLAS_RESOURCES_FOW" Index="36"/>
+    <Row Name="ICON_RESOURCE_TOYS_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="37"/>
+    <Row Name="ICON_RESOURCE_CINNAMON_FOW"        Atlas="ICON_ATLAS_RESOURCES_FOW" Index="38"/>
+    <Row Name="ICON_RESOURCE_CLOVES_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="39"/>
+    <Row Name="ICON_RESOURCE_ALUMINUM_FOW"        Atlas="ICON_ATLAS_RESOURCES_FOW" Index="40"/>
+    <Row Name="ICON_RESOURCE_COAL_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="41"/>
+    <Row Name="ICON_RESOURCE_HORSES_FOW"          Atlas="ICON_ATLAS_RESOURCES_FOW" Index="42"/>
+    <Row Name="ICON_RESOURCE_IRON_FOW"            Atlas="ICON_ATLAS_RESOURCES_FOW" Index="43"/>
+    <Row Name="ICON_RESOURCE_NITER_FOW"           Atlas="ICON_ATLAS_RESOURCES_FOW" Index="44"/>
+    <Row Name="ICON_RESOURCE_OIL_FOW"             Atlas="ICON_ATLAS_RESOURCES_FOW" Index="45"/>
+    <Row Name="ICON_RESOURCE_URANIUM_FOW"         Atlas="ICON_ATLAS_RESOURCES_FOW" Index="46"/>
+    <Row Name="ICON_RESOURCE_ANTIQUITY_SITE_FOW"  Atlas="ICON_ATLAS_RESOURCES_FOW" Index="47"/>
+    <Row Name="ICON_RESOURCE_SHIPWRECK_FOW"       Atlas="ICON_ATLAS_RESOURCES_FOW" Index="48"/>
+  </IconDefinitions>
+</GameInfo>

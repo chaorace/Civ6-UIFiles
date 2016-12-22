@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Context>
+  <!-- Main Container -->
+  <Container ID="TourismBanners"/>
+
+  <!-- Tourism Banner Intance -->
+  <Instance Name="TourismBannerInstance">
+    <WorldAnchor ID="Anchor">
+      <Container ID="TourismBannerContainer" Size="120,120" Anchor="C,C" Hidden="1">
+        <Image ID="TourismBannerGlow" Anchor="C,C" Size="179,178" Texture="Controls_Glow">
+          <!-- Tourism Score Anims-->
+          <FlipAnim ID="LowTourismAnim" Anchor="C,C" Texture="Religion_PressureLowAnim" Size="80,80" FrameCount="71" Columns="10" Hidden="1"/>
+          <FlipAnim ID="MedTourismAnim" Anchor="C,C" Texture="Religion_PressureMediumAnim" Size="80,80" FrameCount="41" Columns="8" Hidden="1"/>
+          <FlipAnim ID="HighTourismAnim" Anchor="C,C" Texture="Religion_PressureHighAnim" Size="80,80" FrameCount="41" Columns="8"/>
+
+          <!-- Token and Tourist Count-->
+          <Image ID="TourismTokenImage" Anchor="C,C" Offset="0,4" Size="50,59" Texture="Tourism_TokenContainer">
+            <Label ID="TouristsLabel" Anchor="C,C" Offset="0,-8" Style="FontFlair24" Color="White" String="0"/>
+          </Image>
+        </Image>
+      </Container>
+    </WorldAnchor>
+  </Instance>
+</Context>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="30" IconsPerRow="8" IconsPerColumn="8" Filename="CityStates30.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="40" IconsPerRow="8" IconsPerColumn="8" Filename="CityStates40.dds"/>
+    <Row Name="ICON_ATLAS_CITYSTATES" IconSize="68" IconsPerRow="8" IconsPerColumn="8" Filename="CityStates68.dds"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+		<Row Name="ICON_CITYSTATE_SCIENCE"			Atlas="ICON_ATLAS_CITYSTATES" Index="0"/>
+		<Row Name="ICON_CITYSTATE_FAITH"				Atlas="ICON_ATLAS_CITYSTATES" Index="1"/>
+		<Row Name="ICON_CITYSTATE_MILITARISTIC"	Atlas="ICON_ATLAS_CITYSTATES" Index="2"/>
+		<Row Name="ICON_CITYSTATE_TRADE"				Atlas="ICON_ATLAS_CITYSTATES" Index="3"/>
+		<Row Name="ICON_CITYSTATE_CULTURE"			Atlas="ICON_ATLAS_CITYSTATES" Index="4"/>
+		<Row Name="ICON_CITYSTATE_INDUSTRIAL"		Atlas="ICON_ATLAS_CITYSTATES" Index="5"/>
+  </IconDefinitions>
+</GameInfo>
+
+

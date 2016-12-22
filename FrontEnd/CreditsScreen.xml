@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context>
+    
+	<Box						ID="BGBlock"  Style="BGBlock" />
+	
+	<GridButton			ID="BackButton"			Anchor="L,B" Offset="10,10" Size="220,32" Style="ShellFlag" TextAnchor="L,C" TextOffset="10,0" String="LOC_CREDITS_BACK_BUTTON" />
+	<ScrollPanel		ID="MajorScroll"		Anchor="C,C" Size="1024,Full" Vertical="1" AutoScrollBar="0">
+		<SlideAnim		ID="SlideAnim"			Anchor="C,C" Size="1024,Full" Start="0,0" End="0,0" Cycle="Once" Speed="0.0015" >
+			<Stack			ID="CreditsList" 		Anchor="C,T" Padding="20" StackGrowth="Bottom">
+				<Container ID="InitialSpace" Size="1,full" />	
+			</Stack>
+		</SlideAnim>
+	</ScrollPanel>
+
+	<Instance Name="MajorTitleInstance">
+		<Label ID="Text" Anchor="C,C" Size="1024,36" Style="FontNormal28" SmallCapsType="FirstOnly" SmallCaps="40" Color0="255,255,212,255" Color1="0,0,0,200" />
+	</Instance>
+
+	<Instance Name="MinorTitleInstance">
+		<Label ID="Text" Anchor="C,C" Style="FontNormal22" SmallCapsType="EveryWord" SmallCaps="30"  Color0="190,156,100,255" Color1="0,0,0,200" Color2="255,255,255,255" />
+	</Instance>
+
+	<Instance Name="HeadingInstance">
+		<Label ID="Text" Anchor="C,C" FontStyle="Shadow" Style="FontNormal20" Color="200,200,200,200" />
+	</Instance>
+
+	<Instance Name="EntryInstance">
+		<Label ID="Text" Anchor="C,C" Style="FontNormal15" Color="255,255,255,255" />
+	</Instance>
+
+	<Instance Name="ImageInstance">
+		<Image ID="Image" Anchor="C,C" StretchMode="Auto" />
+	</Instance>
+
+	<Instance Name="BlankInstance">
+		<Container ID="Top" Size="20,20" />
+	</Instance>
+
+
+	<!--
+	<Label ID="Test" Style="FontNormal28" String="LOC_GENERIC_TEST"/>
+	-->
+	
+</Context>

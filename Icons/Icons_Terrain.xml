@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<GameInfo>
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_TERRAIN" IconSize="50"   IconsPerRow="8" IconsPerColumn="8"  Filename="Terrain50"/>
+    <Row Name="ICON_ATLAS_TERRAIN" IconSize="256"  IconsPerRow="8" IconsPerColumn="8"  Filename="Terrain256"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+    <Row Name="ICON_TERRAIN_GRASS"             Atlas="ICON_ATLAS_TERRAIN" Index="0"/>
+    <Row Name="ICON_TERRAIN_GRASS_HILLS"       Atlas="ICON_ATLAS_TERRAIN" Index="1"/>
+    <Row Name="ICON_TERRAIN_GRASS_MOUNTAIN"    Atlas="ICON_ATLAS_TERRAIN" Index="2"/>
+    <Row Name="ICON_TERRAIN_PLAINS"            Atlas="ICON_ATLAS_TERRAIN" Index="3"/>
+    <Row Name="ICON_TERRAIN_PLAINS_HILLS"      Atlas="ICON_ATLAS_TERRAIN" Index="4"/>
+    <Row Name="ICON_TERRAIN_PLAINS_MOUNTAIN"   Atlas="ICON_ATLAS_TERRAIN" Index="5"/>
+    <Row Name="ICON_TERRAIN_DESERT"            Atlas="ICON_ATLAS_TERRAIN" Index="6"/>
+    <Row Name="ICON_TERRAIN_DESERT_HILLS"      Atlas="ICON_ATLAS_TERRAIN" Index="7"/>
+    <Row Name="ICON_TERRAIN_DESERT_MOUNTAIN"   Atlas="ICON_ATLAS_TERRAIN" Index="8"/>
+    <Row Name="ICON_TERRAIN_TUNDRA"            Atlas="ICON_ATLAS_TERRAIN" Index="9"/>
+    <Row Name="ICON_TERRAIN_TUNDRA_HILLS"      Atlas="ICON_ATLAS_TERRAIN" Index="10"/>
+    <Row Name="ICON_TERRAIN_TUNDRA_MOUNTAIN"   Atlas="ICON_ATLAS_TERRAIN" Index="11"/>
+    <Row Name="ICON_TERRAIN_SNOW"              Atlas="ICON_ATLAS_TERRAIN" Index="12"/>
+    <Row Name="ICON_TERRAIN_SNOW_HILLS"        Atlas="ICON_ATLAS_TERRAIN" Index="13"/>
+    <Row Name="ICON_TERRAIN_SNOW_MOUNTAIN"     Atlas="ICON_ATLAS_TERRAIN" Index="14"/>
+    <Row Name="ICON_TERRAIN_COAST"             Atlas="ICON_ATLAS_TERRAIN" Index="15"/>
+    <Row Name="ICON_TERRAIN_OCEAN"             Atlas="ICON_ATLAS_TERRAIN" Index="16"/>
+    <Row Name="ICON_TERRAIN_OUTOFPLAY"         Atlas="ICON_ATLAS_TERRAIN" Index="17"/>
+  </IconDefinitions>
+</GameInfo>
+

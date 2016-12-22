@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Style="FontNormal16" Name="LeaderView" ColorSet="Beige_Black" FontStyle="Shadow" >
+    <Stack Anchor ="R,C" StackPadding="5" Offset="50,0">
+      <Box ID="Background" Color="0,0,0,70" Anchor="C,C" Size="650,80">
+        <Label ID="LeaderText" Align="center" FontSize="20" String="LOC_LEADER_SCREEN_GREETING" Anchor="C,C" WrapWidth="630"/>
+      </Box>
+      <GridButton ID="DeclareWarButton" Style="MainButton" Size="400,60" String="LOC_LEADER_SCREEN_DECLARE_WAR" Anchor="C,C"/>
+      <GridButton ID="GoodbyeButton" Style="MainButton" Size="400,60" String="LOC_LEADER_SCREEN_GOODBYE"  Anchor="C,C"/>
+    </Stack>
+</Context>

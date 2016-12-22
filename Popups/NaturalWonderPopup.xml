@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Context Name="NaturalWonderPopup">
+
+  <!-- Darken the screen -->
+  <Box Color="0,0,0,0" Size="Full,Full" ConsumeMouse="1"/>
+  <Image ID="VignetteRB" Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="R,B"/>
+  <Image ID="VignetteRT" Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="R,T" FlipY="1"/>
+  <Image ID="VignetteLT" Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="L,T" FlipY="1" FlipX="1"/>
+  <Image ID="VignetteLB" Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="L,B" FlipX="1"/>
+  <Image ID="GradientL" Texture="Controls_GradientSmall" Size="20,full"  Color="0,0,0,255" Anchor="L,T" Rotate="270"/>
+  <Image ID="GradientR" Texture="Controls_GradientSmall" Size="20,full"  Color="0,0,0,255" Anchor="R,T" Rotate="90"/>
+  <Image ID="GradientT" Texture="Controls_Gradient" Size="full,150"  Color="0,0,0,255" Anchor="L,T" FlipY="1"/>
+  <Image ID="GradientB" Texture="Controls_Gradient" Size="full,150"  Color="0,0,0,255" Anchor="L,B"/>
+  <Image ID="GradientB2" Texture="Controls_Gradient" Size="full,150"  Color="0,0,0,255" Anchor="L,B"/>
+
+  <AlphaAnim ID="HeaderAlpha" Size="full,full" AlphaBegin="0" AlphaEnd="1" Speed=".2" Cycle="Once" Function="OutQuint" FunctionPower="10">
+    <SlideAnim ID="HeaderSlide" Size="full,full" Start="0,-200" End="0,0" Speed=".5" Cycle="Once" Function="OutQuint" FunctionPower="10">
+      <Grid ID="HeaderGrid" Texture="Controls_LensHeaderSmall" SliceTextureSize="71,49" SliceCorner="20,24" Size="full,49" Color="255,255,255,200">
+        <Image ID="HeaderDropshadow" Texture="Controls_GradientSmall" Size="full,22"  Color="0,0,0,255" Anchor="L,B" AnchorSide="I,O"/>
+        <Label ID="WonderRevealedHeader" String="{LOC_HUD_POPUP_WORLD_WONDER_CREATED:upper}" Style="FontFlair24" FontStyle="glow" ColorSet="WonderHeader"  Anchor="C,C"/>
+        <Button ID="Close" Texture="Controls_CloseButtonAlt" Size="32,32" Anchor="R,C" Offset="2,0"/>
+      </Grid>
+    </SlideAnim>
+  </AlphaAnim>
+
+  <AlphaAnim ID="QuoteAlpha" Size="full,full" AlphaBegin="0" AlphaEnd="1" Speed=".2" Cycle="Once" Function="OutQuint" FunctionPower="10">
+    <SlideAnim ID="QuoteSlide" Size="full,full" Start="0,200" End="0,0" Speed=".5" Cycle="Once" Function="OutQuint" FunctionPower="10">
+      <Container ID="QuoteContainer" Size="full,100" Anchor="L,B" AutoSize="V" AutoSizePadding="0,10">
+        <Grid ID="RibbonDropShadow" Style="DropShadow3" Size="full, 50" AutoSize="V" Anchor="L,C" InnerPadding="0,30" Color="0,0,0,150">
+          <Box ID="RibbonBox" Color="17,29,36,200" Size="full,50" AutoSize="V" Anchor="L,C">
+            <Box Color="27,39,46,255" Size="full,1"/>
+            <Image ID="DecoMap" Texture="Controls_DecoMapScale" Size="full,4" StretchMode="Tile"  Color="36,49,59,255" Anchor="L,B" Offset="0,1"/>
+            <Container ID="WonderNameContainer" Size="400,50" Anchor="C,C" Offset="-370,0" AutoSize="V" AutoSizePadding="0,12">
+              <Label ID="WonderName" String="GREAT LIBRARY" Style="WindowHeader" Anchor="R,C" Align="Right" Color0="214,225,228,255" Color1="214,225,228,80" WrapWidth="parent-100"/>
+              <Image Anchor="R,C" AnchorSide="O,I" Texture="Controls_CircleBacking68" Size="68,68" Color="193,201,206" Hidden="0">
+                <Image ID="WonderIcon" Texture="Features64" Size="64,64" Anchor="C,C"/>
+              </Image>
+            </Container>
+          </Box>
+        </Grid>
+        <Grid ID="WonderQuoteContainer" Style="SubContainerFill" Size="600,50" AutoSize="V" Color="14,21,26,255" Anchor="C,C" Offset="200,-1" AutoSizePadding="0,-3">
+          <Grid ID="WonderQuoteDeco" Texture="Controls_GossipContainer" SliceTextureSize="70,70" SliceCorner="35,35" MinSize="70,70" Offset="0,-2" Size="parent+4,parent" Anchor="C,T" Color="36,49,59,255" AutoSize="V" InnerPadding="25,20">
+            <Label ID="WonderQuote" Style="BodyText16" Anchor="C,C" WrapWidth="parent-20" String="QuoteString"/>
+          </Grid>
+        </Grid>
+      </Container>
+    </SlideAnim>
+  </AlphaAnim>
+  
+  
+	<Box																				Anchor="C,T"								Size="full,full"			Color="0,0,0,50"		ConsumeAllMouse="1" Hidden="1">
+		<Grid							ID="DropShadow"					Anchor="C,C" Offset="0,-20" Size="600,400"				Style="DropShadow"				AutoSize="V">
+			<Grid						ID="Window"							Anchor="C,C"								Size="parent-100,100"	Style="WindowFrameTitle"	AutoSize="V" InnerPadding="0,50">
+				<Label				ID="PopupTitle"					Anchor="C,T" Offset="0,-10"												Style="HeaderFont"										String="{LOC_UI_FEATURE_NATURAL_WONDER_DISCOVERY:upper}" />
+				<Stack				ID="WindowContentStack" Anchor="C,T" Offset="0,30"	StackGrowth="Down"		Padding="10">
+					<Label			ID="Name"								Anchor="C,T"								Align="center"				Style="FontFlair26" WrapWidth="400"			String="$Name$" FontStyle="Shadow" Color0="255,255,255,255" Color1="0,0,0,200" />
+					<Label			ID="Quote"							Anchor="C,T"								Align="center"				Style="BodyFont"		WrapWidth="400"			String="$Quote$"/>
+					<Label			ID="Description"				Anchor="C,T"								Align="center"				Style="BodyFont16"	WrapWidth="400"			String="$Description$"/>
+					<Label															Anchor="C,T"								Align="center"				Style="BodyFont16"	WrapWidth="400"			String="LOC_FEATURE_NATURAL_WONDER_DESCRIPTION" />
+					<GridButton ID="ContinueButton"			Anchor="C,T"								Size="200,41"					Style="MainButton"	FontStyle="Shadow"	String="Continue"/>
+				</Stack>
+			</Grid>
+		</Grid>
+	</Box>
+</Context>

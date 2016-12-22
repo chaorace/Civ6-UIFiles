@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Context Layer="WorldAnchor" >
+
+	<Container				ID="PlotBonusContainer" />
+	
+	<Instance					Name="PlotYieldBonusInstance">
+		<WorldAnchor		ID="Anchor"			Anchor="C,C"	Size="2,2">
+			<Stack				ID="IconStack" Anchor="C,C" Size="100,50" Padding="1" StackGrowth="Right">
+				<Image			ID="PrereqIcon"	Anchor="C,C"	Offset="0,0"	Size="32,32"	Texture="Alert32" Hidden="1" />
+				<Grid				ID="PlotBonus"	Anchor="C,C"  Size="56,34"	Style="DistrictBonusBack" Hidden="1">
+					<Label		ID="BonusText"	Anchor="C,C"								Offset="-4,-1" Style="YieldBonusText" String="?" />
+				</Grid>
+			</Stack>
+		</WorldAnchor>
+	</Instance>
+
+</Context>

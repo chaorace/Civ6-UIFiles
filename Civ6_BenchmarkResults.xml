@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+         Name="BenchmarkResults" FontStyle="Shadow" ColorSet="BodyTextCool" FontSize="20">
+
+  <Grid Style="WindowFrameHUD" Anchor="C,C" Size="384,0" AutoSize="Vertical" ID="BenchmarkPanel">
+    <Stack StackPadding="8" StackGrowth="Down" Anchor="C,C" ID="BenchmarkStack" >
+      <Label String="LOC_BENCHMARK_RESULTS_TITLE" Anchor="C,T" />
+      <Container Anchor="C,C" Size="parent-10,20">
+        <Label String="LOC_BENCHMARK_FILE" Anchor="L,C"/>
+        <Label ID="FileText" Anchor="R,C"/>
+      </Container>
+      <Container Anchor="C,C" Size="parent-10,20">
+        <Label String="LOC_BENCHMARK_AVG_FRAME_TIME" Anchor="L,C"/>
+        <Label ID="AvgText" Anchor="R,C"/>
+      </Container>
+      <Container Anchor="C,C" Size="parent-10,20">
+        <Label String="LOC_BENCHMARK_99TH_PERCENTILE" Anchor="L,C"/>
+        <Label ID="99thText" Anchor="R,C"/>
+      </Container>
+      <Label String="LOC_FRAME_TIME_DISTRIBUTION" Anchor="C,T" />
+      <Graph ID="FrameDistribution" Size="parent-10,120" Anchor="C,C" Offset="0,0" Domain="0,40" Range="0,100" TickInterval="5,0" NumberInterval="5,0" ShowTicks="1,0" ShowGridLines="1,0" ShowNumbers="1,0" ShowAxes="1,0" GridColor="Civ6Green" />
+      <GridButton ID="CloseButton" Anchor="C,T" Size="236,40" Style="MainButton" String="LOC_HUD_CLOSE" />
+    </Stack>
+  </Grid>
+
+</Context>

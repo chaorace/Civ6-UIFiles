@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+				 ColorSet="Gray_Black_Alpha" Style="FontNormal24" Name="FiraxisLive">
+
+  <Container ID="FiraxisLiveMessageArea" Size="Full,Full" >
+  </Container>
+  
+  <Instance Name="FiraxisLiveMessage" >
+    <Grid ID="Dialog" Size="400,78" Style="Grid9FiraxisLive" >
+      <Image ID="MessageIcon"	Anchor="L,C" Offset="17,C" Size="48,48" Texture="CivBEIcon.dds" />
+      <Stack ID="MessageArea" Anchor="L,T" Offset="82,17" StackGrowth="Down" >
+        <!-- Wrapwidth = DialogWidth(400) - (17 + IconWidth(24) + 17 + 17) -->
+        <Label	ID="MessageTitle"	Anchor="L,T" Style="FiraxisLiveTitleText"/>
+        <Label  ID="MessageText" Anchor="L,T" Style="FiraxisLiveMessageText"/>
+      </Stack>
+    </Grid>
+  </Instance>
+  
+</Context>

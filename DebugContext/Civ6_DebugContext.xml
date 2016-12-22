@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+				 Name="DebugContext" FontStyle="Shadow" ColorSet="Beige_Black_Alpha" FontSize="14">
+
+	<Instance Name="LogText" >
+		<Label ID="Text"  WrapWidth="770" Style="FontNormal14" ColorSet="Beige_Black_Alpha" FontSize="14" />
+	</Instance>
+
+	<Context		ID="DebugContextPanels"		FileName="UI/DebugContext/DebugContextPanels" Hidden="0"  />
+	<Context		ID="TestContext"					FileName="UI/Civ6_UITestMenu"									Hidden="1"  />
+	<Context		ID="DebugUnitPanel"				FileName="UI/DebugContext/DebugUnitPanel"			Hidden="1"  />
+	<Context		ID="StatsScreen"					FileName="UI/FrontEnd/StatsScreen"						Hidden="1" />
+	<LuaContext ID="DebugHotloadCache"		FileName="UI/DebugContext/DebugHotloadCache"	Hidden="0" />
+
+	<Stack ID="DebugStack" >
+
+		<Grid Style="UnitFrame" Anchor="L,T" Offset="60,0" Size="740,30" ID="Console" >
+			<ColorBox Color="0,0,0,90" Anchor="C,C" AutoSize="1" SizePadding="1,1" >
+				<EditBox Anchor="C,C" Size="730,20" MaxLength="255" ID="ConsoleEdit" FocusStop="1" />
+			</ColorBox>
+
+			<Grid Style="UnitFrame" Anchor="L,C" AnchorSide="o,i" Size="30,30" >
+				<Button Anchor="C,C" Style="Select_Up" ToolTip="Toggle Log" ID="LogButton" />
+			</Grid>
+			<Grid Style="UnitFrame" Anchor="L,C" AnchorSide="o,i" Offset="30,0" Size="30,30" >
+				<Button Anchor="C,C" Style="Select_Down" ToolTip="Toggle Panel" ID="DebugPanelButton" />
+			</Grid>
+		</Grid>
+
+		<Grid Style="UnitFrame" Anchor="L,T" Size="800,400" ID="LogPanel" Hidden="1" >
+			<ScrollPanel Size="790,390" Anchor="C,C" ID="LogScroll" Vertical="1" >
+				<Stack StackGrowth="Bottom" Anchor="L,B" Offset="5,10" ID="LogStack" StackPadding="3"  />
+
+				<ScrollBar  Style="ScrollVerticalBar" Length="364" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+				<UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
+				<DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+			</ScrollPanel>
+		</Grid>
+
+		<Grid Style="UnitFrame" Anchor="L,T" AutoSize="1" ID="DebugPanel" Hidden="1" >
+			<Stack StackGrowth="Right" StackPadding="3">
+
+				<Grid Style="UnitFrame" Anchor="R,T" Size="210,260" ID="DebugViewPanel" Hidden="0" >
+					<Stack StackPadding="8" Offset="5,10" >
+						<Label String="Debug View" Anchor="C,C" />
+						<CheckBox Style="MainMenuCheck" BoxOnLeft="1" ID="ShowFrameStats" String="Show Frame Statistics" />
+						<CheckBox Style="MainMenuCheck" BoxOnLeft="1" ID="ShowVFXStats" String="Show VFX Statistics"/>
+						<CheckBox Style="MainMenuCheck" BoxOnLeft="1" ID="ShowTOD" String="Show Time Of Day"/>
+						<CheckBox Style="MainMenuCheck" BoxOnLeft="1" ID="ShowCamera" String="Show Camera"/>
+						<CheckBox Style="MainMenuCheck" BoxOnLeft="1" ID="ShowLuaStats" String="Show Lua Statistics"/>
+						<CheckBox Style="MainMenuCheck" BoxOnLeft="1" ID="ShowMemory" String="Show Memory"/>
+					</Stack>
+				</Grid>
+
+				<Grid Style="UnitFrame" Anchor="R,T" Size="700,400" ID="FrameStatsPanel" Hidden="1" >
+					<ScrollPanel Size="290,400" Anchor="L,T" Vertical="1" >
+						<ScrollBar Style="ScrollVerticalBar" Length="364" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+						<UpButton Style="ScrollUpButton" Anchor="R,T" />
+						<DownButton Style="ScrollDownButton" Anchor="R,B" />
+						<Stack StackPadding="8" Offset="2,10" Anchor="L,T" ID="FrameStatsStack" >
+							<Label String="Frame Statistics" />
+							<Label ID="FPSText" String="Blank" />
+							<Label ID="GPUWaitText" String="Blank" />
+							<Label ID="TerrainText" String="Blank" />
+							<Label ID="ResolutionText" String="Blank" />
+							<Label ID="DeviceText" String="Blank" />
+							<Label ID="VSync" String="Blank" />
+							<Label ID="TickInterval" String="Blank" />
+							<Label ID="MSAASamples" String="Blank" />
+							<Label ID="MSAAQuality" String="Blank" />
+							<Label ID="PrimCount" String="Blank" />
+							<Label ID="DrawCount" String="Blank" />
+							<Label ID="ListCount" String="Blank" />
+							<Label ID="PSOCount" String="Blank" />
+							<Label ID="DynamicSize" String="Blank" />
+							<Label ID="GPUMemoryUsage" String="Blank" />
+							<Label ID="BarrierCount" String="Blank" />
+							<Label ID="RenderTargetSets" String="Blank" />
+              <Label ID="DescriptorTableSets" String="Blank" />
+              <Label ID="RootSigSets" String="Blank" />
+							<Label ID="FenceCount" String="Blank" />
+							<Label ID="AvgTurnTime" String="Blank" />
+							<Label ID="TotalTurnTime" String="Blank" />
+						</Stack>
+					</ScrollPanel>
+					<!--TODO several of these attributes could be packed into a "GraphStyle"-->
+					<Graph ID="FrameGraph" Size="390,380" Anchor="R,C" Offset="10,0" Domain="0,100" Range="0,33" TickInterval="0,5" NumberInterval="0,5" ShowTicks="0,1" ShowGridLines="1,1" ShowNumbers="0,1" ShowAxes="0,1" GridColor="Civ6Green" />
+				</Grid>
+
+				<Grid Style="UnitFrame" Anchor="R,T" Size="240,260" ID="VFX_StatsPanel" Hidden="1" >
+					<ScrollPanel Size="230,250" Anchor="C,C" Vertical="1" >
+						<ScrollBar Style="ScrollVerticalBar" Length="364" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+						<UpButton Style="ScrollUpButton" Anchor="R,T" />
+						<DownButton Style="ScrollDownButton" Anchor="R,B" />
+						<Stack StackPadding="8" Offset="2,10" Anchor="L,T" ID="VFX_StatsStack">
+							<Label String="VFX Statistics" />
+							<Label ID="VFX_ParticleSimuationPreProcess" String="Blank" ToolTip="The time it took to pre-process fork effects/emitters this frame (in milliseconds)"/>
+							<Label ID="VFX_ParticleSimuationProcess" String="Blank" ToolTip="The time it took to simulate all fork particles (in parallel) this frame (in milliseconds)"/>
+							<Label ID="VFX_ParticleSimuationPostProcess" String="Blank" ToolTip="The time it took to post-process fork effects/emitters this frame (in milliseconds)"/>
+							<Label ID="VFX_ParticleSimuationTotalProcess" String="Blank" ToolTip="The total time it took to perform fork simulation this frame (in milliseconds)"/>
+							<Label ID="VFX_AllocatedVFXs" String="Blank" ToolTip="The number of allocated vfx objects"/>
+							<Label ID="VFX_AllocatedVFXModels" String="Blank" ToolTip="The number of allocated vfx model vis objects"/>
+							<Label ID="VFX_EvaluatedLights" String="Blank" ToolTip="The number of lights evaluated"/>
+							<Label ID="VFX_SubmittedLights" String="Blank" ToolTip="The number of lights submitted"/>
+							<Label ID="VFX_SimulatedEffects" String="Blank" ToolTip="The number of fork effects simulated"/>
+							<Label ID="VFX_SimulatedEmitters" String="Blank" ToolTip="The number of fork emitters simulated"/>
+							<Label ID="VFX_SimulatedParticles" String="Blank" ToolTip="The number of fork particles simulated"/>
+							<Label ID="VFX_SubmittedSprites" String="Blank" ToolTip="The number of fork particles sprites submitted"/>
+							<Label ID="VFX_SubmittedTriangles" String="Blank" ToolTip="The number of triangles submitted"/>
+							<Label ID="VFX_RenderedSurfaces" String="Blank" ToolTip="The number of graphics surfaces rendered"/>
+							<Label ID="VFX_RenderedTriangles" String="Blank" ToolTip="The number of triangles rendered"/>
+							<Label ID="VFX_MaxPSBs" String="Blank" ToolTip="The maximum number fork psbs allowed within a fork particle system"/>
+							<Label ID="VFX_MaxEffects" String="Blank" ToolTip="The maximum number fork effects allowed within a fork particle system"/>
+							<Label ID="VFX_MaxEmitters" String="Blank" ToolTip="The maximum number fork emitters allowed within a fork particle system"/>
+							<Label ID="VFX_MaxParticles" String="Blank" ToolTip="The maximum number fork particles allowed within a fork particle system"/>
+							<Label ID="VFX_HeapSize" String="Blank" ToolTip="The fork particle heap size"/>
+							<Label ID="VFX_MaxSimulationThreads" String="Blank" ToolTip="The maximum number of threads used by fork to simulate particles"/>
+						</Stack>
+					</ScrollPanel>
+				</Grid>
+
+				<Grid Style="UnitFrame" Anchor="R,T" Size="220,260" ID="TODPanel" Hidden="1" >
+					<ScrollPanel Size="210,250" Anchor="C,C" Vertical="1" >
+						<ScrollBar Style="ScrollVerticalBar" Length="364" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+						<UpButton Style="ScrollUpButton" Anchor="R,T" />
+						<DownButton Style="ScrollDownButton" Anchor="R,B" />
+						<Stack StackPadding="8" Offset="2,10" Anchor="L,T" ID="TODStack">
+							<Label String="Time Of Day" />
+							<Label String="Time: 00:00 am" ID="TODText" />
+							<Slider Style="Slider_Horiz" Anchor="C,C" Offset="5,0" Size="190,32" ID="TODSlider" />
+							<Label String="Rendered Time: 00:00 am" ID="RenderedTOD" />
+						</Stack>
+					</ScrollPanel>
+				</Grid>
+
+
+				<Grid Style="UnitFrame" Anchor="R,T" Size="220,260" ID="CameraPanel" Hidden="1" >
+					<ScrollPanel Size="210,250" Anchor="C,C" Vertical="1" >
+
+						<Stack StackPadding="8" Offset="2,10" Anchor="L,T" ID="CameraStack">
+							<Label String="Camera state" />
+							<Label String="Camera text goes here" ID="CameraText" />
+						</Stack>
+
+					</ScrollPanel>
+				</Grid>
+
+
+				<Grid Style="UnitFrame" Anchor="R,T" Size="220,260" ID="MemoryPanel" Hidden="1" >
+					<ScrollPanel Size="210,250" Anchor="C,C" Vertical="1" >
+
+						<Stack StackPadding="8" Offset="2,10" Anchor="L,T" ID="MemoryStack">
+							<Label String="Memory text goes here" ID="MemoryText" />
+						</Stack>
+
+					</ScrollPanel>
+				</Grid>
+
+				<Grid Style="UnitFrame" Anchor="R,T" Size="220,260" ID="LuaPanel" Hidden="1" >
+					<ScrollPanel Size="210,250" Anchor="C,C" Vertical="1" >
+
+						<Stack StackPadding="8" Offset="2,10" Anchor="L,T" ID="LuaStack">
+							<Label String="Lua Statistics" />
+							<Label String="" ID="LuaAllocated" />
+							<Label String="" ID="LuaMaxAllocated" />
+						</Stack>
+
+					</ScrollPanel>
+				</Grid>
+
+
+			</Stack>
+
+		</Grid>
+
+
+	</Stack>
+
+</Context>

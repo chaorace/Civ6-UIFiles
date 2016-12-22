@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context ColorSet="Beige_Black_Alpha" Style="FontNormal22" FontStyle="Shadow" >
+
+	<!-- Menu Panel -->
+
+	<Container Size="480,480" Color="0.0.0.0" Anchor="C,C" Offset="0.32" Padding="0,0" >
+
+			<Stack Anchor="C,C" Offset="0,200" Padding="5" ID="MainStack">
+				<GridButton ID="StandardButton"	Style="MainButton" Anchor="C,C" Offset="0,0" Size="400,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MULTIPLAYER_STANDARD_GAME"	ToolTip="LOC_MULTIPLAYER_STANDARD_GAME_TT"/>
+				<GridButton ID="InternetButton"	Style="MainButton" Anchor="C,C" Offset="0,0" Size="400,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MULTIPLAYER_INTERNET_GAME"	ToolTip="LOC_MULTIPLAYER_INTERNET_GAME_TT"	Hidden="1"/>
+				<GridButton ID="LANButton"			Style="MainButton" Anchor="C,C" Offset="0,0" Size="400,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MULTIPLAYER_LAN_GAME"				ToolTip="LOC_MULTIPLAYER_LAN_GAME_TT"				Hidden="1"/>
+				<GridButton ID="HotSeatButton"	Style="MainButton" Anchor="C,C" Offset="0,0" Size="400,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MULTIPLAYER_HOTSEAT_GAME"		ToolTip="LOC_MULTIPLAYER_HOTSEAT_GAME_TT"/>
+				<GridButton ID="CloudButton"			Style="MainButton" Anchor="C,C" Offset="0,0" Size="400,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MULTIPLAYER_CLOUD_GAME"		ToolTip="LOC_MULTIPLAYER_CLOUD_GAME_TT" />
+				<GridButton ID="BackButton"				Style="MainButton" Anchor="C,C" Offset="0,0" Size="400,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MENU_BACK"/>
+			</Stack>
+		
+	</Container>
+
+    <!-- Child Screens -->
+    <LuaContext FileName="UI/FrontEnd/Multiplayer/Lobby" ID="LobbyScreen" Hidden="1"/>
+    <LuaContext FileName="UI/FrontEnd/Multiplayer/HostGame" ID="HostGameScreen" Hidden="1"/>
+	<LuaContext FileName="UI/FrontEnd/Multiplayer/CloudGame" ID="CloudGameScreen" Hidden="1" />
+</Context>

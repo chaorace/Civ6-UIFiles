@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Style="FontNormal18" ColorSet="Beige_Black" FontStyle="Shadow">
+  
+	<Container ID="TechBoostsPanel" Size="280,170" Offset="50,10" ConsumeMouse="true" Hidden="true">
+		<Grid ID="TechBoostsWindow" Size="Parent,Parent" Style="WindowFrameHUD">
+			<Label String="Tech Boosts Available" Offset="20,20" Color="Science"/>
+			<Stack ID="BoostStack" StackGrowth="Top" Offset="25,40" />
+		</Grid>
+	</Container>
+	
+	<Instance Name="BoostStackInstance">
+		<Label ID="InstanceLabel" Style="FontNormal16" String=""/>
+	</Instance>
+  
+</Context>

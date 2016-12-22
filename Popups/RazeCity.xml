@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Style="FontNormal18" ColorSet="Beige_Black" FontStyle="Shadow">
+  <!--
+	<Container ID="RazeCityPanel" Anchor="C,C" Size="500,600" ConsumeMouse="true">
+		<Grid ID="RazeCityWindow" Size="Parent,Parent" Style="WindowFrameHUD">
+			<Label ID="PanelHeader" Anchor="C,T" Offset="0,10" Style="FontFlair28" />
+      <Label ID="CityHeader" Anchor="L,T" Offset="25,80" />
+      <Label ID="CityName" Anchor="L,T" Offset="270,80" />
+      <Label ID="CityPopulation" Anchor="L,T" Offset="25,130" />
+      <Label ID="NumPeople" Anchor="L,T" Offset="270,130" />
+      <Label ID="CityDistricts" Anchor="L,T" Offset="25,180" />
+      <Label ID="NumDistricts" Anchor="L,T" Offset="270,180" />
+      <GridButton ID="Button1" Anchor="C,T" Offset="0,230" Size="350,40" Style="MainButton" FontStyle="Shadow"/>
+      <GridButton ID="Button2" Anchor="C,T" Offset="0,300" Size="350,40" Style="MainButton" FontStyle="Shadow"/>
+      <GridButton ID="Button3" Anchor="C,T" Offset="0,370" Size="350,40" Style="MainButton" FontStyle="Shadow"/>
+      <GridButton ID="Button4" Anchor="C,T" Offset="0,440" Size="350,40" Style="MainButton" FontStyle="Shadow"/>
+    </Grid>
+    	</Container>
+-->
+    <Box     ID="RazeCityPanel"      Size="Full,Full" ConsumeMouse="1" Color="0,0,0,150">
+      <AlphaAnim        ID="PopupAlphaIn"       Size="parent,parent"  AlphaBegin="0"  AlphaEnd="1"  Speed="3" Function="Root" Cycle="Once">
+        <SlideAnim      ID="PopupSlideIn"       Size="parent,parent"  Start="0,-20"   End="0,0"     Speed="3" Function="Root" Cycle="Once">
+          <Grid                                 Size="500,250"        Anchor="C,C" Offset="0,0" Style="DropShadow2"     Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25" ConsumeMouse="1">
+            <Grid       ID="RazeCityWindow"     Size="500,250"        Anchor="C,C" Offset="0,0" Style="WindowFrameTitle" AutoSize="V" AutoSizePadding="0,10">
+              <Container                        Size="parent,38"                         Offset="0,4">
+                <Label  ID="PanelHeader"   Style="WindowHeader"        Anchor="C,C" String="{LOC_CONFIRM_CHOICE:upper}" />
+              </Container>
+              
+              <Stack		ID="PopupStack"  	      Size="400,100"			Anchor="L,T" Offset="50,50" StackGrowth="Bottom" StackPadding="10">
+                <Container Size="1,1"/>
+                <Stack StackGrowth="Right" Anchor="L,T" Padding="5">
+                  <Container  Size="200, 20" AutoSize="V">
+                    <Label        ID="CityHeader"         Anchor="R,C" Style="BodyTextDark16" Align="Right" WrapWidth="parent"/>
+                  </Container>
+                  <Container  Size="200, 20" AutoSize="V">
+                    <Label        ID="CityName"           Anchor="L,C" Style="BodyTextDark16" Align="Left"  WrapWidth="parent"/>
+                  </Container>
+                </Stack>
+                <Stack StackGrowth="Right" Anchor="L,T" Padding="5">
+                  <Container  Size="200, 20" AutoSize="V">
+                    <Label        ID="CityPopulation"     Anchor="R,C" Style="BodyTextDark16" Align="Right" WrapWidth="parent"/>
+                  </Container>
+                  <Container  Size="200, 20" AutoSize="V">
+                    <Label        ID="NumPeople"          Anchor="L,C" Style="BodyTextDark16" Align="Left"  WrapWidth="parent"/>
+                  </Container>
+                </Stack>
+                <Stack StackGrowth="Right" Anchor="L,T" Padding="5">
+                  <Container  Size="200, 20" AutoSize="V">
+                    <Label        ID="CityDistricts"      Anchor="R,C" Style="BodyTextDark16" Align="Right" WrapWidth="parent"/>
+                  </Container>
+                  <Container  Size="200, 20" AutoSize="V">
+                    <Label        ID="NumDistricts"       Anchor="L,C" Style="BodyTextDark16" Align="Left"  WrapWidth="parent"/>
+                  </Container>
+                </Stack>
+                <Stack StackGrowth="Right" WrapWidth="parent" Anchor="C,T">
+                  <GridButton   ID="Button1"     Size="400,41"   Style="MainButton" Hidden="1"/>
+                  <GridButton   ID="Button2"     Size="400,41"   Style="MainButton" Hidden="1"/>
+                  <GridButton   ID="Button3"     Size="200,41"   Style="MainButton" Hidden="0"/>
+                  <GridButton   ID="Button4"     Size="200,41"   Style="MainButton" Hidden="0"/>
+                </Stack>
+              </Stack>
+            </Grid>
+          </Grid>
+        </SlideAnim>
+      </AlphaAnim>
+    </Box>
+</Context>

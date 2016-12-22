@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context ColorSet="BodyTextCool" Style="FontNormal22" FontStyle="Shadow" >
+	<!-- Background fade -->
+
+  <Box                ID="PlayerChangePopup"  Size="Full,Full" ConsumeMouse="1" Color="0,0,0,150" Hidden="0">
+    <AlphaAnim        ID="PopupAlphaIn" Size="parent,parent"  AlphaBegin="0"  AlphaEnd="1"  Speed="3" Function="Root" Cycle="Once">
+      <SlideAnim      ID="PopupSlideIn" Size="parent,parent"  Start="0,-20"   End="0,0"     Speed="3" Function="Root" Cycle="Once">
+        <Grid         ID="DropShadow"   Size="500,250"              Anchor="C,C" Offset="0,0" Style="DropShadow2"     Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25" ConsumeMouse="1">
+          <Grid       ID="Window"       Size="500,250"              Anchor="C,C" Offset="0,0" Style="WindowFrameTitle" AutoSize="V" AutoSizePadding="0,10">
+            <Container                  Size="parent,38"                         Offset="0,4">
+              <Label  ID="DialogTitle"    Style="WindowHeader"        Anchor="C,C" String="{LOC_HOTSEAT_EDIT_PLAYER:upper}" />
+            </Container>
+            <Stack		ID="HotseatPasswordStack"  	Anchor="R,T" Offset="50,50" StackGrowth="Bottom" StackPadding="10">
+              <Stack        ID="HotseatPlayerNameStack" StackGrowth="Right" Padding="20" Anchor="R,T">
+                <Label      ID="HotseatPlayerNameLabel" Style="BodyTextDark18" Align="Right" WrapWidth="parent-20" Anchor="L,C" String="LOC_HOTSEAT_PLAYER_NAME"/>
+                <Grid       ID="HotseatPlayerNameBox" Style="EditTextArea" Size="153,29" Anchor="C,T" Offset="0,4">
+                  <Box Size="parent-8,parent-8" Color="0,0,0,70" Anchor="C,C"/>
+                  <EditBox  ID="HotseatPlayerNameEntry" FocusStop="1" CallOnChar="1" Style="BlueGlow" EditMode="1" Size="parent-5,22" Anchor="C,C" MaxLength="32" ConsumeMouse="1" HighlightColor="25,120,154,200"/>
+                </Grid>
+              </Stack>
+
+              <Stack         StackGrowth="Right" Padding="20" Anchor="R,T">
+                <Label      ID="HotseatPasswordLabel" Style="BodyTextDark18" Align="Right" WrapWidth="parent-20" Anchor="L,C" String="LOC_HOTSEAT_PASSWORD"/>
+                <Grid       ID="HotseatPasswordBox" Style="EditTextArea" Size="153,29" Anchor="C,T" Offset="0,4">
+                  <Box Size="parent-8,parent-8" Color="0,0,0,70" Anchor="C,C"/>
+                  <EditBox  ID="HotseatPasswordEntry" Obscure="1" FocusStop="1" CallOnChar="1" Style="BlueGlow" EditMode="1" Size="parent-5,22" Anchor="C,C" MaxLength="32" ConsumeMouse="1" HighlightColor="25,120,154,200"/>
+                </Grid>
+              </Stack>
+
+              <Stack         StackGrowth="Right" Padding="20" Anchor="R,T">
+                <Label      ID="HotseatPasswordVerifyLabel" Style="BodyTextDark18" Align="Right" WrapWidth="parent-20" Anchor="L,C" String="LOC_HOTSEAT_RETYPE_PASSWORD"/>
+                <Grid       ID="HotseatPasswordVerifyBox" Style="EditTextArea" Size="153,29" Anchor="C,T" Offset="0,4">
+                  <Box Size="parent-8,parent-8" Color="0,0,0,70" Anchor="C,C"/>
+                  <EditBox  ID="HotseatPasswordVerifyEntry" Obscure="1" FocusStop="1" CallOnChar="1" Style="BlueGlow" EditMode="1" Size="parent-5,22" Anchor="C,C" MaxLength="32" ConsumeMouse="1" HighlightColor="25,120,154,200"/>
+                </Grid>
+              </Stack>
+
+              <Container Size="400,20" AutoSize="V" MinSize="20,20">
+                <Label        ID="HotseatPasswordsMatchLabel"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="parent-20" String="LOC_MULTIPLAYER_HOTSEAT_PASSWORDS_DONT_MATCH" Hidden="1"/>
+              </Container>
+              
+              <Stack ID="StackContents" Offset="0,0" StackGrowth="Right" Padding="20" Anchor="C,T">
+                <GridButton   ID="CancelButton"     Size="200,41"   Style="MainButton" String="LOC_CANCEL_BUTTON"/>
+                <GridButton   ID="AcceptButton"       Size="200,41"   Style="MainButton" String="LOC_ACCEPT_BUTTON"/>
+              </Stack>
+              
+            </Stack>
+          </Grid>
+        </Grid>
+      </SlideAnim>
+    </AlphaAnim>
+  </Box>
+  		<!-- Hotseat Player Name 
+	<Box Style="BGBlock" />
+	<Grid Size="450,300m" Anchor="C,C" Offset="0,0" Padding="0,20" Style="WindowFrame" >
+
+		<Label ID="DialogTitle" Anchor="C,T" Offset="0,25" FontStyle="stroke"	Color0="255,255,255,255"	Color1="0,0,0,200"	Style="FontBoldFlair26" Align="Center" String="LOC_HOTSEAT_EDIT_PLAYER"/>
+		<Label ID="DialogStatus" Anchor="C,T" Offset="0,25" Style="FontNormal20" Color="0,0,0,255" WrapWidth="400" String=""/>
+
+
+		<Stack ID="HotseatPasswordStack" Anchor="C,T" StackGrowth="Down" Offset="5,85" Padding="10">
+			<Stack ID="HotseatPlayerNameStack" StackGrowth="Right" Offset="5,0" Padding="10">
+				<Label ID="HotseatPlayerNameLabel" String="LOC_HOTSEAT_PLAYER_NAME"/>
+				<Box ID="HotseatPlayerNameBox" Size="153,27" Color="255,255,200,255">
+					<Box Anchor="C,C"	Size="parent-3,25" Color="0,0,0,255">
+						<EditBox ID="HotseatPlayerNameEntry"	Anchor="C,C"	Size="parent,parent" MaxLength="32" KeepFocus="1" FocusStop="0" Style="FontNormal18" />
+					</Box>
+				</Box>
+			</Stack>
+			<Stack StackGrowth="Right" Offset="5,0" Padding="10">
+				<Label ID="HotseatPasswordLabel" Anchor="L,C" String="LOC_HOTSEAT_PASSWORD"/>
+				<Box ID="HotseatPasswordBox" Size="153,27" Color="255,255,200,255">
+					<Box Anchor="C,C" Size="parent-3,25" Color="0,0,0,255">
+						<EditBox ID="HotseatPasswordEntry"	Size="parent,parent" MaxLength="32" Obscure="1" KeepFocus="1" FocusStop="1" Style="FontNormal18" />
+					</Box>
+				</Box>
+			</Stack>
+			<Stack StackGrowth="Right" Offset="5,0" Padding="10">
+				<Label ID="HotseatPasswordVerifyLabel" Anchor="L,C" String="LOC_HOTSEAT_RETYPE_PASSWORD"/>
+				<Box ID="HotseatPasswordVerifyBox" Anchor="L,C"	Size="153,27" Color="255,255,200,255">
+					<Box Anchor="C,C"	Size="parent-3,25" Color="0,0,0,255">
+						<EditBox		ID="HotseatPasswordVerifyEntry"	Anchor="C,C"	Size="parent,parent" MaxLength="32" Obscure="1" KeepFocus="1" FocusStop="2" Style="FontNormal18" />
+					</Box>
+				</Box>
+			</Stack>
+		</Stack>
+
+		<Label ID="HotseatPasswordsMatchLabel" Anchor="C,B" Offset="0,80" Color="255,0,0,255" Style="FontNormal12" String="LOC_MULTIPLAYER_HOTSEAT_PASSWORDS_DONT_MATCH" Hidden="1"/>
+
+		<Stack ID="StackContents" Anchor="C,B" Offset="0,25" Size="450,100" StackGrowth="Right" StackPadding="30" InnerPadding="0,0">
+			<GridButton		ID="AcceptButton"			Size="160,42"		Style="MainButton" String="LOC_ACCEPT_BUTTON" />
+			<GridButton		ID="CancelButton"			Size="160,42"		Style="MainButton" String="LOC_CANCEL_BUTTON" />
+		</Stack>
+
+	</Grid>-->
+</Context>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_LEADERS" IconSize="32"  IconsPerRow="8" IconsPerColumn="8" Filename="Leaders32"/>
+    <Row Name="ICON_ATLAS_LEADERS" IconSize="45"  IconsPerRow="8" IconsPerColumn="8" Filename="Leaders45"/>
+    <Row Name="ICON_ATLAS_LEADERS" IconSize="50"  IconsPerRow="8" IconsPerColumn="8" Filename="Leaders50"/>
+	  <Row Name="ICON_ATLAS_LEADERS" IconSize="55"  IconsPerRow="8" IconsPerColumn="8" Filename="Leaders55"/>
+    <Row Name="ICON_ATLAS_LEADERS" IconSize="64"  IconsPerRow="8" IconsPerColumn="8" Filename="Leaders64"/>
+    <Row Name="ICON_ATLAS_LEADERS" IconSize="80"  IconsPerRow="8" IconsPerColumn="8" Filename="Leaders80"/>
+	  <Row Name="ICON_ATLAS_LEADERS" IconSize="256" IconsPerRow="8" IconsPerColumn="8" Filename="Leaders256"/>
+
+    <Row Name="ICON_ATLAS_MONTEZUMA" IconSize="32"  IconsPerRow="1" IconsPerColumn="1" Filename="Montezuma32"/>
+    <Row Name="ICON_ATLAS_MONTEZUMA" IconSize="45"  IconsPerRow="1" IconsPerColumn="1" Filename="Montezuma45"/>
+    <Row Name="ICON_ATLAS_MONTEZUMA" IconSize="50"  IconsPerRow="1" IconsPerColumn="1" Filename="Montezuma50"/>
+    <Row Name="ICON_ATLAS_MONTEZUMA" IconSize="55"  IconsPerRow="1" IconsPerColumn="1" Filename="Montezuma55"/>
+    <Row Name="ICON_ATLAS_MONTEZUMA" IconSize="64"  IconsPerRow="1" IconsPerColumn="1" Filename="Montezuma64"/>
+    <Row Name="ICON_ATLAS_MONTEZUMA" IconSize="80"  IconsPerRow="1" IconsPerColumn="1" Filename="Montezuma80"/>
+    <Row Name="ICON_ATLAS_MONTEZUMA" IconSize="256" IconsPerRow="1" IconsPerColumn="1" Filename="Montezuma256"/>
+
+    <Row Name="ICON_ATLAS_JADWIGA" IconSize="32"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga32"/>
+    <Row Name="ICON_ATLAS_JADWIGA" IconSize="45"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga45"/>
+    <Row Name="ICON_ATLAS_JADWIGA" IconSize="50"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga50"/>
+    <Row Name="ICON_ATLAS_JADWIGA" IconSize="55"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga55"/>
+    <Row Name="ICON_ATLAS_JADWIGA" IconSize="64"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga64"/>
+    <Row Name="ICON_ATLAS_JADWIGA" IconSize="80"  IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga80"/>
+    <Row Name="ICON_ATLAS_JADWIGA" IconSize="256" IconsPerRow="1" IconsPerColumn="1" Filename="Jadwiga256"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+    <Row Name="ICON_LEADER_DEFAULT"                        Atlas="ICON_ATLAS_LEADERS" Index="0"/>
+    <Row Name="ICON_LEADER_BARBAROSSA"                     Atlas="ICON_ATLAS_LEADERS" Index="1"/>
+    <Row Name="ICON_LEADER_CATHERINE_DE_MEDICI"            Atlas="ICON_ATLAS_LEADERS" Index="2"/>
+    <Row Name="ICON_LEADER_CLEOPATRA"                      Atlas="ICON_ATLAS_LEADERS" Index="3"/>
+    <Row Name="ICON_LEADER_GANDHI"                         Atlas="ICON_ATLAS_LEADERS" Index="4"/>
+    <Row Name="ICON_LEADER_GILGAMESH"                      Atlas="ICON_ATLAS_LEADERS" Index="5"/>
+    <Row Name="ICON_LEADER_GORGO"                          Atlas="ICON_ATLAS_LEADERS" Index="6"/>
+    <Row Name="ICON_LEADER_HARDRADA"                       Atlas="ICON_ATLAS_LEADERS" Index="7"/>
+    <Row Name="ICON_LEADER_HOJO"                           Atlas="ICON_ATLAS_LEADERS" Index="8"/>
+    <Row Name="ICON_LEADER_MVEMBA"                         Atlas="ICON_ATLAS_LEADERS" Index="9"/>
+    <Row Name="ICON_LEADER_PEDRO"                          Atlas="ICON_ATLAS_LEADERS" Index="10"/>
+    <Row Name="ICON_LEADER_PERICLES"                       Atlas="ICON_ATLAS_LEADERS" Index="11"/>
+    <Row Name="ICON_LEADER_PETER_GREAT"                    Atlas="ICON_ATLAS_LEADERS" Index="12"/>
+    <Row Name="ICON_LEADER_PHILIP_II"                      Atlas="ICON_ATLAS_LEADERS" Index="13"/>
+    <Row Name="ICON_LEADER_QIN"                            Atlas="ICON_ATLAS_LEADERS" Index="14"/>
+    <Row Name="ICON_LEADER_SALADIN"                        Atlas="ICON_ATLAS_LEADERS" Index="15"/>
+    <Row Name="ICON_LEADER_TOMYRIS"                        Atlas="ICON_ATLAS_LEADERS" Index="16"/>
+    <Row Name="ICON_LEADER_TRAJAN"                         Atlas="ICON_ATLAS_LEADERS" Index="17"/>
+    <Row Name="ICON_LEADER_T_ROOSEVELT"                    Atlas="ICON_ATLAS_LEADERS" Index="18"/>
+    <Row Name="ICON_LEADER_VICTORIA"                       Atlas="ICON_ATLAS_LEADERS" Index="19"/>
+    <Row Name="ICON_LEADER_MINOR_CIV_DEFAULT"              Atlas="ICON_ATLAS_LEADERS" Index="0"/>
+    <Row Name="ICON_LEADER_MINOR_CIV_SCIENTIFIC"           Atlas="ICON_ATLAS_LEADERS" Index="0"/>
+    <Row Name="ICON_LEADER_MINOR_CIV_RELIGIOUS"            Atlas="ICON_ATLAS_LEADERS" Index="0"/>
+    <Row Name="ICON_LEADER_MINOR_CIV_TRADE"                Atlas="ICON_ATLAS_LEADERS" Index="0"/>
+    <Row Name="ICON_LEADER_MINOR_CIV_CULTURAL"             Atlas="ICON_ATLAS_LEADERS" Index="0"/>
+    <Row Name="ICON_LEADER_MINOR_CIV_MILITARISTIC"         Atlas="ICON_ATLAS_LEADERS" Index="0"/>
+    <Row Name="ICON_LEADER_MINOR_CIV_INDUSTRIAL"           Atlas="ICON_ATLAS_LEADERS" Index="0"/>
+    <Row Name="ICON_LEADER_BARBARIAN"                      Atlas="ICON_ATLAS_LEADERS" Index="0"/>
+
+    <Row Name="ICON_LEADER_JADWIGA"                        Atlas="ICON_ATLAS_JADWIGA" Index="0"/>
+    <Row Name="ICON_LEADER_MONTEZUMA"                      Atlas="ICON_ATLAS_MONTEZUMA" Index="0"/>
+  </IconDefinitions>
+</GameInfo>

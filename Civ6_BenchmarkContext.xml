@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+         Name="BenchmarkContext" FontStyle="Shadow" ColorSet="BodyTextCool" FontSize="20">
+
+  <Grid Style="WindowFrameHUD" Anchor="C,T" Offset="0,50" Size="640,230" ID="BenchmarkPanel">
+    <!--benchmarking data stack-->
+    <Container Size="260,230" Anchor="L,C">
+      <Stack StackPadding="8" StackGrowth="Down" Anchor="L,C" ID="BenchmarkStack" >
+        <Label String="LOC_BENCHMARK_TITLE" Anchor="C,C" />
+        <Container Anchor="C,C" Size="parent-10,20">
+          <Label String="LOC_BENCHMARK_FRAME" Anchor="L,C"/>
+          <Label ID="FrameText" Anchor="R,C"/>
+        </Container>
+        <Container Anchor="C,C" Size="parent-10,20">
+          <Label String="LOC_BENCHMARK_CURRENT_FPS" Anchor="L,C"/>
+          <Label ID="FPSText" Anchor="R,C"/>
+        </Container>
+        <Container Anchor="C,C" Size="parent-10,20">
+          <Label String="LOC_BENCHMARK_FRAME_TIME" Anchor="L,C"/>
+          <Label ID="CurrText" Anchor="R,C"/>
+        </Container>
+        <Container Anchor="C,C" Size="parent-10,20">
+          <Label String="LOC_BENCHMARK_99TH_PERCENTILE" Anchor="L,C"/>
+          <Label ID="99thText" Anchor="R,C"/>
+        </Container>
+        <Container Anchor="C,C" Size="parent-10,20">
+          <Label String="LOC_BENCHMARK_AVERAGE" Anchor="L,C"/>
+          <Label ID="AvgText" Anchor="R,C"/>
+        </Container>
+        <GridButton ID="CloseButton" Anchor="L,T" Size="parent-10,40" Style="MainButton" String="LOC_HUD_CLOSE" />
+      </Stack>
+    </Container>
+    <!--benchmarking graph-->
+    <Graph ID="FrameGraph" Size="365,210" Anchor="R,C" Offset="0,0" Domain="0,100" Range="0,33" TickInterval="0,5" NumberInterval="0,5" ShowTicks="0,1" ShowGridLines="1,1" ShowNumbers="0,1" ShowAxes="0,1" GridColor="Civ6Green" />
+  </Grid>
+
+</Context>

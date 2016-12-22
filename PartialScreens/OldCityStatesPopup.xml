@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSPY v2004 rel. 2 U (http://www.xmlspy.com) by Anton Strenger (Firaxis Games) -->
+<Context Style="FontNormal20">
+	<Instance Name="CityStateInstance">
+		<GridButton ID="CityStateBase" Style="ProductionBuildingSlot" Size="948,40">
+			<Label ID="NameLabel" Anchor="L,C" Offset="5,0" Style="FontNormal16" String="Name"/>
+			<Label ID="TypeLabel" Anchor="L,C" Offset="125,0" Style="FontNormal16" String="[ICON_Faith]Religious"/>
+			<Label ID="QuestsLabel" Anchor="L,C" Offset="250,0" Style="FontNormal16" String="[COLOR_GREEN]![ENDCOLOR]"/>
+			<GridButton ID="GiveTokenButton" Anchor="L,C" Size="140,32" Offset="270,0" Style="MainButton" String="Send Envoy"/>
+			<Label ID="CurrentTokensLabel" Anchor="L,C" Offset="415,0" Style="FontNormal16" String="Current Tokens"/>
+			<Label ID="TypeBonusLabel" Anchor="L,C" Offset="510,0" Style="FontNormal16" String="Next Bonus"/>
+			<Label ID="UniqueBonusLabel" Anchor="L,C" Offset="620,0" Style="FontNormal16" String="Most Tokens Y/N?"/>
+			<GridButton ID="LevyMilitaryButton" Anchor="R,C" Size="140,32" Offset="150,0" Style="MainButton" String="Levy Military"/>
+			<GridButton ID="ChangeWarStateButton" Anchor="R,C" Size="140,32" Offset="0,0" Style="MainButton" String="Declare War!"/>
+		</GridButton>
+	</Instance>
+	<Grid ID="MainWindow" Style="WindowFrameTitle" Anchor="C,C" Size="1000,760" ConsumeMouse="true" NoStateChange="true">
+		<Grid Style="SubContainer" Anchor="C,B" Offset="0,20" Size="960,690"/>
+		<Label ID="MainHeader" Anchor="C,T" Offset="0,12" Style="FontNormal20" Hidden="false" String="MainHeader"/>
+		<Label ID="PointsLabel" Anchor="L,T" Offset="50,80" Style="FontNormal16" Hidden="false" String="PointsLabel"/>
+		<Stack ID="CityStateStack" StackGrowth="Bottom" Anchor="L,T" Offset="24,150" Padding="5"/>
+		<Button ID="CloseButton" Style="Btn_Topbar_Quit" Anchor="R,T" Offset="0,0"/>
+	</Grid>
+</Context>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+	<IconTextureAtlases>
+    
+		<Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="22" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols22.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="30" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols30.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="36" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols36.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="45" IconsPerRow="8" IconsPerColumn="8" Filename="CivDefaults45.dds"/> <!--Baked in color-->
+    <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="44" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols44.dds"/> <!-- city state ribbon -->
+	<Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="48" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols48.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="50" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols50.dds"/>
+	  <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="64" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols64.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="80" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols80.dds"/>
+	  <Row Name="ICON_ATLAS_CIVILIZATIONS" IconSize="256" IconsPerRow="8" IconsPerColumn="8" Filename="CivSymbols256.dds"/>
+
+    <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="22"   IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec22.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="30"   IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec30.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="36"   IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec36.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="45"   IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec45.dds"/> <!--Baked in color-->
+    <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="48"   IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec48.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="50"   IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec50.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="64"   IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec64.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="80"   IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec80.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_AZTEC" IconSize="256"  IconsPerRow="1" IconsPerColumn="1" Filename="CivAztec256.dds"/>
+
+    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="22"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland22.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="30"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland30.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="36"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland36.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="45"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland45.dds"/> <!--Baked in color-->
+    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="48"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland48.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="50"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland50.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="64"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland64.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="80"  IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland80.dds"/>
+    <Row Name="ICON_ATLAS_CIVILIZATION_POLAND" IconSize="256" IconsPerRow="1" IconsPerColumn="1" Filename="CivPoland256.dds"/>
+	</IconTextureAtlases>
+  
+	<IconDefinitions>
+    <Row Name="ICON_CIVILIZATION_UNKNOWN"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="0"/>
+    <Row Name="ICON_CIVILIZATION_BARBARIAN"         Atlas="ICON_ATLAS_CIVILIZATIONS" Index="1"/>
+    <Row Name="ICON_CIVILIZATION_AMERICA"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="2"/>
+    <Row Name="ICON_CIVILIZATION_ARABIA"            Atlas="ICON_ATLAS_CIVILIZATIONS" Index="3"/>
+    <Row Name="ICON_CIVILIZATION_BRAZIL"            Atlas="ICON_ATLAS_CIVILIZATIONS" Index="4"/>
+    <Row Name="ICON_CIVILIZATION_CHINA"             Atlas="ICON_ATLAS_CIVILIZATIONS" Index="5"/>
+    <Row Name="ICON_CIVILIZATION_ENGLAND"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="6"/>
+    <Row Name="ICON_CIVILIZATION_EGYPT"             Atlas="ICON_ATLAS_CIVILIZATIONS" Index="7"/>
+    <Row Name="ICON_CIVILIZATION_FRANCE"            Atlas="ICON_ATLAS_CIVILIZATIONS" Index="8"/>
+    <Row Name="ICON_CIVILIZATION_GERMANY"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="9"/>
+    <Row Name="ICON_CIVILIZATION_GREECE"            Atlas="ICON_ATLAS_CIVILIZATIONS" Index="10"/>
+    <Row Name="ICON_CIVILIZATION_INDIA"             Atlas="ICON_ATLAS_CIVILIZATIONS" Index="11"/>
+    <Row Name="ICON_CIVILIZATION_JAPAN"             Atlas="ICON_ATLAS_CIVILIZATIONS" Index="12"/>
+    <Row Name="ICON_CIVILIZATION_KONGO"             Atlas="ICON_ATLAS_CIVILIZATIONS" Index="13"/>
+    <Row Name="ICON_CIVILIZATION_NORWAY"            Atlas="ICON_ATLAS_CIVILIZATIONS" Index="14"/>
+    <Row Name="ICON_CIVILIZATION_ROME"              Atlas="ICON_ATLAS_CIVILIZATIONS" Index="15"/>
+    <Row Name="ICON_CIVILIZATION_RUSSIA"            Atlas="ICON_ATLAS_CIVILIZATIONS" Index="16"/>
+    <Row Name="ICON_CIVILIZATION_SCYTHIA"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="17"/>
+    <Row Name="ICON_CIVILIZATION_SPAIN"             Atlas="ICON_ATLAS_CIVILIZATIONS" Index="18"/>
+    <Row Name="ICON_CIVILIZATION_SUMERIA"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="19"/>
+      
+	  <Row Name="ICON_CIVILIZATION_AZTEC"             Atlas="ICON_ATLAS_CIVILIZATION_AZTEC"   Index="0"/>
+    <Row Name="ICON_CIVILIZATION_POLAND"            Atlas="ICON_ATLAS_CIVILIZATION_POLAND"  Index="0"/>
+
+    <Row Name="ICON_CIVILIZATION_AMSTERDAM"         Atlas="ICON_ATLAS_CIVILIZATIONS" Index="20"/>
+    <Row Name="ICON_CIVILIZATION_BRUSSELS"          Atlas="ICON_ATLAS_CIVILIZATIONS" Index="21"/>
+    <Row Name="ICON_CIVILIZATION_BUENOS_AIRES"      Atlas="ICON_ATLAS_CIVILIZATIONS" Index="22"/>
+    <Row Name="ICON_CIVILIZATION_CARTHAGE"          Atlas="ICON_ATLAS_CIVILIZATIONS" Index="23"/>
+    <Row Name="ICON_CIVILIZATION_GENEVA"            Atlas="ICON_ATLAS_CIVILIZATIONS" Index="24"/>
+    <Row Name="ICON_CIVILIZATION_HATTUSA"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="25"/>
+    <Row Name="ICON_CIVILIZATION_HONG_KONG"         Atlas="ICON_ATLAS_CIVILIZATIONS" Index="26"/>
+    <Row Name="ICON_CIVILIZATION_JAKARTA"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="27"/>
+    <Row Name="ICON_CIVILIZATION_JERUSALEM"         Atlas="ICON_ATLAS_CIVILIZATIONS" Index="28"/>
+    <Row Name="ICON_CIVILIZATION_KABUL"             Atlas="ICON_ATLAS_CIVILIZATIONS" Index="29"/>
+    <Row Name="ICON_CIVILIZATION_KANDY"             Atlas="ICON_ATLAS_CIVILIZATIONS" Index="30"/>
+    <Row Name="ICON_CIVILIZATION_KUMASI"            Atlas="ICON_ATLAS_CIVILIZATIONS" Index="31"/>
+    <Row Name="ICON_CIVILIZATION_LA_VENTA"          Atlas="ICON_ATLAS_CIVILIZATIONS" Index="32"/>
+    <Row Name="ICON_CIVILIZATION_YEREVAN"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="33"/>
+    <Row Name="ICON_CIVILIZATION_LISBON"            Atlas="ICON_ATLAS_CIVILIZATIONS" Index="34"/>
+    <Row Name="ICON_CIVILIZATION_MOHENJO_DARO"      Atlas="ICON_ATLAS_CIVILIZATIONS" Index="35"/>
+    <Row Name="ICON_CIVILIZATION_NAN_MADOL"         Atlas="ICON_ATLAS_CIVILIZATIONS" Index="36"/>
+    <Row Name="ICON_CIVILIZATION_PRESLAV"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="37"/>
+    <Row Name="ICON_CIVILIZATION_SEOUL"             Atlas="ICON_ATLAS_CIVILIZATIONS" Index="38"/>
+    <Row Name="ICON_CIVILIZATION_STOCKHOLM"         Atlas="ICON_ATLAS_CIVILIZATIONS" Index="39"/>
+    <Row Name="ICON_CIVILIZATION_TORONTO"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="40"/>
+    <Row Name="ICON_CIVILIZATION_VALLETTA"          Atlas="ICON_ATLAS_CIVILIZATIONS" Index="41"/>
+    <Row Name="ICON_CIVILIZATION_VILNIUS"           Atlas="ICON_ATLAS_CIVILIZATIONS" Index="42"/>
+    <Row Name="ICON_CIVILIZATION_ZANZIBAR"          Atlas="ICON_ATLAS_CIVILIZATIONS" Index="43"/>
+    <Row Name="ICON_CIVILIZATION_GREECE_GORGO"      Atlas="ICON_ATLAS_CIVILIZATIONS" Index="44"/>
+  </IconDefinitions>                                                                
+</GameInfo>                                                                         

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context ColorSet="Beige_Black_Alpha" Style="FontNormal18" Name="FrontEnd" FontSize="16" >
+
+    <Box Anchor="C,C" Size="Full,Full" Color="128,128,128,128" />
+
+  <!--
+    <Stack Anchor="c,b" StackGrowth="R" StackPadding="30" Offset="0,60" >
+        <Stack Anchor="c,b" StackPadding="5" SizePadding="150,0" >
+          
+            <Button Anchor="C,C" Style="Button_X" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="Button_X" />
+            </Button>
+            <Button Anchor="C,C" Style="Button_X2" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="Button_X2" />
+            </Button>
+            <Button Anchor="C,C" Style="TabButton" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="TabButton" />
+            </Button>
+            <Button Anchor="C,C" Style="BarButton" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="BarButton" />
+            </Button>
+            <Button Anchor="C,C" Style="RoundButton" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="RoundButton" />
+            </Button>
+            <Button Anchor="C,C" Style="HexButton" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="HexButton" />
+            </Button>
+            <Button Anchor="C,C" Style="HexButtonA" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="HexButtonA" />
+            </Button>
+            <Button Anchor="C,C" Style="ScrollBarUp" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="ScrollBarUp" />
+            </Button>
+            <Button Anchor="C,C" Style="ScrollBarDown" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="ScrollBarDown" />
+            </Button>
+            <Button Anchor="C,C" Style="ScrollBarLeft" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="ScrollBarLeft" />
+            </Button>
+            <Button Anchor="C,C" Style="ScrollBarRight" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="ScrollBarRight" />
+            </Button>
+            <Button Anchor="C,C" Style="SelectedUp" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="SelectedUp" />
+            </Button>
+            <Button Anchor="C,C" Style="SelectedDown" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="SelectedDown" />
+            </Button>
+            <Button Anchor="C,C" Style="ForwardButton" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="ForwardButton" />
+            </Button>
+            <Button Anchor="C,C" Style="BackButton" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="BackButton" />
+            </Button>
+            <Button Anchor="C,C" Style="Button_64" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="Button_64" />
+            </Button>
+            <Button Anchor="C,C" Style="Button_128" >
+                <Label Anchor="R,C" AnchorSide="o,i" String="Button_128" />
+            </Button>
+        </Stack>
+        
+        <Stack Anchor="c,b" StackPadding="5" >
+            <CheckBox Anchor="R,C" Style="DefaultCheck" String="DefaultCheck" IsChecked="1" />
+            <CheckBox Anchor="R,C" Style="DefaultXCheck" String="DefaultXCheck" IsChecked="1" />
+            <CheckBox Anchor="R,C" Style="SquareCheck" String="SquareCheck" IsChecked="1" />
+            <CheckBox Anchor="R,C" Style="SquareXCheck" String="SquareXCheck" IsChecked="1" />
+            <Button Anchor="C,C" String="Button_256_Shine" Style="Button_256_Shine" />
+            <Button Anchor="C,C" String="Button_512" Style="Button_512" />
+        </Stack>
+        
+        
+        <Stack Anchor="c,b" StackPadding="5" >
+            <GridButton Anchor="C,C" Size="200,30" String="SquareFrameButton" Style="SquareFrameButton" />
+            <GridButton Anchor="C,C" Size="200,30" String="SquareFrameButtonGrey" Style="SquareFrameButtonGrey" />
+            <GridButton Anchor="C,C" Size="200,30" String="ZoomButton" Style="ZoomButton" />
+            <GridButton Anchor="C,C" Size="200,40" String="RoundFrameButton" Style="RoundFrameButton" />
+            <GridButton Anchor="C,C" Size="200,40" String="RoundFrameButton2" Style="RoundFrameButton2" />
+            
+            <GridButton Anchor="C,C" Size="200,30" String="LineButton" Style="LineButton" />
+            <GridButton Anchor="C,C" Size="200,30" String="SquareButton" Style="SquareButton" />
+            <GridButton Anchor="C,C" Size="200,30" String="SquareButtonBlack" Style="SquareButtonBlack" />
+            
+            <GridButton Anchor="C,C" String="EmptyButton" Style="EmptyButton" />
+            <GridButton Anchor="C,C" String="EmptyButtonSmall" Style="EmptyButtonSmall" />
+        </Stack>
+        
+
+
+
+        <Stack Anchor="c,b" StackPadding="5" >
+            <Grid Size="200,30" Style="SquareFrameGrey" >
+                <Label Anchor="C,C" String="SquareFrameGrey" />
+            </Grid>
+            <Grid Size="200,30" Style="SquareFrameBlack" >
+                <Label Anchor="C,C" String="SquareFrameBlack" />
+            </Grid>
+            <Grid Size="200,30" Style="SquareFrameBlue" >
+                <Label Anchor="C,C" String="SquareFrameBlue" />
+            </Grid>
+            <Grid Size="200,45" Style="RoundFrameGrey" >
+                <Label Anchor="C,C" String="RoundFrameGrey" />
+            </Grid>
+            <Grid Size="200,45" Style="RoundFrameBlack" >
+                <Label Anchor="C,C" String="RoundFrameBlack" />
+            </Grid>
+            <Grid Size="200,45" Style="RoundFrameBlue" >
+                <Label Anchor="C,C" String="RoundFrameBlue" />
+            </Grid>
+            <Grid Size="200,30" Style="RoundGrey" >
+                <Label Anchor="C,C" String="RoundGrey" />
+            </Grid>
+            <Grid Size="200,30" Style="RoundGreyTint" >
+                <Label Anchor="C,C" String="RoundGreyTint" />
+            </Grid>
+            <Grid Size="200,30" Style="RoundBlack" >
+                <Label Anchor="C,C" String="RoundBlack" />
+            </Grid>
+            <Grid Size="200,30" Style="RoundBlackTint" >
+                <Label Anchor="C,C" String="RoundBlackTint" />
+            </Grid>
+
+            <Grid Size="200,40" Style="EmptyFrame" >
+                <Label Anchor="C,C" String="EmptyFrame" />
+            </Grid>
+            <Grid Size="200,45" Style="BlackCorners" >
+                <Label Anchor="C,C" String="BlackCorners" />
+            </Grid>
+            <Grid Size="200,40" Style="Glass"  >
+                <Label Anchor="C,C" String="Glass" />
+            </Grid>
+
+        </Stack>
+        
+        
+        <Stack Anchor="c,b" StackPadding="5" >
+            <Grid Size="200,80" Style="SideFrames" >
+                <Label Anchor="C,C" String="SideFrames" />
+            </Grid>
+            <Grid Size="200,80" Style="WindowBlack" >
+                <Label Anchor="C,C" String="WindowBlack" />
+            </Grid>
+            <Grid Size="200,80" Style="WindowEmpty" >
+                <Label Anchor="C,C" String="WindowEmpty" />
+            </Grid>
+            <Grid Size="200,80" Style="DetailWindow" >
+                <Label Anchor="C,C" String="DetailWindow" />
+            </Grid>
+            <Grid Size="200,100" Style="LinePanel" >
+                <Label Anchor="C,C" String="LinePanel" />
+            </Grid>
+            
+                        
+        </Stack>
+        
+    </Stack>
+    -->
+</Context>

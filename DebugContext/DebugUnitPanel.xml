@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+				 Name="InGame" ColorSet="Beige_Black" >
+
+    <Grid Style="UnitFrame" Anchor="L,T" Offset="150,30" Size="400,220" ID="UnitPanel" Hidden="0" >
+        <Label ID="name" Offset="20,10" String="Name" />
+        <Stack Growth="Bottom" StackPadding="8" Offset="20,30" >
+            <Label Anchor="R,C" String="Speed" />
+            <Label Anchor="R,C" String="FP" />
+            <Label Anchor="R,C" String="Range" />
+            <Label Anchor="R,C" String="Shock" />
+            <Label Anchor="R,C" String="Damage" />
+            <Label Anchor="R,C" String="Morale" />
+            <Label Anchor="R,C" String="Heading" />
+            <Label Anchor="R,C" String="Target" />
+        </Stack>
+        <Stack Growth="Bottom" StackPadding="8" Offset="90,30" >
+            <Label Anchor="L,C" ID="speed"   String="0" />
+            <Label Anchor="L,C" ID="fp"      String="0" />
+            <Label Anchor="L,C" ID="range"   String="0" />
+            <Label Anchor="L,C" ID="shock"   String="0" />
+            <Label Anchor="L,C" ID="damage"  String="0" />
+            <Label Anchor="L,C" ID="morale"  String="0" />
+            <Label Anchor="L,C" ID="head"    String="0" />
+            <Label Anchor="L,C" ID="target"  String="0" />
+        </Stack>
+
+        <Stack Growth="Bottom" StackPadding="8" Offset="160,30" >
+            <Label Anchor="R,C" String="xy" />
+            <Label Anchor="R,C" String="xy0" />
+            <Label Anchor="R,C" String="xy1" />
+            <Label Anchor="R,C" String="dest" />
+            <Label Anchor="R,C" String="transit" />
+            <Label Anchor="R,C" String="tt" />
+            <Label Anchor="R,C" String="see" />
+            <Label Anchor="R,C" String="size" />
+        </Stack>
+        <Stack Growth="Bottom" StackPadding="8" Offset="230,30" >
+            <Label Anchor="L,C" ID="xy"   String="0" />
+            <Label Anchor="L,C" ID="xy0"   String="0" />
+            <Label Anchor="L,C" ID="xy1"      String="0" />
+            <Label Anchor="L,C" ID="dest"  String="0" />
+            <Label Anchor="L,C" ID="transit"   String="0" />
+            <Label Anchor="L,C" ID="tt"      String="0" />
+            <Label Anchor="L,C" ID="see"  String="0" />
+            <Label Anchor="L,C" ID="size"  String="0" />
+        </Stack>
+    </Grid>
+
+</Context>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Handles receiving input in the InGame root UI tree. -->
+<!-- Tabs set to 2 spaces, retaining the tab.		-->
+<Context					Name="TutorialInput">
+</Context>
+

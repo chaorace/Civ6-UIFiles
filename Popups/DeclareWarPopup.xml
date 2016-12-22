@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context>
+  <!-- Darken the screen -->
+  <Box Color="0,0,0,150" Size="Full,Full" ConsumeMouse="1"/>
+  <Image Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="R,B"/>
+  <Image Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="R,T" FlipY="1"/>
+  <Image Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="L,T" FlipY="1" FlipX="1"/>
+  <Image Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="L,B" FlipX="1"/>
+  <Image Texture="Controls_Gradient" Size="150,full"  Color="0,0,0,255" Anchor="L,T" Rotate="90"/>
+  <Image Texture="Controls_Gradient" Size="150,full"  Color="0,0,0,255" Anchor="R,T" Rotate="270"/>
+  <Image Texture="Controls_Gradient" Size="full,150"  Color="0,0,0,255" Anchor="L,T" FlipY="1"/>
+  <Image Texture="Controls_Gradient" Size="full,150"  Color="0,0,0,255" Anchor="L,B"/>
+
+  <AlphaAnim ID="WarConfirmAlpha" AlphaBegin="0" AlphaEnd="1" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+    <SlideAnim ID="WarConfirmSlide" Start="0,-20" End="0,0" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+      <Grid ID="DropShadow" Size="500,250" Anchor="C,C" Offset="0,0" Style="DropShadow2" Color="255,255,255,200">
+        <Grid ID="Window" Size="parent-50,parent-50" Anchor="C,C" Offset="0,0" SizePadding="0,20" Style="WindowFrameTitle" AutoSize="V">
+          <Container Size="parent,38" Offset="0,4">
+            <Label Style="WindowHeader" String="{LOC_DECLARE_WAR_HEADER:upper}" Anchor="C,C"/>
+          </Container>
+          
+          <Stack Offset="0,45" StackGrowth="Down" Anchor="C,T" Padding="15">
+            <Stack ID="ConsequencesStack" StackGrowth="Down" Anchor="C,T" Padding="15" Hidden="0">
+              <Grid ID="WarmongerContainer" Style="LightweightLayer" Size="parent-20,70" AutoSize="V" Hidden="1">
+                <Stack Offset="-20,2" Padding="4">
+                  <Label WrapWidth="parent" String="LOC_DECLARE_WAR_WARMONGER_HEADING" Style="BlueGlow" Align="Center" Anchor="C,T"/>
+                  <Grid Style="Divider6Grid" Size="parent-40,2" Anchor="C,T" Color="80,150,192,50"/>
+                  <Stack ID="WarmongerStack"/>
+                </Stack>
+              </Grid>
+              <Grid ID="DefensivePactContainer" Style="LightweightLayer" Size="parent-20,70" AutoSize="V" ToolTip="LOC_DECLARE_WAR_DEFENSIVE_PACT_TOOLTIP" Hidden="1">
+                <Stack Offset="-20,2" Padding="4">
+                  <Label WrapWidth="parent" String="LOC_DECLARE_WAR_DEFENSIVE_PACT_HEADING" Style="BlueGlow" Align="Center" Anchor="C,T"/>
+                  <Grid Style="Divider6Grid" Size="parent-40,2" Anchor="C,T" Color="80,150,192,50"/>
+                  <Stack ID="DefensivePactStack"/>
+                </Stack>
+              </Grid>
+              <Grid ID="CityStateContainer" Style="LightweightLayer" Size="parent-20,70" AutoSize="V" Hidden="1">
+                <Stack Offset="-20,2" Padding="4">
+                  <Label WrapWidth="parent" String="LOC_DECLARE_WAR_CITY_STATE_HEADING" Style="BlueGlow" Align="Center" Anchor="C,T"/>
+                  <Grid Style="Divider6Grid" Size="parent-40,2" Anchor="C,T" Color="80,150,192,50"/>
+                  <Stack ID="CityStateStack"/>
+                </Stack>
+              </Grid>
+              <Grid ID="TradeRouteContainer" Style="LightweightLayer" Size="parent-20,70" AutoSize="V" Hidden="1">
+                <Stack Offset="-20,2" Padding="4">
+                  <Label WrapWidth="parent" String="LOC_DECLARE_WAR_TRADE_ROUTE_HEADING" Style="BlueGlow" Align="Center" Anchor="C,T"/>
+                  <Grid Style="Divider6Grid" Size="parent-40,2" Anchor="C,T" Color="80,150,192,50"/>
+                  <Stack ID="TradeRoutesStack"/>
+                </Stack>
+              </Grid>
+              <Grid ID="DealsContainer" Style="LightweightLayer" Size="parent-20,70" AutoSize="V" Hidden="1">
+                <Stack Offset="-20,2" Padding="4">
+                  <Label WrapWidth="parent" String="LOC_DECLARE_WAR_DEALS_HEADING" Style="BlueGlow" Align="Center" Anchor="C,T"/>
+                  <Grid Style="Divider6Grid" Size="parent-40,2" Anchor="C,T" Color="80,150,192,50"/>
+                  <Stack ID="DealsStack"/>
+                </Stack>
+              </Grid>
+            </Stack>
+            
+            
+
+            <Container Size="parent-20,64" Anchor="C,T">
+              <Image Texture="Controls_CircleBacking68" Size="68,68" Anchor="R,C">
+                <Image Texture="Advisors64" Size="64,64" Anchor="C,C"/>
+              </Image>
+              <Grid Size="parent-75,48" Style="AdvisorWordBubble" Anchor="L,C" Offset="10,2">
+                <Container Size="parent-44,20" AutoSizePadding="0,2" AutoSize="V" Anchor="C,T">
+                  <Label ID="Message" WrapWidth="parent-44" String="LOC_DECLARE_WAR_ADVISOR_TEXT" Style="BodyTextDark16" Anchor="L,C" Align="Center"/>
+                  <Image    ID="CircleBacking"  Texture="Circle44_Base"     Size="44,44"  Anchor="R,C">
+                    <Image  ID="CircleDarker"   Texture="Circle44_Darker"   Size="44,44"/>
+                    <Image  ID="CircleLighter"  Texture="Circle44_Lighter"  Size="44,44"/>
+                    <Image                      Texture="Circle44_Lighter"  Size="44,44"/>
+                    <Image  ID="CivIcon"        Texture="CivSymbols44"      Size="44,44"/>
+                    <AlphaAnim  Size="44,44"  AlphaBegin="0" AlphaEnd="1" Speed=".5" Cycle="Bounce">
+                      <Image Texture="Circle44_Base"     Size="44,44"  Color="0,0,0,200">
+                        <Image Texture="Controls_CircleRimSmall" Size="44,45" Anchor="C,B" Color="255,255,255,200"/>
+                        <Image Texture="Notifications40" Size="40,40" Anchor="C,C" Icon="ICON_NOTIFICATION_DECLARE_WAR"/>
+                      </Image>
+                    </AlphaAnim>
+                  </Image>
+                </Container>
+              </Grid>
+            </Container>
+            
+            <Container Size="parent,60" Anchor="C,T">
+              <Stack ID="ButtonStack" Anchor="C,B" StackPadding="15" StackGrowth="Right">
+                <GridButton ID="No" Style="MainButton" Size="200,41" Anchor="C,T" Offset="0,0"  Hidden="0" String="LOC_DIPLOMACY_DEAL_EXIT_DEAL"/>
+                <GridButton ID="Yes" Style="ButtonRed" Size="200,41" Anchor="C,T" Offset="0,0"  Hidden="0" String="LOC_DECLARE_WAR_BUTTON"/>
+              </Stack>
+            </Container>
+          </Stack>
+        </Grid>
+      </Grid>
+    </SlideAnim>
+  </AlphaAnim>
+  
+  <!-- Instances -->
+
+  <Instance Name="ConsequenceItem">
+    <Container ID="Root" Size="450,10" AutoSize="V">
+      <Label ID="Text" WrapWidth="parent" String="This string is a text instance for a consequence" Style="BodyText16" Align="Center" Anchor="C,T"/>
+    </Container>
+  </Instance>
+  
+</Context>

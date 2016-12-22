@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <IconTextureAtlases>
+		<Row Name="ICON_ATLAS_ENVOY_BONUSES" IconSize="26" IconsPerRow="8" IconsPerColumn="8" Filename="EnvoyBonuses26.dds"/>
+    <Row Name="ICON_ATLAS_ENVOY_BONUSES" IconSize="50" IconsPerRow="8" IconsPerColumn="8" Filename="EnvoyBonuses50.dds"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+		<Row Name="ICON_ENVOY_BONUS_CULTURE"			Atlas="ICON_ATLAS_ENVOY_BONUSES" Index="0"/>
+		<Row Name="ICON_ENVOY_BONUS_PRODUCTION"		Atlas="ICON_ATLAS_ENVOY_BONUSES" Index="1"/>
+		<Row Name="ICON_ENVOY_BONUS_MILITARY"			Atlas="ICON_ATLAS_ENVOY_BONUSES" Index="2"/>
+		<Row Name="ICON_ENVOY_BONUS_FAITH"				Atlas="ICON_ATLAS_ENVOY_BONUSES" Index="3"/>
+		<Row Name="ICON_ENVOY_BONUS_SCIENCE"			Atlas="ICON_ATLAS_ENVOY_BONUSES" Index="4"/>
+		<Row Name="ICON_ENVOY_BONUS_GOLD"					Atlas="ICON_ATLAS_ENVOY_BONUSES" Index="5"/>
+		<Row Name="ICON_ENVOY_BONUS_SUZERAIN"			Atlas="ICON_ATLAS_ENVOY_BONUSES" Index="6"/>
+	</IconDefinitions>
+</GameInfo>
+
+

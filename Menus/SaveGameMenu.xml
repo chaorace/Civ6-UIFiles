@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Context ColorSet="BodyTextCool" Style="FontNormal22" FontEffect="Stroke" >
+    <Box ID="MainGrid" Size="1024,full" Anchor="C,T" Color="9,44,72,200" TutorialActive="1">
+      <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="R,T" Color="0,0,0,200" Rotate="270" Offset="0,0"/>
+      <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="L,T" Color="0,0,0,200" Rotate="90" Offset="0,0"/>
+      <Box Color="32,70,101,150" Anchor="L,T" Size="2,parent"/>
+      <Box Color="32,70,101,150" Anchor="R,T" Size="2,parent"/>
+
+      <Container ID="MainWindow" Size="1024,768" Anchor="C,C">
+        <!-- Logo -->
+        <Grid ID="LogoContainer" Style="SubContainer4" Size="parent-10,116" Anchor="C,T" Color="7,28,50" AnchorSide="I,O" Offset="0,4">
+          <Image ID="Logo"				Anchor="C,C" Texture="MainLogo.dds" StretchMode="Auto"/>
+        </Grid>
+
+        <!-- Header -->
+        <Container Size="parent,54">
+          <Grid Anchor="C,T" Size="parent-10,39" Texture="Controls_DecoFrame" SliceCorner="19,18" SliceSize="1,1" SliceTextureSize="40,38" Color="41,74,108,255" Offset="0,6">
+            <GridButton ID="BackButton" Style="ShellButtonOrnateFlat" Anchor="R,C" Size="150,36" Offset="1,0" String="LOC_MULTIPLAYER_BACK"/>
+          </Grid>
+          <Label ID="WindowHeader" Style="ShellHeader" Anchor="C,C" String="{LOC_SAVE_GAME:upper}"/>
+          <Grid Style="Divider3Grid" Size="parent+4, 8" Anchor="L,B" Offset="-2,0"/>
+          <Grid Style="Divider3Grid" Size="parent+4, 8" Anchor="L,T" Offset="-2,0" Color="150,150,150,255"/>
+        </Container>
+
+
+        <Grid Style="SubContainer4" Size="parent-10,parent-60" Anchor="C,T" Color="7,28,50" Offset="0,55">
+          <!-- Decorative Border -->
+          <Grid Style="SubContainer3" Size="685,625" Anchor="C,C" Color="7,28,50,200">
+            <!-- Border Around both Inspector and Game Select -->
+            <Stack StackGrowth="Right" Anchor="C,C">
+              <!-- Stack of SELECTOR and INSPECTOR-->
+              <!-- ************************************* INSPECTOR AREA ************************************* -->
+              <!-- INSPECTOR AREA -->
+              <Grid Size="340,620" Style="SubContainerFill" Color="19,51,91">
+                <!-- INSPECTOR opaque background -->
+                <Grid Style="SubContainer3" Size="parent-5,parent-5" Anchor="C,C" Color="2,89,148,255">
+                  <!-- INSPECTOR decorative border -->
+                  <Grid Style="SubContainer3Inner" Size="parent+7,parent+7" Anchor="C,C" Color="23,66,111,150">
+                    <!-- INSPECTOR inner glow -->
+                    <Container ID="NoSelectedFile" Size="parent,parent" Hidden="1">
+                      <Label String="LOC_NO_FILE_SELECTED" Style="BlueGlow" Anchor="C,C"/>
+                    </Container>
+                    <Container ID="SelectedFile" Size="parent,parent" Hidden="1">
+                      <Stack StackGrowth="Down" Padding="1">
+                        <!-- INSPECTOR contents-->
+                        <Grid Style="ShellLoadSaveHeader" Size="parent,40" Offset="0,1" Anchor="C,T">
+                          <Grid Style="EditTextArea" Size="parent-60,29" Anchor="C,T" Offset="0,4">
+                            <Box Size="parent-8,parent-8" Color="0,0,0,70" Anchor="C,C"/>
+                            <EditBox ID="FileName" FocusStop="1" CallOnChar="1" Style="BlueGlow" EditMode="1" Size="parent-5,22" Anchor="C,C" MaxLength="32" ConsumeMouse="1" HighlightColor="25,120,154,200"/>
+                          </Grid>
+                        </Grid>
+                        <!-- Map Area -->
+                        <Container ID="InspectorTopArea" Size="parent, 0" AutoSize="V">
+                          <Box ID="InspectorTopAreaBox" Color="6,77,127,150" Size="parent,0" AutoSize="V" InnerPadding="4,4">
+                            <Container ID="InspectorTopAreaGridContainer" Size="parent,0" AutoSize="V" InnerPadding="8,8">
+                              <Grid ID="InspectorTopAreaGrid" Style="DecoGrid" Color="30,125,182,50" Size="parent, 0" AutoSize="V" InnerPadding="6,25" Anchor="C,T">
+                                <Stack ID="InspectorTopAreaStack" StackGrowth="Down" Padding="1">
+                                  <Container ID="SavedMinimapContainer" Anchor="C,T" Size="parent,160">
+                                    <Grid Style="DropShadow3" Size="267,160" Anchor="C,C" Color="0,0,0,120"/>
+                                    <Image Texture="Shell_MinimapBacking" Size="250,141" Anchor="C,C"/>
+                                    <Image ID="SavedMinimap" Texture="Shell_MinimapPlaceholder" StretchMode="UniformToFill" Anchor="C,C" Offset="-1,-1" Hidden="1">
+                                      <Grid Style="SubContainer5" Size="parent,parent" Color="0,0,0,120"/>
+                                    </Image>
+                                    <Image Texture="Shell_MinimapOverlay" Size="252,147" Anchor="C,C"/>
+                                    <Label ID="NoMapDataLabel" Anchor="C,C" String="LOC_LOADSAVE_NO_MAP_DATA" Style="HeaderTextParchment16" Hidden="0"/>
+                                  </Container>
+                                  <Container ID="Root" Size="parent,30" Anchor="L,B" Offset="0,2">
+                                    <Container Size="146,parent" Anchor="L,T">
+                                      <Stack ID="SelectedGameInfoStack1" StackGrowth="Down" Anchor="R,T">
+                                        <Label ID="SelectedCurrentTurnLabel" Anchor="R,T" Align="Right" Style="FontNormal14" ColorSet="BodyTextCool" FontStyle="stroke" WrapWidth="140"/>
+                                        <Label ID="SelectedTimeLabel" Anchor="R,T" Align="Right" Style="FontNormal14" ColorSet="BodyTextCool" FontStyle="stroke" WrapWidth="140"/>
+                                      </Stack>
+                                    </Container>
+                                    <Container Size="10,parent" Anchor="C,T">
+                                      <Label Anchor="C,T" Style="FontNormal14" String="[ICON_BulletGlow]"/>
+                                    </Container>
+                                    <Container Size="146,parent" Anchor="R,T">
+                                      <Stack ID="SelectedGameInfoStack2" StackGrowth="Down">
+                                        <Label ID="SelectedHostEraLabel" Anchor="L,T" Offset="0,0" Style="FontNormal14" ColorSet="BodyTextCool" FontStyle="stroke" WrapWidth="140"/>
+                                      </Stack>
+                                    </Container>
+                                  </Container>
+                                </Stack>
+                              </Grid>
+                            </Container>
+                            <Box Color="30,125,182,50" Size="parent,2" Anchor="L,B"/>
+                          </Box>
+                        </Container>
+                        <!-- Civ and Leader Portrait -->
+                        <Box Size="parent,55" Color="30,125,182,50" Anchor="C,T" Offset="-1,0">
+                          <Grid Style="ShellGameDetailsContainer" Size="72,55" Anchor="L,C"/>
+                          <Grid Style="ShellGameDetailsContainerR" Size="72,55" Anchor="R,C"/>
+                          <Stack StackGrowth="Right" Anchor="C,C" Offset="0,1" Padding="-3">
+                            <Container Size="62,62">
+                              <Image ID="CivBacking_Base" Texture="Circle44_Base" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+                              <Image ID="CivBacking_Darker" Texture="Circle44_Darker" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+                              <Image ID="CivBacking_Lighter" Texture="Circle44_Lighter" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+                              <Image ID="CivBacking_None" Texture="Circle44_None" Size="44,44" Anchor="C,C"/>
+                              <Image ID="CivIcon" Texture="CivSymbols36" Size="36,36" Anchor="C,C"/>
+                              <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="-1,-1" Color="2,119,186"/>
+                            </Container>
+                            <Container Size="62,62">
+                              <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="0,-1" Color="2,119,186"/>
+                              <Image ID="LeaderIcon" Texture="Leaders45" Size="45,45" Anchor="C,C" Offset="1,0"/>
+                            </Container>
+                            <Image ID="GameDifficulty" Texture="Shell_GameDifficulty" Size="62,62"/>
+                            <Image ID="GameSpeed" Texture="Shell_GameSpeed" Size="62,62"/>
+                          </Stack>
+                          <Box Color="30,125,182,50" Size="parent,2" Anchor="L,B"/>
+                        </Box>
+                        <ScrollPanel	ID="GameInfoScrollPanel" Anchor="L,T" Size="parent,320"	Vertical="1" AutoScrollBar="1">
+                          <Stack ID="GameInfoStack" StackGrowth="Down" Anchor="C,T" Padding="3"/>
+                          <ScrollBar Anchor="R,C" Style="Slider_Blue" Vertical="1" Offset="-2,-2"/>
+                        </ScrollPanel>
+                      </Stack>
+                      <!--/Stack of Inspector Contents-->
+                      <Container ID="ShowModsButtonContainer" Size="parent, 40" Anchor="C,B">
+                        <Box Color="30,125,182,50" Size="parent,2" Anchor="L,T"/>
+                        <GridButton ID="ShowModsButton" Anchor="C,B" Style="ShellButtonOrnateFlat" String="LOC_LOAD_MENU_MODS"/>
+                      </Container>
+                    </Container>
+                  </Grid>
+                  <!-- /INSPECTOR inner glow -->
+                </Grid>
+                <!-- /INSPECTOR decorative border-->
+              
+                <!-- /INSPECTOR decorative border-->
+                <Stack StackGrowth="Down" AnchorSide="I,O" Anchor="C,B" Offset="0,5">
+                  <GridButton ID="ActionButton" Size="parent,41" Style="ButtonConfirm" String="LOC_SAVE_GAME" />
+                  <GridButton ID="SaveMapButton" Size="parent,41" Style="MainButton" String="LOC_SAVE_MAP_BUTTON" Hidden="1"/>
+                </Stack>
+              </Grid>
+              <!-- ************************************* SELECTOR AREA ************************************* -->
+              <Grid Size="340,620" Style="SubContainerFill" Color="8,36,68">
+                <!-- SELECTOR opaque background -->
+                <Stack StackGrowth="Down"  Anchor="C,T" Padding="2">
+                  <!-- Stack of Selector Controls
+                  <GridButton ID="AutoCheck" String="LOC_AUTOSAVES" Style="CheckBoxControl"  Size="340,24" Hidden="1"/>-->
+                  <GridButton ID="CloudCheck" String="LOC_STEAMCLOUD" Style="CheckBoxControl" Size="340,24" Hidden="1"/>
+                  <PullDown			ID="SortByPullDown" Anchor="C,T" Style="PullDownBlue" Size="340,24" ScrollThreshold="110" AutoSizePopUp="1" SpaceForScroll="0" Offset="0,0"/>
+									<!-- USE THIS WITH CLOUD CHECK ENABLED:
+									<Grid Style="SubContainer3" Size="parent-5,parent-55" Anchor="C,T" Color="6,54,93,255" Offset="0,2">
+									-->
+                  <Grid ID="DecoContainer" Style="SubContainer3" Size="parent-5,parent-31" Anchor="C,T" Color="6,54,93,255" Offset="0,2">Z
+                    <!-- SELECTOR decorative border-->
+                    <Image Texture="Controls_Compass" StretchMode="Auto" Anchor="C,B" Color="6,54,93,150"/>
+                    <Label ID="NoGames" Anchor="C,C" Style="BlueGlow" String="{LOC_NO_SAVED_GAMES:upper}"/>
+                    <ScrollPanel	ID="ScrollPanel" Anchor="L,T" Size="parent+10,parent+10"	Vertical="1" AutoScrollBar="1" Offset="-5,-5" FullClip="1">
+                      <Stack ID="FileListEntryStack" Anchor="C,T" Offset="-5,0" StackGrowth="Bottom"/>
+                      <ScrollBar Anchor="R,C" Style="Slider_Blue" Vertical="1" Offset="-4,0"/>
+                    </ScrollPanel>
+                  </Grid>
+                  <!-- /SELECTOR decorative border-->
+                </Stack>
+                <!-- /Stack of Selector Controls-->
+                <GridButton ID="Delete" Anchor="C,B"  Style="ButtonRed" Size="parent,41"  Offset="0,5" AnchorSide="I,O" String="LOC_DELETE_BUTTON" Hidden="1"/>
+              </Grid>
+              <!-- /SELECTOR opaque background -->
+
+
+              <!-- ************************** MODS popup ******************************** -->
+              <Grid ID="ReferencedPackagesWindow" Style="SubContainerFill" Color="0,0,0,150" Size="parent,parent" ConsumeMouseOver="1" Hidden="1" Anchor="C,C">
+                <Grid Size="parent,200" Anchor="C,C" Offset="0,0" SizePadding="0,20" Style="EnhancedToolTip"  Hidden="0" >
+
+                  <Label ID="ReferencedPackagesPrompt" Anchor="C,T"  Offset="0,20" WrapWidth="440"  Style="PanelHeaderText" ColorSet="BodyTextCool" String="LOC_LOAD_MENU_MODS"/>
+
+                  <ScrollPanel Offset="20,110" Anchor="L,T" Size="435,245" ID="ReferencedPackagesScrollPanel" Vertical="1" AutoScrollBar="1" >
+
+                    <!-- Scroll Controls -->
+                    <ScrollBar Style="Slider_Vert" Length="214" Offset="0,18" Anchor="R,T" AnchorSide="O,I" />
+                    <UpButton  Offset="0,0"  Style="Scroll_Up"  Anchor="R,T" AnchorSide="O,I" />
+                    <DownButton Offset="0,0" Style="Scroll_Down"  Anchor="R,B" AnchorSide="O,I" />
+
+                    <Stack Anchor="L,T" Offset="0,0"  StackGrowth="Bottom" StackPadding="4" ID="ReferencedPackagesStack" />
+                  </ScrollPanel>
+
+                  <!-- Close Button  -->
+                  <Button ID="CloseReferencedPackagesButton" Style="CloseButtonAlt" Anchor="R,T" Offset="0,0"/>
+                </Grid>
+              </Grid>
+              <!-- /SELECTOR grid opaque background-->
+            </Stack>
+            <!-- /Stack of Inspector/Game Select-->
+          </Grid>
+          <!-- /Border Around both Inspector and Game Select -->
+        </Grid>
+        <!-- /Decorative border -->
+      </Container>
+      <!-- /1024,768 container -->
+    </Box>
+    <!-- /1024,full window banner -->
+
+
+	<!-- ************************** DELETE popup ******************************** -->
+	<Box ID="DeleteConfirm" Color="0,0,0,150" Size="Full,Full" ConsumeMouseOver="1" Hidden="1" TutorialActive="1">
+		<AlphaAnim ID="DeleteConfirmAlpha" AlphaBegin="0" AlphaEnd="1" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+			<SlideAnim ID="DeleteConfirmSlide" Start="0,-20" End="0,0" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+				<Grid Size="500,250" Anchor="C,C" Offset="0,0" Style="DropShadow2"  Hidden="0" Color="255,255,255,200">
+					<Grid Size="parent-50,parent-50" Anchor="C,C" Offset="0,0" SizePadding="0,20" Style="WindowFrameTitle"  Hidden="0" >
+						<Container Size="parent,38" Offset="0,4">
+							<Label ID="DeleteHeader" Style="WindowHeader" String="{LOC_CONFIRM_TITLE_TXT:upper}" Anchor="C,C"/>
+						</Container>
+						<Stack Offset="0,60" StackGrowth="Down" Anchor="C,T" Padding="15">
+							<Label ID="Message" Anchor="C,T" WrapWidth="400" String="LOC_CONFIRM_TXT" Style="BodyTextDark18" Align="Center"/>
+							<Stack ID="ButtonStack" Anchor="C,T" StackPadding="15" StackGrowth="Right">
+								<GridButton ID="No" Style="MainButton" Size="200,41" Anchor="C,T" Offset="0,0"  Hidden="0" String="LOC_NO_BUTTON"/>
+								<GridButton ID="Yes" Style="ButtonRed" Size="200,41" Anchor="C,T" Offset="0,0"  Hidden="0" String="LOC_YES_BUTTON"/>
+							</Stack>
+						</Stack>
+					</Grid>
+				</Grid>
+			</SlideAnim>
+		</AlphaAnim>
+	</Box>
+
+
+	<!-- INSTANCES -->
+	<Instance Name="FileEntry">
+		<Container Size="parent-20,40" ID="InstanceRoot">
+			<GridButton       ID="Button" Style="ShellButtonOrnateFlat" Size="parent,32"/>
+			<AlphaAnim          ID="SelectionAnimAlpha" AlphaBegin="0"	AlphaEnd="1" Size="parent,parent" Speed="4" Cycle="Once" Function="OutQuad" Stopped="1" FunctionPower="5">
+				<SlideAnim        ID="SelectionAnimSlide" Begin="-300,-4"	End="0,-4"		Size="parent,parent" Speed="4" Cycle="Once" Function="OutQuad" Stopped="1" FunctionPower="5">
+					<Grid  Texture="Shell_ButtonOrnateSelected" SliceCorner="30,20" SliceTextureSize="300,40" Size="parent,40"/>
+				</SlideAnim>
+			</AlphaAnim>
+			<Label        ID="ButtonText" Style="ShellFlagButtonFont" Anchor="C,C" Offset="0,-2" String="Button Text"/>
+		</Container>
+	</Instance>
+
+	<Instance Name="DescriptionText">
+		<Container AutoSize="1" ID="Root">
+			<Label ID="Text" Anchor="L,T" Offset="0,0" Style="FontNormalMedium14" ColorSet="BodyTextCool" FontStyle="stroke" WrapWidth="300"  String=""/>
+		</Container>
+	</Instance>
+
+	<Instance Name="DetailsItem">
+		<Container AutoSize="1" ID="Root">
+			<Container AutoSize="1">
+				<Box Size="140,10" Color="0,0,0,0"/>
+				<Label ID="Title" Anchor="R,T" Offset="0,0" Style="FontNormal14" ColorSet="ShellOptionText" FontStyle="stroke" WrapWidth="140" String="Map Type:"/>
+			</Container>
+			<Container AutoSize="1" Offset="145,0">
+				<Box Size="160,10" Color="0,0,0,0"/>
+				<Label ID="Description" Anchor="L,T" Offset="0,0" Style="FontNormal14" ColorSet="BodyTextCool" FontStyle="stroke" WrapWidth="160"  String="Pangaea"/>
+			</Container>
+		</Container>
+	</Instance>
+
+	<Instance Name="DetailsHeader">
+		<Grid ID="Root" Size="328,21" Texture="Shell_SectionHeader" SliceCorner="154,10" SliceTextureSize="308,21" Color="22,157,152,150">
+			<Label ID="HeadingTitle" Anchor="C,C" Style="FontNormal14" ColorSet="ShellOptionText" FontSize="16" FontStyle="stroke" WrapWidth="320" String="Game Options"/>
+		</Grid>
+	</Instance>
+
+	<Instance Name="ReferencedPackageInstance" >
+		<Label ID="Label" Anchor="L,C"  Offset="0,0" Style="FontNormal18" ColorSet="BodyTextCool"  />
+	</Instance>
+
+</Context>

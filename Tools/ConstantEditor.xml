@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context ColorSet="Beige_Black_Alpha" FontSize="16" FontStyle="Shadow" Name="ConstantEditor" >
+
+    <Grid Style="UnitFrame" AutoSize="1" ID="Grid" SizePadding="10,0">
+           
+            <ScrollPanel ID="ConstantPanel" Vertical="1" Anchor="L,T" Size="5,Full" >
+
+                <Stack StackGrowth="Bottom" Anchor="L,T" ID="ControlStack">
+                    <Label Anchor="L,T" ID="ClassLabel" String="" Color="255,255,255,255" />
+                    <Label Anchor="L,T" ID="FileLabel" String="" Color="255,255,255,255" />
+                    <Stack StackGrowth ="Right" Anchor="C,T" >
+                        <GridButton Anchor="C,Top" Size="128,36" ID="CommitButton" Style="MainMenuSquareButton" String="Save Changes" />
+                        <GridButton Anchor="C,Top" Size="128,36" ID="CancelButton" Style="MainMenuSquareButton" String="Cancel Changes" />
+                    </Stack>
+                    <Box Anchor="L,T" ID="Seperator" Size="0,24" Color="255,255,255,0"/>
+                    <!-- This stack is programmatically filled with controls by the const editor....-->
+
+                </Stack>
+                
+                <ScrollBar Style="Slider_Vert" Length="214" Offset="10,18" Anchor="R,T" AnchorSide="O,I" />
+                <UpButton Offset="10,0" Style="Scroll_Up" Anchor="R,T" AnchorSide="O,I" />
+                <DownButton Offset="10,0" Style="Scroll_Down" Anchor="R,B" AnchorSide="O,I" />
+            </ScrollPanel>
+
+    </Grid>
+
+	<Instance Name="NumericSliderInstance">    
+        <Stack StackGrowth="R" Anchor="L,T" ID="Root" SizePadding="0,8" Offset="0,8">
+            <Label  Anchor="R,T" ID="FieldName" String="Test" Color="255,255,255,255" Offset="8" ></Label>
+            <Slider Anchor="L,T" Size="200,16" Offset="0,0" ID="TheSlider" Style="Slider_VertThumb"/>
+            <Label  Anchor="L,T" ID="ValueLabel" String="Value" Color="255,255,255,255" ></Label>
+        </Stack>
+    </Instance>
+
+    <Instance Name="BoolInstance">
+        <Stack StackGrowth="R" Anchor="L,T" ID="Root" SizePadding="0,16" Offset="0,4">
+            <Label  Anchor="R,T" ID="FieldName" String="Test" Color="255,255,255,255" Offset="8" ></Label>
+            <CheckBox Style="MainMenuCheck" Anchor ="R,T"  Size="16,16" ID="Check" IsChecked="0" />
+        </Stack>
+    </Instance>
+    
+    <Instance Name="ColorEditorInstance">
+        <Stack StackGrowth="R" Anchor="L,T" ID="Root" SizePadding="0,16" Offset="0,4">
+            <Label Anchor="R,T" ID="FieldName" String="Test" Color="255,255,255,255" Offset="8" ></Label>
+            
+            <Grid Style="SubContainer" AutoSize="1" SizePadding="10,0">
+                <EditBox Anchor="C,T" ID="Red"   NumberInput="1" MaxLength="3" Size="32,24" />
+            </Grid>
+            
+            <Grid Style="SubContainer" AutoSize="1" SizePadding="10,0">
+                <EditBox Anchor="C,T" ID="Green" NumberInput="1" MaxLength="3" Size="32,24" />
+            </Grid>
+
+            <Grid Style="SubContainer" AutoSize="1" SizePadding="10,0">
+                <EditBox Anchor="C,T" ID="Blue"  NumberInput="1" MaxLength="3" Size="32,24" />
+            </Grid>
+            <Grid Style="SubContainer" AutoSize="1" SizePadding="0,0">
+                <Box Anchor="C,T" ID="ColorBox" Size="24,24" />
+            </Grid>
+        </Stack>
+    </Instance>
+
+
+    <Instance Name="ColorPickerInstance">
+
+        <Stack StackGrowth="B" Anchor="L,T" SizePadding="0,16" Offset="0,4">
+
+            <Stack StackGrowth="R" Anchor="L,T" ID="Root" SizePadding="0,4">
+                <Label Anchor="R,T" ID="FieldName" String="Test" Color="255,255,255,255" Offset="8" ></Label>
+
+                <Box Anchor="C,T" Size="26,26" Color="128,128,128,255">
+                    <BoxButton Anchor="C,C" ID="ColorBox" Size="24,24" Color="255,0,0,255" />
+                </Box>
+            </Stack>
+
+            <Stack StackGrowth="B" Anchor="L,T" ID="ColorPickerRoot" SizePadding="0,0">
+                <Grid Style="SubContainer" AutoSize="1" SizePadding="10,10" Offset="8,0">
+
+                    <Stack StackGrowth="R" Anchor="C,C" >
+                        <Stack StackGrowth="B" SizePadding="4,0">
+                        <Label Anchor="R,C" Size="0,20" String="R" Color="255,255,255,255"  ></Label>
+                        <Label Anchor="R,C" Offset="0,5" Size="0,20" String="G" Color="255,255,255,255"  ></Label>
+                        <Label Anchor="R,C" Offset="0,5" Size="0,20" String="B" Color="255,255,255,255"></Label>
+                    </Stack>
+
+                    <Stack StackGrowth="B" Anchor="C,C">
+                        <Stack StackGrowth="B">
+                            <Slider Anchor="R,T" Size="255,20" Offset="0,0" ID="RedSlider" Style="Slider_Vert"/>
+                            <Slider Anchor="R,T" Size="255,20" Offset="0,0" ID="GreenSlider" Style="Slider_Vert"/>
+                            <Slider Anchor="R,T" Size="255,20" Offset="0,0" ID="BlueSlider" Style="Slider_Vert"/>
+                        </Stack>
+                    </Stack>
+
+                    <Stack StackGrowth="B" Anchor="C,C">
+                        <Grid Style="SquareFrameBlack" AutoSize="1" SizePadding="10,0" >
+                            <EditBox Anchor="C,T" ID="RedBox"  Color="255,0,0,255" NumberInput="1" MaxLength="3" Size="32,20" />
+                        </Grid>
+                        <Grid Style="SquareFrameBlack" AutoSize="1" SizePadding="10,0">
+                            <EditBox Anchor="C,T" ID="GreenBox" Color="0,255,0,255" NumberInput="1" MaxLength="3" Size="32,20" />
+                        </Grid>
+                        <Grid Style="SquareFrameBlack" AutoSize="1" SizePadding="10,0">
+                            <EditBox Anchor="C,T" ID="BlueBox"  Color="0,0,255,255" NumberInput="1" MaxLength="3" Size="32,20" />
+                        </Grid>
+                    </Stack>
+
+                </Stack>
+                </Grid>
+            </Stack>
+        </Stack>
+            
+    </Instance>
+
+
+    <Instance Name="EnumEditorInstance">
+        <Stack StackGrowth="R" Anchor="L,T" ID="Root" SizePadding="0,16" Offset="0,4">
+            <Label Anchor="R,T" ID="FieldName" String="Test" Color="255,255,255,255" Offset="8"></Label>
+            <PullDown Anchor="R,Top" Size="200,24" ID="ValueList" Style="GenericPullDown" />          
+        </Stack>
+    </Instance>
+
+
+    <Instance Name="ControlGroupInstance">
+        <Stack StackGrowth="B" Anchor="L,T" ID="Root" SizePadding="0,8" Offset="0,4">
+            <Stack StackGrowth="R" Anchor="L,T"  >
+
+                <Label Anchor="L,T" ID="FieldName" String="NAME_GOES_HERE" Color="255,255,255,255" Offset="8"></Label>
+                <GridButton Anchor="L,Top" Size="24,24" ID="ToggleButton" Style="MainMenuSquareButton" String="X" Offset="4"/>
+            </Stack>
+            <Grid Style="SquareFrameBlack" AutoSize="1" SizePadding="8,8" Offset="32,8" ID="Grid" >
+                <Stack StackGrowth="B" Anchor="L,T" ID="Container" >
+
+                </Stack>
+            </Grid>
+            
+        </Stack>
+    </Instance>
+
+</Context>
+

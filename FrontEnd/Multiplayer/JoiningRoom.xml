@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Context="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
+	
+	<Box ID="MainGrid" Style="ShellBGBox">
+
+		<Container ID="MainWindow" Style="ShellWindowContainer">
+
+			<Container Style="ShellHeaderContainer">
+				<Label ID="TitleLabel" Style="ShellHeader" Anchor="C,C" String="LOC_MULTIPLAYER_JOINING_ROOM_TITLE"/>
+			</Container>
+
+			<Label	ID="JoiningLabel"	Anchor="C,C"	Offset="0,0" Style="FontNormal24"/>
+			<GridButton	ID="CancelButton"	Anchor="C,B" Offset="0,10" Style="MainButton" String="LOC_CANCEL_BUTTON"/>
+		</Container>
+	</Box>
+</Context>

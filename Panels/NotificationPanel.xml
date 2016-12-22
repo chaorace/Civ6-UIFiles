@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
+	
+  <Image															Anchor="R,B" Texture="ActionPanel_Backing.dds"/>
+  <SlideAnim        ID="RailOffsetAnim" Anchor="R,B" Size="parent,parent" Begin="0,-70" End="13,0" Cycle="Once" Speed="1" Function="OutQuint" Stopped="1">
+    <SlideAnim				ID="RailAnim"			Anchor="R,B" Size="1,1"		Offset="0,60" Begin="0,-260" End="0,0" Cycle="Once" Speed="1" Function="OutQuint">
+      <Stack Anchor="R,B" Offset="-5,-5" StackGrowth="Down" Padding="0">
+        <Image Texture="ActionPanel_RailTopper.dds"  Size="39,41"/>
+        <Image ID="RailImage" Texture="ActionPanel_Rail"    Size ="39,89" StretchMode="Tile"/>
+      </Stack>
+    </SlideAnim>
+    <Grid AnchorSide="O,I" Offset="-2,0" Texture="Controls_ScrollBarBacking" Size="15,parent" SliceTextureSize="11,11" SliceCorner="5,5" Anchor="R,B" Color="111,101,94,180"/>
+    <Container				ID="Items"/>
+    <Container				ID="Groups"/>
+
+    <!-- The offset of the scrollpanel (300) is to accommodate the height of the ActionPanel AND Purchase Tile/Manage Citizens buttons -->
+    <!-- The relative size of the scrollpanel height (parent-285) is to accommodate the height of the ActionPanel AND the hieght of the top bar-->
+    <ScrollPanel			ID="ScrollPanel"	Anchor="R,B"	Offset="0,300"	Size="FULL,parent-285"				Vertical="1" AutoScollbar="1" FullClip="1">
+      <ScrollBar										Anchor="R,C"									Size="11,14"				AnchorSide="O,I"  Texture="Controls_ScrollbarV" StateOffsetIncrement="0,0" Vertical="1" SliceCorner="5,5" SliceTextureSize="11,14" Color="0,0,0,120" >
+        <Thumb																										Size="13,13"					Texture="Controls_ScrollBarHandleV_Brown" StateOffsetIncrement="0,0" SliceCorner="6,6" SliceTextureSize="13,13"/>
+      </ScrollBar>
+      <Stack					ID="ScrollStack"	Anchor="R,B"	Offset="0,0"		StackGrowth="Top"		Padding="-10"  />
+    </ScrollPanel>
+  </SlideAnim>
+
+
+  <Stack						ID="Test"					Anchor="R,B"	Offset="70,250"	StackGrowth="Up"		Padding="-10" Hidden="1">
+
+    <Grid															Anchor="R,B"									Size="250,66"				Texture="ActionPanel_Flyout" SliceTextureSize="64,64" SliceCorner="32,32"  >
+      <Label													Anchor="C,T"	Offset="0,11"												Style="NotificationHeader"	String="UNIT PROMOTION" />
+      <Label													Anchor="C,T"	Offset="0,26"		WrapWidth="245"			Style="WhiteSemiBold12"			String="Your warrior has received a promotion after he did something awesome." />
+    </Grid>
+    <Grid															Anchor="R,B"	Size="250,66"												Texture="ActionPanel_Flyout" SliceTextureSize="64,64" SliceCorner="32,32"  >
+      <Stack													Anchor="C,T"	Offset="0,3"		StackGrowth="Right" Padding="2"  >
+        <Label		ID="ActionCount"		Anchor="L,C"																			Style="FlairShadow28"				String="2" />
+        <Label		ID="ActionInfo"			Anchor="L,C"																			Style="NotificationHeader"	String="$ActionInfo$" />
+      </Stack>
+      <Label			ID="ActionDetails"	Anchor="C,T"	Offset="0,28"												Style="WhiteSemiBold12" String="$ActionDetails$" />
+      <Button													Anchor="L,T"	Offset="0,5"		Size="19,23"				Texture="Controls_ArrowButtonLeft" />
+      <Button													Anchor="R,T"	Offset="0,5"		Size="19,23"				Texture="Controls_ArrowButtonRight"/>
+      <Stack			ID="PagePipStack"		Anchor="C,B"	Offset="0,9"		StackGrowth="Right" Padding="3">
+        <Image																											Size="9,10"					Texture="Controls_Bolt" />
+        <Image																											Size="9,10"					Texture="Controls_Bolt" Color="60,60,60,255" />
+      </Stack>
+      <Label			ID="Pages"					Anchor="R,B"	Offset="5,9"												Style="NotificationHeader" String="1/2" />
+    </Grid>
+
+    <Grid															Anchor="R,B"									Size="250,66"				Texture="ActionPanel_Flyout" SliceTextureSize="64,64" SliceCorner="32,32" >
+      <Label			ID="Intel"					Anchor="C,T"	Offset="0,11"												Style="NotificationHeader" String="INTEL REPORTS" />
+      <Button													Anchor="L,C"									Size="50,50"				Texture="ActionPanel_Notification2" StateOffsetIncrement="0,0">
+        <Label												Anchor="C,C"	Offset="-1,0"												Style="FlairShadow28" String="12" />
+      </Button>
+      <Stack													Anchor="L,C"	Offset="50,8"		StackGrowth="Right" Padding="6" >
+        <Grid			ID="Level0Reports"																Size="42,30"				Texture="Controls_ItemContainer" SliceCorner="8,8" SliceTextureSize="16,16" >
+          <Image											Anchor="L,C"	Offset="-15,2"	Size="44,44"				Texture="Diplomacy_VisibilityIcons" />
+          <Label	ID="Level0Number"		Anchor="L,C"	Offset="20,2"												Style="FlairShadow26" String="7" />
+        </Grid>
+        <Grid			ID="Level1Reports"																Size="42,30"				Texture="Controls_ItemContainer" SliceCorner="8,8" SliceTextureSize="16,16" >
+          <Image											Anchor="L,C"	Offset="-15,2"	Size="44,44"				Texture="Diplomacy_VisibilityIcons" TextureOffset="44,0" />
+          <Label	ID="Level1Number"		Anchor="L,C"	Offset="20,2"												Style="FlairShadow26" String="1" />
+        </Grid>
+        <Grid			ID="Level2Reports"																Size="42,30"				Texture="Controls_ItemContainer" SliceCorner="8,8" SliceTextureSize="16,16" >
+          <Image											Anchor="L,C"	Offset="-15,2"	Size="44,44"				Texture="Diplomacy_VisibilityIcons" TextureOffset="88,0" />
+          <Label	ID="Level2Number"		Anchor="L,C"	Offset="20,2"												Style="FlairShadow26" String="2" />
+        </Grid>
+        <Grid			ID="Level3Reports"																Size="42,30"				Texture="Controls_ItemContainer" SliceCorner="8,8" SliceTextureSize="16,16" >
+          <Image											Anchor="L,C"	Offset="-15,2"	Size="44,44"				Texture="Diplomacy_VisibilityIcons" TextureOffset="132,0" />
+          <Label	ID="Level3Number"		Anchor="L,C"	Offset="20,2"												Style="FlairShadow26" String="2" />
+        </Grid>
+      </Stack>
+    </Grid>
+
+    <Grid					ID="GroupExpanded"	Anchor="R,B"									Size="350,200"			Texture="ActionPanel_Flyout" SliceTextureSize="64,64" SliceCorner="32,32" >
+      <Label													Anchor="C,T" Offset="0,11"												Style="NotificationHeader" String="UNIT PROMOTION" />
+      <Grid														Anchor="L,T" Offset="5,28"		Size="parent-24,parent-40"	Style="DecoGrid" Color="111,101,94,255"/>
+      <ScrollPanel ID="ListScroll"		Anchor="L,B" Offset="5,11"		Size="parent-22,parent-40" Vertical="1" AutoScrollBar="1">
+        <ScrollBar										Anchor="R,C"									Size="11,12"				AnchorSide="O,I"  Texture="Controls_ScrollbarV" StateOffsetIncrement="0,0" Vertical="1" SliceCorner="5,5" SliceTextureSize="11,14" Color="111,101,94,255">
+          <Thumb																										Size="5,15"					Texture="Controls_ScrollHandle" StateOffsetIncrement="0,0" SliceCorner="2,4" SliceTextureSize="5,12" Color="111,101,94,255" />
+        </ScrollBar>
+        <Stack			ID="ListStack"		Anchor="L,T" Offset="12,5"		StackGrowth="Down" >
+          <Grid																											Size="parent-30,50" Texture="ActionPanel_FlyoutSubcontainer" SliceCorner="25,5" SliceTextureSize="51,50" >
+            <Image										Anchor="L,C" Offset="-12,0"		Size="50,50"				Texture="ActionPanel_Notification2"  />
+            <Label										Anchor="C,C" Offset="-4,0"		WrapWidth="210"			Style="WhiteSemiBold12" String="Your warrior has received a promotion after he did something awesome." />
+          </Grid>
+          <Grid																											Size="parent-30,50"	Texture="ActionPanel_FlyoutSubcontainer" SliceCorner="25,5" SliceTextureSize="51,50" >
+            <Image										Anchor="L,C" Offset="-12,0"		Size="50,50"				Texture="ActionPanel_Notification2" />
+            <Label										Anchor="C,C" Offset="-4,0"		WrapWidth="210"			Style="WhiteSemiBold12" String="Your warrior has received a promotion after he did something awesome." />
+          </Grid>
+          <Grid																											Size="parent-30,50"	Texture="ActionPanel_FlyoutSubcontainer" SliceCorner="25,5" SliceTextureSize="51,50" >
+            <Image										Anchor="L,C" Offset="-12,0"		Size="50,50"				Texture="ActionPanel_Notification2" />
+            <Label										Anchor="C,C" Offset="-4,0"		WrapWidth="210"			Style="WhiteSemiBold12" String="Your warrior has received a promotion after he did something awesome." />
+          </Grid>
+          <Grid																											Size="parent-30,50"	Texture="ActionPanel_FlyoutSubcontainer" SliceCorner="25,5" SliceTextureSize="51,50" >
+            <Image										Anchor="L,C" Offset="-12,0"		Size="50,50"				Texture="ActionPanel_Notification2" />
+            <Label										Anchor="C,C" Offset="-4,0"		WrapWidth="210"			Style="WhiteSemiBold12" String="Your warrior has received a promotion after he did something awesome." />
+          </Grid>
+          <Grid																											Size="parent-30,50"	Texture="ActionPanel_FlyoutSubcontainer" SliceCorner="25,5" SliceTextureSize="51,50" >
+            <Image										Anchor="L,C" Offset="-12,0"		Size="50,50"				Texture="ActionPanel_Notification2"  />
+            <Label										Anchor="C,C" Offset="-4,0"		WrapWidth="210" 		Style="WhiteSemiBold12" String="Your warrior has received a promotion after he did something awesome." />
+          </Grid>
+        </Stack>
+      </ScrollPanel>
+    </Grid>
+
+  </Stack>
+
+
+
+  <!-- ====================================================================	-->
+  <!--	Instances																														-->
+  <!-- ====================================================================	-->
+
+  <Instance							Name="GroupInstance">
+    <Container					ID="Top"								Anchor="R,C"  Offset="0,0"	Size="96,62"	ConsumeMouseButton="1">
+      <Button						ID="GroupButton"				Anchor="R,C"	Offset="0,0"	Size="65,66"	Texture="ActionPanel_NotificationGrouped.dds" NoStateChange="1">
+        <Image            ID="Icon"               Size="40,40"  Texture="Notifications40" Anchor="C,C"/>
+      </Button>
+    </Container>
+  </Instance>
+
+  <Instance							Name="ItemInstance">
+    <Container					ID="Top"								Anchor="R,C"	Offset="0,0"		Size="62,72"	ConsumeMouseButton="1" >
+
+      <ScrollPanel			ID="Clip"								Anchor="L,C"	Offset="-43,0"	Size="2048,66" AnchorSide="O,O" Vertical="0">
+        <SlideAnim			ID="NotificationSlide"	Anchor="R,C"	Start="-250,0"	EndOffset="0,0"		Size="250,60" Speed="3" Pause="1" Cycle="Once" FunctionPower="3" Function="Root">
+          <Grid					ID="ExpandedArea"				Anchor="L,C"	Size="250,70"		InnerPadding="35,0"										Texture="ActionPanel_Flyout" SliceTextureSize="64,64" SliceCorner="32,32" ConsumeAllMouse="1" >
+            <Stack			ID="TitleStack"					Anchor="C,T"	Offset="0,3"		Size="0,26" AutoSize="H" StackGrowth="Right" Padding="4" >
+               <Label		ID="TitleCount"					Anchor="L,C"																			Style="FlairShadow26"				ColorEffect="0,0,0,255" FontStyle="Shadow" String="" Offset="-20,0" />
+              <Label		ID="TitleInfo"					Anchor="L,C"	Offset="0,1"												Style="NotificationHeader"	String="$ActionInfo$" />
+            </Stack>
+            <Label			ID="Summary"						Anchor="C,T"	Offset="0,27"			LeadingOffset="1"                 Style="WhiteSemiBold12"     String="$ActionDetails$"/>
+            <Button			ID="LeftArrow"					Anchor="L,T"	Offset="-15,5"		Size="19,23"				Texture="Controls_ArrowButtonLeft"						Hidden="1" />
+            <Button			ID="RightArrow"					Anchor="R,T"	Offset="-15,5"		Size="19,23"				Texture="Controls_ArrowButtonRight"						Hidden="1" />
+            <Stack			ID="PagePipStack"				Anchor="C,B"	Offset="0,8"		StackGrowth="Right" Padding="1"																		Hidden="1">
+              <Image																													Size="9,10"					Texture="Controls_Bolt" />
+              <Image																													Size="9,10"					Texture="Controls_Bolt" Color="60,60,60,255" />
+            </Stack>
+            <Label			ID="Pages"							Anchor="R,B"	Offset="5,9"												Style="NotificationHeader" String="1/2"				Hidden="1"	/>
+          </Grid>
+        </SlideAnim>
+      </ScrollPanel>
+
+      <Container				ID="MouseOutArea"						Anchor="R,C" Size="321,66"  />
+
+      <Button						ID="ItemButton"							Anchor="R,C"	Offset="0,0"	Size="65,66"	Texture="ActionPanel_Notification.dds" NoStateChange="1">
+        <Image            ID="Icon"               Size="40,40"  Texture="Notifications40" Anchor="C,C" Offset="-2,-2"/>
+      </Button>
+      
+      <Button						ID="ItemButtonInvalidPhase"	Anchor="R,C"	Offset="0,0"	Size="65,66"  Texture="ActionPanel_Notification.dds" NoStateChange="1" Color="Civ6Red" Hidden="1" />
+      <Image						ID="CountImage"							Anchor="R,B"	Offset="0,-4" Texture="ActionPanel_Badge" Hidden="0" >
+        <Label					ID="Count"									Anchor="C,C"	Offset="4,4"	Style="FontFlair14" String="3" />
+        <Button         ID="DismissStackButton"     Anchor="R,B"  Offset="5,5" Size="20,20"/>
+      </Image>
+    </Container>
+  </Instance>
+
+  <Instance							Name="ButtonInstance">
+    <Button							ID="Button"							Size="50,50"	Texture="ActionPanel_Notification2" NoStateChange="1">
+      <Image            ID="Icon"               Size="40,40"  Texture="Notifications40" Anchor="C,C"/>
+    </Button>
+  </Instance>
+
+  <Instance							Name="PipInstance">
+    <Image							ID="Pip"							Size="9,10"					Texture="Controls_Bolt" />
+  </Instance>
+
+
+</Context>

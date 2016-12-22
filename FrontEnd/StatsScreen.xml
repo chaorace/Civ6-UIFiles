@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+				 Name="StatScreen" ColorSet="Beige_Black" FontSize="16" >
+
+    <Instance Name="StatsEntryInstance" >
+      <Container Size="620,13" Anchor="R,T" Offset="8,0" >
+        <Label Anchor="L,C" Offset="8,16" ID="StatName" FontSize="16" String="Unit Name Here" />
+        <Label Anchor="R,C" Offset="8,16" ID="StatValue" FontSize="16" String="Unit Value Here" />
+      </Container>
+    </Instance>
+
+    <Grid Style="EscMenuFrame" Anchor="c,c" Offset="0,110" Size="855,600" >
+      <!--<Image Texture="UI/Art/front_end/titlebk_pointsbuy.dds" Offset="0,10" Anchor="C,T" Size="836,51" />-->
+      
+        <Stack Anchor="R,T" StackGrowth="R" Offset="30,30" StackPadding="30" Hidden="0" >
+          <RadioButton RadioGroup="GlobalRadio" ID="GlobalRadio1" Style="MainMenuCheck" String="My Stats" />
+          <RadioButton RadioGroup="GlobalRadio" ID="GlobalRadio2" Style="MainMenuCheck" String="Global Totals" />
+        </Stack>
+        
+        <Grid Style="MainMenu_1Frame" Anchor="C,T" Offset="-60,70" Size="660,450" >
+            <ScrollPanel Offset="10,10" Size="620,430" Vertical="1" ID="ScrollPanel" >
+                <ScrollBar  Style="Slider_Vert"      Anchor="R,C" AnchorSide="O,I" Offset="3,0"  Length="394" />
+                <UpButton   Style="Scroll_Up"     Anchor="R,T" AnchorSide="O,I" Offset="3,0"  />
+                <DownButton Style="Scroll_Down"   Anchor="R,B" AnchorSide="O,I" Offset="3,0"  />
+                <Stack ID="StatStack" StackPadding="4" >
+                </Stack>
+            </ScrollPanel>
+        </Grid>
+      
+        <Label Anchor="L,T" Offset="40,25" FontSize="21" String="Stats" />
+
+        <GridButton Style="MainMenuSquareButton" Anchor="L,B" Offset="40,30" String="Back" Size="110,30" ID="BackButton" />
+  
+    </Grid>
+
+</Context>
+
+
+
+
+<!-- (╯°□°）╯︵ ┻━┻ -->

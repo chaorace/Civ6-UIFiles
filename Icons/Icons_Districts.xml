@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_DISTRICTS" IconSize="32" IconsPerRow="8" IconsPerColumn="8" Filename="Districts32.dds"/>
+	  <Row Name="ICON_ATLAS_DISTRICTS" IconSize="38" IconsPerRow="8" IconsPerColumn="8" Filename="Districts38.dds"/>
+    <Row Name="ICON_ATLAS_DISTRICTS" IconSize="50" IconsPerRow="8" IconsPerColumn="8" Filename="Districts50.dds"/>
+	  <Row Name="ICON_ATLAS_DISTRICTS" IconSize="80" IconsPerRow="8" IconsPerColumn="8" Filename="Districts80.dds"/>
+	  <Row Name="ICON_ATLAS_DISTRICTS" IconSize="128" IconsPerRow="8" IconsPerColumn="8" Filename="Districts128.dds"/>  
+    <Row Name="ICON_ATLAS_DISTRICTS" IconSize="256" IconsPerRow="8" IconsPerColumn="8" Filename="Districts256.dds"/>
+    <Row Name="ICON_ATLAS_DISTRICTS_FOW" IconSize="256" IconsPerRow="8" IconsPerColumn="8" Filename="Districts256.dds"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+    <Row Name="ICON_DISTRICT_CITY_CENTER"             Atlas="ICON_ATLAS_DISTRICTS" Index="0"/>
+    <Row Name="ICON_DISTRICT_HOLY_SITE"               Atlas="ICON_ATLAS_DISTRICTS" Index="1"/>
+    <Row Name="ICON_DISTRICT_CAMPUS"                  Atlas="ICON_ATLAS_DISTRICTS" Index="2"/>
+    <Row Name="ICON_DISTRICT_ENCAMPMENT"              Atlas="ICON_ATLAS_DISTRICTS" Index="3"/>
+    <Row Name="ICON_DISTRICT_HARBOR"                  Atlas="ICON_ATLAS_DISTRICTS" Index="4"/>
+    <Row Name="ICON_DISTRICT_AERODROME"               Atlas="ICON_ATLAS_DISTRICTS" Index="5"/>
+    <Row Name="ICON_DISTRICT_COMMERCIAL_HUB"          Atlas="ICON_ATLAS_DISTRICTS" Index="6"/>
+    <Row Name="ICON_DISTRICT_ENTERTAINMENT_COMPLEX"   Atlas="ICON_ATLAS_DISTRICTS" Index="7"/>
+    <Row Name="ICON_DISTRICT_THEATER"                 Atlas="ICON_ATLAS_DISTRICTS" Index="8"/>
+    <Row Name="ICON_DISTRICT_INDUSTRIAL_ZONE"         Atlas="ICON_ATLAS_DISTRICTS" Index="9"/>
+    <Row Name="ICON_DISTRICT_NEIGHBORHOOD"            Atlas="ICON_ATLAS_DISTRICTS" Index="10"/>
+    <Row Name="ICON_DISTRICT_AQUEDUCT"                Atlas="ICON_ATLAS_DISTRICTS" Index="11"/>
+    <Row Name="ICON_DISTRICT_SPACEPORT"               Atlas="ICON_ATLAS_DISTRICTS" Index="12"/>
+    <Row Name="ICON_DISTRICT_WONDER"                  Atlas="ICON_ATLAS_DISTRICTS" Index="13"/>
+    <Row Name="ICON_DISTRICT_ACROPOLIS"               Atlas="ICON_ATLAS_DISTRICTS" Index="8"/>
+    <Row Name="ICON_DISTRICT_BATH"                    Atlas="ICON_ATLAS_DISTRICTS" Index="11"/>
+    <Row Name="ICON_DISTRICT_HANSA"                   Atlas="ICON_ATLAS_DISTRICTS" Index="9"/>
+    <Row Name="ICON_DISTRICT_LAVRA"                   Atlas="ICON_ATLAS_DISTRICTS" Index="1"/>
+    <Row Name="ICON_DISTRICT_MBANZA"                  Atlas="ICON_ATLAS_DISTRICTS" Index="10"/>
+    <Row Name="ICON_DISTRICT_STREET_CARNIVAL"         Atlas="ICON_ATLAS_DISTRICTS" Index="7"/>
+    <Row Name="ICON_DISTRICT_ROYAL_NAVY_DOCKYARD"     Atlas="ICON_ATLAS_DISTRICTS" Index="4"/>
+
+    <Row Name="ICON_DISTRICT_CITY_CENTER_FOW"           Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="0"/>
+    <Row Name="ICON_DISTRICT_HOLY_SITE_FOW"             Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="1"/>
+    <Row Name="ICON_DISTRICT_CAMPUS_FOW"                Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="2"/>
+    <Row Name="ICON_DISTRICT_ENCAMPMENT_FOW"            Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="3"/>
+    <Row Name="ICON_DISTRICT_HARBOR_FOW"                Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="4"/>
+    <Row Name="ICON_DISTRICT_AERODROME_FOW"             Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="5"/>
+    <Row Name="ICON_DISTRICT_COMMERCIAL_HUB_FOW"        Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="6"/>
+    <Row Name="ICON_DISTRICT_ENTERTAINMENT_COMPLEX_FOW" Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="7"/>
+    <Row Name="ICON_DISTRICT_THEATER_FOW"               Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="8"/>
+    <Row Name="ICON_DISTRICT_INDUSTRIAL_ZONE_FOW"       Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="9"/>
+    <Row Name="ICON_DISTRICT_NEIGHBORHOOD_FOW"          Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="10"/>
+    <Row Name="ICON_DISTRICT_AQUEDUCT_FOW"              Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="11"/>
+    <Row Name="ICON_DISTRICT_SPACEPORT_FOW"             Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="12"/>
+    <Row Name="ICON_DISTRICT_WONDER_FOW"                Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="13"/>
+    <Row Name="ICON_DISTRICT_ACROPOLIS_FOW"             Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="8"/>
+    <Row Name="ICON_DISTRICT_BATH_FOW"                  Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="11"/>
+    <Row Name="ICON_DISTRICT_HANSA_FOW"                 Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="9"/>
+    <Row Name="ICON_DISTRICT_LAVRA_FOW"                 Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="1"/>
+    <Row Name="ICON_DISTRICT_MBANZA_FOW"                Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="10"/>
+    <Row Name="ICON_DISTRICT_STREET_CARNIVAL_FOW"       Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="7"/>
+    <Row Name="ICON_DISTRICT_ROYAL_NAVY_DOCKYARD_FOW"   Atlas="ICON_ATLAS_DISTRICTS_FOW" Index="4"/>
+  </IconDefinitions>
+</GameInfo>
+

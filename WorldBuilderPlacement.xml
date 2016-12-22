@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Context Name="WorldBuilderPlotEditor">
+
+  <Stack Size="parent,parent" StackGrowth="Bottom" Padding="10">
+
+    <SimplePullDown ID="PlacementPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+
+    <TabControl ID="TabControl" Size="320,200">
+
+      <Label Anchor="L,C" FontSize="18" Size="200,29" String="Left Click to place. Right Click to Remove."/>
+      
+        <!--Tab Container-->
+        <Container ID="TabContainer" Size="parent,parent">
+          
+          <Container ID="PlaceTerrain" Size="parent,parent">
+            <SimplePullDown ID="TerrainPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+          </Container>
+
+          <Container ID="PlaceFeatures" Size="parent,parent">
+            <SimplePullDown ID="FeaturePullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+          </Container>
+
+          <Container ID="PlaceContinent" Size="parent,parent">
+            <SimplePullDown ID="ContinentPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" AutoFlip="1" EntryInstance="InstanceOne"/>
+          </Container>
+
+          <Container ID="PlaceRivers" Size="parent,parent">
+          </Container>
+
+          <Container ID="PlaceCliffs" Size="parent,parent">
+          </Container>
+
+          <Container ID="PlaceResources" Size="parent,parent">
+            <Stack Size="parent,parent" StackGrowth="Bottom" Padding="10">
+              <SimplePullDown ID="ResourcePullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+              <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+                <Label Anchor="L,C" FontSize="18" Size="125,29" String="Resource Amount:"/>
+                <Box Anchor="R,C" Offset="4,0" Size="150,24" Color="255,255,200,255">
+                  <Box Anchor="C,C" Offset="0,0" Size="148,22" Color="0,0,0,255">
+                    <EditBox ID="ResourceAmount" Anchor="L,C" Offset="0,0" Size="148,23" EditMode="1" String="1" NumberInput="1"/>
+                  </Box>
+                </Box>
+              </Stack>
+            </Stack>
+          </Container>
+
+          <Container ID="PlaceCity" Size="parent,parent">
+            <SimplePullDown ID="CityOwnerPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+          </Container>
+
+          <Container ID="PlaceUnit" Size="parent,parent">
+            <Stack Size="parent,parent" StackGrowth="Bottom" Padding="10">
+              <SimplePullDown ID="UnitOwnerPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+              <SimplePullDown ID="UnitPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+            </Stack>
+          </Container>
+    
+          <Container ID="PlaceImprovements" Size="parent,parent">
+            <Stack Size="parent,parent" StackGrowth="Bottom" Padding="10">
+              <SimplePullDown ID="ImprovementPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+              <CheckBox ID="ImprovementPillagedCheck" Style="MainMenuCheck" Anchor="R,T" Offset="15,0" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="Pillaged"/>
+            </Stack>
+          </Container>
+
+          <Container ID="PlaceRoutes" Size="parent,parent">
+            <Stack Size="parent,parent" StackGrowth="Bottom" Padding="10">
+              <SimplePullDown ID="RoutePullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+              <CheckBox ID="RoutePillagedCheck" Style="MainMenuCheck" Anchor="R,T" Offset="15,0" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="Pillaged"/>
+            </Stack>
+          </Container>
+
+          <Container ID="PlaceStartPos" Size="parent,parent">
+            <SimplePullDown ID="StartPosPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+          </Container>
+
+          <Container ID="PlaceOwnership" Size="parent,parent">
+            <SimplePullDown ID="OwnerPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+          </Container>
+
+          <Container ID="PlaceVisibility" Size="parent,parent">
+            <SimplePullDown ID="VisibilityPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,0" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+          </Container>
+          
+        </Container>
+
+    </TabControl>
+    
+  </Stack>
+  
+</Context>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+				 Style="FontNormal18" ColorSet="Beige_Black_Alpha" FontStyle="Shadow">
+
+	<!-- Overall Screen Container -->
+	<Box ID="MainGrid" Style="ShellBGBox">
+
+		<Container ID="MainWindow" Style="ShellWindowContainer">
+			
+			<Container Style="ShellHeaderContainer">
+				<Grid Style="ShellHeaderButtonGrid">
+					<GridButton ID="BackButton" Style="ShellButtonOrnateFlat" Anchor="R,C" Offset="1,0" String="LOC_MULTIPLAYER_BACK"/>
+					<GridButton ID="RefreshButton" Style="ShellButtonOrnateFlat" Anchor="L,C" Offset="1,0" String="LOC_MULTIPLAYER_REFRESH_GAME_LIST" ToolTip="LOC_MULTIPLAYER_REFRESH_GAME_LIST_TT" />
+				</Grid>
+				<Label ID="TitleLabel" Style="ShellHeader" Anchor="C,C" String="LOC_MULTIPLAYER_LAN_LOBBY"/>
+			</Container>
+
+			<Container Anchor="L,T" Offset="0,52" Size="1024,723">
+
+				<Grid Offset="2,0" Size="1020, 714" Style="SubContainer2" Color="MultiplayerSubContainer">
+					<Line															Anchor="L,B" Offset="-6,43" Start="0,0" End="1016,0" Width="2" Color="35,66,92,150" />
+				</Grid>
+
+				<!-- Top Panel  -->
+				<Grid Offset="5,5" Size="parent-10,30" Texture="Controls_SubHeader2" SliceCorner="19,0" SliceSize="1,40" SliceTextureSize="40,40">
+
+					<Stack Anchor="L,T" Size="926,40" Offset="0,-2" Padding="0" StackGrowth="Right">
+
+						<GridButton Anchor="L,T" Size="275,28" Style="ShellHeaderButton" ID="SortbyName" >
+							<Label Anchor="L,C" Offset="7,1" String="LOC_MULTIPLAYER_GAME_NAME" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+						</GridButton>
+
+						<GridButton Anchor="L,T" Size="175,28" Style="ShellHeaderButton" ID="SortbyRuleSet" >
+							<Label Anchor="L,C" Offset="7,1" String="LOC_MULTIPLAYER_GAME_RULESET" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+						</GridButton>
+
+						<GridButton Anchor="L,T" Size="175,28" Style="ShellHeaderButton" ID="SortbyMapName" >
+							<Label Anchor="L,C" Offset="7,1" String="LOC_AD_SETUP_MAP_TYPE" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+						</GridButton>
+
+						<GridButton Anchor="L,T" Size="175,28" Style="ShellHeaderButton" ID="SortbyGameSpeed" >
+							<Label Anchor="L,C" Offset="7,1" String="LOC_AD_SETUP_GAME_SPEED" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+						</GridButton>
+
+						<GridButton  Anchor="L,T" Size="100,28"  Style="ShellHeaderButton" ID="SortbyModsHosted">
+							<Label Anchor="L,C" Offset="7,1" String="LOC_MULTIPLAYER_MODSHOSTED" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+						</GridButton>
+
+						<GridButton  Anchor="L,T" Size="113,28"  Style="ShellHeaderButton" ID="SortbyPlayers">
+							<Label Anchor="L,C" Offset="7,1" String="LOC_MULTIPLAYER_PLAYERS" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+						</GridButton>
+					</Stack>
+				</Grid>
+
+				<!-- Scrollable list of games -->
+				<ScrollPanel Anchor="L,T" ID="ListingScrollPanel" Vertical="1" Size="1004,628" Offset="0,35" AutoScrollBar="1">
+
+					<!-- Scroll Controls -->
+					<ScrollBar Style="ScrollVerticalBar" Offset="0,0" Length="420" Anchor="R,C" AnchorSide="O,I" />
+					<UpButton  Style="ScrollUpButton"  Offset="-3,0" Anchor="R,T" AnchorSide="O,I" />
+					<DownButton Style="ScrollDownButton"  Offset="-3,0" Anchor="R,B" AnchorSide="O,I" />
+
+					<!-- Listing Stack (Dynamic) -->
+					<Stack ID="ListingStack" StackGrowth="B" Padding="2"/>
+
+					<Container ID="GridContainer" Size="1024,parent">
+						<!-- Vertical Grid Lines, Horizontal lines are generated in Lua -->
+						<Line ID="GridLine_1" Start="280,0" End="280,parent" Width="2" Color="35,66,92,150" />
+						<Line ID="GridLine_2" Start="455,0" End="455,parent" Width="2" Color="35,66,92,150" />
+						<Line ID="GridLine_3" Start="630,0" End="630,parent" Width="2" Color="35,66,92,150" />
+						<Line ID="GridLine_4" Start="805,0" End="805,parent" Width="2" Color="35,66,92,150" />
+						<Line ID="GridLine_5" Start="905,0" End="905,parent" Width="2" Color="35,66,92,150" />
+					</Container>
+				</ScrollPanel>
+			</Container>
+
+			<Stack				ID="BottomButtons"	Anchor="R,B" Size="926,20" Offset="5,5" Padding="0" StackGrowth="Right">
+				<GridButton ID="JoinGameButton" Style="ButtonConfirm" String="LOC_MULTIPLAYER_JOIN_GAME"		Disabled="1"/>
+				<GridButton ID="LoadGameButton" Style="MainButton"		String="LOC_LOAD_GAME"								ToolTip="LOC_MULTIPLAYER_LOAD_GAME_TT"/>
+				<GridButton ID="HostButton"			Style="ButtonConfirm" String="LOC_MULTIPLAYER_CREATE_GAME"	ToolTip="LOC_MULTIPLAYER_HOST_GAME_TT"/>
+			</Stack>
+			
+			<!--  Friends Panel -->
+			<GridButton ID="FriendsButton" Anchor="L,B" Offset="5,10" Size="260,30" Texture="Controls_ButtonControl" SliceCorner="12,12" SliceTextureSize="24,24" StateOffsetIncrement="0,24" >
+				<CheckBox ID="FriendsCheck" Anchor="L,C" Style="MainCheckBox" Offset="10,0" Size="260,45" String="LOC_MULTIPLAYER_SHOW_FRIENDS" BoxOnLeft="1" IsChecked="1"/>
+				<Container ID="Friends" Anchor="L,B" Hidden="0">
+
+					<Container ID="FriendsBackground" Anchor="L,B" Offset="0,30" Size="236,330">
+						<Grid Style="SubContainerFill" Anchor="L,B" Size="parent,parent" Color="19,47,77,255"/>
+						<Grid Style="SubContainer4" Anchor="L,B" Offset="-2,0" Size="parent+4,parent" Color="0,0,0,255"/>
+						<Grid Style="DecoGrid" Anchor="L,B" Size="parent-4,parent-8" Offset="2,4" Color="29,60,90,255"/>
+					</Container>
+					
+					<ScrollPanel ID="FriendsScrollPanel" Anchor="L,B" Offset="8,40" Size="222,322" Vertical="1" AutoScrollBar="1">
+						<ScrollBar Style="Slider_Blue" Offset="-10,0" Anchor="R,T"/>
+						<Stack ID="FriendsStack" Anchor="L,B" Size="parent" StackPadding="0" StackGrowth="Up" />
+					</ScrollPanel>
+				</Container>
+			</GridButton>
+		</Container>
+	</Box>
+
+	<!-- Child Contexts -->
+	<LuaContext	ID="LoadGameMenu"			FileName="UI/FrontEnd/LoadGameMenu" Hidden="1" />
+	<!--
+	<LuaContext ID="HostGameScreen"		FileName="UI/FrontEnd/Multiplayer/HostGame" Hidden="1"/>
+	-->
+	
+	<!-- Listing Button Instance -->
+	<Instance Name="ListingButtonInstance">
+
+		<GridButton ID="Button" Style="ShellButton" Size="parent-10,28" Offset="5,0">
+
+			<AlphaAnim ID="Selected" Offset="0,0"	Size="parent,parent"	Speed="5" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
+				<GridButton Size="parent,parent" Style="ShellButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="0"/>
+			</AlphaAnim>
+
+			<Stack Anchor="L,C" Offset="2,0" StackGrowth="Right">
+				<Box ID="ServerNameBox" Anchor="L,C" Anchorside="I.O" Size="280,24" Color="255,255,255,0">
+					<Label Anchor="L,C" Offset="5,0" Style="FontNormal14" ColorSet="ServerText" FontStyle="Shadow" ID="ServerNameLabel" TruncateWidth="280"/>
+				</Box>
+				<Box ID="RuleSetBox" Anchor="L,C" Anchorside="I.O" Size="175,24" Color="255,255,255,0">
+					<Label Anchor="L,C" Offset="0,0" Style="FontNormal14" ColorSet="ServerText" FontStyle="Shadow" ID="RuleSetBoxLabel" TruncateWidth="175"/>
+				</Box>
+				<Box ID="ServerMapTypeBox" Anchor="L,C" Anchorside="I.O" Size="175,24" Color="255,255,255,0">
+					<Label Anchor="L,C" Offset="0,0" Style="FontNormal14" ColorSet="ServerText" FontStyle="Shadow" ID="ServerMapTypeLabel" TruncateWidth="175"/>
+				</Box>
+				<Box ID="GameSpeedBox" Anchor="L,C" Anchorside="I.O" Size="175,24" Color="255,255,255,0">
+					<Label Anchor="L,C" Offset="0,0" Style="FontNormal14" ColorSet="ServerText" FontStyle="Shadow" ID="GameSpeedLabel" TruncateWidth="175"/>
+				</Box>
+				<Box Anchor="L,C" Anchorside="I.O" Size="100,24" Color="255,255,255,0">
+					<Label Anchor="L,C" Offset="0,0" Style="FontNormal14" ColorSet="ServerText" FontStyle="Shadow" ID="DLCHostedLabel" TruncateWidth="100"/>
+				</Box>
+				<Box Anchor="L,C" Anchorside="I.O" Size="120,24" Color="255,255,255,0">
+					<Label Anchor="L,C" Offset="0,0" Style="FontNormal14" ColorSet="ServerText" FontStyle="Shadow" ID="MembersLabel" TruncateWidth="120"/>
+				</Box>
+			</Stack>
+			
+		</GridButton>
+
+	</Instance>
+	
+	<!-- Listing Button Instance -->
+	<Instance Name="HorizontalGridLine">
+
+		<Line ID="Control" Start="5,-1" End="1000,-1" Width="2" Color="35,66,92,150" />
+
+	</Instance>
+
+	<!-- Friend Instance -->
+	<Instance Name="FriendInstance">
+
+		<Container ID="RootContainer" Size="218,46">
+			<PullDown ID="FriendPulldown" Style="PullDownPlayerSlot" ScrollThreshold="110">
+				<Label ID="OnlineIndicator" Anchor="L,T" Offset="4,7" String="[ICON_OnlinePip]"/>
+				<Label ID="PlayerName" Anchor="C,T" Offset="0,7" Style="WhiteSemiBold14" String="PlayerName" TruncateWidth="200" />
+				<Label ID="PlayerStatus" Anchor="L,B" Offset="10,7" Style="WhiteSemiBold12" String="PlayerStatus"/>
+			</PullDown>
+		</Container>
+
+	</Instance>
+	
+</Context>

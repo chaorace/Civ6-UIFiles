@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_YIELDS" IconSize="64" IconsPerRow="6" IconsPerColumn="7" Filename="YieldAtlas.dds"/>    
+  </IconTextureAtlases>
+  <IconDefinitions>
+		<Row Name="ICON_YIELD_FOOD_1"                    Atlas="ICON_ATLAS_YIELDS" Index="0"/>
+		<Row Name="ICON_YIELD_PRODUCTION_1"              Atlas="ICON_ATLAS_YIELDS" Index="1"/>
+		<Row Name="ICON_YIELD_GOLD_1"										 Atlas="ICON_ATLAS_YIELDS" Index="2"/>
+		<Row Name="ICON_YIELD_SCIENCE_1"								 Atlas="ICON_ATLAS_YIELDS" Index="3"/>
+		<Row Name="ICON_YIELD_FOOD_2"                    Atlas="ICON_ATLAS_YIELDS" Index="6"/>
+		<Row Name="ICON_YIELD_PRODUCTION_2"              Atlas="ICON_ATLAS_YIELDS" Index="7"/>
+		<Row Name="ICON_YIELD_GOLD_2"										 Atlas="ICON_ATLAS_YIELDS" Index="8"/>
+		<Row Name="ICON_YIELD_SCIENCE_2"								 Atlas="ICON_ATLAS_YIELDS" Index="9"/>
+		<Row Name="ICON_YIELD_FOOD_3"                    Atlas="ICON_ATLAS_YIELDS" Index="12"/>
+		<Row Name="ICON_YIELD_PRODUCTION_3"              Atlas="ICON_ATLAS_YIELDS" Index="13"/>
+		<Row Name="ICON_YIELD_GOLD_3"										 Atlas="ICON_ATLAS_YIELDS" Index="14"/>
+		<Row Name="ICON_YIELD_SCIENCE_3"								 Atlas="ICON_ATLAS_YIELDS" Index="15"/>
+		<Row Name="ICON_YIELD_FOOD_4"                    Atlas="ICON_ATLAS_YIELDS" Index="18"/>
+		<Row Name="ICON_YIELD_PRODUCTION_4"              Atlas="ICON_ATLAS_YIELDS" Index="19"/>
+		<Row Name="ICON_YIELD_GOLD_4"										 Atlas="ICON_ATLAS_YIELDS" Index="20"/>
+		<Row Name="ICON_YIELD_SCIENCE_4"								 Atlas="ICON_ATLAS_YIELDS" Index="21"/>
+		<Row Name="ICON_YIELD_FOOD_5"                    Atlas="ICON_ATLAS_YIELDS" Index="24"/>
+		<Row Name="ICON_YIELD_PRODUCTION_5"              Atlas="ICON_ATLAS_YIELDS" Index="25"/>
+		<Row Name="ICON_YIELD_GOLD_5"										 Atlas="ICON_ATLAS_YIELDS" Index="26"/>
+		<Row Name="ICON_YIELD_SCIENCE_5"								 Atlas="ICON_ATLAS_YIELDS" Index="27"/>
+		
+	</IconDefinitions>
+</GameInfo>
+

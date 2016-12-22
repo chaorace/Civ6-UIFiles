@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_UNITABILITIES" IconSize="32" IconsPerRow="8" IconsPerColumn="8" Filename="Abilties32.dds"/>
+    <Row Name="ICON_ATLAS_UNITABILITIES_FOW" IconSize="32" IconsPerRow="8" IconsPerColumn="8" Filename="Abilties32.dds"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+    <Row Name="ICON_ABILITY_ANTI_CAVALRY"                      Atlas="ICON_ATLAS_UNITABILITIES" Index="0"/>
+    <Row Name="ICON_ABILITY_HEAVY_CHARIOT"                     Atlas="ICON_ATLAS_UNITABILITIES" Index="1"/>
+    <Row Name="ICON_ABILITY_IGNORE_TERRAIN_COST"               Atlas="ICON_ATLAS_UNITABILITIES" Index="2"/>
+    <Row Name="ICON_ABILITY_RELIGIOUS_ENTER_FOREIGN_LANDS"     Atlas="ICON_ATLAS_UNITABILITIES" Index="3"/>
+    <Row Name="ICON_ABILITY_RELIGIOUS_IGNORE_TERRAIN_COST"     Atlas="ICON_ATLAS_UNITABILITIES" Index="4"/>
+    <Row Name="ICON_ABILITY_IGNORE_ZOC"                        Atlas="ICON_ATLAS_UNITABILITIES" Index="5"/>
+    <Row Name="ICON_ABILITY_LIGHT_CHARIOT"                     Atlas="ICON_ATLAS_UNITABILITIES" Index="6"/>
+    <Row Name="ICON_ABILITY_NO_OCEAN"                          Atlas="ICON_ATLAS_UNITABILITIES" Index="7"/>
+    <Row Name="ICON_ABILITY_NO_MOVE_AND_SHOOT"                 Atlas="ICON_ATLAS_UNITABILITIES" Index="8"/>
+    <Row Name="ICON_ABILITY_ENABLE_WALL_ATTACK"                Atlas="ICON_ATLAS_UNITABILITIES" Index="9"/>
+    <Row Name="ICON_ABILITY_BYPASS_WALLS"                      Atlas="ICON_ATLAS_UNITABILITIES" Index="10"/>
+    <Row Name="ICON_ABILITY_ANTI_SPEAR"                        Atlas="ICON_ATLAS_UNITABILITIES" Index="11"/>
+    <Row Name="ICON_ABILITY_GRANT_RANGE_BONUS"                 Atlas="ICON_ATLAS_UNITABILITIES" Index="12"/>
+    <Row Name="ICON_ABILITY_UNOBSTRUCTED_VIEW"                 Atlas="ICON_ATLAS_UNITABILITIES" Index="13"/>
+    <Row Name="ICON_ABILITY_RELIGIOUS_CANNOT_ATTACK"           Atlas="ICON_ATLAS_UNITABILITIES" Index="14"/>
+    <Row Name="ICON_ABILITY_FRIENDLY_TERRITORY_RELIGIOUS"      Atlas="ICON_ATLAS_UNITABILITIES" Index="15"/>
+    <Row Name="ICON_ABILITY_NO_FOREIGN_SPREAD"                 Atlas="ICON_ATLAS_UNITABILITIES" Index="16"/>
+    <Row Name="ICON_ABILITY_ANTI_CAVALRY_FOW"                  Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="0"/>
+    <Row Name="ICON_ABILITY_HEAVY_CHARIOT_FOW"                 Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="1"/>
+    <Row Name="ICON_ABILITY_IGNORE_TERRAIN_COST_FOW"           Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="2"/>
+    <Row Name="ICON_ABILITY_RELIGIOUS_ENTER_FOREIGN_LANDS_FOW" Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="3"/>
+    <Row Name="ICON_ABILITY_RELIGIOUS_IGNORE_TERRAIN_COST_FOW" Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="4"/>
+    <Row Name="ICON_ABILITY_IGNORE_ZOC_FOW"                    Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="5"/>
+    <Row Name="ICON_ABILITY_LIGHT_CHARIOT_FOW"                 Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="6"/>
+    <Row Name="ICON_ABILITY_NO_OCEAN_FOW"                      Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="7"/>
+    <Row Name="ICON_ABILITY_NO_MOVE_AND_SHOOT_FOW"             Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="8"/>
+    <Row Name="ICON_ABILITY_ENABLE_WALL_ATTACK_FOW"            Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="9"/>
+    <Row Name="ICON_ABILITY_BYPASS_WALLS_FOW"                  Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="10"/>
+    <Row Name="ICON_ABILITY_ANTI_SPEAR_FOW"                    Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="11"/>
+    <Row Name="ICON_ABILITY_GRANT_RANGE_BONUS_FOW"             Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="12"/>
+    <Row Name="ICON_ABILITY_UNOBSTRUCTED_VIEW_FOW"             Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="13"/>
+    <Row Name="ICON_ABILITY_RELIGIOUS_CANNOT_ATTACK_FOW"       Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="14"/>
+    <Row Name="ICON_ABILITY_FRIENDLY_TERRITORY_RELIGIOUS_FOW"  Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="15"/>
+    <Row Name="ICON_ABILITY_NO_FOREIGN_SPREAD_FOW"             Atlas="ICON_ATLAS_UNITABILITIES_FOW" Index="16"/>     
+  </IconDefinitions>
+</GameInfo>

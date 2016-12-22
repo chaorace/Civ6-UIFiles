@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context >
+
+    <Box ID="NumberPad" Size="164,210" Color="70,70,70,200" ConsumeMouse="1"  Hidden="1" >
+        <Stack Padding="8" Anchor="c,c" Offset="2,0" StackGrowth="down" >
+            <Stack Padding="8" Anchor="c,c" StackGrowth="Right" >
+                <GridButton Size="45,45" Style="SoftTouchPadButton" String="1" ID="Button1" Void1="1" />
+                <GridButton Size="45,45" Style="SoftTouchPadButton" String="2" ID="Button2" Void1="2" />
+                <GridButton Size="45,45" Style="SoftTouchPadButton" String="3" ID="Button3" Void1="3" />
+            </Stack>
+
+            <Stack Padding="8" Anchor="c,c" Offset="2,0" StackGrowth="Right" >
+                <GridButton Size="45,45" Style="SoftTouchPadButton" String="4" ID="Button4" Void1="4" />
+                <GridButton Size="45,45" Style="SoftTouchPadButton" String="5" ID="Button5" Void1="5" />
+                <GridButton Size="45,45" Style="SoftTouchPadButton" String="6" ID="Button6" Void1="6" />
+            </Stack>
+
+            <Stack Padding="8" Anchor="c,c" Offset="2,0" StackGrowth="Right" >
+                <GridButton Size="45,45" Style="SoftTouchPadButton" String="7" ID="Button7" Void1="7" />
+                <GridButton Size="45,45" Style="SoftTouchPadButton" String="8" ID="Button8" Void1="8" />
+                <GridButton Size="45,45" Style="SoftTouchPadButton" String="9" ID="Button9" Void1="9" />
+            </Stack>
+
+            <Stack Padding="8" Anchor="c,c" Offset="2,0" StackGrowth="Right" >
+                <GridButton ID="BackspaceButton" Size="45,45" Style="SoftTouchPadButton" />>
+                <GridButton ID="Button0"  Size="45,45" Style="SoftTouchPadButton" String="0" Void1="0" />
+                <GridButton ID="OKButton" Size="45,45" Style="SoftTouchPadButton" />
+            </Stack>
+        </Stack>
+    </Box>
+
+</Context>

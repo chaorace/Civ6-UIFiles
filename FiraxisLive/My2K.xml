@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
+
+	<Box ID="My2KBG" Style="BGBlock" />
+
+	<Instance Name="2KMainMenuInstance" >
+		<Grid ID="Dialog" Size="500,400" Anchor="C,C" Style="My2KWindow" >
+
+			<Stack ID="WindowData" Anchor="C,B" Offset="0,30" StackGrowth="Bottom" Padding="12">
+
+				<Label ID="Title" WrapWidth="440" Style="My2KTitleText" />
+				
+				<Stack			ID="ButtonStack" Anchor="C,B"  Padding="5" StackGrowth="Bottom" >
+					<GridButton ID="LoginButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+						<Label	ID="LoginText"		Anchor="C,C" Style="ShellFlagButtonFont" String="TXT_KEY_MY2K_ADDITION_LOGIN_USER"/>
+					</GridButton>
+					<GridButton ID="CancelButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+						<Label	ID="CancelText"		Anchor="C,C" Style="ShellFlagButtonFont" String="TXT_KEY_MY2K_ADDITION_CANCEL" />
+					</GridButton>
+				</Stack>
+			</Stack>
+		</Grid>
+	</Instance>
+
+	<Instance Name="LoginDialogInstance" >
+		<Grid ID="Dialog" Size="500,500" Anchor="C,C" Style="My2KWindow" >
+
+			<Stack ID="WindowData" Anchor="C,B" Offset="0,30" StackGrowth="Bottom" Padding="24">
+
+				<Label ID="Title" WrapWidth="440" Style="My2KTitleText" String="title" />
+
+				<Stack			ID="ContentStack" Anchor="C,B" Padding="12" StackGrowth="Bottom">
+					<Label		ID="Message" Anchor="L,T"  WrapWidth="440" Style="My2KMessageText" String="message" />
+
+					<Label		ID="EMailTitle" Anchor="L,T"  WrapWidth="440" Style="My2KTitleText" String="email" />
+					<Box Size="430,30" Offset="20,0" Color="110,120,150,100">
+						<Box			Size="426,26" Offset="2,2" Color="0,0,0,100" />
+						<EditBox ID="Email"  Offset="4,4" Anchor="L,T" Size="426,22" EditMode="1" Style="FontNormal24" MaxLength="64" String="" FocusStop="0" />
+					</Box>
+
+					<Label		ID="PasswordTitle" Anchor="L,T"  WrapWidth="440" Style="My2KTitleText" FontStyle="Shadow"
+								String="password" />
+					<Box Size="430,30" Offset="20,0" Color="110,120,150,100">
+						<Box			Size="426,26" Offset="2,2" Color="0,0,0,100" />
+						<EditBox ID="Password"  Offset="4,4" Anchor="L,T" Size="426,24" EditMode="1" Obscure="1" Style="FontNormal22" MaxLength="64" String="" FocusStop="1" />
+					</Box>
+				</Stack>
+
+				<Stack			ID="ButtonStack" Anchor="C,B" Padding="12" StackGrowth="Right" >
+					<GridButton ID="CancelButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+						<Label	ID="CancelText"		Anchor="C,C" String="CancelText"	Style="ShellFlagButtonFont" />
+					</GridButton>
+					<GridButton ID="LoginButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+						<Label	ID="LoginText"		Anchor="C,C" String="LoginText"		Style="ShellFlagButtonFont" />
+					</GridButton>
+				</Stack>
+				
+				<GridButton ID="CreateButton"	Size="400,36" Anchor="C,T"			Style="ShellButtonOrnateFlat"  FocusStop="6" >
+					<Label	ID="CreateText"		Anchor="C,C" String="CreateText"	Style="ShellFlagButtonFont" />
+				</GridButton>
+			</Stack>
+		</Grid>
+	</Instance>
+
+
+	<Instance Name="NewUserDialogInstance" >
+		<Grid ID="Dialog" Size="500,460" Anchor="C,C" Offset="0,0" Style="My2KWindow" >
+
+			<Stack ID="WindowData" Anchor="C,B" Offset="0,30" StackGrowth="Bottom" Padding="24">
+
+				<Label ID="Title" WrapWidth="440" Style="My2KTitleText" String="TXT_KEY_MY2K_ADDITION_SIGN_UP_TITLE" />
+
+				<Stack			ID="ContentStack" Anchor="C,B" Padding="12" StackGrowth="Bottom">
+					
+					<Label		ID="Message" Anchor="C,T"  WrapWidth="440" Style="My2KMessageText" String="TXT_KEY_MY2K_ADDITION_CREATE_NEW_USER_MESSAGE" />
+					<Label		ID="EMailTitle" Anchor="L,T"  WrapWidth="440" Style="My2KTitleText" String="email" />
+					<Box Size="430,30" Offset="20,0" Color="110,120,150,100">
+						<Box			Size="426,26" Offset="2,2" Color="0,0,0,100" />
+						<EditBox ID="Email"  Offset="4,4" Anchor="L,T" Size="426,22" EditMode="1" Style="FontNormal24" MaxLength="64" String="" FocusStop="0" />
+					</Box>
+
+				</Stack>
+
+				<Stack			ID="ButtonStack" Anchor="C,B" Padding="24" StackGrowth="Right" >
+					<GridButton ID="CancelButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat" FocusStop="4"  >
+						<Label	ID="CancelText"		Anchor="C,C" String="TXT_KEY_MY2K_ADDITION_CANCEL"	Style="ShellFlagButtonFont" />
+					</GridButton>
+					<GridButton ID="NewUserButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat"  FocusStop="5" >
+						<Label	ID="NewUserText"		Anchor="C,C" String="TXT_KEY_MY2K_ADDITION_SIGN_UP"		Style="ShellFlagButtonFont" />
+					</GridButton>
+				</Stack>
+			</Stack>
+		</Grid>
+	</Instance>
+
+	<Instance Name="UnlinkConfirmationInstance">
+		<Grid ID="Dialog" Size="500,300" Anchor="C,C" Offset="0,0" Style="My2KWindow">
+			<Stack ID="WindowData" Anchor="C,B" Offset="0,30" StackGrowth="Bottom" Padding="24">
+				<Label ID="Title" WrapWidth="440" Style="My2KTitleText" String="TXT_KEY_MY2K_ADDITION_UNLINK_ACCOUNT_TITLE" />
+				<Label ID="Message" Anchor="C,T"  WrapWidth="440" Style="My2KMessageText" String="TXT_KEY_MY2K_ADDITION_UNLINK_ACCOUNT" />
+				<Stack ID="ButtonStack" Anchor="C,B" Padding="24" StackGrowth="Right">
+					<GridButton ID="CancelButton" Size="200,36" Anchor="C,T" Style="ShellButtonOrnateFlat">
+						<Label ID="CancelText" Anchor="C,C" String="TXT_KEY_MY2K_ADDITION_CANCEL" Style="ShellFlagButtonFont" />
+					</GridButton>
+					<GridButton ID="OkButton" Size="200,36" Anchor="C,T" Style="ShellButtonOrnateFlat">
+						<Label ID="OkText" Anchor="C,C" String="TXT_KEY_MY2K_ADDITION_OK" Style="ShellFlagButtonFont" />
+					</GridButton>
+				</Stack>
+			</Stack>
+		</Grid>
+	</Instance>
+
+	<Instance Name="UserNameDialogInstance" >
+		<Grid ID="Dialog" Size="500,460" Anchor="C,C" Offset="0,0" Style="My2KWindow" >
+
+			<Stack ID="WindowData" Anchor="C,B" Offset="0,30" StackGrowth="Bottom" Padding="24">
+
+				<Label ID="Title" WrapWidth="440" Style="My2KTitleText" String="title" />
+
+				<Stack			ID="ContentStack" Anchor="C,T" Padding="12" StackGrowth="Bottom">
+					<Label		ID="Message" Anchor="C,T"  WrapWidth="440" Style="My2KMessageText" String="" />
+					<Label		ID="EMailTitle" Anchor="L,T"  WrapWidth="440" Style="My2KTitleText" String="email" />
+					<Box Size="430,30" Offset="20,0" Color="110,120,150,100">
+						<Box			Size="426,26" Offset="2,2" Color="0,0,0,100" />
+						<EditBox ID="Email"  Offset="4,4" Anchor="L,T" Size="426,22" EditMode="1" Style="FontNormal24" MaxLength="64" String="" FocusStop="0" />
+					</Box>
+				</Stack>
+
+				<Stack			ID="ButtonStack" Anchor="C,B" Padding="24" StackGrowth="Right" >
+					<GridButton ID="CancelButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+						<Label	ID="CancelText"		Anchor="C,C" String="TXT_KEY_MY2K_ADDITION_CANCEL"	Style="ShellFlagButtonFont" />
+					</GridButton>
+					<GridButton ID="OkButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+						<Label	ID="OkText"		Anchor="C,C" String="TXT_KEY_MY2K_ADDITION_SIGN_UP"		Style="ShellFlagButtonFont" />
+					</GridButton>
+				</Stack>
+			</Stack>
+		</Grid>
+	</Instance>
+		
+	<Instance Name="LegalDialogInstance" >
+		<Grid ID="Dialog" Size="500,460" Anchor="C,C" Offset="0,0" Style="My2KWindow" >
+
+			<Stack ID="WindowData" Anchor="C,B" Offset="0,30" StackGrowth="Bottom" Padding="24">
+
+				<Label ID="Title" WrapWidth="440" Style="My2KTitleText" String="title" />
+					  
+        <Label		ID="Message" Anchor="C,T"  WrapWidth="440" Offset ="0,0" Style="My2KMessageText" String="message" />
+
+				<Stack ID="TOSStack" Anchor="C,B" Padding ="24" StackGrowth="Bottom" >
+          
+					<ScrollPanel	ID="ContentArea"	Anchor="C,T" Vertical="1" Size="400,250" AutoScrollBar="1" Color="0,0,0,128">
+						<ScrollBar	Anchor="R,T"  Style="Slider_Light" AnchorSide="O,I"  Offset="0,0" Length="100"  />
+						<Stack	ID="ContentStack"	Anchor="C,C"  Padding="15" StackGrowth="Bottom" />
+					</ScrollPanel>
+
+					<Stack			ID="ButtonStack"	Anchor="C,B" Padding="24" StackGrowth="Right" >
+						<GridButton ID="DisagreeAllButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+							<Label	ID="DisagreeAllText"		Anchor="C,C" String="CancelText"	Style="ShellFlagButtonFont" />
+						</GridButton>
+						<GridButton ID="AgreeAllButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+							<Label	ID="AgreeAllText"		Anchor="C,C" String="OkText"		Style="ShellFlagButtonFont" />
+						</GridButton>
+					</Stack>
+					
+				</Stack>
+			</Stack>
+		</Grid>
+	</Instance>
+
+	<Instance Name="LegalItemInstance">
+		<Stack			ID="Group" Anchor="L,B" Padding="15" StackGrowth="Right" >
+			<GridButton ID="ReadButton"	Size="400,36" Anchor="C,C"			Style="ShellButtonOrnateFlat"  >
+				<Label	ID="ReadText"		Anchor="C,C" WrapWidth="380" String="TXT_KEY_MY2K_ADDITION_READ"		Style="ShellFlagButtonFont" />
+			</GridButton>
+		</Stack>
+	</Instance>
+
+
+	<Instance Name="LegalItemDialogInstance" >
+    <Grid ID="Dialog" Size="900,660" Anchor="C,C" Offset="0,0" Style="My2KWindowPlain" >
+
+    <Label			ID="Title" Offset="0,30" WrapWidth="840" Style="My2KTitleText" String="title" />
+      
+    <ScrollPanel	ID="ContentArea"	Anchor="C,T" Offset="0,74" Vertical="1" Size="840,500" AutoScrollBar="1">
+      <ScrollBar	Anchor="R,T"  Style="Slider_Light" AnchorSide="O,I"  Offset="0,0" Length="300"  />
+      <Stack		ID="ContentStack"	Anchor="L,T"  Padding="10" StackGrowth="Bottom" />
+    </ScrollPanel>
+
+    <Stack			ID="ButtonStack" Offset="0,30"	Anchor="C,B" Padding="24" StackGrowth="Right" >
+      <GridButton ID="OkButton"	Size="200,36" Anchor="C,T"			Style="ShellButtonOrnateFlat">
+        <Label	ID="OkText"		Anchor="C,C" String="TXT_KEY_MY2K_ADDITION_OK"		Style="ShellFlagButtonFont" />
+      </GridButton>
+    </Stack>
+
+    </Grid>
+	</Instance>
+
+	<Instance Name="LegalTextInstance">
+		<Label	ID="LegalText" Style="My2KMessageText" Anchor="L,T" WrapWidth="830" TextAlign="Left" String="Area for a Legal string..." />
+	</Instance>
+
+
+
+	<Instance Name="MessageDialogInstance" >
+		<Grid ID="Dialog" Size="500,460" Anchor="C,C" Offset="0,0" Style="My2KWindow" >
+
+			<Stack ID="WindowData" Anchor="C,B" Offset="0,30" StackGrowth="Bottom" Padding="24">
+
+				<Label ID="Title" WrapWidth="440" Style="My2KTitleText" String="title" />
+				<Label ID="Message" Anchor="C,T"  WrapWidth="440" Style="My2KMessageText" String="message" />
+
+				<Stack ID="ButtonStack"	Anchor="C,B" Padding="24" StackGrowth="Bottom" >
+					<GridButton ID="OkButton"	Size="200,42" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+						<Label ID="OkText"		Anchor="C,C" String="OkText"		Style="ShellFlagButtonFont" />
+					</GridButton>
+				</Stack>
+			</Stack>
+		</Grid>
+	</Instance>
+
+
+	<Instance Name="LogoutDialogInstance" >
+		<Grid ID="Dialog" Size="500,120" Anchor="C,C" Offset="0,0" Style="My2KWindow" >
+
+			<Stack ID="WindowData" Anchor="C,B" Offset="0,30" StackGrowth="Bottom" Padding="24">
+
+				<Label ID="Title" WrapWidth="440" Style="My2KTitleText" String="title" />
+				<Label ID="Message" Anchor="C,T"  WrapWidth="440" Style="My2KMessageText" String="message" />
+				
+				<Stack			ID="ButtonStack" Anchor="C,B" Padding="24" StackGrowth="Right" >
+					<GridButton ID="CancelButton"	Size="200,42" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+						<Label	ID="CancelText"		Anchor="C,C" String="CancelText"	Style="ShellFlagButtonFont" />
+					</GridButton>
+					<GridButton ID="OkButton"	Size="200,42" Anchor="C,T"			Style="ShellButtonOrnateFlat"  >
+						<Label	ID="OkText"		Anchor="C,C" String="OkText"		Style="ShellFlagButtonFont" />
+					</GridButton>
+				</Stack>
+			</Stack>
+		</Grid>
+	</Instance>
+
+</Context>

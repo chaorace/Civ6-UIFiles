@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Context	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+					Name="PopupGeneric">
+
+  <Box								ID="PopupGenericBlocker" Color="0,0,0,150" Size="Full,Full" ConsumeMouse="1">
+    <AlphaAnim        ID="PopupAlphaIn" AlphaBegin="0" AlphaEnd="1" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+      <SlideAnim      ID="PopupSlideIn" Start="0,-20" End="0,0" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+
+        <Grid         ID="PopupDialog"            Size="450,250"              Anchor="C,C" Offset="0,0" Style="DropShadow2"     Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25" ConsumeMouse="1" Hidden="1">
+          <Grid				ID="PopupDialogPlain"				                            Anchor="C,C" Offset="0,0" Style="WindowFrame"       />
+          <Grid       ID="PopupDialogWithTitle"                               Anchor="C,C" Offset="0,0" Style="WindowFrameTitle"  Hidden="1">
+            <Container                            Size="450,38"     Anchor="C,T"                       Offset="0,4">
+              <Label  ID="PopupTitle"   Style="WindowHeader"        Anchor="C,C" String="{LOC_CONFIRM_CHOICE:upper}"/>
+            </Container>
+          </Grid>
+          <Stack		ID="StackContents"  	Size="450,100"	Anchor="C,C" AutoSize="V" StackGrowth="Bottom" StackPadding="30" InnerPadding="0,10" Offset="0,-5"/>
+        </Grid>
+
+      </SlideAnim>
+    </AlphaAnim>
+  </Box>
+
+
+  <!-- ==================================================================	-->
+	<!--	Instances																													-->
+	<!-- ==================================================================	-->
+
+	<Instance				Name="PopupButtonInstance">
+    <GridButton   ID="Button"     Size="200,41"   Style="MainButton"/>
+	</Instance>
+
+  <Instance				Name="PopupButtonInstanceRed">
+    <GridButton   ID="Button"     Size="200,41"   Style="ButtonRed"/>
+  </Instance>
+  
+  <Instance				Name="PopupButtonInstanceGreen">
+    <GridButton   ID="Button"     Size="200,41"   Style="ButtonConfirm"/>
+  </Instance>
+
+	<Instance				Name="PopupTextInstance">
+    <Label        ID="Text"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="430"/>
+	</Instance>
+
+	<Instance				Name="RowInstance">
+		<Stack        ID="Row"			Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
+	</Instance>
+
+	<Instance				Name="CountDownInstance">
+		<AlphaAnim		ID="Anim"			Anchor="C,T"	Size="50,50" AlphaStart="1" AlphaEnd="0.5" Function="OutQuint" Cycle="Once">
+			<Label			ID="Text"			Anchor="C,T"	Style="FontNormal40" Align="C,T" Color="0,0,0,255" />
+		</AlphaAnim>
+	</Instance>
+
+
+</Context>
+
+

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+				 Style="FontNormal18" ColorSet="Beige_Black_Alpha" FontStyle="Shadow">
+
+  <Box			ID="BGBlock" Style="BGBlock"  />
+  <!-- Instance for a boolean parameters -->
+  <Instance Name="BooleanParameterInstance">
+    <GridButton ID="CheckBox" Anchor="C,T" Style="CheckBoxControl"  Size="340,24" States="8"/>
+  </Instance>
+
+  <!-- Instance for a string parameters -->
+  <Instance Name="StringParameterInstance">
+    <Container AutoSize="1" ID="StringRoot">
+      <Container AutoSize="1">
+        <Box Size="140,30" Color="0,0,0,0"/>
+        <Label ID="StringName" Anchor="R,C" Offset="0,0" Style="FontNormal14" ColorSet="ShellOptionText" FontStyle="stroke" WrapWidth="180" String="UNKNOWN_EDIT_BOX"/>
+      </Container>
+      <Container AutoSize="1" Offset="145,0">
+        <Grid Style="EditTextArea" Size="160,30">
+          <EditBox ID="StringEdit" Anchor="L,C" Offset="6,0" Size="248,23" EditMode="1" Style="FontNormal18" ColorSet="BodyTextCool" FontStyle="stroke" MaxLength="10"/>
+        </Grid>
+      </Container>
+    </Container>
+  </Instance>
+
+	<!-- Instance for a parameter that has multiple choices for the value, displayed as a dropdown -->
+  <Instance Name="PullDownParameterInstance">
+    <Container ID="Root" Anchor="C,T" Size="450,32" Offset="0,0">
+      <PullDown Anchor="C,T" ID="PullDown" Style="PullDownBlue" Size="250,24" Offset="0,0">
+        <Label Style="ShellOptionText" ID="StringName" AnchorSide="O,I" Anchor="L,C" String=""/>
+      </PullDown>
+    </Container>
+  </Instance>
+
+	<Grid Style="WindowFrameTitle" Size="1000,700" Anchor="C,C" Offset="0,0" Padding="0,0"  ID="MainGrid" >
+
+		<Button ID="CloseButton" Style="CloseButtonSmall" Anchor="R,T" Offset="0,0" />
+ 
+		<!-- Screen Title  -->
+		<Label  ID="TitleLabel" Style="FontFlair26" FontStyle="Shadow" ColorSet="ResGoldLabelCS" Anchor="C,T" Offset="0,9"  String="LOC_GAME_SETTINGS_TITLE" />
+
+
+		<!-- Parameters Panel -->
+		<Grid Style="SubContainer" Size="960,560" Anchor="C,T" Offset="0,50" >
+			<ScrollPanel Anchor="C,C" ID="ParametersScrollPanel" Vertical="1" Size="Parent-20,Parent-100" >
+
+				<!-- Scroll Controls -->
+				<ScrollBar Style="Slider_Vert" Length="516" Offset="0, 18" Anchor="R,T" AnchorSide="O,I" />
+				<UpButton  Offset="0,0" Style="Scroll_Up" Anchor="R,T" AnchorSide="O,I" />
+				<DownButton Offset="0,0" Style="Scroll_Down" Anchor="R,B" AnchorSide="O,I" />
+
+				<Stack ID="ParametersStack" Anchor="C,T" Offset="0,0" Padding="20" StackGrowth="Bottom" >
+
+					<!-- Primary Parameters Stack -->
+					<Stack Anchor="C,T" Offset="0,0" Padding="0" StackGrowth="Bottom" ID="PrimaryParametersStack"/>
+
+					<!-- Victory Conditions -->
+					<Container Anchor="C,T" Size="480,30" Offset="0,0" >
+						<Label  Anchor="C,B" Align="center" Offset="0,5" Style="FontFlair26" ColorSet="ResGoldLabelCS" String="LOC_SETUP_VICTORY_CONDITIONS" />
+					</Container>
+
+					<Stack Anchor="L,T" Offset="30,0" Padding="0" StackGrowth="Bottom" ID="VictoryParameterStack" />
+
+					<!-- Secondary Parameters Stack -->
+					<Container Anchor="C,T" Size="480,30" Offset="0,0">
+						<Label Anchor="C,B" Align="center" Offset="0,5" Style="FontFlair26" ColorSet="ResGoldLabelCS" String="LOC_ADVANCED_OPTIONS"/>
+					</Container>
+
+					<Stack Anchor="L,T" Offset="30,0" Padding="0" StackGrowth="Bottom" ID="SecondaryParametersStack"/>
+
+				</Stack>
+			</ScrollPanel>
+		</Grid>
+
+		<!-- Bottom Panel -->
+		<Container Anchor="C,B" Offset="0,26" Size="940,70">
+		</Container>
+  </Grid>
+
+	<LuaContext FileName="UI/FrontEnd/LoadGameMenu" ID="LoadGameMenu"	Hidden="1" />
+	<LuaContext FileName="UI/FrontEnd/Mods"			ID="ModsMenu"		Hidden="1" />
+</Context>

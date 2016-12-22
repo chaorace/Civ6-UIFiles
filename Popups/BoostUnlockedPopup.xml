@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+				 Hidden="1">
+					 
+  <Grid Anchor="C,C" Size="560,350"	Style="DropShadow">
+    <Container Size="parent-100,parent-100" Offset="0,0" Anchor="C,C" ConsumeMouse="1">
+      <Image Size="parent,parent" Texture="Parchment_Pattern"			StretchMode="Tile">
+        <Grid Size="parent,parent" Texture="BoostPopup_Frame" SliceCorner="30,30" SliceSize="20,20">
+          <!-- Head Banner -->
+          <Grid Size="parent+40,80" Offset="-20,0" Texture="Controls_BannerHeaderBlue3" SliceCorner="101,0" SliceSize="65,64" TextureSliceSize="267,64">
+            <Label ID="HeaderLabel" Anchor="C,T" Offset="0,22" Color="Black" Style="FontFlair22" SmallCaps="28" SmallCapsType="EveryWord" FontStyle="Shadow"/>
+          </Grid>
+
+          <!-- Cause Info -->
+          <Label ID="BoostCauseString" Anchor="C,T" Offset="0,65" Color="Black" Style="FontNormal16" FontStyle="Shadow" Align="center" WrapWidth="420"/>
+
+          <!-- Boost Info -->
+          <Grid ID="BoostInfoGrid" Size="370,63" Anchor="C,B" Offset="16,70" Texture="BoostPopup_CivicFrame" SliceCorner="13,13" SliceSize="38,38">
+            <!-- Action Info -->
+            <Container Offset="-38,-5">
+              <FlipAnim   ID="GearAnim" Texture="CivicPanel_MeterFrameAnim" FrameCount="3" Columns="3" Anchor="L,T" Speed="10" Size="40,40" Stopped="1"/>
+              <Image      ID="GearFrame" Texture="CivicPanel_MeterFrame">
+                <Button	  ID="GearButton" Texture="CivicPanel_Button"		Anchor="C,C"	Size="44,44" NoStateChange="1">
+                  <Image  ID="BoostIcon"	Texture="Tech38" Anchor="C,C" Offset="0,0" Size="38,38" />
+                </Button>
+                <Meter	  ID="BoostBar"	Anchor="C,C"	Size="56,56" Percent="0"	Texture="CivicPanel_BoostMeter" Speed="0.0" Follow="1"/>
+                <Meter	  ID="ProgressBar"	Anchor="C,C"	Size="56,56" Percent="0"	Texture="CivicPanel_Meter" Speed="0.8" Follow="0"/>
+              </Image>
+            </Container>
+
+            <!-- Boost Info -->
+            <Label ID="BoostDescString" Anchor="L,T" Offset="40,10" Color="White" Style="FontNormal14" FontStyle="Shadow" EffectColor="Black" WrapWidth="325"/>
+            <Label ID="BoostDescFontIcon" Anchor="C,B" Offset="-55,-2" Color="White" Style="FontNormal16" FontStyle="Shadow" EffectColor="Black"/>
+            <Label String="LOC_BOOST_BOOSTED_POPUP" Anchor="C,B" Offset="-10,1" Color="White" Style="FontNormal14" FontStyle="Shadow" EffectColor="Black"/>
+          </Grid>
+
+          <!-- Continue Button -->
+          <GridButton ID="ContinueButton" Size="260,45" Anchor="C,B" Offset="0,15" String="LOC_CONTINUE" Style="MainButton"/>
+        
+          <!-- Glow Animation -->
+          <SlideAnim ID="GlowSlideAnim" Begin="0,0" End="445,0" Speed="1.0" Function="OutSine" Cycle="Once" Stopped="1">
+            <AlphaAnim ID="GlowAlphaAnim" AlphaBegin="0" AlphaEnd="1" Speed="2.0" Function="Root" Cycle="OneBounce" Stopped="1">
+              <Image ID="GlowImage" Anchor="T,L" Offset="-90,-30" Texture="BoostPopup_GlowCivic"/>
+            </AlphaAnim>
+          </SlideAnim>
+        </Grid>
+      </Image>
+    </Container>
+  </Grid>
+</Context>

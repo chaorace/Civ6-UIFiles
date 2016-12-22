@@ -1,0 +1,120 @@
+<GameInfo>
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_UNIT_ACTIONS" IconSize="38" IconsPerRow="8" IconsPerColumn="12" Filename="UnitActions38.dds"/>
+		<Row Name="ICON_ATLAS_UNIT_ACTIONS" IconSize="50" IconsPerRow="8" IconsPerColumn="12" Filename="UnitActions50.dds"/>
+    <Row Name="ICON_ATLAS_UNIT_ACTIONS" IconSize="80" IconsPerRow="8" IconsPerColumn="12" Filename="UnitActions80.dds"/>
+		<Row Name="ICON_ATLAS_UNIT_ACTIONS" IconSize="256" IconsPerRow="8" IconsPerColumn="12" Filename="UnitActions256.dds"/>
+    <Row Name="ICON_ATLAS_SPYOPERATIONS" IconSize="40" IconsPerRow="9" IconsPerColumn="8" Filename="EspionageMissions40.dds"/>
+    <Row Name="ICON_ATLAS_SPYOPERATIONS" IconSize="200" IconsPerRow="9" IconsPerColumn="8" Filename="EspionageMissions200.dds"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+    <Row Name="ICON_IMPROVEMENT_BARBARIAN_CAMP"           	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="0"/>
+    <Row Name="ICON_IMPROVEMENT_FARM"                     	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="1"/>
+    <Row Name="ICON_IMPROVEMENT_MINE"                     	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="2"/>
+    <Row Name="ICON_IMPROVEMENT_QUARRY"                   	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="3"/>
+    <Row Name="ICON_IMPROVEMENT_FISHING_BOATS"            	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="4"/>
+    <Row Name="ICON_IMPROVEMENT_PASTURE"                  	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="5"/>
+    <Row Name="ICON_IMPROVEMENT_PLANTATION"               	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="6"/>
+    <Row Name="ICON_IMPROVEMENT_CAMP"                     	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="7"/>
+    <Row Name="ICON_IMPROVEMENT_LUMBER_MILL"              	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="8"/>
+    <Row Name="ICON_IMPROVEMENT_GOODY_HUT"                	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="9"/>
+    <Row Name="ICON_IMPROVEMENT_OIL_WELL"                 	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="10"/>
+    <Row Name="ICON_IMPROVEMENT_OFFSHORE_OIL_RIG"         	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="11"/>
+    <Row Name="ICON_IMPROVEMENT_FORT"                     	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="12"/>
+    <Row Name="ICON_IMPROVEMENT_ROMAN_FORT"               	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="12"/>
+    <Row Name="ICON_IMPROVEMENT_AIRSTRIP"                 	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="13"/>
+    <Row Name="ICON_IMPROVEMENT_BEACH_RESORT"             	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="14"/>
+    <Row Name="ICON_IMPROVEMENT_MISSILE_SILO"             	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="15"/>
+    <Row Name="ICON_IMPROVEMENT_CHATEAU"                  	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="16"/>
+    <Row Name="ICON_IMPROVEMENT_COLOSSAL_HEAD"            	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="17"/>
+    <Row Name="ICON_IMPROVEMENT_GREAT_WALL"               	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="18"/>
+    <Row Name="ICON_IMPROVEMENT_KURGAN"                   	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="19"/>
+    <Row Name="ICON_IMPROVEMENT_MISSION"                  	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="20"/>
+    <Row Name="ICON_IMPROVEMENT_SPHINX"                   	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="21"/>
+    <Row Name="ICON_IMPROVEMENT_STEPWELL"                 	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="22"/>
+    <Row Name="ICON_IMPROVEMENT_ZIGGURAT"                 	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="23"/>
+    <Row Name="ICON_UNITCOMMAND_PROMOTE"                		Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="24"/>
+    <Row Name="ICON_UNITCOMMAND_UPGRADE"                  	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="25"/>
+    <Row Name="ICON_UNITOPERATION_UPGRADE"                	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="25"/>
+    <Row Name="ICON_UNITCOMMAND_AUTOMATE"                 	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="26"/>
+    <Row Name="ICON_UNITOPERATION_AUTO_EXPLORE"							Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="26"/>
+    <Row Name="ICON_UNITCOMMAND_WAKE"                     	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="27"/>
+    <Row Name="ICON_UNITCOMMAND_CANCEL"                   	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="28"/>
+    <Row Name="ICON_UNITCOMMAND_STOP_AUTOMATION"          	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="29"/>
+    <Row Name="ICON_UNITCOMMAND_DELETE"                   	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="30"/>
+    <Row Name="ICON_UNITCOMMAND_GIFT"                     	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="31"/>
+    <Row Name="ICON_UNITCOMMAND_ENTER_FORMATION"          	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="32"/>
+    <Row Name="ICON_UNITCOMMAND_EXIT_FORMATION"           	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="33"/>
+    <Row Name="ICON_UNITCOMMAND_ACTIVATE_GREAT_PERSON"    	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="34"/>
+    <Row Name="ICON_UNITCOMMAND_DISTRICT_PRODUCTION"      	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="35"/>
+    <Row Name="ICON_UNITCOMMAND_FORM_CORPS"               	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="36"/>
+    <Row Name="ICON_UNITCOMMAND_FORM_ARMY"                	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="37"/>
+	<Row Name="ICON_UNITCOMMAND_AIRLIFT"					Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="67"/>
+    <Row Name="ICON_UNITCOMMAND_PLUNDER_TRADE_ROUTE"      	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="38"/>
+    <Row Name="ICON_UNITCOMMAND_NAME_UNIT"                	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="39"/>
+    <Row Name="ICON_UNITCOMMAND_WONDER_PRODUCTION"        	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="40"/>
+    <Row Name="ICON_UNITOPERATION_AIR_ATTACK"             	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="41"/>
+    <Row Name="ICON_UNITOPERATION_BUILD_IMPROVEMENT"      	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="42"/>
+    <Row Name="ICON_UNITOPERATION_BUILD_ROUTE"            	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="43"/>
+    <Row Name="ICON_UNITOPERATION_CLEAR_CONTAMINATION"    	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="44"/>
+    <Row Name="ICON_UNITOPERATION_CONVERT_BARBARIANS"     	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="45"/>
+    <Row Name="ICON_UNITOPERATION_DEPLOY"                 	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="46"/>
+    <Row Name="ICON_UNITOPERATION_DESIGNATE_PARK"         	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="47"/>
+    <Row Name="ICON_UNITOPERATION_DISEMBARK"              	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="48"/>
+    <Row Name="ICON_UNITOPERATION_DONATE_MUSEUM"          	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="49"/>
+    <Row Name="ICON_UNITOPERATION_EMBARK"                 	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="50"/>
+    <Row Name="ICON_UNITOPERATION_EVANGELIZE_BELIEF"      	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="51"/>
+    <Row Name="ICON_UNITOPERATION_EXCAVATE"               	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="52"/>
+    <Row Name="ICON_UNITOPERATION_FORTIFY"                	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="53"/>
+    <Row Name="ICON_UNITOPERATION_HEAL"                   	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="54"/>
+    <Row Name="ICON_UNITOPERATION_FOUND_CITY"             	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="55"/>
+    <Row Name="ICON_UNITOPERATION_FOUND_RELIGION"         	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="56"/>
+    <Row Name="ICON_UNITOPERATION_HARVEST_RESOURCE"       	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="57"/>
+    <Row Name="ICON_UNITOPERATION_LAUNCH_INQUISITION"     	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="58"/>
+    <Row Name="ICON_UNITOPERATION_MAKE_TRADE_ROUTE"       	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="59"/>
+    <Row Name="ICON_UNITOPERATION_MOVE_TO"                	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="60"/>
+    <Row Name="ICON_UNITOPERATION_MOVE_TO_UNIT"           	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="61"/>
+    <Row Name="ICON_UNITOPERATION_WMD_STRIKE"             	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="62"/>
+    <Row Name="ICON_UNITOPERATION_COASTAL_RAID"           	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="63"/>
+    <Row Name="ICON_UNITOPERATION_PILLAGE"                	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="63"/>
+    <Row Name="ICON_UNITOPERATION_PILLAGE_ROUTE"          	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="64"/>
+    <Row Name="ICON_UNITOPERATION_PLANT_FOREST"           	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="65"/>
+    <Row Name="ICON_UNITOPERATION_RANGE_ATTACK"           	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="66"/>
+    <Row Name="ICON_UNITOPERATION_REBASE"                 	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="67"/>
+    <Row Name="ICON_UNITOPERATION_REMOVE_FEATURE"         	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="68"/>
+    <Row Name="ICON_UNITOPERATION_REMOVE_IMPROVEMENT"     	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="68"/>
+    <Row Name="ICON_UNITOPERATION_REPAIR"                 	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="69"/>
+    <Row Name="ICON_UNITOPERATION_REPAIR_ROUTE"           	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="69"/>
+    <Row Name="ICON_UNITOPERATION_RETRAIN"                	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="70"/>
+    <Row Name="ICON_UNITOPERATION_SKIP_TURN"              	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="71"/>
+    <Row Name="ICON_UNITOPERATION_SLEEP"                  	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="72"/>
+    <Row Name="ICON_UNITOPERATION_SPREAD_RELIGION"        	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="73"/>
+    <Row Name="ICON_UNITOPERATION_SPY_TRAVEL_NEW_CITY"    	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="74"/>
+    <Row Name="ICON_UNITOPERATION_SWAP_UNITS"             	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="75"/>
+    <Row Name="ICON_UNITOPERATION_TELEPORT_TO_CITY"       	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="76"/>
+    <Row Name="ICON_UNITOPERATION_WAIT_FOR"               	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="77"/>
+    <Row Name="ICON_UNITOPERATION_SPY_MISSIONCHOOSER"      	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="78"/>
+    <Row Name="ICON_UNITOPERATION_SPY_COUNTERSPY_ACTION"   	Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="79"/>
+		<Row Name="ICON_UNITOPERATION_ADMIRAL_ACTION"   				Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="80"/>
+		<Row Name="ICON_UNITOPERATION_ARTIST_ACTION"   					Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="81"/>
+		<Row Name="ICON_UNITOPERATION_ENGINEER_ACTION"   				Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="82"/>
+		<Row Name="ICON_UNITOPERATION_GENERAL_ACTION"   				Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="83"/>
+		<Row Name="ICON_UNITOPERATION_MERCHANT_ACTION"   				Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="84"/>
+		<Row Name="ICON_UNITOPERATION_MUSICIAN_ACTION"   				Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="85"/>
+		<!-- Skip index 86 since we're using ICON_UNITOPERATION_FOUND_RELIGION as the Prophet's operation icon -->
+		<Row Name="ICON_UNITOPERATION_SCIENTIST_ACTION"   			Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="87"/>
+		<Row Name="ICON_UNITOPERATION_WRITER_ACTION"   					Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="88"/>
+    <Row Name="ICON_UNITCOMMAND_HARVEST_WONDER"   				Atlas="ICON_ATLAS_UNIT_ACTIONS"   Index="89"/>
+    
+    <!-- Spy Operations -->
+    <Row Name="ICON_UNITOPERATION_SPY_LISTENING_POST"       Atlas="ICON_ATLAS_SPYOPERATIONS"  Index="0"/>
+    <Row Name="ICON_UNITOPERATION_SPY_GAIN_SOURCES"         Atlas="ICON_ATLAS_SPYOPERATIONS"  Index="1"/>
+    <Row Name="ICON_UNITOPERATION_SPY_STEAL_TECH_BOOST"     Atlas="ICON_ATLAS_SPYOPERATIONS"  Index="2"/>
+    <Row Name="ICON_UNITOPERATION_SPY_GREAT_WORK_HEIST"     Atlas="ICON_ATLAS_SPYOPERATIONS"  Index="3"/>
+    <Row Name="ICON_UNITOPERATION_SPY_SABOTAGE_PRODUCTION"  Atlas="ICON_ATLAS_SPYOPERATIONS"  Index="4"/>
+    <Row Name="ICON_UNITOPERATION_SPY_SIPHON_FUNDS"         Atlas="ICON_ATLAS_SPYOPERATIONS"  Index="5"/>
+    <Row Name="ICON_UNITOPERATION_SPY_RECRUIT_PARTISANS"    Atlas="ICON_ATLAS_SPYOPERATIONS"  Index="6"/>
+    <Row Name="ICON_UNITOPERATION_SPY_DISRUPT_ROCKETRY"     Atlas="ICON_ATLAS_SPYOPERATIONS"  Index="7"/>
+    <Row Name="ICON_UNITOPERATION_SPY_COUNTERSPY"         	Atlas="ICON_ATLAS_SPYOPERATIONS"  Index="8"/>
+  </IconDefinitions>
+</GameInfo>

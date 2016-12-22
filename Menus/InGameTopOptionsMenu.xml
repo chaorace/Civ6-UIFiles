@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Context  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+					ColorSet="Beige_Black" Style="FontNormal16" FontStyle="Shadow" >
+
+  <AlphaAnim        ID="PauseWindowClose"  AlphaBegin="0"  AlphaEnd="1"  Speed="3" Function="Root" Cycle="Once" Stopped="1"/>
+
+  <AlphaAnim        ID="AlphaIn"      Size="parent,parent"  AlphaBegin="0"  AlphaEnd="1"  Speed="3" Function="Root" Cycle="Once">
+    <SlideAnim      ID="SlideIn"      Size="parent,parent"  Start="0,-20"   End="0,0"     Speed="3" Function="Root" Cycle="Once">
+      <Grid         ID="PauseWindow"  Size="500,250"              Anchor="C,C" Offset="0,0" Style="DropShadow2"     Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25" ConsumeMouse="1">
+        <Box Color="21,46,75,200" Size="290,620" Anchor="C,C" AutoSize="V" AutoSizePadding="10,-5">
+          <Grid Size="300,630" Anchor="C,C" Style="WindowFrameAlpha" AutoSize="V" AutoSizePadding="0,58">
+            <Container Anchor="C,T" Size="parent,50">
+              <Label	ID="WindowTitle" Style="ShellHeader" Anchor="C,C" Offset="0,1" String="LOC_GAME_MENU_TITLE"/>
+              <Grid Style="Divider3Grid" Size="parent-9,8" Anchor="C,B" Offset="-2,0"/>
+            </Container>
+
+            <Grid Style="SubContainer4" Size="parent-20,116" Offset="-1,55" Anchor="C,T" Color="41,74,108,255" AutoSize="V" AutoSizePadding="0,0">
+
+              <Image        ID="CompassDeco" Size="193,122" Texture="Controls_Compass" Color="41,74,108,100" Anchor="C,B"/>
+              <Stack				ID="MainStack"						Anchor="C,T" Offset="-1,5" Padding="0" StackGrowth="Bottom"  >
+                <Container Size="20,40"/>
+                <GridButton ID="ReturnButton"		      Anchor="C,T" Style="PauseMenuButton" String="{LOC_GAME_MENU_RETURN_TO_GAME:upper}" ToolTip="LOC_GAME_MENU_RETURN_TO_GAME_TOOLTIP" />
+                <Container Size="20,20"/>
+                <GridButton ID="RestartGameButton"		Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_RESTART:upper}" ToolTip="LOC_GAME_MENU_RESTART_TOOLTIP"/>
+                <GridButton ID="QuickSaveButton"			Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_QUICK_SAVE:upper}" ToolTip="LOC_GAME_MENU_QUICK_SAVE_TOOLTIP" />
+                <GridButton ID="SaveGameButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_SAVE:upper}" ToolTip="LOC_GAME_MENU_SAVE_TOOLTIP" />
+                <GridButton ID="LoadGameButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_LOAD:upper}" ToolTip="LOC_GAME_MENU_LOAD_TOOLTIP" />
+                <GridButton ID="OptionsButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_OPTIONS:upper}" ToolTip="LOC_GAME_MENU_OPTIONS_TOOLTIP"/>
+                <GridButton ID="RetireButton"					Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_RETIRE:upper}" ToolTip="LOC_GAME_MENU_RETIRE_TOOLTIP"/>
+                <GridButton ID="MainMenuButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_EXIT_TO_MAIN:upper}" ToolTip="LOC_GAME_MENU_EXIT_TO_MAIN_TOOLTIP" />
+                <GridButton ID="ExitGameButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_EXIT_TO_DESKTOP:upper}" ToolTip="LOC_GAME_MENU_EXIT_TO_DESKTOP_TOOLTIP" />
+
+                <Container Size="20,20"/>
+
+                <!-- Mods Stack -->
+                <Grid						ID="ModsInUse"				Anchor="C,T"	Style="DecoFrame" Size="parent-50,80" Hidden="1">
+                  <Label		ID="ModsInUseHeader"	Anchor="C,T" Offset="0,5" Style="BlueGlow" FontSize="14" String="{LOC_GAME_MENU_MODS_IN_USE:upper}" />
+                  <Grid Style="Divider6Grid" Size="parent,2" Color="41,74,108,255" Offset="0,20"/>
+                  <ScrollPanel	ID="ModListings"			Anchor="L,T"	Offset="10,22" Size="parent-20,parent-24" Vertical="1" AutoScrollBar="1">
+                    <Stack			ID="ModListingsStack"	Anchor="L,T" StackGrowth="Bottom" Padding="0"/>
+                    <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"/>
+                  </ScrollPanel>
+                </Grid>
+                <Container Size="20,40"/>
+              </Stack>
+            </Grid>
+
+            <Container ID="GameDetails" Size="parent,105" Anchor="C,B">
+              <!-- Game Info -->
+              <Box Size="parent-12,55" Color="30,125,182,50" Anchor="C,T" Offset="-1,0">
+                <Grid Style="ShellGameDetailsContainer" Size="52,55" Anchor="L,C"/>
+                <Grid Style="ShellGameDetailsContainerR" Size="52,55" Anchor="R,C"/>
+                <Stack StackGrowth="Right" Anchor="C,C" Offset="0,1" Padding="-3">
+                  <Container Size="62,62">
+                    <Image ID="CivBacking_Base" Texture="Circle44_Base" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+                    <Image ID="CivBacking_Darker" Texture="Circle44_Darker" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+                    <Image ID="CivBacking_Lighter" Texture="Circle44_Lighter" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
+                    <Image ID="CivBacking_None" Texture="Circle44_None" Size="44,44" Anchor="C,C"/>
+                    <Image ID="CivIcon" Texture="CivSymbols36" Size="36,36" Anchor="C,C"/>
+                    <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="-1,-1" Color="2,119,186"/>
+                  </Container>
+                  <Container Size="62,62">
+                    <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="0,-1" Color="2,119,186"/>
+                    <Image ID="LeaderIcon" Texture="Leaders45" Size="45,45" Anchor="C,C" Offset="1,0"/>
+                  </Container>
+                  <Image ID="GameDifficulty" Texture="Shell_GameDifficulty" Size="62,62"/>
+                  <Image ID="GameSpeed" Texture="Shell_GameSpeed" Size="62,62"/>
+                </Stack>
+                <Box Color="30,125,182,50" Size="parent,2" Anchor="L,B"/>
+              </Box>
+              <Label ID="VersionLabel" Style="FontNormal14"	Color="102,122,145" Anchor="C,B" Offset="0,10" String="Mod Title" />
+            </Container>
+          </Grid>
+        </Box>
+      </Grid>
+    </SlideAnim>
+  </AlphaAnim>
+
+	<!-- Custom popup dialog -->
+  <Box Style="PopupDialogBox"/>
+
+
+
+	<Instance Name="ModInstance">
+		<Label ID="ModTitle" Style="FontNormal14"	Color="102,122,145" Anchor="L,T" Offset="5,0" WrapWidth="205" String="Mod Title" />
+	</Instance>
+
+	<!-- Customized popup dialog pieces-->
+  <Instance				Name="PopupButtonInstance">
+    <GridButton   ID="Button"     Size="200,41"   Style="MainButton"/>
+  </Instance>
+  <Instance				Name="PopupButtonInstanceAlt">
+    <GridButton   ID="Button"     Size="200,41"   Style="ButtonRed"/>
+  </Instance>
+  <Instance				Name="PopupTextInstance">
+    <Label        ID="Text"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="parent-20"/>
+  </Instance>
+  <Instance				Name="RowInstance">
+    <Stack        ID="Row"			Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
+  </Instance>
+
+
+	<LuaContext FileName="LoadGameMenu" ID="LoadGameMenu" Hidden="1" />
+	<LuaContext FileName="SaveGameMenu" ID="SaveGameMenu" Hidden="1" TutorialActive="1" />
+	<LuaContext FileName="Options"			ID="Options"			Hidden="1" TutorialActive="1" />
+
+</Context>

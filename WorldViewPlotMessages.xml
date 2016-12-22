@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Context>
+
+  <Container ID="FloatUpPlotTextContainer"/>
+  
+  <Instance Name="FloatUpPlotText">
+    <WorldAnchor ID="Anchor" Anchor="c,c">
+      <SlideAnim ID="SlideAnim" Anchor="c,c" End="0,-100" Cycle="once" Speed=".5" GlobalUpdate="1" >
+        <AlphaAnim ID="AlphaAnimIn" Anchor="c,c" AlphaStart="0" Cycle="once" AlphaEnd="1" Pause="0" Speed="100" GlobalUpdate="1">
+          <AlphaAnim ID="AlphaAnimOut" Anchor="c,c" AlphaStart="1" Cycle="once" AlphaEnd="0" Pause="0.75" Function="Square" GlobalUpdate="1">
+            <Label ID="Text" Anchor="c,c" ColorSet="White_Black" Style="FontNormal22" FontStyle="Stroke"/>
+          </AlphaAnim>
+        </AlphaAnim>
+      </SlideAnim>
+    </WorldAnchor>
+  </Instance>
+  
+</Context>

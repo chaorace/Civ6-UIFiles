@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+	<IconTextureAtlases>
+    <Row Name="ICON_ATLAS_STATS" IconSize="16" IconsPerRow="8" IconsPerColumn="8" Filename="Stats16"/>
+		<Row Name="ICON_ATLAS_STATS" IconSize="22" IconsPerRow="8" IconsPerColumn="8" Filename="Stats22"/>
+    <Row Name="ICON_ATLAS_STATS" IconSize="32" IconsPerRow="8" IconsPerColumn="8" Filename="Stats32"/>
+		<Row Name="ICON_ATLAS_STATS" IconSize="45" IconsPerRow="8" IconsPerColumn="8" Filename="Stats45"/>
+		<Row Name="ICON_ATLAS_STATS" IconSize="55" IconsPerRow="8" IconsPerColumn="8" Filename="Stats55"/>
+	</IconTextureAtlases>
+	<IconDefinitions>
+		<Row Name="ICON_STRENGTH"					Index="0" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_RANGED_STRENGTH"	Index="1" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_BOMBARD"					Index="2" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_MOVES"						Index="3" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_BUILD_CHARGES"		Index="4" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_RANGE"						Index="5" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_POSITION"					Index="6" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_PROMOTION"				Index="7" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_GREAT_PERSON"			Index="8" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_DEFENSE"					Index="9" Atlas="ICON_ATLAS_STATS"/>
+    <Row Name="ICON_FORTIFICATION"		Index="9" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_DAMAGE"						Index="10" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_GOVERNMENT"		    Index="11" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_POLICY"						Index="12" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_BUILDINGS"				Index="13" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_RELIGION"					Index="14" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_AMENITIES"				Index="15" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_HOUSING"					Index="16" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_QUEUE"						Index="17" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_CITIZEN"					Index="18" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_STATS_LAND_TRADE"		Index="19" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_STATS_SEA_TRADE"		Index="20" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_STATS_TRADEGOODS"			Index="21" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_STATS_TERRAIN"				Index="22" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_STATS_INTERCEPTOR"			Index="23" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_STATS_ANTIAIR"				Index="24" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_STATS_GENERIC_MODIFIER"		Index="25" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_STATS_SLEEP"				Index="26" Atlas="ICON_ATLAS_STATS"/>
+		<Row Name="ICON_STATS_SKIP"					Index="27" Atlas="ICON_ATLAS_STATS"/>
+    <Row Name="ICON_STATS_SPREADCHARGES"					Index="30" Atlas="ICON_ATLAS_STATS"/>
+	</IconDefinitions>
+</GameInfo>

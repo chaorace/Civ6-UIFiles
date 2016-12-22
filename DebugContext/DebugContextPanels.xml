@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+					ColorSet="Beige_Black_Alpha" FontSize="14" FontStyle="Shadow" Name="DebugContextPanels" >
+
+  <Grid Style="UnitFrame" Anchor="L,T" Offset="200,30" AnchorSide="i,i" Size="400,280" ID="TerrainModifyPanel" Hidden="1" >
+    <Stack StackPadding="4" Offset="10,10" >
+      <Label ID="DiffuseLabel"    String="Diffuse 0,0,0,0" />
+      <Slider Style="Slider_Vert" Anchor="C,c" Size="180,32" ID="DiffuseSliderR" />
+      <Slider Style="Slider_Vert" Anchor="C,c" Size="180,32" ID="DiffuseSliderG" />
+      <Slider Style="Slider_Vert" Anchor="C,c" Size="180,32" ID="DiffuseSliderB" />
+      <Slider Style="Slider_Vert" Anchor="C,c" Size="180,32" ID="DiffuseSliderA" />
+      <RadioButton RadioGroup="DiffuseMode" Anchor="r,t" Style="MainMenuCheck" String="Off" ID="DiffuseRadioOff" />
+      <RadioButton RadioGroup="DiffuseMode" Anchor="r,t" Style="MainMenuCheck" String="Texture" ID="DiffuseRadioTexture" IsChecked="1" />
+      <RadioButton RadioGroup="DiffuseMode" Anchor="r,t" Style="MainMenuCheck" String="RGBA" ID="DiffuseRadioRGBA" />
+    </Stack>
+
+    <Stack StackPadding="4" Offset="10,10" Anchor="R,T" >
+      <Label ID="SpecularLabel"    String="Specular 0,0,0,0" />
+      <Slider Style="Slider_Vert" Anchor="C,c" Size="180,32" ID="SpecularSliderR" />
+      <Slider Style="Slider_Vert" Anchor="C,c" Size="180,32" ID="SpecularSliderG" />
+      <Slider Style="Slider_Vert" Anchor="C,c" Size="180,32" ID="SpecularSliderB" />
+      <Slider Style="Slider_Vert" Anchor="C,c" Size="180,32" ID="SpecularSliderA" />
+      <RadioButton RadioGroup="SpecularMode" Anchor="r,t" Style="MainMenuCheck" String="Off" ID="SpecularRadioOff" />
+      <RadioButton RadioGroup="SpecularMode" Anchor="r,t" Style="MainMenuCheck" String="Texture" ID="SpecularRadioTexture" IsChecked="1" />
+      <RadioButton RadioGroup="SpecularMode" Anchor="r,t" Style="MainMenuCheck" String="RGBA" ID="SpecularRadioRGBA" />
+    </Stack>
+  </Grid>
+
+  <Grid Style="UnitFrame" Anchor="L,T" Offset="200,30" AnchorSide="i,i" SizePadding="20,20" ID="ComboFlagGrid" Hidden="1" >
+    <Image ID="ComboFlagTexture" NormalizedQuad="1" Anchor="c,c" />
+  </Grid>
+  <Grid Style="UnitFrame" Anchor="L,T" Offset="200,30"  AnchorSide="i,i" SizePadding="20,20" ID="MoraleFlagGrid" Hidden="1" >
+    <Image ID="MoraleFlagTexture" NormalizedQuad="1" Anchor="c,c" />
+  </Grid>
+  <Grid Style="UnitFrame" Anchor="L,T" Offset="200,30"  AnchorSide="i,i" SizePadding="20,20" ID="PromotionFlagGrid" Hidden="1" >
+    <Image ID="PromotionFlagTexture" NormalizedQuad="1" Anchor="c,c" />
+  </Grid>
+  <Grid Style="UnitFrame" Anchor="L,T" Offset="200,30"  AnchorSide="i,i" SizePadding="20,20" ID="TypeFlagGrid" Hidden="1" >
+    <Image ID="TypeFlagTexture" NormalizedQuad="1" Anchor="c,c" />
+  </Grid>
+  <Grid Style="UnitFrame" Anchor="L,T" Offset="200,30"  AnchorSide="i,i" SizePadding="20,20" ID="DestFlagGrid" Hidden="1" >
+    <Image ID="DestFlagTexture" NormalizedQuad="1" Anchor="c,c" />
+  </Grid>
+
+</Context>

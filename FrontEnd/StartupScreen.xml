@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContextDefaults ColorSet="White_Black" Style="FontNormal22" FontStyle="Stroke" Name="StartupScreen" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\ForgeUI_Assets\Controls.xsd">
+	<LuaContext ID="Intro" FileName="UI/FrontEnd/IntroScreen" />
+</ContextDefaults>

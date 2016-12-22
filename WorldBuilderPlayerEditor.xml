@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Context Name="WorldPlayerEditor">
+
+  <Container Style="ModalScreen">
+
+    <Grid Size="980,700" Offset="20,50" Texture="Religion_OverviewFrame" SliceCorner="15,15" SliceTextureSize="34,33">
+
+      <ListBox ID="PlayerList" Size="400,640" Offset="15,15">
+
+        <Grid Style="UnitFrame" Anchor="L,T" Size="400,640" >
+          <ScrollPanel Size="390,620" Anchor="L,T" Vertical="1" Offset="5,10" >
+            <Stack ID="ListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
+
+            <ScrollBar  Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+            <UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
+            <DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+          </ScrollPanel>
+        </Grid>
+
+        <InstanceData Name="EntryInstance" >
+          <GridButton  Size="370,24" Style="ButtonLightWeight"  Anchor="C,C" ID="Button" />
+        </InstanceData>
+
+      </ListBox>
+
+      <Stack StackGrowth="Right" Anchor="L,B" Offset="15,15" StackPadding="5">
+        <GridButton ID="NewPlayerButton"    String="Add Player"     Size="130,26" Style="MainMenuSquareButton" />
+        <GridButton ID="NewAIPlayerButton"  String="Add AI Player"  Size="130,26" Style="MainMenuSquareButton" />
+        <GridButton ID="RemovePlayerButton" String="Remove Player"  Size="130,26" Style="MainMenuSquareButton" />
+      </Stack>
+
+      <Stack StackGrowth="Down" Anchor="L,T" Offset="430,15" StackPadding="15">
+        
+        <Stack StackGrowth="Right" Anchor="L,T" StackPadding="15">
+
+          <SimplePullDown ID="CivPullDown"    Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+          <SimplePullDown ID="LeaderPullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+
+        </Stack>
+      
+        <Stack StackGrowth="Right" Anchor="L,T" StackPadding="15" Offset="0,-30">
+
+          <SimplePullDown ID="EraPullDown" Style="MainPullDown" ScrollThreshold="400" Size="200,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+        
+          <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+            <Label Anchor="L,C" FontSize="18" Size="125,29" String="Gold:"/>
+            <Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
+              <Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
+                <EditBox ID="GoldEdit" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
+              </Box>
+            </Box>
+          </Stack>
+
+          <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+            <Label Anchor="L,C" FontSize="18" Size="125,29" String="Faith:"/>
+            <Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
+              <Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
+                <EditBox ID="FaithEdit" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
+              </Box>
+            </Box>
+          </Stack>
+        
+        </Stack>
+
+        <Stack StackGrowth="Right" StackPadding="5" Offset="0,-30">
+
+          <Stack StackGrowth="Bottom" StackPadding="5" >
+            <Label Anchor="L,C" FontSize="32" Size="125,29" String="Techs"/>
+            <MultiSelectListBox ID="TechList" Size="265,515" ListContainer="TechListContainer">
+
+              <Grid Style="UnitFrame" Anchor="L,T" Size="parent,parent" >
+                <ScrollPanel Size="255,495" Anchor="L,T" Vertical="1" Offset="5,10" >
+                  <Stack ID="TechListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
+
+                  <ScrollBar  Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+                  <UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
+                  <DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+                </ScrollPanel>
+              </Grid>
+
+              <InstanceData Name="EntryInstance" >
+                <CheckBox  Size="240,24" Style="MainCheckBox"  Anchor="L,T" ID="Button" BoxOnLeft="1"/>
+              </InstanceData>
+
+            </MultiSelectListBox>
+          </Stack>
+
+          <Stack StackGrowth="Bottom" StackPadding="5" >
+            <Label Anchor="L,C" FontSize="32" Size="125,29" String="Civics"/>
+            <MultiSelectListBox ID="CivicsList" Size="265,515" ListContainer="CivicsListContainer">
+
+              <Grid Style="UnitFrame" Anchor="L,T" Size="parent,parent" >
+                <ScrollPanel Size="255,495" Anchor="L,T" Vertical="1" Offset="5,10" >
+                  <Stack ID="CivicsListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
+
+                  <ScrollBar  Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+                  <UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
+                  <DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+                </ScrollPanel>
+              </Grid>
+
+              <InstanceData Name="EntryInstance" >
+                <CheckBox  Size="240,24" Style="MainCheckBox"  Anchor="L,T" ID="Button" BoxOnLeft="1"/>
+              </InstanceData>
+
+            </MultiSelectListBox>
+          </Stack>
+
+        </Stack>
+        
+      </Stack>
+
+    </Grid>
+
+  </Container>
+	
+</Context>

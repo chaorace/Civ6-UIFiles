@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context FontStyle="Stroke">
+
+  <Container Offset="-65,-34">
+    <Grid																							 Offset="0,35"	Size="310,60"		Texture="Controls_Glow2"  SliceCorner="25,25" SliceTextureSize="50,50" Color="0,0,0,200"/>
+    <Image			ID="LaunchBackingTile"								 Offset="65,34" Size ="200,41"	Texture="LaunchBar_Backing_Tile"    StretchMode="Tile" />
+    <Grid				ID="LaunchBacking"																		Size="350,77"		Texture="LaunchBar_BackingLeft_Backing"   SliceCorner="114,32" SliceSize="1,1" SliceTextureSize="226,77"/>
+
+    <Stack			ID="ButtonStack"											 Offset="63,32" Padding="-2"		StackGrowth="Right" >
+      <Image														Anchor="L,C" Offset="0,-2"	Size="7,7"			Texture="LaunchBar_TrackPip"		Color="255,255,255,200" />
+      <Button ID="PlayerEditorButton"			Anchor="L,C"								Size="49,49" 	  Texture="LaunchBar_Hook_GovernmentButton" Style="ButtonNormalText"  TextureOffset="0,2"   StateOffsetIncrement="0,49" ToolTip="Player Editor">
+        <Image Texture="LaunchBar_Hook_Government" Size="35,35" Anchor="C,T" Offset="0,3"/>
+      </Button>
+      <Image                            Anchor="L,C" Offset="0,-2"	Size="7,7"			Texture="LaunchBar_TrackPip"		Color="255,255,255,200" />
+    </Stack>
+    
+  </Container>
+
+
+</Context>

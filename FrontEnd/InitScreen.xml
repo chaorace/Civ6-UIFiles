@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContextDefaults ColorSet="White_Black" Style="FontNormal22" FontStyle="Stroke" Name="IntroScreen" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
+    <Box Anchor="C,C" Size="Full,Full" Color="0,0,0,255"/>
+    <TextButton ID="FallbackMessage" Anchor="C,C" Align="center" Style="FontFlair20"	SmallCapsType="EveryWord" SmallCaps="26" 	String="{LOC_LOADING_PLEASE_WAIT:upper}" Color="200,200,200,255"/>
+</ContextDefaults>

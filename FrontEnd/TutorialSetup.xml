@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Style="FontNormal14">
+
+	<Box ID="MainGrid" Size="1024,full" Anchor="C,T" Color="9,44,72,240" IgnoreTutorial="1">
+		<Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="R,T" Color="0,0,0,200" Rotate="270" Offset="0,0"/>
+		<Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="L,T" Color="0,0,0,200" Rotate="90" Offset="0,0"/>
+		<Box Color="32,70,101,150" Anchor="L,T" Size="2,parent"/>
+		<Box Color="32,70,101,150" Anchor="R,T" Size="2,parent"/>
+
+		<Container	ID="MainWindow" Size="1024,768" Anchor="C,C">
+			<Grid			ID="LogoContainer" Style="SubContainer4" Size="parent-10,116" Anchor="C,T" Color="7,28,50" AnchorSide="I,O" Offset="0,4">
+				<Image	ID="Logo"				Anchor="C,C" Texture="MainLogo.dds" StretchMode="Auto"/>
+			</Grid>
+
+			<!-- Header -->
+			<Container Size="parent,54">
+				<Grid Anchor="C,T" Size="parent-10,39" Texture="Controls_DecoFrame" SliceCorner="19,18" SliceSize="1,1" SliceTextureSize="40,38" Color="41,74,108,255" Offset="0,6">
+					<GridButton ID="CloseButton" Style="ShellButtonOrnateFlat" Anchor="R,C" Size="150,36" Offset="1,0" String="LOC_MULTIPLAYER_BACK"/>
+				</Grid>
+				<Label ID="TitleLabel" Style="ShellHeader" Anchor="C,C" String="{LOC_SETUP_TUTORIAL_TITLE:upper}"/>
+				<Grid Style="Divider3Grid" Size="parent+4, 8" Anchor="L,B" Offset="-2,0"/>
+				<Grid Style="Divider3Grid" Size="parent+4, 8" Anchor="L,T" Offset="-2,0" Color="150,150,150,255"/>
+			</Container>
+	  
+			<Container ID="TutorialPanel" Hidden="0" Size="parent,parent">
+				<Grid Style="SubContainer4" Size="parent-10,parent-60" Anchor="C,T" Color="7,28,50" Offset="0,55" InnerPadding="10,10">
+					<Grid Size="parent-8,620" Style="SubContainerFill" Color="8,36,68,150" Anchor="C,C">
+						<Grid Style="DecoGrid" Size="parent-16,180" Anchor="C,T" Offset="0,10" Color="30,66,96,255">
+							<Label Anchor="C,C" String="LOC_SETUP_TUTORIAL_DESCRIPTION" WrapWidth="930" FontSize="14" Style="BlueGlow" />
+						</Grid>
+				
+						<Container Size="350,385"  Anchor="L,T" Offset="120,200">
+							<Grid Style="DecoGrid" Size="350,340" Color="30,66,96,255">
+								<Image Texture="Civilopedia_PortraitSquare" Anchor="C,T" Size="298,295">
+									<Image ID="Leader1Portrait" Anchor="C,C" Texture="Controls_Placeholder256" Size="200,200" />
+								</Image>
+								<Label Anchor="C,B" Offset="0,10" String="LOC_SETUP_TUTORIAL_LEADER_1" WrapWidth="250" FontSize="14" Style="BlueGlow" />
+							</Grid>
+							<GridButton ID="Leader1Start" Anchor="C,B" Size="260,45" Style="ButtonConfirm" String="LOC_TUTORIAL_PLAY_CLEO_NAME" />
+						</Container>
+				
+						<Container Size="350,385"  Anchor="R,T" Offset="120,200">
+							<Grid Style="DecoGrid" Size="350,340" Color="30,66,96,255">
+								<Image Texture="Civilopedia_PortraitSquare" Anchor="C,T" Size="298,295">
+									<Image ID="Leader2Portrait" Anchor="C,C" Texture="Controls_Placeholder256" Size="200,200" />
+								</Image>
+								<Label Anchor="C,B" Offset="0,10" String="LOC_SETUP_TUTORIAL_LEADER_2" WrapWidth="250" FontSize="14" Style="BlueGlow" />
+							</Grid>
+							<GridButton ID="Leader2Start" Anchor="C,B" Size="260,45" Style="ButtonConfirm" String="LOC_TUTORIAL_PLAY_GILG_NAME" />
+						</Container>
+						<Container ID="StatusPanel" Size="parent-15,parent" Offset="5,15" Hidden="1" >
+							<Label  ID="Status" Anchor="C,C" String="[COLOR_RED]There was an error loading the Tutorial scenario.[ENDCOLOR]" />
+						</Container>
+				
+					</Grid>
+				</Grid>
+
+			</Container>	
+		
+		</Container>	
+	</Box>
+
+  <BoxButton	ID="IntroMovieContainer" Size="full,full" Color="255,255,255,255" Hidden="1" ConsumeAllMouse="1">
+    <Movie		ID="IntroMovie" Size="full,full" LoopMovie="0" StretchMode="UniformToFill" />
+  </BoxButton>
+</Context>

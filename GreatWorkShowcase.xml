@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
+
+	<Container ID="GalleryBG" Style="ModalScreen"/>
+	<Box Size="full,full" Color="0,0,0,100" ConsumeMouse="1">
+		<Image ID="BannerBG" Size="314,full" Offset="0,0" Anchor="C,T" Texture="Diplomacy_Banner" StretchMode="Tile">
+			<Label ID="GreatWorkHeader" Style="GreatWorksHeader" Offset="0,35" Anchor="C,T" Align="center" Size="300,100" String="LOC_GREAT_WORKS_NEW_GREAT_WORK"/>
+			<Image ID="GreatWorkImage" Anchor="C,C" Offset="0,0" Texture="Portrait" StretchMode="Auto">
+				<Container ID="DetailsContainer" Anchor="C,B" Size="300,155" Offset="0,-25" AnchorSide="I,O">
+						<Grid ID="GreatWorkBanner" Anchor="C,T" Offset="0,0" Size="300,88" Texture="Controls_BannerHeaderBlue" SliceCorner="252,0" SliceSize="1,88" SliceTextureSize="506,88">
+							<Label ID="GreatWorkName" Anchor="C,T" Offset="0,40" Style="GreatWorksHeader" Align="center"/>
+						</Grid>
+						<Grid Style="DecoGrid" Anchor="C,T" Offset="0,85" Size="280,80" Color="141,116,82,255">
+						<Container Anchor="C,C" Width="280" Offset="0,-45">
+							<Label ID="CreatedBy" Offset="0,15" Anchor="C,T" Align="center" Style="FontNormalMedium14"/>
+							<Label ID="CreatedDate" Offset="0,38" Anchor="C,T" Align="center" Style="FontNormalMedium14"/>
+							<Label ID="CreatedPlace" Offset="0,60" Anchor="C,T" Align="center" Style="FontNormalMedium14" WrapWidth="250"/>
+						</Container>
+					</Grid>
+				</Container>
+			</Image>
+			<Container ID="MusicDetails" Size="parent,parent">
+				<Label ID="MusicName" Offset="0,-17" Anchor="C,C" Align="Center" Style="GreatWorksName" WrapWidth="450" />
+				<Line Anchor="C,C" Offset="200,27" Start="-200,0" End="200,0" Width="2" Color="0,0,0,122"/>
+				<Label ID="MusicAuthor" Offset="0,60" Anchor="C,C" Align="Center" Style="GreatWorksQuote"/>
+			</Container>
+			<Container ID="WritingDetails" Size="parent,parent">
+				<Label ID="WritingName" Offset="0,-140" Anchor="C,C" WrapWidth="500" Align="center" Style="GreatWorksWritingName"/>
+				<Line Anchor="C,C" Offset="200,-100" Start="-200,0" End="200,0" Width="2" Color="0,0,0,122"/>
+				<Label ID="WritingQuote" Size="520,200" Offset="-5,-20" Anchor="C,C" Align="center" Style="GreatWorksWritingQuote"/>
+				<Label ID="WritingAuthor" Offset="-5,70" Anchor="C,C" Align="center" Style="GreatWorksWritingQuote"/>
+			</Container>
+			<GridButton ID="ViewGreatWorks" Anchor="C,B" Offset="0,10" Size="280,40" Style="MainButton" String="LOC_GREAT_WORKS_VIEW_GREAT_WORKS"/>
+			<Button	ID="NextGreatWork" Anchor="C,C"	Offset="300,0" Size="60,60" Texture="Controls_StepperLarge" Hidden="1"/>
+			<Button	ID="PreviousGreatWork" Anchor="C,C"	Offset="-300,0" Size="60,60" Texture="Controls_StepperLarge" FlipX="1" Hidden="1"/>
+		</Image>
+	</Box>
+
+	<!-- ==================================================================	-->
+	<!--	Instances																													-->
+	<!-- ==================================================================	-->
+
+</Context>

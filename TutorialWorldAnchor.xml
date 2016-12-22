@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Handles receiving events/notifications that should trigger tutorial visuals. -->
+<!-- Tabs set to 2 spaces, retaining the tab.		-->
+<Context					Name="TutorialWorldAnchor" Layer="Tutorial" >
+
+  <WorldAnchor ID="Anchor" >
+    <Container ID="PointerRoot" Anchor="C,C">
+    
+      <Grid ID="LabelBox" Style="TutorialCalloutGrid" Size="200,140" Anchor="C,C">
+        <Label ID="ItemText" Anchor="C,C" Offset="0,0" WrapWidth="200" Style="FontNormal14" />
+      </Grid>
+    
+      <Container ID="DownArrow" Anchor="C,B">
+        <SlideAnim Start="0,0" EndOffset="0,-20" Cycle="Bounce" Function="OutQuad" Anchor="C,C">
+          <Image Texture="Tutorial_ArrowV" Offset="-23,-58" Size="44,58"/>
+        </SlideAnim>
+      </Container>
+      <Container ID="UpArrow" Anchor="C,T">
+        <SlideAnim Start="0,0" EndOffset="0,20" Cycle="Bounce" Function="OutQuad" Anchor="C,C">
+          <Image Texture="Tutorial_ArrowV" Offset="-23,0" Size="44,58" FlipY="true"/>
+        </SlideAnim>
+      </Container>
+      <Container ID="RightArrow" Anchor="C,L">
+        <SlideAnim Start="0,0" EndOffset="-20,0" Cycle="Bounce" Function="OutQuad" Anchor="C,C">
+          <Image Texture="Tutorial_ArrowH" Offset="-59,-22" Size="59,44" />
+        </SlideAnim>
+      </Container>
+      <Container ID="LeftArrow" Anchor="C,R">
+        <SlideAnim Start="0,0" EndOffset="20,0" Cycle="Bounce" Function="OutQuad" Anchor="C,C">
+          <Image Texture="Tutorial_ArrowH" Offset="0,-22" Size="59,44" FlipX="true"/>
+        </SlideAnim>
+      </Container>
+    
+    </Container>
+  </WorldAnchor>
+
+</Context>
+

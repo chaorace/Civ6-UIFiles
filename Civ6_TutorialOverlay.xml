@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+When a tutorial is raised, this will cover the non-tutorial elements.
+It can be as simple as a gray box, or as complex as the UI system will allow... go nuts with it.
+-->
+
+<Context Name="TutorialOverlay">
+	
+	<Box		ID="ThatHugeTutorialOverlay" Anchor="C,C" Size="Full,Full" Color="20,20,0,46" ConsumeMouse="1" />
+
+</Context>

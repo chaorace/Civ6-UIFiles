@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Top level context for InGame Civ6					-->
+
+<Context Name="WorldBuilder">
+
+	<!--Order matters in this list regarding mouse priority and rendering -->
+
+	<LuaContext		ID="WorldInput"							    FileName="WorldInput" />
+	<LuaContext		ID="StrategicView"							FileName="StrategicView"  />
+
+	<Container		ID="WorldViewControls">
+		<LuaContext ID="WorldViewIconsManager"			FileName="WorldViewIconsManager"/>
+		<LuaContext ID="DistrictPlotIconManager"		FileName="WorldView/DistrictPlotIconManager"/>
+		<LuaContext ID="PlotInfo"										FileName="WorldView/PlotInfo"/>
+		<LuaContext ID="CityBannerManager"					FileName="CityBannerManager" />
+		<LuaContext ID="UnitFlagManager"						FileName="UnitFlagManager"/>
+    <LuaContext ID="TourismBannerManager"				FileName="TourismBannerManager" />
+		<LuaContext ID="MapPinManager"							FileName="MapPinManager"/>
+		<LuaContext ID="SelectedUnit"								FileName="WorldView/SelectedUnit"/>
+		<Container	ID="SelectedMapPinContainer"/>		<!-- Selected map pin UI is dynamically attached/detached from here so that it renders last -->
+		<Container	ID="SelectedUnitContainer"/>		<!-- Selected unit UI is dynamically attached/detached from here so that it renders last -->
+		<LuaContext ID="WorldViewPlotMessages"			FileName="WorldViewPlotMessages"/>
+	</Container>
+
+
+	<Container		ID="HUD">
+		<LuaContext	ID="PlotToolTip"							FileName="PlotToolTip"													/>
+		<LuaContext	ID="MinimapPanel"							FileName="MinimapPanel"													/>
+    <LuaContext	ID="WorldBuilderMapTools"			FileName="WorldBuilderMapTools"									/>
+    <LuaContext	ID="WorldBuilderLaunchBar"		FileName="WorldBuilderLaunchBar"						    />
+    <LuaContext	ID="WorldBuilderPlayerEditor" FileName="WorldBuilderPlayerEditor" Hidden="1"	/>
+    
+    <!--<LuaContext	ID="CityPanel"								FileName="CityPanel"								Hidden="1"	/>-->
+		<!--<LuaContext	ID="UnitPanel"								FileName="UnitPanel"								Hidden="1"	/>-->
+	</Container>
+
+	<!--<Container		ID="PartialScreens">
+    <LuaContext	ID="TradeOverview"					  FileName="TradeOverview"						Hidden="1"	/>
+		<LuaContext	ID="ProductionPanel"					FileName="ProductionPanel"					Hidden="1"	/>
+	</Container>-->
+
+	<!--<Container		ID="Screens">	
+		<LuaContext	ID="TechTree"									FileName="TechTree"									Hidden="1"	/>
+		<LuaContext	ID="CivicsTree"								FileName="CivicsTree"								Hidden="1"	/>
+		<LuaContext	ID="GovernmentScreen"					FileName="GovernmentScreen"					Hidden="1"	/>
+		<LuaContext	ID="ReligionScreen"					  FileName="ReligionScreen"				  	Hidden="1"	/>
+	</Container>-->
+	
+	<LuaContext		ID="PausePanel"								FileName="PausePanel"								Hidden="0"	/>
+
+	<!-- Always very last/top: the in-game 'SHELL' menu. -->
+	<LuaContext		ID="TopOptionsMenu"						FileName="InGameTopOptionsMenu"			Hidden="1"	/>
+
+</Context>

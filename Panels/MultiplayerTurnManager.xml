@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+				 Style="FontNormal20">
+
+	<AlphaAnim ID="YourTurnBannerOutTimer" Cycle="Once" Speed="0.5" AlphaBegin="0.0" AlphaEnd="1.0" Stopped="1"/>
+
+	<SlideAnim ID="YourTurnBannerIn" Anchor="R,T" Begin="-550,40" End="0,40" Speed="1" Cycle="Once" Stopped="0">
+		<Image ID="YourTurnBanner" Texture="Shell_WaitingOnYou" Offset="-300,60" Anchor="R,T">
+			<Label ID="YourTurnLabel" Offset="60,21" String="LOC_YOUR_TURN_BANNER"/>
+		</Image>
+	</SlideAnim>
+	
+</Context>

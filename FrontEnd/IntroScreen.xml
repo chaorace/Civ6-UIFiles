@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContextDefaults ColorSet="White_Black" Style="FontNormal22" FontStyle="Stroke" Name="IntroScreen" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\ForgeUI_Assets\Controls.xsd"> 
+  <Box																		Anchor="C,C" Size="Full,Full" Color="0,0,0,255"/>
+  
+  <Box																		Anchor="C,C" Size="1280,700" Padding="0,0" Color="0,0,0,0">
+		<Stack																Anchor="C,C" Padding="20" StackGrowth="Bottom">
+      <Image Texture="Controls_Glow" AutoSize="1" StretchMode="Fill" AutoSizePadding="250,50" Color="100,100,100,120">
+			  <Image				ID="Logo"							Anchor="C,C" Texture="MainLogo.dds" />
+      </Image>
+			<Label				ID="CopyrightText" 		Anchor="C,T" LeadingOffset="4"  Style="FontNormal12" WrapWidth="740" ColorSet="White_Black" String="LOC_COPYRIGHT_TEXT" Offset="0,-50"/>
+      <GridButton		ID="CopyrightAccept"	Anchor="C,T" Style="MainButton" Size="300,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_COPYRIGHT_ACCEPT"/>
+      <Stack Anchor="C,T" StackGrowth="Right" Padding="20">
+        <Image Texture="Shell_ForkLogo" StretchMode="Auto" Anchor="L,C"/>
+        <Image Texture="Shell_HavokLogo" StretchMode="Auto" Anchor="L,C"/>
+      </Stack>
+		</Stack>
+  </Box>
+</ContextDefaults>
+

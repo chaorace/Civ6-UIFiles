@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+				 Style="FontNormal18" ColorSet="BodyTextBlue" FontStyle="Shadow">
+  
+  <Box								ID="PopupGenericBlocker" Color="0,0,0,150" Size="Full,Full" ConsumeMouse="1">
+    <AlphaAnim        ID="PopupAlphaIn" AlphaBegin="0" AlphaEnd="1" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+      <SlideAnim      ID="PopupSlideIn" Start="0,-20" End="0,0" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+        <Grid         ID="ChooseArtifactPanel"    Size="500,400"        Anchor="C,C" Offset="0,0" Style="DropShadow2"     Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25" ConsumeMouse="1">
+          <Grid       ID="ChooseArtifactWindow"   Size="500,400"        Anchor="C,C" Offset="0,0" Style="WindowFrameTitle" AutoSize="V" AutoSizePadding="0,10">
+            <Container                            Size="parent,38"                            Offset="0,4">
+              <Label  ID="PanelHeader"   Style="WindowHeader"        Anchor="C,C" String="{LOC_CONFIRM_CHOICE:upper}" />
+            </Container>
+            <Stack     ID="ContentStack" StackGrowth="Down" Anchor="C,T" Offset="0,50" Padding="20">
+              <Stack StackGrowth="Bottom" Padding="20">
+                <Label ID="Explanation"   Anchor="L,T" WrapWidth="425" Style="BodyTextDark14"/>
+                <Label ID="EraString"     Anchor="L,T" WrapWidth="425" Style="BodyTextDark14"/>
+                <Label ID="ChoiceHeader"  Anchor="L,T" WrapWidth="425" Style="BodyTextDark14"/>
+              </Stack>
+              <Stack		ID="ButtonStack"  	Size="450,100"	Anchor="C,T" StackGrowth="Right" StackPadding="30">
+                <GridButton   ID="Button1"     Size="200,41"   Style="MainButton"/>
+                <GridButton   ID="Button2"     Size="200,41"   Style="MainButton"/>
+              </Stack>
+            </Stack>
+          </Grid>
+        </Grid>
+      </SlideAnim>
+    </AlphaAnim>
+  </Box>
+  
+</Context>

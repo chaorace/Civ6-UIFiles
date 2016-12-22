@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Handles receiving events/notifications that should trigger tutorial visuals. -->
+<!-- Tabs set to 2 spaces, retaining the tab.		-->
+<Context					Name="TutorialUIRoot" Layer="Tutorial" >
+
+	<Container			ID="ListContainer"		Size="200,full" AutoSize="V" Hidden="1" Buttons="L" ConsumeAllMouse="1">
+		<Box																Size="parent,parent" Color="10,10,10,200" />
+		<ScrollPanel	ID="TutorialScroll"		Size="200,full" Vertical="1" >
+			<Stack			ID="TutorialItemStack" StackGrowth="Down" StackPadding="2" />
+			<ScrollBar	Anchor="L,C"	Size="10,400" Offset="0,0"	  Style="ScrollVerticalBar"		Color="57,48,42,255" />
+		</ScrollPanel>
+	</Container>
+	
+	<Instance				Name="TutorialEntryInstance">
+		<Container		ID="Top"				Size="200,10" >
+			<TextButton	ID="TutorialID" Offset="10,0" WrapWidth="200" Style="FontNormal10" Color0="200,200,240,255" Color1="0,0,0,200" MouseOverColor="255,255,255,255"  MouseDownColor="0,0,0,255" FontStyle="Shadow" />
+		</Container>
+	</Instance>
+
+	<LuaContext   ID="AdvisorPopup"					FileName="AdvisorPopup"					Hidden="1"  TutorialActive="1" />	
+	<LuaContext		ID="TutorialWorldAnchor"	FileName="TutorialWorldAnchor"	Hidden="1"	/>
+	<!--<LuaContext		ID="TutorialInput"				FileName="TutorialInput"				Hidden="1"	/>-->
+
+  <BoxButton	ID="TutorialMovieContainer" Size="full,full" Color="255,255,255,255" Hidden="1" ConsumeAllMouse="1">
+    <Movie		ID="TutorialMovie" Size="full,full" LoopMovie="0" StretchMode="UniformToFill" />
+  </BoxButton>
+
+</Context>
+

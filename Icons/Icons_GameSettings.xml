@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_GAME_SPEED" IconSize="62" IconsPerRow="1" IconsPerColumn="5" Filename="Shell_GameSpeed"/>
+    <Row Name="ICON_ATLAS_GAME_DIFFICULTY" IconSize="62" IconsPerRow="1" IconsPerColumn="8" Filename="Shell_GameDifficulty"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+    <Row Name="ICON_GAMESPEED_ONLINE"        Atlas="ICON_ATLAS_GAME_SPEED"   Index="0"/>
+    <Row Name="ICON_GAMESPEED_QUICK"         Atlas="ICON_ATLAS_GAME_SPEED"   Index="1"/>
+    <Row Name="ICON_GAMESPEED_STANDARD"      Atlas="ICON_ATLAS_GAME_SPEED"   Index="2"/>
+    <Row Name="ICON_GAMESPEED_EPIC"          Atlas="ICON_ATLAS_GAME_SPEED"   Index="3"/>
+    <Row Name="ICON_GAMESPEED_MARATHON"      Atlas="ICON_ATLAS_GAME_SPEED"   Index="4"/>
+
+    <Row Name="ICON_DIFFICULTY_SETTLER"  Atlas="ICON_ATLAS_GAME_DIFFICULTY"   Index="0"/>
+    <Row Name="ICON_DIFFICULTY_CHIEFTAIN" Atlas="ICON_ATLAS_GAME_DIFFICULTY"   Index="1"/>
+    <Row Name="ICON_DIFFICULTY_WARLORD"  Atlas="ICON_ATLAS_GAME_DIFFICULTY"   Index="2"/>
+    <Row Name="ICON_DIFFICULTY_PRINCE"   Atlas="ICON_ATLAS_GAME_DIFFICULTY"   Index="3"/>
+    <Row Name="ICON_DIFFICULTY_KING"     Atlas="ICON_ATLAS_GAME_DIFFICULTY"   Index="4"/>
+    <Row Name="ICON_DIFFICULTY_EMPEROR"  Atlas="ICON_ATLAS_GAME_DIFFICULTY"   Index="5"/>
+    <Row Name="ICON_DIFFICULTY_IMMORTAL" Atlas="ICON_ATLAS_GAME_DIFFICULTY"   Index="6"/>
+    <Row Name="ICON_DIFFICULTY_DEITY"    Atlas="ICON_ATLAS_GAME_DIFFICULTY"   Index="7"/>
+  </IconDefinitions>
+</GameInfo>

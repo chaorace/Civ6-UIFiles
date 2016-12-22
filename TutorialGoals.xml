@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Handles receiving input in the InGame root UI tree. -->
+<!-- Tabs set to 2 spaces, retaining the tab.		-->
+<Context					Name="TutorialGoals">
+
+	<Grid					ID="GoalsWindow"	Anchor="L,T" AutoSize="V" Size="301,100" Style="EnhancedToolTip" InnerPadding="10,30" InnerOffset="10,10">
+		<Stack			ID="GoalList"			Offset="2,2" StackGrowth="Down" StackPadding="8">
+			<Label											Anchor="C,T" Align="Center" Style="FontFlair20" String="LOC_TUTORIAL_GOAL_GENERAL_1" />
+		</Stack>
+	</Grid>
+
+	<Instance			Name="GoalInstance">
+		<CheckBox		ID="Top"	BoxOnLeft="1" Style="MainCheckBox" TextOffset="-10" WrapWidth="250" NoStateChange="true" Disabled="true"/>
+	</Instance>
+
+</Context>
+

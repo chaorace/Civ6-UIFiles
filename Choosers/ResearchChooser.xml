@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context>
+	
+	<SlideAnim																																										Style="ChooserAnim" >
+    <Button					ID="CloseButton"															Offset="265,2"								Style="CloseButtonSmall" />
+		
+		<Grid						ID="MainPanel"																Offset="-5,27"	Size="296,95"	Texture="ResearchPanel_Frame" SliceCorner="80,80" SliceSize="1,1" SliceTextureSize="110,88" ConsumeMouseOver="1">
+			<FlipAnim			ID="MainGearAnim"																														Texture="ResearchPanel_MeterFrameAnim" FrameCount="3" Columns="3" Speed="10" Size="40,40" Stopped="1" />
+			<TextButton		ID="TitleButton"															Offset="65,8"		Size="200,40"	Style="PanelHeaderText" String="$ChangeResearch$" />
+			<Image				ID="ResearchGearFrame"																											Texture="ResearchPanel_MeterFrame">
+				<Button			ID="IconButton"									Anchor="C,C"									Size="44,44"	Texture="ResearchPanel_Button" >
+					<Image		ID="Icon"												Anchor="C,C"									Size="38,38"	Texture="Tech38" />
+				</Button>
+				<Meter			ID="BoostMeter"									Anchor="C,C"									Size="56,56"	Texture="ResearchPanel_BoostMeter"  Percent="0"		Speed="1.0" Follow="1"/>
+				<Meter			ID="ProgressMeter"							Anchor="C,C"									Size="56,56"	Texture="ResearchPanel_Meter"				Percent="0"	Speed="1.0" Follow="1"/>
+			</Image>
+			<Label				ID="TurnsLeftLabel"							Anchor="L,B"	Offset="15,17" 								Style="FontNormal12"	String="LOC_RESEARCH_CHOOSER_TURNS" />
+			<Label				ID="TurnsLeft"									Anchor="L,B"	Offset="12,3"									Style="FontNormal14"	String="33" />
+			<Image				ID="IconCanBeBoosted"						Anchor="L,B"	Offset="50,-4"								Texture="ResearchPanel_BoostIconAvailable"	Hidden="1" />
+			<Label				ID="BoostLabel"									Anchor="L,B"	Offset="80,7"									Style="FontNormal12"	Color0="150,150,150,155" />
+			<Image				ID="IconHasBeenBoosted"					Anchor="L,B"	Offset="50,-4"								Texture="ResearchPanel_BoostIconBoosted"		Hidden="1" />
+			<Stack				ID="UnlockStack"															Offset="65,30"								StackGrowth="Right"		StackPadding="-2" />
+      <Button   ID="UnlockPageTurner"   Anchor="R,B"   Offset="18, 28"  Size ="19,23" Hidden="1" >
+        <Image  ID="PageTurnerImage"    Anchor="C,C"   Offset="0,0"     Size="parent,parent"  Texture="Controls_ArrowButtonRight" FlipX="false"/>
+      </Button>
+      
+			<Tutorial  ID="TutSelectCityResearch" Style="TutorialContainer" Anchor="R,T" AnchorSide="O,I" Offset="60,350" TriggerBy="TutorialSelectResearch"  >
+				<Grid Style="TutorialCalloutGrid">
+					<Label Style="TutorialHeaderText" String="LOC_META_7_HEAD"/>
+					<Label Style="TutorialBodyText" String="LOC_META_7_BODY" />
+				</Grid>
+        <SlideAnim Start="10,0" End="0,0" Cycle="Bounce" Speed="1.2" Function="OutSine" EndPause=".4" Size="parent,parent">
+          <Image Texture="Tutorial_ArrowH" AnchorSide="O,I" Offset="-30,5" Size="59,44" FlipX="1"/>
+        </SlideAnim>
+			</Tutorial>
+
+			<Tutorial ID="TutSelectCityResearchB" Style="TutorialContainer" Anchor="R,T" AnchorSide="O,I" Offset="60,530" TriggerBy="TutorialSelectResearchB">
+				<Grid Style="TutorialCalloutGrid">
+					<Label Style="TutorialHeaderText" String="LOC_META_33_HEAD"/>
+					<Label Style="TutorialBodyText" String="LOC_META_33_BODY" />
+				</Grid>
+        <SlideAnim Start="10,0" End="0,0" Cycle="Bounce" Speed="1.2" Function="OutSine" EndPause=".4" Size="parent,parent">
+          <Image Texture="Tutorial_ArrowH" AnchorSide="O,I" Offset="-30,5" Size="59,44" FlipX="1"/>
+        </SlideAnim>
+			</Tutorial>
+
+			<Tutorial  ID="TutSelectCityResearchC" Style="TutorialContainer" Anchor="R,T" AnchorSide="O,I" Offset="60,710" TriggerBy="TutorialSelectResearchC">
+				<Grid Style="TutorialCalloutGrid">
+					<Label Style="TutorialHeaderText" String="LOC_META_51_HEAD"/>
+					<Label Style="TutorialBodyText" String="LOC_META_51_BODY" />
+				</Grid>
+        <SlideAnim Start="10,0" End="0,0" Cycle="Bounce" Speed="1.2" Function="OutSine" EndPause=".4" Size="parent,parent">
+          <Image Texture="Tutorial_ArrowH" AnchorSide="O,I" Offset="-30,5" Size="59,44" FlipX="1"/>
+        </SlideAnim>
+			</Tutorial>
+
+			<Tutorial  ID="TutSelectCityResearchIrrigation" Style="TutorialContainer" Anchor="R,T" AnchorSide="O,I" Offset="60,450" TriggerBy="TutorialSelectResearchIrrigation">
+				<Grid Style="TutorialCalloutGrid">
+					<Label Style="TutorialHeaderText" String="LOC_META_6_HEAD"/>
+					<Label Style="TutorialBodyText" String="LOC_META_SELECT_IRRIGATION" />
+        </Grid>
+        <SlideAnim Start="10,0" End="0,0" Cycle="Bounce" Speed="1.2" Function="OutSine" EndPause=".4" Size="parent,parent">
+          <Image Texture="Tutorial_ArrowH" AnchorSide="O,I" Offset="-30,5" Size="59,44" FlipX="1"/>
+        </SlideAnim>
+			</Tutorial>
+
+		</Grid>		
+		
+    <GridButton			ID="OpenTreeButton"										Offset="5,125"	Size="285,42"							Style="MainButton"/>    
+    <ScrollPanel		ID="ChooseResearchList"								Offset="20,170" Size="parent,parent-170"	Style="ScrollPanelWithLeftBar">
+      <Stack				ID="ResearchStack"			StackGrowth="Bottom" StackPadding="1" />
+    </ScrollPanel>    
+  </SlideAnim>
+
+	
+	<!-- ================================================================= -->
+	<!--	INSTANCES																												 -->
+	<!-- ================================================================= -->
+
+	<Instance				Name="ResearchListInstance">
+    <Container      ID="TopContainer" Size="276,90" >
+		  <GridButton		ID="Top"															Offset="0,10"	Size="276,80"	Texture="ResearchPanel_ChooserButton"	StateOffsetIncrement="0,80" SliceCorner="73,62" SliceTextureSize="102,80" >
+        <Meter			ID="BoostMeter"												Offset="2,2"	Size="44,44"	Texture="ResearchPanel_ChooserBoostMeter" Follow="1">
+				  <Box															Anchor="C,T"								Size="1,5"		Color="91,208,251,255"  />
+        </Meter>
+        <Meter			ID="ProgressMeter"										Offset="2,2"	Size="44,44"	Texture="ResearchPanel_ChooserMeter" Follow="1"/>
+        <Image			ID="Icon"															Offset="9,9"	Size="30,30"	Texture="Tech30" />
+			  <Image			ID="IconCanBeBoosted"		Anchor="L,B"	Offset="-4,-8" 							Texture="ResearchPanel_BoostIconAvailable.dds" />
+        <Label			ID="BoostLabel"					Anchor="L,B"	Offset="28,5"								Color0="150,150,150,155" Style="FontNormal12" />
+			  <Image			ID="IconHasBeenBoosted"	Anchor="L,B"	Offset="-4,-8"							Texture="ResearchPanel_BoostIconBoosted.dds" />
+			  <Label			ID="TechName"						Anchor="L,T"	Offset="48,5"								Style="FontNormal14" FontStyle="Stroke" ColorSet="BodyTextCool" Color1="0,0,0,100"/>
+        <Label			ID="TurnsLeft"					Anchor="L,B"	Offset="4,18"								Style="FontNormal12" String="[ICON_Turn]" />
+        <Image      ID="QueueBadge"                       Offset="-22,-18"  Size="54,58" Texture="Tree_QueueBadge.dds" Hidden="1"/>
+        <Label      ID="NodeNumber"						            Offset="-22,-2" Style="FontFlair12" String="99" Hidden="1"/>
+        <Stack			ID="UnlockStack"											Offset="46,22"							StackGrowth="Right" StackPadding="-1" />
+        <Button   ID="UnlockPageTurner"   Anchor="R,B"   Offset="18, 28"  Size ="19,23" Hidden="1" >
+          <Image  ID="PageTurnerImage"    Anchor="C,C"   Offset="0,0"     Size="parent,parent"  Texture="Controls_ArrowButtonRight" FlipX="false"/>
+        </Button>
+		  </GridButton>
+    </Container>
+  </Instance>
+  
+  <Instance				Name="UnlockIconInstance">
+    <Button				ID="UnlockIcon" Style="UnlockFrames" NoStateChange="1">
+      <Image			ID="Icon" Size="38,38" Texture="Controls_Blank" Anchor="C,C"/>
+    </Button>
+  </Instance>
+  
+</Context>
+
+
+

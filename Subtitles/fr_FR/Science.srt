@@ -1,0 +1,24 @@
+﻿1
+00:00:00,710 --> 00:00:04,200
+Comme le dit l'adage, il faut savoir marcher avant de courir.
+
+2
+00:00:06,620 --> 00:00:10,220
+Nous avons fait un premier pas avant d'enchaîner les enjambées.
+
+3
+00:00:12,900 --> 00:00:15,600
+Puis nous nous sommes émancipés de la Terre.
+
+4
+00:00:18,140 --> 00:00:20,600
+Aujourd'hui, nous naviguons parmi les planètes,
+
+5
+00:00:20,700 --> 00:00:23,140
+et c'est vous qui nous avez menés vers les cieux ...
+
+6
+00:00:25,810 --> 00:00:26,960
+... et au-delà.
+

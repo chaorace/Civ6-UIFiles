@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Top level debug context to work with InGame for Civ6					-->
+<!-- This is a LUA enabled context, unlike DebugContext						-->
+<!--																															-->
+<!-- FUNCTIONALITY:																								-->
+<!-- Caches UI that may be lost during a hotload									-->
+<!--																															-->
+<Context Name="GameDebug">
+</Context>

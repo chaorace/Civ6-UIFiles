@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- File that, locally, can be changed to anything for testing purposes.  
+	 Do not expect anything in here to persist.  Do not put game-dependent code in here.  Do not taunt happy-fun ball. d="id*+" d="id*+"-->
+
+<Context Name="Test">
+
+	<!--
+	<Box Color="0,0,0,255" Size="500,500" Anchor="C,C">
+		<Stack ID="s" StackGrowth="Down" StackPadding="10">
+			<Box ID="a" Color="255,0,0,100" Size="20,20" />
+			<Box ID="b" Color="255,255,0,100" Size="20,20" />
+			<Box ID="c" Color="0,255,0,100" Size="20,20" />
+			<Box ID="d" Color="0,255,255,100" Size="20,20" />
+			<Box ID="e" Color="0,0,255,100" Size="20,20" />
+		</Stack>
+	</Box>
+	-->
+	
+		<!--
+	<Stack StackGrowth="Down" StackPadding="10">
+		<Label Style="FontNormal8" String="0 a 1 a 2 a 3 a 4 a 5 a 6 a 7 a 8 a 9 a 0 abc def" Color0="230,230,230,255" />
+		<Label Style="FontNormal9" String="0 a 1 a 2 a 3 a 4 a 5 a 6 a 7 a 8 a 9 a 0 abc def" Color0="230,230,230,255" />
+		<Label Style="FontNormal10" String="0 a 1 a 2 a 3 a 4 a 5 a 6 a 7 a 8 a 9 a 0 abc def" Color0="230,230,230,255" />
+		<Label Style="FontNormal11" String="0 a 1 a 2 a 3 a 4 a 5 a 6 a 7 a 8 a 9 a 0 abc def" Color0="230,230,230,255" />
+		<Label Style="FontNormal12" String="0 a 1 a 2 a 3 a 4 a 5 a 6 a 7 a 8 a 9 a 0 abc def" Color0="230,230,230,255" />
+		<Label Style="FontNormal13" String="0 a 1 a 2 a 3 a 4 a 5 a 6 a 7 a 8 a 9 a 0 abc def" Color0="230,230,230,255" />
+		<Label Style="FontNormal14" String="0 a 1 a 2 a 3 a 4 a 5 a 6 a 7 a 8 a 9 a 0 abc def" Color0="230,230,230,255" />
+		<Label Style="FontNormal15" String="0 a 1 a 2 a 3 a 4 a 5 a 6 a 7 a 8 a 9 a 0 abc def" Color0="230,230,230,255" />
+		<Label Style="FontNormal16" String="0 a 1 a 2 a 3 a 4 a 5 a 6 a 7 a 8 a 9 a 0 abc def" Color0="230,230,230,255" />
+	</Stack>
+	-->
+	
+	<!--
+	<Box			ID="Foo" Color="255,0,0,255" Size="100,100"/>
+	<Tutorial ID="Bar" TriggedBy="Foo" />
+-->	
+
+	<!--
+  <CheckBox Style="MainCheckBox" Anchor="L,T" Offset="10,5" ID="HideDisabled"/>
+-->
+
+	<!--
+	<CheckBox ButtonTexture="Checkbox.dds" ButtonSize="17,17" CheckTexture="Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" NoStateChange="true"/>
+	
+	<Button Offset="100,100" Texture="UI/Art/Controls/Controls_Close.dds"
+								Size="34,34"
+								StateOffsetIncrement="0,34"
+								/>
+-->
+	
+<!--	
+	<Box Offset="100,100" Color="155,155,155,100" Size="400,200">
+		<Stack WrapGrowth="Right" WrapWidth="parent">
+			<Box Size="100,100" Color="128,0,32,200" />
+			<Box Size="100,100" Color="128,64,0,200" />
+			<Box Size="100,100" Color="128,128,0,200" />
+			<Box Size="100,100" Color="0,255,0,200" />
+			<Box Size="100,100" Color="0,128,128,200" />
+			<Box Size="100,100" Color="0,0,255,200" />
+			<Box Size="100,100" Color="128,0,128,200" />
+		</Stack>
+	</Box>
+-->	
+
+	
+	<!--
+<Box Size="100,50" Color="0,100,0,100">
+		<Label Size="100,50" FontSize="16" String="Word wrapping via a parent lookup" Color="255,0,0,255"  />
+	</Box>
+		
+	
+	<Label FontSize="16" String="NATIVE SMALL CAPS SUPPORT" Offset="10,20" Color="0,255,0,255" SmallCaps="24" SmallCapsLeading="2" />
+	-->
+	
+	<!--
+  <Grid Style="EncampmentBannerBacking" Size="90,32" Anchor="C,C" ID="ShieldsBacking" >
+     <Image Texture="UI/Art/Screens/InWorld/CityBannerShields.dds" TextureOffset="161,0" Size="161,18" Anchor="C,B" Offset="0,1"/>
+
+    <Stack Anchor="C,T" StackGrowth="Bottom" Offset="1,6" Padding="1">
+       <Image Size="66,7" Texture="UI/Art/Screens/InWorld/CityBannerShieldsBar1.dds" Color="0,0,0,230">
+         <TextureBar Texture="UI/Art/Screens/InWorld/CityBannerShieldsBar1.dds" ID="EncampmentHealthBar" Size="66,7" Direction="Right" Speed="1"/>
+       </Image>    
+       <Image Size="66,7" Texture="UI/Art/Screens/InWorld/CityBannerShieldsBar1.dds" Color="0,0,0,230">
+         <TextureBar Texture="UI/Art/Screens/InWorld/CityBannerShieldsBar1.dds" ID="EncampmentDefenseBar" Size="66,7" Direction="Right" Speed="1" />
+       </Image>
+    </Stack>
+    <Image ID="CityAttackContainer" Texture="UI/Art/Screens/InWorld/CityBannerRangeAttackRim.dds" Size="36,45" Anchor="C,B" Offset="0,-11" AnchorSide="I,O">
+       <Button ID="CityRangeStrikeButton" Style="CityBannerRangeAttack" Anchor="C,B" Offset="0,10" StateOffsetIncrement="0,25"/>
+     </Image>
+  
+     <Image Texture="UI/Art/Screens/InWorld/CityBannerStrength.dds" Size="22,25" Anchor="L,C" Offset="-10,-1" ID="CityStrengthIndicator">
+       <Label ID="DefenseNumber" Offset="-1,5" Style="StrongSmall" String="1" Anchor="C,T" KerningAdjustment="-1"/>
+     </Image>
+  
+  </Grid> 
+   -->
+
+	
+	<!--	<ScrollAnim Texture="UnitFlagShine.dds" MaskTexture="Controls_Close.dds" Size="34,94" Anchor="L,T" Speed="2"/>
+  
+
+  <Button Style="CloseButtonSmall" Size="34,34" Anchor="C,C">
+    <ScrollAnim Texture="UnitFlagShine.dds" MaskTexture="Controls_Close.dds" Size="34,34" Anchor="L,T" Speed="2"/>
+  </Button>
+
+
+	<SlideAnim ID="PauseAnim" Speed="15" Cycle="Once"/>
+  
+  <Container			ID="Container"			Anchor="L,T" Size="500,500" Offset="200,100" >
+    <ScrollPanel	ID="ProductionList" Offset="0,0" Size="400,450" Vertical="1" Style="ScrollPanelWithRightBar" AutoScrollBar="1">
+        <Stack		ID="ListStack"			StackGrowth="Down" Anchor="C,T"/>
+			
+      <SlideAnim	ID="RefreshList"		Start="0,0" End="0,0" Speed="4" Cycle="Once" Size="400,41">
+        <Stack		ID="ListStack"			StackGrowth="Down" Anchor="C,T"/>
+      </SlideAnim>
+		
+    </ScrollPanel>
+  </Container>
+  
+  
+	
+  <Instance Name="NestedList">
+    <Stack					ID="Top" StackGrowth="Down" Size="500,100" Anchor="L,T">      
+			<Box Style="d1" Size="500,50" Anchor="R,T"/>
+			<Container																															Size="400,41">
+				<GridButton ID="Header"		Style="ButtonExpand"		String="Districts"	Size="400,41" />
+				<GridButton ID="HeaderOn" Style="ButtonExpandSelected"	String="Districts"	Size="400,41" Hidden="1" />
+			</Container>      
+			<SlideAnim		ID="ListSlide"	Anchor="L,T" Speed="4" Begin="0,-10" End="0,0" Cycle="Once" Pause="5" Size="400,0"				
+        <AlphaAnim ID="ListAlpha" Speed="4" AlphaBegin="0" AlphaEnd="1" Cycle="Once">
+          <Stack ID="List" StackGrowth="Down" Anchor="L,T" Offset="5,0" />
+        </AlphaAnim>
+		
+      </SlideAnim>
+			<Box Style="d2" Size="500,50" Anchor="R,T" />	
+    </Stack>
+  </Instance>
+
+  <Instance Name="Item">
+    <GridButton ID="Root" Size="390,63" Style="ProductionSlot" Anchor="L,T"/>
+  </Instance>
+
+  <Instance Name="DistrictItem">
+    <GridButton ID="ListButton" Anchor="L,T" Style="ProductionSlot" Size="214,24">
+      <Label ID="ListText" Anchor="L,C" Offset="10,0"/>
+    </GridButton>
+  </Instance>
+
+  <Instance Name="BuildingItem">
+    <GridButton ID="ListButton" Anchor="L,T" Style="ProductionSlot" Size="214,24">
+      <Label ID="ListText" Anchor="L,C" Offset="10,0"/>
+    </GridButton>
+  </Instance>
+
+  <Instance Name="CivilianItem">
+    <GridButton ID="ListButton" Anchor="L,T" Style="ProductionSlot" Size="214,24">
+      <Label ID="ListText" Anchor="L,C" Offset="10,0"/>
+    </GridButton>
+  </Instance>
+
+  <Instance Name="UnitItem">
+    <GridButton ID="ListButton" Anchor="L,T" Style="ProductionSlot" Size="214,24">
+      <Label ID="ListText" Anchor="L,C" Offset="10,0"/>
+    </GridButton>
+  </Instance>
+  -->	
+</Context>

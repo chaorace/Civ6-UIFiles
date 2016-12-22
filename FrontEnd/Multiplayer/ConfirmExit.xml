@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context ColorSet="Beige_Black" Style="FontNormal22" FontStyle="Shadow" >
+	<!-- Background fade -->
+	<Box Style="BGBlock" />
+	<Grid Size="450,150" Anchor="C,C" Offset="0,0" Padding="0,20" Style="WindowFrame" >
+		<!-- Label  -->
+		<Label ID="KickDialog" Anchor="C,T" Offset="0,25" Style="HeaderFont" WrapWidth="400" />
+
+		<!-- Buttons  -->
+		<Stack ID="StackContents" Anchor="C,B" Offset="0,25" Size="450,100" StackGrowth="Right" StackPadding="30" InnerPadding="0,0">
+			<GridButton		ID="CancelButton"			Size="160,42"		Style="MainButton" String="LOC_CANCEL_BUTTON" />
+			<GridButton		ID="AcceptButton"			Size="160,42"		Style="MainButton" String="LOC_ACCEPT_BUTTON" />
+		</Stack>
+		
+	</Grid>
+</Context>

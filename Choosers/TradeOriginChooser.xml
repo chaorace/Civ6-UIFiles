@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
+	
+  <SlideAnim				Style="ChooserAnim">
+    <Button					ID="CloseButton"				Anchor="L,T"	Offset="265,2" Style="CloseButtonSmall"/>
+    
+    <ScrollPanel		ID="CityScrollPanel"	Offset="18,35" Size="parent-22,parent-35" Vertical="1" AutoScrollBar="0">
+      <ScrollBar    Anchor="L,C" Size="11,parent" AnchorSide="O,I" Offset="4,0"	Style="ScrollVerticalBar" />
+      <Stack				ID="CityStack" StackGrowth="Bottom" StackPadding="2" />
+    </ScrollPanel>
+  </SlideAnim>
+
+  <!-- Instances -->
+  <Instance Name="CityInstance">
+    <GridButton ID="CityButton" Size="parent,30" Style="FontFlair18" SmallCaps="22" SmallCapsType="EveryWord" TextAnchor="L,C" TextOffset="30,0">
+      <GridData Style="ButtonLightWeightGrid"/>
+    </GridButton>
+  </Instance>
+</Context>

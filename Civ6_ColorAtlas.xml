@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ColorAtlas>
+	<Color Name="Beige"									Color="255,255,200,255"/>
+	<Color Name="Black"									Color="0,0,0,255"/>
+	<Color Name="White"									Color="255,255,255,255"/>
+  <Color Name="Clear"									Color="255,255,255,0"/>
+	<Color Name="Gray"									Color="164,164,164,255"/>
+  <Color Name="GrayMedium"						Color="96,100,102"/>
+	<Color Name="Grey"									Color="164,164,164,255"/>
+	<Color Name="Dark_Gray"							Color="73,75,76,255"/>
+	<Color Name="Red"										Color="191,55,60,255"/>
+	<Color Name="Green"									Color="0,200,0,255"/>
+  <Color Name="Magenta"								Color="255,0,255,255"/>
+	<Color Name="Blue"									Color="0,0,255,255"/>
+		
+	<Color Name="COLOR_RED"							Color="255,0,0,255"/>
+	<Color Name="COLOR_GREEN"						Color="0,255,0,255"/>
+	<Color Name="COLOR_LIGHTBLUE"				Color="100,255,240,255"/>
+  <Color Name="COLOR_FLOAT_CULTURE"		Color="254,42,237,255"/>
+	<Color Name="COLOR_FLOAT_FOOD"			Color="85,155,6,255"/>
+	<Color Name="COLOR_FLOAT_GOLD"			Color="229,213,66,255"/>
+  <Color Name="COLOR_FLOAT_MILITARY"	Color="188,22,22,255"/>
+  <Color Name="COLOR_FLOAT_PRODUCTION" Color="145,51,0,255"/>
+  <Color Name="COLOR_FLOAT_SCIENCE"		Color="95,145,255,255"/>
+  <Color Name="COLOR_FLOAT_FAITH"			Color="255,255,255,255"/>
+
+  <Color Name="Airport"								Color="133,16,241,255"/>
+	<Color Name="AirportDark"						Color="86,10,155,255"/>
+	<Color Name="Brown"									Color="106,89,71,255"/>
+	<Color Name="ChatPlayerName"				Color="255,255,255,255"/>
+	<Color Name="Civ6Blue"							Color="100,100,200,255"/>
+	<Color Name="Civ6DarkRed"						Color="152,30,30,255"/>
+	<Color Name="Civ6Green"							Color="107,196,109,255"/>
+	<Color Name="Civ6LightBlue"					Color="100,255,240,255"/>
+	<Color Name="Civ6Purple"						Color="70,50,118,255"/>
+	<Color Name="Civ6Red"								Color="231,53,52,255"/>
+	<Color Name="Civ6Yellow"						Color="255,255,96,255"/>
+	<Color Name="Culture"								Color="175,89,245,255"/>
+	<Color Name="CultureDark"						Color="87,45,123,255"/>
+	<Color Name="DarkBrown"					    Color="106,89,71,255"/>
+	<Color Name="DarkBlue"						  Color="6,53,92,255"/>
+	<Color Name="DiplomacyPanelFrameColor" Color="41,51,59,255"/>
+	<Color Name="Faith"									Color="182,193,227,255"/>
+	<Color Name="FaithDark"							Color="106,124,148,255"/>
+	<Color Name="Food"									Color="130,178,44,255"/>
+	<Color Name="FoodDark"							Color="65,88,22,255"/>
+	<Color Name="Gold"									Color="206,194,85,255"/>
+	<Color Name="GoldDark"							Color="103,97,43,255"/>
+	<Color Name="GoldMetal"							Color="203,173,115,255"/>
+	<Color Name="GoldMetalDark"					Color="130,111,75,255"/>
+	<Color Name="GovBonus"							Color="199,223,233,255" />
+	<Color Name="GovBonusDark"					Color="15,54,90,255" />
+	<Color Name="GovBonusSelected"			Color="136,165,184,255" />
+	<Color Name="GovInkDarkMark"				Color="62,56,50,255" />	
+	<Color Name="GovWaterMark"					Color="20,55,85,200" />
+	<Color Name="GovWaterDarkMark"			Color="62,56,50,100" />
+	<Color Name="GreatPeopleRow"				Color="143,141,137,255" />
+	<Color Name="GreatPeopleRowUnOwned"	Color="48,58,66,255" />
+	<Color Name="Happiness"							Color="246,225,44,255"/>
+	<Color Name="HappinessDark"					Color="156,139,25,255"/>
+	<Color Name="Marine"								Color="113,226,214,255"/>
+	<Color Name="MarineDark"						Color="77,155,147,255"/>
+	<Color Name="Military"							Color="188,22,22,255"/>
+	<Color Name="MilitaryDark"					Color="114,13,13,255"/>
+	<Color Name="ModStatusGreen"				Color="33,158,48,230"/>
+	<Color Name="ModStatusYellow"				Color="222,222,27,230"/>
+	<Color Name="PolicyMilitary"				Color="197,90,17,255"/>
+	<Color Name="PolicyEconomic"				Color="255,192,0,255"/>
+	<Color Name="PolicyDiplomatic"			Color="205,97,233,255"/>
+	<Color Name="PolicyWildcard"				Color="146,208,80,255"/>
+	<Color Name="Production"						Color="211,143,61,255"/>
+	<Color Name="ProductionDark"				Color="106,72,31,255"/>
+	<Color Name="Science"								Color="68,179,234,255"/>
+	<Color Name="ScienceDark"						Color="34,90,152,255"/>
+	<Color Name="Tourism"								Color="181,116,102,255"/>
+	<Color Name="TourismDark"						Color="90,58,51,255"/>
+	<Color Name="SuzerainDark"          Color="19,95,220,255"/>
+	
+	<ColorSet Name="Beige_Black"				Color0="Beige" Color1="Black"/>
+	<ColorSet Name="Beige_Black_Alpha"	Color0="Beige" Color1="Black,200"/>
+	<ColorSet Name="White_Black"				Color0="White" Color1="Black"/>
+	<ColorSet Name="Gray_Black"					Color0="Gray" Color1="Black"/>
+	<ColorSet Name="Dark_Gray_Black"		Color0="Dark_Gray" Color1="Black"/>
+  <ColorSet Name="BodyTextBright"			Color0="208,212,217,255"	Color1="0,0,0,200"/>
+  <ColorSet Name="BodyTextCool"       Color0="194,194,204" Color1="0,0,0,50"/>
+  <ColorSet Name="BodyTextBlue"       Color0="6,53,92,255" Color1="135,185,201,150"/>
+  <ColorSet Name="BodyTextBlueAlt"    Color0="78,116,129,255" Color1="85,137,151,20"/>
+  <ColorSet Name="BodyTextLightBlue"  Color0="93,153,205,255" Color1="6,53,92,150"/>
+	<ColorSet Name="ServerText"					Color0="211,215,218" Color1="Black"/>
+	<ColorSet Name="ServerTextFaded"    Color0="82,118,125" Color1="Black"/>
+	<ColorSet Name="ServerColumnHeader" Color0="231,235,238" Color1="Black"/>
+  <ColorSet Name="ConfirmButton"      Color0="206,229,238,255" Color1="83,198,247,100"/>
+  <ColorSet Name="DenyButton"					Color0="206,205,206,255" Color1="168,34,34,100"/>
+  <ColorSet Name="ParchmentBlack"			Color0="26,25,30,255" Color1="103,96,87,255"/>
+  <ColorSet Name="ParchmentBrown"			Color0="74,67,60,255" Color1="74,67,60,100"/>
+  
+	<ColorSet Name="StagingStatus_Invalid"			Color0="251,50,50,255"		Color1="0,0,0,50"/> <!-- Text Color for player status strings that are blocking game launch in the staging room. -->
+	<ColorSet Name="ConnectionStatus_Offline"		Color0="132,145,158,255"	Color1="0,0,0,50"/> <!-- Color of the Offline network connection summary text -->
+	<ColorSet Name="ConnectionStatus_Connected"		Color0="13,191,80,255"		Color1="0,0,0,50"/> <!-- Color of the Connected network connection summary text -->
+	<ColorSet Name="ConnectionStatus_Connecting"	Color0="237,205,78,255"		Color1="0,0,0,50"/> <!-- Color of the Connecting network connection summary text -->
+	<ColorSet Name="ChatMessage_Help"		Color0="132,145,158,255"	Color1="0,0,0,50"/>	<!-- Color of help text -->
+	<ColorSet Name="ChatMessage_Team"		Color0="13,191,80,255"		Color1="0,0,0,50"/>		<!-- Color of team chat -->
+	<ColorSet Name="ChatMessage_Global"		Color0="90,170,236,255"		Color1="0,0,0,50"/>		<!-- Color of global chat -->
+	<ColorSet Name="ChatMessage_Whisper"	Color0="237,205,78,255"		Color1="0,0,0,50"/>		<!-- Color of whispered chat -->
+	
+	<!-- Defined for warning levels on the city panel -->
+  <ColorSet Name="WarningMinor"         Color0="206,199,91,255"   Color1="0,0,0,200" />
+  <ColorSet Name="WarningMajor"         Color0="200,146,52,255"   Color1="0,0,0,200" />
+  <ColorSet Name="Error"                Color0="200,62,52,255"    Color1="0,0,0,200" />
+
+  <!-- Color# means the following: 0 = main color, 1 = effect, 2 = gradient bottom -->
+
+	<ColorSet Name="StatGoodCS"										Color0="80,255,90,240"		Color1="0,0,0,200" />
+	<ColorSet Name="StatNormalCS"									Color0="200,200,200,240"	Color1="0,0,0,200" />
+	<ColorSet Name="StatBadCS"										Color0="255,40,50,240"		Color1="0,0,0,200" />
+
+  <ColorSet Name="StatGoodCSGlow"								Color0="107,196,109"		  Color1="107,196,109,150" />
+  <ColorSet Name="StatNormalCSGlow"							Color0="214,215,218"      Color1="5,85,138"/>
+  <ColorSet Name="StatBadCSGlow"								Color0="231,53,52,255"		Color1="231,53,52,150" />
+
+	<ColorSet Name="ModStatusGreenCS"							Color0="97,255,107,230"		Color1="0,0,0,200" />
+	<ColorSet Name="ModStatusYellowCS"						Color0="255,255,96,255"		Color1="0,0,0,200" />
+	<ColorSet Name="ModStatusRedCS"								Color0="255,80,10,230"		Color1="0,0,0,200" />
+
+	<ColorSet Name="ButtonCS"         						Color0="177,203,240,255"	Color1="0,0,0,100"				Color2="255,214,255,255" />
+  <ColorSet Name="ButtonDisabledCS"  						Color0="127,157,190,150"	Color1="0,0,0,100"				Color2="205,176,205,150" />
+	<ColorSet Name="CityStateCS"									Color0="160,160,160,240"  Color1="0,0,0,100" />
+	<ColorSet Name="CityStateDisabledCS"					Color0="80,80,80,240"			Color1="0,0,0,100" />
+	<ColorSet Name="GreatPeopleCS"								Color0="130,130,100,255"  Color1="0,0,0,255" />
+  <ColorSet Name="GreatPeopleActiveCS"					Color0="198,195,187,255"  Color1="0,0,0,255" />
+	<ColorSet Name="GreatPeoplePastCS"						Color0="198,195,187,255"  Color1="0,0,0,255" />
+	<ColorSet Name="GreatPeoplePastUnownedCS"			Color0="121,125,125,255"  Color1="0,0,0,255" />
+	<ColorSet Name="GrowthCS"											Color0="120,140,70,255"		Color1="0,0,0,150" />
+	<ColorSet Name="HudCS"												Color0="179,175,179,255"	Color1="0,0,0,155"				Color2="240,240,240,255"/>
+	<ColorSet Name="LeaderCS"											Color0="168,180,190,255"	Color1="0,0,0,150" />
+	<ColorSet Name="NeutralCS"										Color0="159,155,159,255"  Color1="0,0,0,100"        Color2="159,155,159,200"/>
+	<ColorSet Name="NormalCS"											Color0="180,180,180,255"	Color1="0,0,0,200" />
+	<ColorSet Name="PlaceholderCS"								Color0="255,100,200,255"	Color1="200,200,200,100"  Color2="25,10,10,255" />
+	<ColorSet Name="ResearchPanelCS"							Color0="212,211,210,255"	Color1="0,0,0,100" />
+	<ColorSet Name="ResCultureLabelCS"						Color0="190,89,189,255"		Color1="0,0,0,100"				Color2="255,214,255,255" />
+	<ColorSet Name="ResFoodLabelCS"								Color0="171,224,47,255"   Color1="0,0,0,100"				Color2="217,236,148,255"/>
+	<ColorSet Name="ResFaithLabelCS"							Color0="100,128,160,255"	Color1="0,0,0,100"				Color2="255,255,255,255" />
+	<ColorSet Name="ResGoldLabelCS"								Color0="229,213,66,255"		Color1="0,0,0,100"				Color2="255,255,255,255" />
+	<ColorSet Name="ResProductionLabelCS"					Color0="130,83,43,255"		Color1="0,0,0,200"				Color2="215,184,96,255" />
+	<ColorSet Name="ResScienceLabelCS"						Color0="10,137,173,255"		Color1="0,0,0,100"				Color2="170,255,255,255" />
+	<ColorSet Name="ResMilitaryLabelCS"						Color0="188,22,22,255"		Color1="0,0,0,100"				Color2="240,120,120,255" />
+  <ColorSet Name="ResTourismLabelCS"						Color0="181,116,102,255"	Color1="0,0,0,100"				Color2="255,255,255,255" />
+  <ColorSet Name="TopBarLabelCS"								Color0="179,175,179,255"	Color1="0,0,0,155"				Color2="240,240,240,255"/>
+	<ColorSet Name="TopBarValueCS"								Color0="170,169,168,255"	Color1="0,0,0,155"				Color2="245,245,245,255" />
+	<ColorSet Name="TradeOverviewTextCS"	        Color0="255,255,255,255"  Color1="0,0,0,100"				Color2="255,255,255,127"/>
+	<ColorSet Name="TradeOverviewTextDisabledCS"	Color0="255,255,255,85"		Color1="0,0,0,100"				Color2="255,255,255,127"/>
+	<ColorSet Name="TutorialCS"										Color0="245,206,16,255"   Color1="0,0,0,100"        Color2="255,255,155,255"/>
+	<ColorSet Name="UnitPanelTextCS"							Color0="255,255,255,255"  Color1="0,0,0,100"        Color2="255,255,255,255"/>
+	<ColorSet Name="UnitPanelTextDisabledCS"			Color0="255,255,255,127"  Color1="0,0,0,100"        Color2="255,255,255,127"/>
+
+	<ColorSet Name="OperationChance_Green"			  Color0="40,162,78,255"   Color1="0,0,0,100"/>
+	<ColorSet Name="OperationChance_YellowGreen"	Color0="147,185,47,255"  Color1="0,0,0,100"/>
+	<ColorSet Name="OperationChance_Yellow"			  Color0="206,199,92,255"  Color1="0,0,0,100"/>
+	<ColorSet Name="OperationChance_Orange"			  Color0="200,146,52,255"  Color1="0,0,0,100"/>
+	<ColorSet Name="OperationChance_Red"			    Color0="200,62,52,255"   Color1="0,0,0,100"/>
+
+  <ColorSet Name="ShellHeader"									Color0="255,255,255,255" Color1="10,137,173,255"		Color2="255,255,255,255" />
+  <ColorSet Name="ShellOptionText"							Color0="22,157,152,255"	 Color1="0,0,0,50"/>
+  <ColorSet Name="BlueGlow"											Color0="214,215,218"		 Color1="5,85,138"/>
+  <Color    Name="ShellControl"									Color="20,144,140,100" />
+	<Color		Name="MultiplayerBackground"				Color="4,31,53,225" />
+	<Color		Name="MultiplayerSubContainer"			Color="30,50,75,255" />
+	<Color		Name="MultiplayerGameSetupText"			Color="28,177,171,255" />
+
+	<!-- LoadGameScreen -->
+	<Color Name="LoadSaveGameInfoIconBackingBase"			Color="49,59,80,255" />
+	<Color Name="LoadSaveGameInfoIconBackingDarker"		Color="49,59,80,255" />
+	<Color Name="LoadSaveGameInfoIconBackingLighter"	Color="49,59,80,255" />
+
+	<!-- EspionagePopup -->
+  <Color Name="EspionagePopup_Header"			  Color="52,50,43,255"/>
+  <Color Name="EspionagePopup_Body"			    Color="95,87,71,255"/>
+  <Color Name="EspionagePopup_Deco"			    Color="126,117,99,255"/>
+
+  <!-- EspionageOverview -->
+  <Color Name="EspionageOverview_EffectBlue"  Color="54,89,220,255"/>
+</ColorAtlas>

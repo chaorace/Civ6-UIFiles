@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Style="FontNormal18" ColorSet="Beige_Black" FontStyle="Shadow">
+  
+	<Container ID="CivicBoostsPanel" Size="260,170" Offset="50,10" ConsumeMouse="true" Hidden="true">
+		<Grid ID="CivicBoostsWindow" Size="Parent,Parent" Style="WindowFrameHUD">
+      <Label String="Civic Boosts Available" Offset="20,20" Color="Culture"/>
+      <Stack ID="CivicBoostStack" StackGrowth="Bottom" Offset="25,40" />
+    </Grid>
+	</Container>
+	
+	<Instance Name="BoostStackInstance">
+		<Label ID="InstanceLabel" Style="FontNormal16" String=""/>
+	</Instance>
+  
+</Context>

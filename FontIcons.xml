@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FontIcons>
+		<Atlas File="UI/FontIcons.dds" />
+  <Icon Name="Housing"                                      Start="0,0" 	    Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Amenities"                                    Start="22,0" 	    Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Citizen"                                      Start="44,0" 	    Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="TradeRoute"                                   Start="66,0" 	    Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Strength"                                     Start="88,0" 	    Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Ranged"                                       Start="110,0" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Bombard"                                      Start="132,0" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Movement"                                     Start="154,0" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Charges"                                      Start="176,0" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Range"                                        Start="198,0" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Position"                                     Start="220,0" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="Promotion"                                    Start="0,22" 	    Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Religion"                                     Start="22,22" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatPerson"                                  Start="44,22" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Fortified"                                    Start="66,22" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Fortifying"                                   Start="88,22" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Terrain"                                      Start="110,22" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Ability"                                      Start="132,22" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Damaged"                                      Start="154,22" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Government"                                   Start="176,22" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Policy"                                       Start="198,22" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Turn"                                         Start="220,22" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="FoodPerTurn"                                  Start="0,44" 	    Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="FoodSurplus"                                  Start="22,44" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="FoodDeficit"                                  Start="44,44" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Envoy"                                        Start="66,44" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="TradingPost"                                  Start="88,44" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Barbarian"                                    Start="110,44" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="District"                                     Start="132,44" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Unit"                                         Start="154,44" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Buildings"                                    Start="176,44" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Formation"                                    Start="198,44" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="InfluencePerTurn"                             Start="220,44" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="VisLimitedLarge"                              Start="0,66" 	    Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="VisOpenLarge"                                 Start="22,66" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="VisSecretLarge"                               Start="44,66" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="VisTopSecretLarge"                            Start="66,66" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="ScienceLarge"                                 Start="88,66" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GoldLarge"                                    Start="110,66" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="ProductionLarge"                              Start="132,66" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="FoodLarge"                                    Start="154,66" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="CultureLarge"                                 Start="176,66" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="FaithLarge"                                   Start="198,66" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="TourismLarge"                                 Start="220,66" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="VisLimited"                                   Start="0,88" 	    Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="VisOpen"                                      Start="22,88" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="VisSecret"                                    Start="44,88" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="VisTopSecret"                                 Start="66,88" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Science"                                      Start="88,88" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Gold"                                         Start="110,88" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Production"                                   Start="132,88" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Food"                                         Start="154,88" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Culture"                                      Start="176,88" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Faith"                                        Start="198,88" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Tourism"                                      Start="220,88" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="RESOURCE_BANANAS"                             Start="0,110" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_CATTLE"                              Start="22,110" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_COPPER"                              Start="44,110" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_CRABS"                               Start="66,110" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_DEER"                                Start="88,110" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_FISH"                                Start="110,110" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_RICE"                                Start="132,110" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_SHEEP"                               Start="154,110" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_STONE"                               Start="176,110" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_WHEAT"                               Start="198,110" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_CITRUS"                              Start="220,110" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="RESOURCE_COCOA"                               Start="0,132" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_COFFEE"                              Start="22,132" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_COTTON"                              Start="44,132" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_DIAMONDS"                            Start="66,132" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_DYES"                                Start="88,132" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_FURS"                                Start="110,132" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_GYPSUM"                              Start="132,132" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_INCENSE"                             Start="154,132" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_IVORY"                               Start="176,132" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_JADE"                                Start="198,132" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_MARBLE"                              Start="220,132" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="RESOURCE_MERCURY"                             Start="0,154" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_PEARLS"                              Start="22,154" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_SALT"                                Start="44,154" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_SILK"                                Start="66,154" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_SILVER"                              Start="88,154" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_SPICES"                              Start="110,154" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_SUGAR"                               Start="132,154" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_TEA"                                 Start="154,154" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_TOBACCO"                             Start="176,154" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_TRUFFLES"                            Start="198,154" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_WHALES"                              Start="220,154" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="RESOURCE_WINE"                                Start="0,176" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_ALUMINUM"                            Start="22,176" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_COAL"                                Start="44,176" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_HORSES"                              Start="66,176" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_IRON"                                Start="88,176" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_NITER"                               Start="110,176" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_OIL"                                 Start="132,176" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_URANIUM"                             Start="154,176" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_ANTIQUITY_SITE"                      Start="176,176" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_SHIPWRECK"                           Start="198,176" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_JEANS"                               Start="220,176" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="RESOURCE_PERFUME"                             Start="0,198" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_COSMETICS"                           Start="22,198" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_TOYS"                                Start="44,198" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_CINNAMON"                            Start="66,198" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="RESOURCE_CLOVES"                              Start="88,198" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Nuclear"                                         Start="110,198" 	Size="22,22" Advance="22" Baseline="0,8"/>
+  <Icon Name="ThermoNuclear"                                             Start="132,198" 	Size="22,22" Advance="22" Baseline="0,8"/>
+ <!-- <Icon Name=""                                             Start="154,198" 	Size="22,22" Advance="22" Baseline="0,8"/>
+  <Icon Name=""                                             Start="176,198" 	Size="22,22" Advance="22" Baseline="0,8"/>
+  <Icon Name=""                                             Start="198,198" 	Size="22,22" Advance="22" Baseline="0,8"/>
+  <Icon Name=""                                             Start="220,198" 	Size="22,22" Advance="22" Baseline="0,8"/>-->
+  
+  <Icon Name="GreatWork_Portrait_Themed"                           Start="0,220" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="ThemeBonus_Active"                            Start="0,220" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Writing_Themed"                            Start="22,220" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Landscape_Themed"                          Start="44,220" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Religious_Themed"                          Start="66,220" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Sculpture_Themed"                          Start="88,220" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Music_Themed"                              Start="110,220" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Relic_Themed"                              Start="132,220" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Ancient_Themed"                   Start="154,220" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Classical_Themed"                 Start="176,220" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Medieval_Themed"                  Start="198,220" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Renaissance_Themed"               Start="220,220" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="GreatWork_Artifact_Industrial_Themed"                Start="0,242" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Portrait"                      Start="22,242" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Writing"                       Start="44,242" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Landscape"                     Start="66,242" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Religious"                     Start="88,242" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Sculpture"                     Start="110,242" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Music"                         Start="132,242" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Relic"                         Start="154,242" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact"                      Start="176,242" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Ancient"              Start="176,242" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Classical"            Start="198,242" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Medieval"             Start="220,242" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <Icon Name="GreatWork_Artifact_Renaissance"          Start="0,264" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Industrial"           Start="22,264" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="ThemeBonus"                                   Start="44,264" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+
+  <Icon Name="GreatWork_Portrait_Theming"              Start="66,264" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Writing_Theming"               Start="88,264" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Landscape_Theming"             Start="110,264" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Religious_Theming"             Start="132,264" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Sculpture_Theming"             Start="154,264" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Music_Theming"                 Start="176,264" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Relic_Theming"                 Start="198,264" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Anc_Theming"          Start="220,264" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Cla_Theming"          Start="0,264" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Med_Theming"          Start="22,264" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Ren_Theming"          Start="44,286" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWork_Artifact_Ind_Theming"          Start="66,286" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  
+  <!--<Icon Name=""                                             Start="88,286" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name=""                                             Start="110,286" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name=""                                             Start="132,286" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name=""                                             Start="154,286" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name=""                                             Start="176,286" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name=""                                             Start="198,286" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name=""                                             Start="220,286" 	Size="22,22" Advance="22" Baseline="0,6"/>-->
+  
+  <Icon Name="GreatAdmiral"                                 Start="0,308" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatArtist"                                  Start="22,308" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatEngineer"                                Start="44,308" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatGeneral"                                 Start="66,308" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatMerchant"                                Start="88,308" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatMusician"                                Start="110,308" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatProphet"                                 Start="132,308" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatScientist"                               Start="154,308" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="GreatWriter"                                  Start="176,308" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <!--<Icon Name=""                                             Start="198,308" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name=""                                             Start="220,308" 	Size="22,22" Advance="22" Baseline="0,6"/>-->
+  
+  <Icon Name="OnlinePip"                                    Start="0,330" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Host"                                         Start="22,330" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="You"                                          Start="44,330" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Ready"                                        Start="66,330" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="BulletGlow"                                   Start="88,330" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Revert"                                       Start="110,330" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Team"                                         Start="132,330" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Whisper"                                      Start="154,330" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Global"                                       Start="176,330" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <!--<Icon Name=""                                             Start="198,330" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="220,330" 	Size="22,22" Advance="22" Baseline="0,4"/>-->
+  
+  <Icon Name="DISTRICT_CITYCENTER"                          Start="0,352" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_CAMPUS"                              Start="22,352" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_COMMERCIAL_HUB"                      Start="44,352" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_ENCAMPMENT"                          Start="66,352" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_HOLYSITE"                            Start="88,352" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_LAVRA"                               Start="110,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_NEIGHBORHOOD"                        Start="110,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_MBANZA"                              Start="110,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_THEATER"                             Start="132,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_ACROPOLIS"                           Start="132,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_AQUEDUCT"                            Start="154,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_BATH"                                Start="154,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_HARBOR"                              Start="176,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_ROYAL_NAVY_DOCKYARD"                 Start="176,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_INDUSTRIAL_ZONE"                     Start="198,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_HANSA"                               Start="198,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_SPACEPORT"                           Start="220,352" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  
+  <Icon Name="DISTRICT_WONDER"                              Start="0,374" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="DISTRICT_ENTERTAINMENT"                       Start="22,374" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <!--<Icon Name=""                                             Start="44,374" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="66,374" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="88,374" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="110,374" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="132,374" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="154,374" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="176,374" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="198,374" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="220,374" 	Size="22,22" Advance="22" Baseline="0,4"/>-->
+  
+  <Icon Name="Corps"                                        Start="0,396" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Army"                                         Start="22,396" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Exclamation"                                  Start="44,396" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="TradingPostLarge"                             Start="66,396" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="CapitalLarge"                                 Start="88,396" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="PressureDown"                                 Start="110,396" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="PressureUp"                                   Start="132,396" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="PressureDownLarge"                            Start="154,396" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="PressureUpLarge"                              Start="176,396" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="CivicBoosted"                                 Start="198,396" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="TechBoosted"                                  Start="220,396" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  
+  <Icon Name="Capital"                                      Start="0,418" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="New"                                          Start="22,418" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Bolt"                                         Start="44,418" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Bullet"                                       Start="66,418" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="TradeRouteLarge"                              Start="88,418" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="LocationPip"                                  Start="110,418" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="ShowMe"                                       Start="132,418" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Not"                                          Start="154,418" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Checkmark"                                    Start="176,418" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="CheckSuccess"                                 Start="198,418" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="CheckFail"                                    Start="220,418" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  
+  <Icon Name="CheckmarkBlue"                                Start="0,440" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="CityStateQuest"                               Start="22,440" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="List"                                         Start="44,440" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="Plus"                                         Start="66,440" 	  Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name="PressureHigh"                                 Start="88,440" 	  Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="PressureMedium"                               Start="110,440" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="PressureLow"                                  Start="132,440" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <!--  <Icon Name=""                                       Start="154,418" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="176,418" 	Size="22,22" Advance="22" Baseline="0,6"/>
+  <Icon Name=""                                             Start="198,418" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="220,418" 	Size="22,22" Advance="22" Baseline="0,4"/>-->
+
+  <Icon Name="Bombard_Large"                                Start="0,   462" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Charges_Large"                                Start="22,  462" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Movement_Large"                               Start="44,  462" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Range_Large"                                  Start="66,  462" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="RangedStrength_Large"                         Start="88,  462" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="ReligionStat_Large"                           Start="110, 462" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Strength_Large"                               Start="132, 462" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="AntiAir_Large"                                Start="154, 462" 	Size="22,22" Advance="22" Baseline="0,4"/>
+<!--  <Icon Name=""                                         Start="176, 462" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="198, 462" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="220, 462" 	Size="22,22" Advance="22" Baseline="0,4"/>-->
+
+  <Icon Name="Pillaged"                                     Start="0,   484" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Razed"                                        Start="22,  484" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="UnderSiege"                                   Start="44, 484" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="Occupied"                                     Start="66, 484" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="HousingInsufficient"                          Start="88, 484" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name="AmenitiesInsufficient"                        Start="110, 484" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <!--<Icon Name=""                                             Start="132, 484" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="154, 484" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="176, 484" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="198, 484" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="220, 484" 	Size="22,22" Advance="22" Baseline="0,4"/>-->
+
+
+  <Icon Name="OPEN_BORDERS"                                 Start="0,506" 	  Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DEFENSIVE_PACT"                               Start="22,506" 	  Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="MILITARY_REQUEST"                             Start="22,506" 	  Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="JOINT_WAR"                                    Start="44,506" 	  Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="RESEARCH_AGREEMENT"                           Start="66,506"  	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="ALLIANCE"                                     Start="88,506" 	  Size="22,22" Advance="22" Baseline="0,4"/>   
+  
+  <Icon Name="GIFT_UNIT"                                    Start="132,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DENOUNCE"                                     Start="154,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DEMAND_TRIBUTE"                               Start="154,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="VIEW_DEMAND_TRIBUTE"                          Start="154,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="MAKE_PEACE"                                   Start="176,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DECLARE_SURPRISE_WAR"                         Start="198,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DECLARE_FORMAL_WAR"                           Start="198,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DECLARE_HOLY_WAR"                             Start="198,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DECLARE_LIBERATION_WAR"                       Start="198,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DECLARE_RECONQUEST_WAR"                       Start="198,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DECLARE_PROTECTORATE_WAR"                     Start="198,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DECLARE_COLONIAL_WAR"                         Start="198,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DECLARE_TERRITORIAL_WAR"                      Start="198,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DECLARE_WAR_MINOR_CIV"                        Start="198,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="PROPOSE_TRADE"                                Start="220,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="VIEW_TRADE"                                   Start="220,506" 	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="USE_NUCLEAR_WEAPON"                           Start="0,528"   	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DECLARE_FRIENDSHIP"                           Start="22,528" 	  Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="GRANT_INFLUENCE_TOKEN"                        Start="44,528" 	  Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="DIPLOMATIC_DELEGATION"                        Start="66,528"  	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="RESIDENT_EMBASSY"                             Start="66,528" 	  Size="22,22" Advance="22" Baseline="0,4"/>   
+  <Icon Name="REQUEST_ASSISTANCE"                           Start="88,528"  	Size="22,22" Advance="22" Baseline="0,4"/>   
+  <!--  <Icon Name=""                                             Start="110, 528" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="132, 528" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="154, 528" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="176, 528" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="198, 528" 	Size="22,22" Advance="22" Baseline="0,4"/>
+  <Icon Name=""                                             Start="220, 528" 	Size="22,22" Advance="22" Baseline="0,4"/>-->
+
+
+  </FontIcons>
+
+

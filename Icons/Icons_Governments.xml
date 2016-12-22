@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <IconTextureAtlases>
+    <Row Name="ICON_ATLAS_GOVERNMENTS" IconSize="32" IconsPerRow="8" IconsPerColumn="8" Filename="Governments32.dds"/>
+	  <Row Name="ICON_ATLAS_GOVERNMENTS" IconSize="50" IconsPerRow="1" IconsPerColumn="1" Filename="Government50.dds"/>
+    <Row Name="ICON_ATLAS_GOVERNMENTS_FOW" IconSize="32" IconsPerRow="8" IconsPerColumn="8" Filename="Governments32.dds"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+    <Row Name="ICON_GOVERNMENT_CHIEFDOM"               Atlas="ICON_ATLAS_GOVERNMENTS" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_AUTOCRACY"              Atlas="ICON_ATLAS_GOVERNMENTS" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_OLIGARCHY"              Atlas="ICON_ATLAS_GOVERNMENTS" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_CLASSICAL_REPUBLIC"     Atlas="ICON_ATLAS_GOVERNMENTS" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_MONARCHY"               Atlas="ICON_ATLAS_GOVERNMENTS" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_THEOCRACY"              Atlas="ICON_ATLAS_GOVERNMENTS" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_MERCHANT_REPUBLIC"      Atlas="ICON_ATLAS_GOVERNMENTS" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_FASCISM"                Atlas="ICON_ATLAS_GOVERNMENTS" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_COMMUNISM"              Atlas="ICON_ATLAS_GOVERNMENTS" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_DEMOCRACY"              Atlas="ICON_ATLAS_GOVERNMENTS" Index="0"/>
+
+    <Row Name="ICON_GOVERNMENT_CHIEFDOM_FOW"           Atlas="ICON_ATLAS_GOVERNMENTS_FOW" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_AUTOCRACY_FOW"          Atlas="ICON_ATLAS_GOVERNMENTS_FOW" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_OLIGARCHY_FOW"          Atlas="ICON_ATLAS_GOVERNMENTS_FOW" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_CLASSICAL_REPUBLIC_FOW" Atlas="ICON_ATLAS_GOVERNMENTS_FOW" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_MONARCHY_FOW"           Atlas="ICON_ATLAS_GOVERNMENTS_FOW" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_THEOCRACY_FOW"          Atlas="ICON_ATLAS_GOVERNMENTS_FOW" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_MERCHANT_REPUBLIC_FOW"  Atlas="ICON_ATLAS_GOVERNMENTS_FOW" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_FASCISM_FOW"            Atlas="ICON_ATLAS_GOVERNMENTS_FOW" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_COMMUNISM_FOW"          Atlas="ICON_ATLAS_GOVERNMENTS_FOW" Index="0"/>
+    <Row Name="ICON_GOVERNMENT_DEMOCRACY_FOW"          Atlas="ICON_ATLAS_GOVERNMENTS_FOW" Index="0"/>
+  </IconDefinitions>
+</GameInfo>

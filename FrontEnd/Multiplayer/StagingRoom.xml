@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContextDefaults ColorSet="Beige_Black" Style="FontNormal22" FontStyle="Stroke" Name="StagingRoom" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\ForgeUI_Assets\Controls.xsd">
+	
+	<Box ID="MainGrid" Style="ShellBGBox">
+
+		<Container ID="MainWindow" Style="ShellWindowContainer">
+
+			<Container Style="ShellHeaderContainer">
+				<Grid Style="ShellHeaderButtonGrid">
+					<GridButton ID="BackButton" Style="ShellButtonOrnateFlat" Anchor="R,C" Offset="1,0" String="LOC_MULTIPLAYER_BACK"/>
+				</Grid>
+				<Label ID="TitleLabel" Style="ShellHeader" Anchor="C,C" String="{LOC_MULTIPLAYER_STAGING_ROOM:upper}"/>
+			</Container>
+
+			<Stack ID="ShellTabs" Anchor="C,T" Offset="0,54" StackGrowth="Right" Size="940,70" Padding="10"/>
+			
+			<!-- Players Stack -->
+			<Stack ID="PrimaryPanelStack" StackGrowth="Bottom" Anchor="L,T" Offset="3,114">
+				<Grid ID="PrimaryStackGrid" Style="SubContainer" Size="1020,310" Anchor="C,T" Offset="0,2">
+					<ScrollPanel ID="PlayersScrollPanel" Anchor="C,T"  Vertical="1" Size="parent,parent-10" Offset="5,2">
+						<Container ID="GridContainer" Size="1024,parent">
+							<!-- Vertical Grid Lines, Horizontal lines are generated in Lua -->
+							<Line ID="GridLine_1" Start="218,0" End="218,parent" Width="2" Color="20,55,70,255" />
+							<Line ID="GridLine_2" Start="287,0" End="287,parent" Width="2" Color="20,55,70,255" />
+							<Line ID="GridLine_3" Start="616,0" End="616,parent" Width="2" Color="20,55,70,255" />
+							<Line ID="GridLine_4" Start="760,0" End="760,parent" Width="2" Color="20,55,70,255" />
+							<Line ID="GridLine_5" Start="928,0" End="928,parent" Width="2" Color="20,55,70,255" />
+						</Container>
+						<!-- Scroll Controls -->
+						<ScrollBar Style="Slider_Blue" Length="parent" Offset="5,0" Anchor="R,T" AnchorSide="I,I" />
+						<Stack ID="PlayerListStack" StackGrowth="Bottom" Anchor="L,T" Offset="10,0" Padding="1" />
+					</ScrollPanel>
+					
+					<Image Anchor="C,B" Offset="0,5" Size="parent,4" Texture="Controls_DecoMapScale" StretchMode="Tile" Color="20,55,70,255"/>
+				</Grid>
+			</Stack>
+
+			<Stack ID="HeaderStack" StackGrowth="Right" Anchor="L,T" Offset="2,92">
+			  <Grid Anchor="L,T" Size="229,28" Style="ShellHeaderButton" ID="SortbyName" >
+			    <Label Anchor="L,C" Offset="7,1" String="LOC_MULTIPLAYER_PLAYERS" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+			  </Grid>
+
+				<Grid Anchor="L,T" Size="68,28" Style="ShellHeaderButton" ID="SortbyTeam" >
+					<!-- IMPORTANT: DISABLING TEAM PULLDOWNS UNTIL DAY 0 PATCH -->
+					<Label Hidden="1" Anchor="L,C" Offset="7,1" String="LOC_MULTIPLAYER_TEAM_HEADER" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader"/>
+				</Grid>
+
+				<Grid Anchor="L,T" Size="330,28" Style="ShellHeaderButton" ID="SortbyCiv" >
+			    <Label Anchor="L,C" Offset="7,1" String="LOC_MULTIPLAYER_CIV_LEADER_HEADER" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+			  </Grid>
+
+				<Grid Anchor="L,T" Size="144,28" Style="ShellHeaderButton" ID="SortbyDifficulty" >
+			    <Label Anchor="L,C" Offset="7,1" String="LOC_MULTIPLAYER_DIFFICULTY_HEADER" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+			  </Grid>
+
+				<Grid  Anchor="L,T" Size="168,28"  Style="ShellHeaderButton" ID="SortbyReady">
+			    <Label ID="ReadyColumnLabel" Anchor="L,C" Offset="7,1" String="LOC_MULTIPLAYER_READY_HEADER" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+			  </Grid>
+
+				<Grid  Anchor="L,T" Size="80,28"  Style="ShellHeaderButton" ID="SortbyKickPlayer">
+			    <Label Anchor="L,C" Offset="7,1" String="LOC_MP_KICK_PLAYER" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />
+			  </Grid>
+			</Stack>
+
+			<!-- Decorations -->
+			<Grid  ID="LargeCompassDeco" Texture="Controls_CompassDecoLarge" Anchor="C,B" Alpha="0.1" Size="529,322" Offset="0,0" SliceTextureSize="529,322" SliceStart="0,0" SliceSize="529,322"/>
+
+			<!-- Chat Panel -->
+			<Container ID="ChatContainer" Anchor="R,B" Offset="10,10" Size="452,310">
+				<Container ID="ChatBackground" Anchor="R,B" Offset="0,20" Size="parent,parent">
+					<Grid Style="SubContainerFill" Anchor="R,B" Size="parent,parent" Color="19,47,77,255"/>
+					<Grid Style="SubContainer" Anchor="R,B" Offset="-2,0" Size="parent+4,parent"/>
+				</Container>
+
+				<Label Anchor="C,T" Offset="0,-5" String="LOC_MULTIPLAYER_CHAT" Style="ShellButtonText"/>
+				<Image Anchor="L,T" Offset="15,-7" Size="27,18" Texture="Controls_Deco3" Color="20,55,70,255"/>
+				<Image Anchor="R,T" Offset="15,-7" Size="27,18" Texture="Controls_Deco3" Color="20,55,70,255"/>
+				<Image Offset="0,19" Size="parent-4,4" Texture="Controls_DecoMapScale" StretchMode="Tile" Color="20,55,70,255"/>
+
+				<ScrollPanel		ID="ChatScroll"	Anchor="L,T" Offset="20,-7" Size="parent-40,parent-55"  Vertical="1" AutoScrollBar="1" >
+					<ScrollBar Anchor="R,C" Offset="3,10" Style="Slider_Blue" Length="290" AnchorSide="O,I"/>
+					<Stack			ID="ChatStack" StackGrowth="B" Anchor="L,B" />
+				</ScrollPanel>
+
+				<!-- Text Chat Input -->
+				<Container							Anchor="L,B"	Offset="15,30"	Size="parent-40,28" Color="80,96,130,255">
+					<PullDown		ID="ChatPull"		Anchor="L,C"	Offset="0,0"	Size="420,26"		Style="StagingRoomPullDown" AutoFlip="1"/>
+				</Container>
+			</Container>
+
+			<!-- Friends Panel -->
+			<Container ID="InfoContainer" Anchor="L,B" Offset="10,10" Size="452,310">
+				<Container ID="InfoBackground" Anchor="L,B" Offset="0,20" Size="parent,parent">
+					<Grid Style="SubContainerFill" Anchor="L,B" Size="parent,parent" Color="19,47,77,255"/>
+					<Grid Style="SubContainer" Anchor="L,B" Offset="-2,0" Size="parent+4,parent"/>
+				</Container>
+				
+				<Image Offset="0,19" Size="parent-4,4" Texture="Controls_DecoMapScale" StretchMode="Tile" Color="20,55,70,255"/>
+
+				<Container ID="Friends" Size="parent,parent" Hidden="1">
+					<ScrollPanel ID="FriendsScrollPanel" Offset="8,25" Size="437,parent-80" Vertical="1" AutoScrollBar="1">
+						<ScrollBar Style="Slider_Blue" Offset="-9,0" Anchor="R,T"/>
+						<Stack ID="FriendsStack" Anchor="L,T" Size="parent" StackPadding="0" StackGrowth="Right" WrapWidth="472" />
+					</ScrollPanel>
+					<!-- Invite Button -->
+					<GridButton ID="InviteButton" Offset="0,27" Size="175,25" Anchor="C,B" Style="ShellButton" String="LOC_INVITE_BUTTON" ToolTip="LOC_INVITE_BUTTON_TT"/>
+				</Container>
+
+				<!-- Parameters Panel -->
+				<ScrollPanel ID="ParametersScrollPanel" Offset="8,25" Size="437,parent-50" Vertical="1" AutoScrollBar="1" Hidden="0">
+
+					<!-- Scroll Controls -->
+					<ScrollBar Style="Slider_Blue" Length="420" Offset="-4,0" Anchor="R,T"/>
+					<Stack ID="ParametersStack" Anchor="C,T" Offset="0,0" Padding="0" StackGrowth="Bottom" >
+						<!--
+						<Grid Size="parent,21" Texture="Shell_SectionHeader" SliceCorner="154,10" SliceTextureSize="308,21" Color="20,144,140,100" Offset="0,8">
+							<Image Texture="Controls_Gradient_HalfRadial" Color="20,144,140,100" FlipY="1" Anchor="C,T" Size="225,94"/>
+							<Label Anchor="C,C" Style="ShellOptionText" WrapWidth="320" String="LOC_MAP_OPTIONS"/>
+						</Grid>
+						-->
+						<!-- Primary Parameters Stack -->
+						<Stack Anchor="C,T" Padding="0" StackGrowth="Bottom" ID="PrimaryParametersStack"/>
+						<!--
+						<Grid Size="parent,21" Texture="Shell_SectionHeader" SliceCorner="154,10" SliceTextureSize="308,21" Color="20,144,140,100" Offset="0,8">
+							<Image Texture="Controls_Gradient_HalfRadial" Color="20,144,140,100" FlipY="1" Anchor="C,T" Size="225,94"/>
+							<Label Anchor="C,C" Style="ShellOptionText" WrapWidth="320" String="LOC_SETUP_VICTORY_CONDITIONS"/>
+						</Grid>
+						-->
+						<Stack Anchor="C,T" Padding="0" StackGrowth="Bottom" ID="VictoryParameterStack" />
+
+						<!-- Secondary Parameters Stack -->
+						<!--
+						<Grid Size="parent,21" Texture="Shell_SectionHeader" SliceCorner="154,10" SliceTextureSize="308,21" Color="20,144,140,100" Offset="0,8">
+							<Image Texture="Controls_Gradient_HalfRadial" Color="20,144,140,100" FlipY="1" Anchor="C,T" Size="225,94"/>
+							<Label Anchor="C,C" Style="ShellOptionText" WrapWidth="320" String="LOC_ADVANCED_OPTIONS"/>
+						</Grid>
+						-->
+						<Stack Anchor="C,T" Padding="0" StackGrowth="Bottom" ID="SecondaryParametersStack"/>
+					</Stack>
+				</ScrollPanel>
+				
+				<!-- Friends / Game Setup Tabs -->
+				<Stack ID="InfoTabs" Anchor="C,T" Offset="0,-14" StackGrowth="Right" Size="940,70" Padding="10"/>
+			</Container>
+		</Container>
+	</Box>
+	
+	<!-- Hotseat bottom deco -->
+	<Image ID="HotseatDeco" Anchor="C,B" Size="963,45" Offset="0,55" Texture="Controls_BorderDeco" StretchMode="Tile" Color="255,255,255,20"/>
+
+  <!-- Ready Button  -->
+  <AlphaAnim			ID="FadeAnim"						Anchor="C,C"								Size="parent,parent"	AlphaBegin="0" AlphaEnd="1" Cycle="Once" Speed=".5" Stopped="0" Pause="1" Function="Root">
+    <Container ID="ReadyContainer"						Anchor="C,B" Offset="0,-5"	Size="300,130" Hidden="0">
+      <Image															Anchor="C,B" Offset="0,35"	Size="130,23"	Texture="Diplomacy_PortraitBacking" />
+      <Image															Anchor="C,B" Offset="0,0" Size="305,58" Texture="Controls_BannerBlueSmall">
+        <Label		ID="StartLabel"					Anchor="C,C" Offset="0,6" Align="Center" String="{LOC_START:upper}" Style="BannerHeaderText" />
+      </Image>
+     
+			<Container  ID="StartButtonContainer" Size="300,130" Hidden="1">
+				<Image	 ID="TurnTimerHotseatBG"		Anchor="C,C" Offset="0,-17"		Size="91,92"	Texture="Shell_BeginButtonBacking"/>
+				<Image	 ID="TurnTimerBG"						Anchor="C,C" Offset="0,-17"		Size="109,110"	Texture="Shell_CountdownTimerBacking"/>
+				<Meter ID="TurnTimerMeter" Anchor="C,C" Offset="0,-19"	Size="93,94" Texture="Shell_CountdownTimerFill" Speed="0"/>
+				<Button		ID="ReadyButton"				Anchor="C,C" Offset="0,-16"	Size="80,80"	Texture="Shell_BeginButton" StateOffsetIncrement="0,80"/>
+			</Container>
+			
+			<Container  ID="ReadyButtonContainer" Size="300,130" Hidden="0">
+				<Button		ID="ReadyCheck"		Anchor="C,C" Offset="-1,-13"	Size="80,80"	Texture="Shell_ReadyCheckboxLarge" StateOffsetIncrement="0,80"/>
+			</Container>
+
+      <!-- ??tron REMOVE: -->
+      <SlideAnim		ID="SlideAnim"					Anchor="C,C"								Size="parent,parent"	Start="0,100" End="0,0"			Cycle="Once" Speed=".9" Stopped="0" Pause="1" Function="Root" >
+      </SlideAnim>
+    </Container>
+			
+  </AlphaAnim>
+
+
+	<!-- Children Contexts -->
+	<LuaContext FileName="UI/FrontEnd/Multiplayer/ConfirmKick" ID="ConfirmKick" Hidden="1" />
+	<LuaContext FileName="UI/FrontEnd/Multiplayer/EditHotseatPlayer" ID="EditHotseatPlayer" Hidden="1" />
+
+	<!-- Instances -->
+	<Instance Name="ShellTab">
+		<Container ID="TopControl" Size="1,1">
+			<GridButton ID="Button" Anchor="C,T" Style="ShellTab"/>
+			<AlphaAnim ID="Selected" Anchor="C,T" Speed="5" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
+				<GridButton ID="SelectedButton" Style="ShellTabSelected" Anchor="C,T"/>
+			</AlphaAnim>
+		</Container>
+	</Instance>
+
+  <!-- Instance for a boolean parameters -->
+  <Instance Name="BooleanParameterInstance">
+    <GridButton ID="CheckBox" Anchor="C,T" Style="CheckBoxControl"  Size="340,24" States="8"/>
+  </Instance>
+
+  <!-- Instance for a string parameters -->
+  <Instance Name="StringParameterInstance">
+    <Container AutoSize="1" ID="StringRoot">
+      <Container AutoSize="1">
+        <Box Size="140,30" Color="0,0,0,0"/>
+        <Label ID="StringName" Anchor="R,C" Offset="0,0" Style="FontNormal14" ColorSet="ShellOptionText" FontStyle="stroke" WrapWidth="180" String="UNKNOWN_EDIT_BOX"/>
+      </Container>
+      <Container AutoSize="1" Offset="145,0">
+        <Grid Style="EditTextArea" Size="160,30">
+          <EditBox ID="StringEdit" Anchor="L,C" Offset="6,0" Size="248,23" EditMode="1" Style="FontNormal18" ColorSet="BodyTextCool" FontStyle="stroke" MaxLength="10"/>
+        </Grid>
+      </Container>
+    </Container>
+  </Instance>
+
+	<!-- Instance for a parameter that has multiple choices for the value, displayed as a dropdown -->
+  <!-- Instance for a parameter that has multiple choices for the value, displayed as a dropdown -->
+  <Instance Name="PullDownParameterInstance">
+    <Container ID="Root" Anchor="C,T" Size="450,32" Offset="0,0">
+      <PullDown Anchor="C,T" ID="PullDown" Style="PullDownBlue" Size="250,24" Offset="0,0">
+        <Label Style="ShellOptionText" ID="StringName" AnchorSide="O,I" Anchor="L,C" String=""/>
+      </PullDown>
+    </Container>
+  </Instance>
+
+	<Instance Name="TeamListEntry">
+		<Stack ID="Root" StackGrowth="Bottom">
+			<Stack StackGrowth="Right" ID="TeamHeaderStack">
+				<Box Size="200,30" Color="0,0,0,128" ID="TeamBox">
+					<Label Anchor="L,C" Offset="0,0" Style="FontNormal18" ColorSet="BodyTextCool" FontStyle="Shadow" String="Team Name" ID="TeamName"/>
+				</Box>
+				<GridButton Anchor="R,B" Size="75,32" Style="TabButton" ID="JoinButton" String="LOC_JOIN" />
+			</Stack>
+			<Stack StackGrowth="Right" ID="TeamLineStack">
+				<Stack Anchor="L,T" Offset="0,0" StackGrowth="Bottom" ID="PlayerListStack" />
+			</Stack>
+		</Stack>
+	</Instance>
+
+	<!-- Player List Instances -->
+	<Instance Name="PlayerListEntry">
+		<Container ID="Root" Size="1024,46">
+			
+			<!-- Player Name -->
+			<Box ID="PlayerNameBox" Color="0,255,0,0" Anchor="L,C" Offset="-12,0" Size="218,46">
+				<!-- Overlapping slot type pulldown for when the entry isn't occupied by an active civ. -->
+				<PullDown ID="SlotTypePulldown" Style="PullDownPlayerSlot" ScrollThreshold="110" Hidden="0">
+					<Label ID="ConnectionStatus" Anchor="L,T" Offset="4,3" String="[ICON_OnlinePip]"/>
+					<Label ID="PlayerName" Anchor="C,T" Offset="0,7" Style="WhiteSemiBold14" String="PlayerName" TruncateWidth="210"/>
+					<Label ID="PlayerStatus" Anchor="L,B" Offset="10,7" Style="WhiteSemiBold12" String="PlayerStatus"/>
+				</PullDown>
+
+				<!-- This shows up for Hotseat and non-human players for online games -->
+				<GridButton ID="AlternateEditButton" Size="214,23" Offset="2,1" Style="ButtonControl" Disabled="1" Hidden="0"/>
+				<GridButton ID="HotseatEditButton" Style="EditTextButton" Offset="-2,0" Size="222,26" Hidden="1" ToolTip="LOC_HOTSEAT_EDIT_PLAYER_TT"/>
+				<PullDown ID="AlternateSlotTypePulldown" Style="PullDownBlue" Size="218" Offset="0,22" ScrollThreshold="110" Hidden="0">
+					<Label ID="AlternateName" Anchor="C,T" Offset="0,-15" Style="WhiteSemiBold14" String="PlayerName" TruncateWidth="210"/>
+					<Label ID="AlternateStatus" Anchor="L,B" Offset="10,7" Style="WhiteSemiBold12" String="PlayerStatus"/>
+				</PullDown>
+				
+			</Box>
+      <!-- Team -->
+			<PullDown ID="TeamPullDown" Offset="210,0" Anchor="L,T" Style="PullDownMultiplayerTeam" ScrollThreshold="110" Size="65,46" AutoSizePopUp="1" SpaceForScroll="1"/>
+      
+			<!-- Civilization -->
+			<PullDown ID="PlayerPullDown" Offset="279,0" Anchor="L,C" Style="PlayerSelectPullDown" ScrollThreshold="350" Size="325,46" AutoSizePopUp="1" SpaceForScroll="1"/>
+
+			<!-- Difficulty -->
+			<PullDown ID="HandicapPullDown" Hidden="1" Offset="608,0" Anchor="L,C" Style="PullDownBlue" ScrollThreshold="400" Size="140,24" AutoSizePopUp="1" SpaceForScroll="1"/>
+
+			<!-- Host Icon -->
+
+			<!-- Voice Chat Icon -->
+			<!--
+			<Box ID="VoiceChatBox" Color="0,255,0,0" Anchor="L,C" Offset="0,0" Size="24,24">
+				<Image Anchor="C,C"  Offset="0,0" ID="VoiceChatIcon" Size="32,32" Texture="assets/UI/Art/Icons/ChatIcons32.dds" Hidden="1" />
+			</Box>
+			-->
+      <!-- Ready Button -->
+      <Button Anchor="L,C" Offset="755,0" Texture="Shell_ReadyCheckbox" Size="34,34" NoStateChange="1" StateOffsetIncrement="0,34" ID="ReadyImage"/>
+
+			<Label ID="StatusLabel" Anchor="L,C" Offset="793,0" Style="FontNormalMedium14" Color="36,100,105" String="LOC_NOT_READY"/>
+
+			<!-- Kick Button -->
+			<Button Anchor="L,C" Offset="935,0" Texture="Shell_XButton" Size="37,37" ID="KickButton" ToolTip="LOC_MP_KICK_PLAYER"/>
+
+			<!-- Mod Download Progress Bar -->
+			<Stack ID="PlayerModProgressStack" Anchor="L,C" Offset="5,0" StackGrowth="Right" Padding="10">
+				<Bar ID="ModProgressBar" Anchor="L,C" Size="150,20" BGColor="0,0,155,255" Direction ="Right" Speed="1"/>
+				<Box ID="BytesRemainingBox" Color="255,0,0,0" Anchor="L,C" Offset="0,0" Size="120,32">
+					<Label ID="BytesRemaining" Anchor="L,C" Style="FontNormal16" TruncateWidth ="120" String="?b/?b" Align="Right" />
+				</Box>
+				<Box ID="ModProgressRemainingBox" Color="0,255,0,0" Anchor="L,C" Offset="0,0" Size="32,32">
+					<Label ID="ModProgressRemaining" Anchor="L,C" Style="FontNormal16" TruncateWidth ="32" String="?/?" Align="left" />
+				</Box>
+			</Stack>
+
+      <GridButton ID="AddPlayerButton" Style="ShellButtonControlLarge" Anchor="L,T" Offset="-12,0" Size="parent-14,parent" ToolTip="LOC_SETUP_ADD_PLAYER_TT" String="{LOC_SETUP_ADD_PLAYER:upper}">
+        <Image Anchor="R,C" Offset="25,0" Texture="Shell_Add" Size="37,37" ConsumeMouse="0"/>
+      </GridButton>
+
+			<Grid ID="YouIndicatorLine" Size="parent-2,parent+4" Offset="-20,-3" Hidden="1" SliceTextureSize="60,60" SliceCorner="20,20" SliceSize="20,20" Texture="Controls_YouIndicatorLine"/>
+      
+		</Container>
+	</Instance>
+
+	<Instance		Name="ChatEntry" >
+		<Box		ID="ChatRoot"			Anchor="L,T" Size="430,22" Color="0,0,0,0"  >
+			<Label	ID="String"			Anchor="L,C" Offset="0,0" WrapWidth="430" Color1="0,0,0,150" Style="FontNormal12" />
+		</Box>
+	</Instance>
+
+	<!-- Friend Instance -->
+	<Instance Name="FriendInstance">
+
+		<Container ID="RootContainer" Size="218,46">
+			<PullDown ID="FriendPulldown" Style="PullDownPlayerSlot" ScrollThreshold="110">
+				<Label ID="OnlineIndicator" Anchor="L,T" Offset="4,3" String="[ICON_OnlinePip]"/>
+				<Label ID="PlayerName" Anchor="C,T" Offset="0,7" Style="WhiteSemiBold14" String="PlayerName" TruncateWidth="210"/>
+				<Label ID="PlayerStatus" Anchor="L,B" Offset="10,7" Style="WhiteSemiBold12" String="PlayerStatus"/>
+			</PullDown>
+		</Container>
+
+	</Instance>
+
+	<Instance Name="GameSetupParameter">
+		<Container ID="Root" Size="1,17">
+			<Label ID="Label" Anchor="R,T" Offset="5,0" Style="FontNormal12" ColorSet="ShellOptionText" FontStyle="stroke" String="UNKNOWN_EDIT_BOX"/>
+			<Label ID="Value" Anchor="L,T" Offset="5,0" Style="WhiteSemiBold12" ColorSet="ShellControl" FontStyle="stroke" String="UNKNOWN_EDIT_BOX" TruncateWidth="230" />
+		</Container>
+	</Instance>
+
+	<Instance Name="HorizontalGridLine">
+		<Line ID="Control" Start="5,-1" End="1000,-1" Width="2" Color="20,55,70,255" />
+	</Instance>
+
+	<!-- Custom popup dialog -->
+	<Box Style="PopupDialogBox"/>
+
+	<!-- Customized popup dialog pieces-->
+	<Instance				Name="PopupButtonInstance">
+		<GridButton   ID="Button"     Size="200,41"   Style="MainButton"/>
+	</Instance>
+	<Instance				Name="PopupButtonInstanceAlt">
+		<GridButton   ID="Button"     Size="200,41"   Style="ButtonRed"/>
+	</Instance>
+	<Instance				Name="PopupTextInstance">
+		<Label        ID="Text"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="parent-20"/>
+	</Instance>
+	<Instance				Name="RowInstance">
+		<Stack        ID="Row"			Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
+	</Instance>
+	
+</ContextDefaults>

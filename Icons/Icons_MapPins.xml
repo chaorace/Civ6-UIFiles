@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSPY v2004 rel. 2 U (http://www.xmlspy.com) by Ed Beach (Firaxis Games) -->
+<GameInfo>
+	<IconTextureAtlases>
+		<Row Name="ICON_ATLAS_MAP_PINS" IconSize="24" IconsPerRow="8" IconsPerColumn="8" Filename="MapPins24"/>
+	</IconTextureAtlases>
+	<IconDefinitions>
+    <Row Name="ICON_MAP_PIN_STRENGTH"  Atlas="ICON_ATLAS_MAP_PINS" Index="0"/>
+    <Row Name="ICON_MAP_PIN_RANGED"    Atlas="ICON_ATLAS_MAP_PINS" Index="1"/>
+    <Row Name="ICON_MAP_PIN_BOMBARD"   Atlas="ICON_ATLAS_MAP_PINS" Index="2"/>
+    <Row Name="ICON_MAP_PIN_DISTRICT"  Atlas="ICON_ATLAS_MAP_PINS" Index="3"/>
+    <Row Name="ICON_MAP_PIN_CHARGES"   Atlas="ICON_ATLAS_MAP_PINS" Index="4"/>
+    <Row Name="ICON_MAP_PIN_DEFENSE"   Atlas="ICON_ATLAS_MAP_PINS" Index="5"/>
+    <Row Name="ICON_MAP_PIN_MOVEMENT"  Atlas="ICON_ATLAS_MAP_PINS" Index="6"/>
+    <Row Name="ICON_MAP_PIN_NO"        Atlas="ICON_ATLAS_MAP_PINS" Index="7"/>
+    <Row Name="ICON_MAP_PIN_PLUS"      Atlas="ICON_ATLAS_MAP_PINS" Index="8"/>
+    <Row Name="ICON_MAP_PIN_CIRCLE"    Atlas="ICON_ATLAS_MAP_PINS" Index="9"/>
+    <Row Name="ICON_MAP_PIN_TRIANGLE"  Atlas="ICON_ATLAS_MAP_PINS" Index="10"/>
+    <Row Name="ICON_MAP_PIN_SUN"       Atlas="ICON_ATLAS_MAP_PINS" Index="11"/>
+    <Row Name="ICON_MAP_PIN_SQUARE"    Atlas="ICON_ATLAS_MAP_PINS" Index="12"/>
+    <Row Name="ICON_MAP_PIN_DIAMOND"   Atlas="ICON_ATLAS_MAP_PINS" Index="13"/>
+ </IconDefinitions>
+</GameInfo>

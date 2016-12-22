@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Top level context for InGame Civ6					-->
+<!-- Tabs set to 2 spaces, retaining the tab.		-->
+<Context Name="InGame">
+
+	<!--Order matters in this list regarding mouse/touch priority and rendering -->
+
+	<Container		ID="Core">
+		<LuaContext	ID="WorldInput"							    FileName="WorldInput" />
+		<LuaContext	ID="StrategicView"							FileName="StrategicView" />
+		<LuaContext ID="AI_Diplomacy"								FileName="AI_Diplomacy"						Hidden="1"	/>	<!-- Game Core side lua script -->
+        <LuaContext ID="ARXManager"                             FileName="ARXManager"                           Hidden="1"  />  <!-- Logitech ARX support -->
+	</Container>
+
+	<Container		ID="WorldViewControls">
+		<LuaContext ID="WorldViewIconsManager"			FileName="WorldViewIconsManager"/>
+		<LuaContext ID="DistrictPlotIconManager"		FileName="WorldView/DistrictPlotIconManager"/>
+		<LuaContext ID="PlotInfo"										FileName="WorldView/PlotInfo"/>
+		<LuaContext ID="CityBannerManager"					FileName="CityBannerManager" />
+		<LuaContext ID="UnitFlagManager"						FileName="UnitFlagManager"/>
+    <LuaContext ID="TourismBannerManager"				FileName="TourismBannerManager" />
+		<LuaContext ID="MapPinManager"							FileName="MapPinManager"/>
+		<LuaContext ID="SelectedUnit"								FileName="WorldView/SelectedUnit"/>
+		<Container	ID="SelectedMapPinContainer"/>		<!-- Selected map pin UI is dynamically attached/detached from here so that it renders last -->
+		<Container	ID="SelectedUnitContainer"/>			<!-- Selected unit UI is dynamically attached/detached from here so that it renders last -->
+		<LuaContext ID="WorldViewPlotMessages"			FileName="WorldViewPlotMessages"/>
+	</Container>
+
+	<Container		ID="HUD">
+		<LuaContext	ID="CameraManager"						FileName="CameraManager" Hidden="1"/>
+		<LuaContext	ID="PlotToolTip"							FileName="PlotToolTip"													/>
+		<LuaContext	ID="NotificationPanel"				FileName="NotificationPanel"										/>
+		<LuaContext ID="WorldTracker"	            FileName="WorldTracker"									        />
+		<LuaContext	ID="MinimapPanel"							FileName="MinimapPanel"													/>	
+		<LuaContext	ID="CityPanel"								FileName="CityPanel"								Hidden="1"	/>
+		<LuaContext	ID="UnitPanel"								FileName="UnitPanel"								Hidden="1"	/>
+    <LuaContext	ID="ActionPanel"							FileName="ActionPanel"													/>
+		<LuaContext	ID="MultiplayerTurnManager"		FileName="MultiplayerTurnManager"		Hidden="1"	/>   
+	</Container>
+
+	<Container		ID="PartialScreens">
+    <LuaContext	ID="TopPanel"									FileName="TopPanel"															/>
+    <LuaContext	ID="DiplomacyRibbon"					FileName="DiplomacyRibbon"									  	/>
+		<LuaContext	ID="CityStatesPopup"					FileName="CityStates"								Hidden="1"	/>
+		<LuaContext ID="EspionageOverview"        FileName="EspionageOverview"        Hidden="1"  />
+		<LuaContext	ID="WorldRankings"						FileName="WorldRankings"						Hidden="1"  />
+    <LuaContext	ID="TradeOverview"					  FileName="TradeOverview"						Hidden="1"	/>
+    <LuaContext	ID="PartialScreenHooks"			  FileName="PartialScreenHooks"      />
+		<LuaContext	ID="ProductionPanel"					FileName="ProductionPanel"					Hidden="1"	/>
+	</Container>
+	  
+  <Container		ID="Screens">
+    <LuaContext	ID="TechTree"									FileName="TechTree"									Hidden="1"	/>
+		<LuaContext	ID="CivicsTree"								FileName="CivicsTree"								Hidden="1"	/>
+    <LuaContext	ID="GovernmentScreen"					FileName="GovernmentScreen"					Hidden="1"	/>
+    <LuaContext	ID="ReligionScreen"					  FileName="ReligionScreen"				  	Hidden="1"	/>
+    <LuaContext ID="GreatWorksOverview"       FileName="GreatWorksOverview"       Hidden="1"  />
+    <LuaContext ID="GreatWorkShowcase"				FileName="GreatWorkShowcase"				Hidden="1"  />
+		<LuaContext ID="GreatPeoplePopup"         FileName="GreatPeoplePopup"         Hidden="1"  />
+		<LuaContext ID="ReportScreen"						  FileName="ReportScreen"							Hidden="1"  />
+	</Container>
+
+	<Container    ID="TopLevelHUD">
+    <LuaContext	ID="LaunchBar"								FileName="LaunchBar"											      />
+    <LuaContext	ID="TradeRouteChooser"				FileName="TradeRouteChooser"				Hidden="1"	/>
+    <LuaContext	ID="TradeOriginChooser"				FileName="TradeOriginChooser"				Hidden="1"	/>
+    <LuaContext ID="CivicsChooser"            FileName="CivicsChooser"            Hidden="1"  />
+		<LuaContext ID="ResearchChooser"          FileName="ResearchChooser"          Hidden="1"  />
+    <LuaContext ID="EspionageChooser"         FileName="EspionageChooser"         Hidden="1"  />
+    <LuaContext ID="CityPanelOverview"        FileName="CityPanelOverview"        Hidden="1"  />
+    <LuaContext ID="ModalLensPanel"           FileName="ModalLensPanel"           Hidden="1"  />
+    <LuaContext	ID="StatusMessagePanel"				FileName="StatusMessagePanel"										/>
+	</Container>
+
+
+	<Container		ID="WorldPopups">
+    <LuaContext	ID="EraCompletePopup"				  FileName="EraCompletePopup"				  Hidden="1"	/>
+		<LuaContext	ID="NaturalWonderPopup"				FileName="NaturalWonderPopup"				Hidden="1"	/>
+		<LuaContext	ID="UnitCaptured"							FileName="UnitCaptured"							Hidden="1"	/>
+		<LuaContext	ID="WonderBuiltPopup"					FileName="WonderBuiltPopup"					Hidden="1"	/>
+		<LuaContext	ID="ProjectBuiltPopup"				FileName="ProjectBuiltPopup"				Hidden="1"	/>
+		<LuaContext	ID="MapPinPopup"							FileName="MapPinPopup"							Hidden="1"	/>
+		<LuaContext ID="RazeCity"                 FileName="RazeCity"                 Hidden="1"  />
+		<LuaContext ID="ChooseArtifact"           FileName="ChooseArtifact"           Hidden="1"  />
+		<LuaContext ID="BoostUnlockedPopup"       FileName="BoostUnlockedPopup"       Hidden="1"  />
+		<LuaContext ID="TechCivicCompletedPopup"  FileName="TechCivicCompletedPopup"  Hidden="1"  />
+    <LuaContext ID="UnitPromotionPopup"       FileName="UnitPromotionPopup"       Hidden="1"  />
+		<LuaContext ID="EspionagePopup"           FileName="EspionagePopup"						Hidden="1"  />
+		<LuaContext ID="EspionageEscape"          FileName="EspionageEscape"          Hidden="1"  />
+		<LuaContext	ID="PopupGeneric"							FileName="PopupGeneric"							Hidden="1"	TutorialActive="1" />
+	</Container>
+
+	<Container		ID="EndGame">
+		<LuaContext	ID="EndGameMenu"							FileName="EndGameMenu"							Hidden="1"	/>
+	</Container>
+	
+	<Container		ID="Diplomacy">
+		<LuaContext ID="LeaderScene"              FileName="LeaderScene"              Hidden="1"  />
+		<LuaContext	ID="DiplomacyActionView"			FileName="DiplomacyActionView"			Hidden="1"	/>
+		<LuaContext	ID="DiplomacyDealView"			  FileName="DiplomacyDealView"			  Hidden="1"	/>
+		<LuaContext	ID="DiploPopup"							  FileName="DiploPopup"							  Hidden="1"	/>
+		<LuaContext ID="DeclareWarPopup"          FileName="DeclareWarPopup"          Hidden="1"  />
+	</Container>
+
+	<Container		ID="Network">
+		<LuaContext	ID="PlayerChange"							FileName="PlayerChange"							Hidden="1"	/>
+		<LuaContext	ID="NewTurnPanel"							FileName="NewTurnPanel"							Hidden="0"	/>
+	</Container>
+	
+	<LuaContext		ID="Civilopedia"							FileName="CivilopediaScreen"				Hidden="1"	/>
+	<LuaContext		ID="PausePanel"								FileName="PausePanel"								Hidden="0"	/>	
+	
+	<!-- Always very last/top: the in-game 'SHELL' menu. -->
+  <LuaContext		ID="TopOptionsBackground"			FileName="InGameTopOptionsBackground"			Hidden="1" /> 
+  <LuaContext		ID="TopOptionsMenu"						FileName="InGameTopOptionsMenu"			      Hidden="1"	TutorialActive="1" />	
+
+</Context>

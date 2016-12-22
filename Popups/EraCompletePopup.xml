@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context  ColorSet="BodyTextCool" FontStyle="Shadow">
+  
+	<AlphaAnim				ID="EraPopupAnimation" AlphaBegin="0" AlphaEnd="1" Speed="0.5" Function="Root" Size="full,full" EndPause="9" Cycle="Once" >
+    <Grid							Style="Divider6Grid"														ConsumeMouse="0"						Size="800,50"		Color="0,0,0,150" Anchor="C,C">
+      <Image					ID="GradientT"	Anchor="L,T"	Texture="Controls_Gradient_HalfRadial" Size="parent,150"			Color="0,0,0,255" AnchorSide="I,O"/>
+      <Image					ID="GradientB"	Anchor="L,B"	Texture="Controls_Gradient_HalfRadial" Size="parent,150"			Color="0,0,0,255" AnchorSide="I,O" FlipY="1"/>
+    </Grid>
+
+    <AlphaAnim			ID="HeaderAlpha" AlphaBegin="0" AlphaEnd="1" Speed="1" Function="Root" Cycle="OneBounce" Size="full,full" Pause=".6" EndPause="1">
+      <SlideAnim		ID="HeaderSlide" Start="0,50" End="0,0" Speed="0.95" Cycle="Once" Size="full,full" Pause=".5">
+        <Label			ID="EraCompletedHeader" String="ERA COMPLETED" Anchor="C,C" Style="ShellHeader"/>
+      </SlideAnim>
+    </AlphaAnim>
+      
+  </AlphaAnim>
+</Context>

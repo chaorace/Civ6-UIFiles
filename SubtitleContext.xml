@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
+         Name="SubtitleContext" FontStyle="Shadow" ColorSet="BodyTextCool" FontSize="20">
+
+  <Label ID="SubtitleText" String="" Anchor="C,B" Offset="0,32" Align="center" />
+
+</Context>

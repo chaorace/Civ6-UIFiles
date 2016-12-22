@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+	<IconTextureAtlases>
+		<Row Name="ICON_ATLAS_RELATIONSHIP" IconSize="23" IconsPerRow="7" IconsPerColumn="1" Filename="Diplomacy_RelationshipPips.dds"/>
+		<Row Name="ICON_ATLAS_RELATIONSHIP" IconSize="31" IconsPerRow="7" IconsPerColumn="1" Filename="Diplomacy_RelationshipPipsLarge.dds"/>
+	</IconTextureAtlases>
+	<IconDefinitions>
+		<Row Name="ICON_RELATIONSHIP_SUZERAIN"			Index="0" Atlas="ICON_ATLAS_RELATIONSHIP"/>
+		<Row Name="ICON_RELATIONSHIP_GREAT"					Index="1" Atlas="ICON_ATLAS_RELATIONSHIP"/>
+		<Row Name="ICON_RELATIONSHIP_GOOD"					Index="2" Atlas="ICON_ATLAS_RELATIONSHIP"/>
+		<Row Name="ICON_RELATIONSHIP_NEUTRAL"				Index="3" Atlas="ICON_ATLAS_RELATIONSHIP"/>
+		<Row Name="ICON_RELATIONSHIP_BAD"						Index="4" Atlas="ICON_ATLAS_RELATIONSHIP"/>
+		<Row Name="ICON_RELATIONSHIP_AWFUL"					Index="5" Atlas="ICON_ATLAS_RELATIONSHIP"/>
+		<Row Name="ICON_RELATIONSHIP_WAR"						Index="6" Atlas="ICON_ATLAS_RELATIONSHIP"/>
+	</IconDefinitions>
+</GameInfo>

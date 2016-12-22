@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContextDefaults ColorSet="Beige_Black" Style="FontNormal22" FontStyle="Shadow" Name="FrontEnd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
+  
+	<Box Anchor="C,C" Size="Full,Full" Color="0,0,0,255"/>
+  
+	<!--<Image				ID="Background"					Anchor="C,T"									Texture="Shell_Background"	StretchMode="Fill"/>-->
+	<Movie ID="BackgroundMovie" Movie="TitleBG.bk2" Size="full,full" LoopMovie="1" StretchMode="UniformToFill"/>
+  
+	<Container		ID="FrontEndContainer" Size="full,full" >
+		<LuaContext ID="MainMenu"					FileName="UI/FrontEnd/MainMenu"				Hidden="1" />
+		<LuaContext	ID="PopupGeneric"			FileName="PopupGeneric"								Hidden="1" />
+		<LuaContext	ID="JoiningRoom"			FileName="JoiningRoom"								Hidden="1" />
+	</Container>
+
+	<Platform		Type="windows">
+		<LuaContext			ID="Test"										FileName="Test" Hidden="0" />	
+	</Platform>
+	
+</ContextDefaults>

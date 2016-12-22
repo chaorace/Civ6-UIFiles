@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Style="FontNormal18" ColorSet="Beige_Black_Alpha" FontStyle="Shadow">
+
+	<Box ID="MainGrid" Style="ShellBGBox">
+
+		<Container ID="MainWindow" Style="ShellWindowContainer">
+
+			<Container Style="ShellHeaderContainer">
+				<Grid Style="ShellHeaderButtonGrid">
+					<GridButton ID="BackButton" Style="ShellButtonOrnateFlat" Anchor="R,C" Offset="1,0" String="LOC_MULTIPLAYER_BACK"/>
+					<GridButton ID="DefaultButton" Style="ShellButtonOrnateFlat" Anchor="L,C" Offset="1,0" String="{LOC_SETUP_RESTORE_DEFAULT:upper}" ToolTip="LOC_SETUP_RESTORE_DEFAULT_TT" />
+				</Grid>
+				<Label ID="TitleLabel" Style="ShellHeader" Anchor="C,C" String="LOC_MULTIPLAYER_HOST_GAME"/>
+			</Container>
+
+			<!-- Decorative Border -->
+      <Grid ID="DecoBorder" Style="SubContainer4" Offset="0,94" Size="parent-10,624" Anchor="C,T" Color="7,28,50">
+
+        <Stack ID="ShellTabs" Offset="0,-40" Anchor="C,T" StackGrowth="Right" Padding="10"/>
+
+        <!-- Parameters Panel -->
+        <Grid ID="DecoGrid" Style="DecoGrid" Anchor="C,T" Size="parent-6,parent-6" Offset="0,3" Color="26,61,90,255"/>
+        <ScrollPanel ID="ParametersScrollPanel" Anchor="C,T" Offset="-2,6" Size="parent-8,parent-12" Vertical="1" AutoScrollBar="1">
+
+          <!-- Scroll Controls -->
+          <ScrollBar Style="Slider_Blue" Length="420" Offset="2,0" Anchor="R,T"/>
+          <Stack ID="ParametersStack" Anchor="C,T" Offset="0,0" Padding="20" StackGrowth="Bottom" >
+
+            <Grid Size="parent,21" Texture="Shell_SectionHeader" SliceCorner="154,10" SliceTextureSize="308,21" Color="20,144,140,100" Offset="0,8">
+              <Image Texture="Controls_Gradient_HalfRadial" Color="20,144,140,100" FlipY="1" Anchor="C,T" Size="225,94"/>
+              <Label Anchor="C,C" Style="ShellOptionText" WrapWidth="320" String="LOC_MAP_OPTIONS"/>
+            </Grid>
+
+            <!-- Primary Parameters Stack -->
+            <Stack Anchor="C,T" Offset="50,0" Padding="0" StackGrowth="Bottom" ID="PrimaryParametersStack"/>
+
+            <Grid Size="parent,21" Texture="Shell_SectionHeader" SliceCorner="154,10" SliceTextureSize="308,21" Color="20,144,140,100" Offset="0,8">
+              <Image Texture="Controls_Gradient_HalfRadial" Color="20,144,140,100" FlipY="1" Anchor="C,T" Size="225,94"/>
+              <Label Anchor="C,C" Style="ShellOptionText" WrapWidth="320" String="LOC_SETUP_VICTORY_CONDITIONS"/>
+            </Grid>
+
+            <Stack Anchor="C,T" Padding="0" StackGrowth="Bottom" ID="VictoryParameterStack" />
+
+            <!-- Secondary Parameters Stack -->
+            <Grid Size="parent,21" Texture="Shell_SectionHeader" SliceCorner="154,10" SliceTextureSize="308,21" Color="20,144,140,100" Offset="0,8">
+              <Image Texture="Controls_Gradient_HalfRadial" Color="20,144,140,100" FlipY="1" Anchor="C,T" Size="225,94"/>
+              <Label Anchor="C,C" Style="ShellOptionText" WrapWidth="320" String="LOC_ADVANCED_OPTIONS"/>
+            </Grid>
+
+            <Stack Anchor="C,T" Offset="0,0" Padding="2" StackGrowth="Bottom" ID="SecondaryParametersStack"/>
+          </Stack>
+        </ScrollPanel>
+      </Grid>
+			<!-- TODO: Add contents of mods screen into the ParametersStack (in the SecondaryParametersStack, or in its own ModsStack)  -->
+			<GridButton ID="ModsButton"			Anchor="L,B" Offset="5,5" Style="MainButton" String="LOC_MAIN_MENU_MODS"/>
+			<GridButton ID="LoadButton"			Anchor="C,B" Offset="0,5" Size="260,38" Style="MainButton" String="LOC_LOAD_GAME"/>
+			<GridButton ID="ConfirmButton"	Anchor="R,B" Offset="5,5" Style="ButtonConfirm" String="LOC_MULTIPLAYER_CONFIRM_SETTINGS" ToolTip="LOC_MULTIPLAYER_HOST_GAME_TT"/>
+		</Container>
+  </Box>
+
+	<!-- TODO: Remove line below and place contents of mods screen into the ParametersStack -->
+	<LuaContext FileName="UI/FrontEnd/Mods"			ID="ModsMenu"		Hidden="1" />
+
+  <LuaContext FileName="UI/FrontEnd/LoadGameMenu" ID="LoadGameMenu"	Hidden="1" />
+
+	<Instance Name="ShellTab">
+		<Container ID="TopControl" AutoSize="1">
+			<GridButton ID="Button" Anchor="C,T" Style="ShellTab"/>
+			<AlphaAnim ID="Selected" Anchor="C,T" Speed="5" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
+				<GridButton ID="SelectedButton" Style="ShellTabSelected" Anchor="C,T"/>
+			</AlphaAnim>
+		</Container>
+	</Instance>
+
+
+  <!-- Instance for a boolean parameters -->
+  <Instance Name="BooleanParameterInstance">
+    <GridButton ID="CheckBox" Anchor="C,T" Style="CheckBoxControl"  Size="340,24" States="8"/>
+  </Instance>
+
+  <!-- Instance for a string parameters -->
+  <Instance Name="StringParameterInstance">
+    <Container  ID="StringRoot" Size="200,36">
+      <Container AutoSize="1">
+        <Box Size="140,30" Color="0,0,0,0"/>
+        <Label ID="StringName" Anchor="R,C" Offset="0,0" Style="FontNormal14" ColorSet="ShellOptionText" FontStyle="stroke" WrapWidth="180" String="UNKNOWN_EDIT_BOX"/>
+      </Container>
+      <Container AutoSize="1" Offset="145,0">
+				<Grid Style="EditTextArea" Size="205,30">
+					<EditBox ID="StringEdit" Anchor="L,C" Offset="6,0" Size="248,23" EditMode="1" Style="FontNormal14" ColorSet="BodyTextCool" FontStyle="stroke" MaxLength="22"/>
+				</Grid>
+			</Container>
+    </Container>
+  </Instance>
+
+	<!-- Instance for a parameter that has multiple choices for the value, displayed as a dropdown -->
+  <Instance Name="PullDownParameterInstance">
+    <Container ID="Root" Anchor="C,T" Size="450,32" Offset="0,0">
+      <PullDown Anchor="C,T" ID="PullDown" Style="PullDownBlue" Size="250,24" Offset="0,0">
+        <Label Style="ShellOptionText" ID="StringName" AnchorSide="O,I" Anchor="L,C" String=""/>
+      </PullDown>
+    </Container>
+  </Instance>
+
+	<!-- Custom popup dialog -->
+	<Box Style="PopupDialogBox"/>
+
+	<!-- Customized popup dialog pieces-->
+	<Instance				Name="PopupButtonInstance">
+		<GridButton   ID="Button"     Size="200,41"   Style="MainButton"/>
+	</Instance>
+	<Instance				Name="PopupButtonInstanceAlt">
+		<GridButton   ID="Button"     Size="200,41"   Style="ButtonRed"/>
+	</Instance>
+	<Instance				Name="PopupTextInstance">
+		<Label        ID="Text"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="parent-20"/>
+	</Instance>
+	<Instance				Name="RowInstance">
+		<Stack        ID="Row"			Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
+	</Instance>
+</Context>

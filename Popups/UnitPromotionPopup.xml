@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context Hidden="0">
+  <Grid ID="PopupDrowShadowGrid" Anchor="C,C" Offset="0,0" Size="625,700" Style="DropShadow" >
+    <Grid ID="PopupFrameGrid" Anchor="C,C" Size="parent,parent+20" Offset="0,0" Style="EnhancedToolTip">
+      <!-- Corner Icons -->
+      <Button	ID="CloseButton"		Texture="Controls_CloseLarge" Size="44,44" Anchor="R,T"	Offset="10,0"	/>
+        
+      <Grid  Texture="Controls_HeaderMetal" Offset="0,-3" Size="parent-4,50" Anchor="C,T" SliceCorner="30,20" SliceSize="9,10" SliceTextureSize="69,42"/> 
+      <Container Size="353, 42" Anchor="C,T" Offset="0,0">
+        <Label ID="HeaderLabel" String="{LOC_HUD_UNIT_CHOOSE_PROMOTION_TEXT:upper}" Anchor="C,C" Align="C,C" Color0="214,214,214,255"	Color1="0,0,0,55" Offset="0,5" Style="FontFlair20" SmallCaps="26" SmallCapsType="EveryWord" WrapWidth="240" />
+      </Container>
+
+      <!---->
+      <!--UNIT PROMOTION CHOOSER-->
+      <!---->
+      <ScrollPanel	ID="PromotionScrollPanel" Anchor="C,T"	Offset="0,30" 		Size="parent-10,parent-50" Vertical="1">
+        <Label ID="StrMoveLabel" Anchor="L,T" Offset="12,20" Align="L,C" Color0="214,214,214,255"	Color1="0,0,0,55"  Style="FontFlair16"/>
+        <Label ID="ExperienceLabel" Anchor="R,T" Offset="24,20" Align="R,C" Color0="214,214,214,255"	Color1="0,0,0,55"  Style="FontFlair16"/>
+        <Line Color="48,73,95,255" Start="10,40" End="parent-10,40" Width="2" />
+        <ScrollBar														Anchor="R,T"	AnchorSide="I,I"	Style="Slider_Vert" Length="parent-50" />
+      </ScrollPanel>
+        
+    </Grid>
+  </Grid>
+
+  <!-- Promotion Selection Instance -->
+  <Instance				Name="PromotionSelectionInstance">
+    <Container		ID="PromotionSelection"															Size="212,106" >
+      <GridButton   ID="PromotionSlot" Style="FontFlair16" Offset="0,0" Size="parent,parent" Texture="Promotion_Button" SliceTextureSize="106,106" SliceCorner="53,53" SliceSize="1,1" StateOffsetIncrement="0,106" SmallCaps="18" SmallCapsType="EveryWord" Disabled="1">
+        <Box			ID="PromotionListIcon"		Anchor="L,T" Offset="8,7" Size="32,32"	Color="0,0,0,0" >
+          <Image  ID="PromotionIcon" Texture="PromotionsSmall" Size="32,32" Offset="0,0" TextureOffset="32,0"/>
+        </Box>
+        <Label		ID="PromotionName"				             Anchor="L,C" Offset="44,-30"							Style="UnitPanelHeader"	 WrapWidth="170" String="Promotion Name"/>
+        <Label		ID="PromotionDescription"							 Offset="13,40"						Style="FontNormalMedium14" Color0="214,214,214,255"	Color1="0,0,0,55" WrapWidth="190" String="Promotion Description"/>
+      </GridButton>
+    </Container>
+  </Instance>
+
+  <Instance				Name="CompletedPromotionSelectionInstance">
+    <Container		ID="PromotionSelection"															Size="212,106">
+      <GridButton   ID="PromotionSlot" Style="FontFlair16" Offset="0,0" Size="parent,parent" Texture="Promotion_ButtonCompleted"  SliceTextureSize="106,106" SliceCorner="53,53" SliceSize="1,1" NoStateChange="1" SmallCaps="18" SmallCapsType="EveryWord" Disabled="1">
+        <Box			ID="PromotionListIcon"		Anchor="L,T" Offset="8,7" Size="32,32"	Color="0,0,0,0" >
+          <Image  ID="PromotionIcon" Texture="PromotionsSmall" Size="32,32" Offset="0,0" TextureOffset="32,0"/>
+          
+        </Box>
+        <Label		ID="PromotionName"				             Anchor="L,C" Offset="44,-30"							Style="UnitPanelHeader"	 WrapWidth="170" String="Promotion Name"/>
+        <Label		ID="PromotionDescription"							 Offset="13,40"						Style="FontNormalMedium14" Color0="214,214,214,255"	Color1="0,0,0,55" WrapWidth="190" String="Promotion Description"/>
+      </GridButton>
+    </Container>
+  </Instance>
+
+  <Instance Name="LineImageInstance">
+    <Image ID="LineImage" Size="20,20" Texture="Controls_TreePathDashEW" Color="63,83,100,255" StretchMode="Tile"/>
+  </Instance>
+  
+</Context>

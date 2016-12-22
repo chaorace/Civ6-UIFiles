@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Context Style="FontNormal16">
+
+	<!-- Collapsed World Tracker Chat Panel -->
+	<Box ID="ChatPanelBG" Offset="0,0"		Size="296,99"		Color="0,0,0,255" ConsumeMouse="1"/>
+	<Box ID="ChatPanel" Anchor="L,T" Offset="0,2"		Size="294,93"		Color="15,56,89,255">
+		<Image Size="parent,parent" Texture="Controls_Gradient" Color="80,133,177,60"/>
+		<Image Size="123,126" Offset="0,0" Texture="ChatPanel_Watermark"/>
+		<Container																Size="parent,parent"	Offset="-5,0" >
+			<ScrollPanel	ID="ChatLogPanel"						Anchor="L,T" Offset="20,0" Vertical="1" Size="296,65" HideScrollBar="0">
+				<ScrollBar Style="Slider_Blue" Offset="-13,0" Anchor="L,T"/>
+				<Stack			ID="ChatEntryStack"					Anchor="L,B" StackGrowth="Bottom" Padding="0"/>
+			</ScrollPanel>
+
+			<PullDown ID="ChatPull" Anchor="L,B" Offset="10,2"		Size="283,26" Style="ChatPullDown" ToolTip="LOC_DIPLO_TO_ALL"/>
+			<Button	ID="ExpandButton"	Anchor="R,T" Offset="5,5" Size="20,17" TextureOffset="0,64" StateOffsetIncrement="0,17" Texture="Controls_ButtonExtendSmall.dds" ToolTip="LOC_HUD_CHAT_EXPAND_TOOLTIP"/>
+		</Container>
+		<Grid Size="parent+3" Anchor="L,B" Offset="-2,0" Style="Divider3Grid"/>
+	</Box>
+	
+	<!-- Expanded World Tracker Chat Panel-->
+	<Box ID="ExpandedChatPanelBG" Offset="0,0"		Size="296,199"		Color="0,0,0,255" Hidden="1" ConsumeMouse="1"/>
+	<Box ID="ExpandedChatPanel" Anchor="L,T" Offset="0,0"		Size="294,193"		Color="15,56,89,255" Hidden="1">
+		<Image Size="parent,parent" Texture="Controls_Gradient" Color="80,133,177,60"/>
+		<Image Size="123,126" Offset="0,25" Texture="ChatPanel_Watermark"/>
+		<Image Size="parent-4,4" 	Offset="2,25" Texture="Controls_DecoMapScale" StretchMode="Tile" Color="42,75,108,255"/>
+		<Container																Size="parent,parent"	Offset="-5,0" >
+			<Stack					ID="ExpandedChatLogStack"				Anchor="L,T" Offset="0,0" StackGrowth="Bottom"  >
+				<GridButton ID="ShowPlayerListButton" Anchor="L,T" Offset="5,1" Size="200,24" Texture="Controls_ButtonControl" SliceCorner="12,12" SliceTextureSize="24,24" StateOffsetIncrement="0,24" >
+					<CheckBox ID="ShowPlayerListCheck" Anchor="L,C" Style="MainCheckBox" Offset="10,0" Size="260,45" String="LOC_SHOW_PLAYER_LIST" BoxOnLeft="1" IsChecked="0"/>
+				</GridButton>
+				<ScrollPanel	ID="ExpandedChatLogPanel"						Anchor="L,T" Offset="20,0" Vertical="1" Size="296,140" HideScrollBar="0">
+					<ScrollBar Style="Slider_Blue" Offset="-13,0" Anchor="L,T"/>
+					<Stack			ID="ExpandedChatEntryStack"					Anchor="L,B" StackGrowth="Bottom" Padding="0"/>
+				</ScrollPanel>
+
+				<PullDown ID="ExpandedChatPull" Anchor="L,B" Offset="10,2"		Size="283,26" Style="ExpandedChatPullDown" ToolTip="LOC_DIPLO_TO_ALL"/>
+			</Stack>
+			<Button				ID="ContractButton"				Anchor="R,T" Offset="5,5" Size="20,17" TextureOffset="0,64" StateOffsetIncrement="0,17" Texture="Controls_ButtonExtendSmall2.dds" ToolTip="LOC_HUD_CHAT_COLLAPSE_TOOLTIP"/>
+		</Container>
+		<Grid Size="parent+3" Anchor="L,B" Offset="-2,0" Style="Divider3Grid"/>
+	</Box>
+
+	<!-- Player List Panel -->
+	<Container ID="PlayerListPanel" Offset="300,0" Hidden="1">
+
+		<Container ID="PlayerListBackground" Anchor="L,T" Size="236,195">
+			<Grid Style="SubContainerFill" Anchor="L,B" Size="parent,parent" Color="19,47,77,255"/>
+			<Grid Style="SubContainer4" Anchor="L,B" Offset="-2,0" Size="parent+4,parent" Color="0,0,0,255"/>
+			<Grid Style="DecoGrid" Anchor="L,B" Size="parent-4,parent-8" Offset="2,4" Color="29,60,90,255"/>
+		</Container>
+
+		<ScrollPanel ID="PlayerListScroll" Anchor="L,T" Offset="0,10" Size="236,175" Vertical="1" AutoScrollBar="1">
+			<ScrollBar Style="Slider_Blue" Offset="-7,0" Anchor="R,T"/>
+			<Stack			ID="PlayerListStack"	Anchor="C,T" StackGrowth="Bottom" Padding="0"/>
+		</ScrollPanel>
+	</Container>
+	
+  <!-- ==================================================================== -->
+  <!--	INSTANCES																														-->
+  <!-- ==================================================================== -->
+	<Instance			Name="ChatEntry">
+		<Container	ID="ChatRoot"		Anchor="L,C" Size="276,16">
+				<Label	ID="String"			Anchor="L,C" WrapWidth="276" Color1="0,0,0,150" Style="FontNormal12" />
+		</Container>
+	</Instance>
+
+	<Instance			Name="MapPinChatEntry">
+		<Container	ID="ChatRoot"						Anchor="L,C" Size="276,16">
+			<Label	  ID="PlayerString"					Anchor="L,C" WrapWidth="276" Color1="0,0,0,150" FontStyle="Stroke" Style="FontNormal14" />
+			<GridButton ID="MapPinButton" Style="ChatWithMapPinButton"/>
+		</Container>
+	</Instance>
+
+	<Instance			Name="PlayerListEntry">
+
+		<Container ID="RootContainer" Size="218,46">
+			<PullDown ID="PlayerListPull" Style="PullDownPlayerSlot" ScrollThreshold="110">
+				<Label ID="ConnectionIcon" Anchor="L,T" Offset="4,8" String="[ICON_OnlinePip]"/>
+				<Label ID="PlayerName" Anchor="C,T" Offset="0,7" Style="WhiteSemiBold14" String="PlayerName"/>
+				<Label ID="ConnectionLabel" Anchor="L,B" Offset="10,7" Style="WhiteSemiBold12" String="PlayerStatus"/>
+			</PullDown>
+		</Container>
+		
+	</Instance>
+
+	<Instance			Name="InvitePlayerListEntry">
+
+		<Container ID="RootContainer" Size="175,25">
+			<GridButton ID="InviteButton" Offset="20,1" Size="parent,parent" Style="ShellButton" String="LOC_INVITE_BUTTON" ToolTip="LOC_INVITE_BUTTON_TT"/>
+		</Container>
+
+	</Instance>
+
+	<!-- ==================================================================== -->
+	<!--	CHILDREN CONTEXTS																													-->
+	<!-- ==================================================================== -->
+	<LuaContext FileName="UI/FrontEnd/ConfirmKick" ID="ConfirmKick" Hidden="1" />
+
+</Context>
