@@ -288,12 +288,16 @@ function PopulateInspectorData(fileInfo, fileName, mod_errors)
 			Controls.CivIcon:SetColor(m_secondaryColor);
 		end
 
-		if(not Controls.CivIcon:SetIcon("ICON_"..fileInfo.HostCivilization)) then
-			Controls.CivIcon:SetIcon("ICON_CIVILIZATION_UNKNOWN")
+		if (not UI.ApplyFileQueryLeaderImage( g_LastFileQueryRequestID, fileInfo.Id, Controls.LeaderIcon)) then
+			if(not Controls.LeaderIcon:SetIcon("ICON_"..fileInfo.HostLeader)) then
+				Controls.LeaderIcon:SetIcon("ICON_LEADER_DEFAULT")
+			end
 		end
 
-		if(not Controls.LeaderIcon:SetIcon("ICON_"..fileInfo.HostLeader)) then
-			Controls.LeaderIcon:SetIcon("ICON_LEADER_DEFAULT")
+		if (not UI.ApplyFileQueryCivImage( g_LastFileQueryRequestID, fileInfo.Id, Controls.CivIcon)) then
+			if(not Controls.CivIcon:SetIcon("ICON_"..fileInfo.HostCivilization)) then
+				Controls.CivIcon:SetIcon("ICON_CIVILIZATION_UNKNOWN")
+			end
 		end
 
 	else

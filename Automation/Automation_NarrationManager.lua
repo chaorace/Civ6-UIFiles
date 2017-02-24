@@ -104,9 +104,9 @@ function OnPlayerDefeat(player1, player2)
 end
 
 -------------------------------------------------------------------------------
-function OnPlayerVictory(player, victoryType)
+function OnTeamVictory(team, victoryType)
 
-	if (IsEventEnabled("NarrationEvent_PlayerVictory")) then
+	if (IsEventEnabled("NarrationEvent_TeamVictory")) then
 
 		local victoryDef = GameInfo.Victories[victoryType];
 		if (victoryDef ~= nil) then
@@ -117,25 +117,21 @@ function OnPlayerVictory(player, victoryType)
 				textKey = "LOC_AUTONARRATE_PLAYER_VICTORY";
 			end
 
-			local pPlayerConfig = PlayerConfigurations[player];
-			if (pPlayerConfig ~= nil) then
-				local tMessage = {};
-				tMessage.Message = Locale.Lookup(textKey, pPlayerConfig:GetCivilizationShortDescription());
-				-- Show a "done" button
-				tMessage.Button1Text = Locale.Lookup("LOC_AUTONARRATE_BUTTON_DONE");
-				-- Stop the test 
-				tMessage.Button1Func = function() 
-					Automation.Pause(false);
-					AutoplayManager.SetActive(false);	-- Stop the autoplay
-				end 
-				tMessage.ShowPortrait = true;
+			local tMessage = {};
+			tMessage.Message = Locale.Lookup(textKey, GameConfiguration.GetTeamName(team));
+			-- Show a "done" button
+			tMessage.Button1Text = Locale.Lookup("LOC_AUTONARRATE_BUTTON_DONE");
+			-- Stop the test 
+			tMessage.Button1Func = function() 
+				Automation.Pause(false);
+				AutoplayManager.SetActive(false);	-- Stop the autoplay
+			end 
+			tMessage.ShowPortrait = true;
 
-				LuaEvents.Automation_AddToNarrationQueue( tMessage );
+			LuaEvents.Automation_AddToNarrationQueue( tMessage );
 
-				Automation.Pause(true);
-			end
-
-
+			Automation.Pause(true);
+			
 		end
 	end
 
@@ -216,8 +212,8 @@ function Initialize()
 	Events.DiplomacyMakePeace.Add( OnDiplomacyMakePeace );	
 	Events.DiplomacyRelationshipChanged.Add( OnDiplomacyRelationshipChanged );	
 	Events.PlayerDefeat.Add( OnPlayerDefeat );	
-	Events.PlayerVictory.Add( OnPlayerVictory );
 	Events.PlayerEraChanged.Add( OnPlayerEraChanged );	
+	Events.TeamVictory.Add( OnTeamVictory );
 	Events.CityOccupationChanged.Add( OnCityOccupationChanged );	
 	Events.SpyMissionUpdated.Add( OnSpyMissionUpdated );			
 	Events.UnitActivate.Add( OnUnitActivate );

@@ -39,15 +39,15 @@ end
 
 -- ===========================================================================
 function OnShow()
-	BuildGameSetup();
+	GameSetup_RefreshParameters();
 
 
 	-- Hide buttons if we're already in a game
 	local isInSession:boolean = Network.IsInSession();
 	Controls.ModsButton:SetHide(isInSession);
 	Controls.ConfirmButton:SetHide(isInSession);
-
-	Controls.DefaultButton:SetHide(not Network.IsHost());
+	
+	ShowDefaultButton();
 	Controls.LoadButton:SetHide(not GameConfiguration.IsHotseat() or isInSession);
 
 	--[[
@@ -57,11 +57,15 @@ function OnShow()
 	Controls.ParametersScrollPanel:SetSizeY(sizeY - 2);
 	--]]
 
-	if(GameConfiguration.IsSavedGame()) then
-		Controls.DefaultButton:SetHide(true);
-	end
-
 	RealizeShellTabs();
+end
+
+-- ===========================================================================
+function ShowDefaultButton()
+	local showDefaultButton = not GameConfiguration.IsSavedGame()
+								and not Network.IsInSession();
+
+	Controls.DefaultButton:SetHide(not showDefaultButton);
 end
 
 -- ===========================================================================
@@ -74,17 +78,13 @@ end
 -------------------------------------------------
 function OnDefaultButton()
 	print("Resetting Setup Parameters");
-	g_Refreshing = true;
+
+	-- Get the game name since we wish to persist this.
+	local gameName = GameConfiguration.GetValue("GAME_NAME");
 	g_GameParameters:ResetDefaults();
 	GameConfiguration.RegenerateSeeds();
-	g_GameParameters:FullRefresh();
-	ResetPlayerParameters();
-	g_Refreshing = false;
-	if(g_NeedsAdditionalRefresh) then
-		g_NeedsAdditionalRefresh = false;
-		print("Refreshing again, to be sure.")
-		return GameSetup_RefreshParameters();
-	end
+	GameConfiguration.SetValue("GAME_NAME", gameName);
+	return GameSetup_RefreshParameters();
 end
 
 -------------------------------------------------------------------------------

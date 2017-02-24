@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GameInfo>
   <IconTextureAtlases>
-    <Row Name="ICON_ATLAS_TECHUNLOCKS" IconSize="38" IconsPerRow="13" IconsPerColumn="1" Filename="UnlockFrames"/>
-    <Row Name="ICON_ATLAS_TECHUNLOCKS_FOW" IconSize="38" IconsPerRow="13" IconsPerColumn="1" Filename="UnlockFrames"/>
+    <Row Name="ICON_ATLAS_TECHUNLOCKS" IconSize="38" IconsPerRow="14" IconsPerColumn="1" Filename="UnlockFrames"/>
+    <Row Name="ICON_ATLAS_TECHUNLOCKS_FOW" IconSize="38" IconsPerRow="14" IconsPerColumn="1" Filename="UnlockFrames"/>
   </IconTextureAtlases>
   <IconDefinitions>
     <Row Name="ICON_TECHUNLOCK_0"             Atlas="ICON_ATLAS_TECHUNLOCKS" Index="0"/>
@@ -18,6 +18,7 @@
     <Row Name="ICON_TECHUNLOCK_10"            Atlas="ICON_ATLAS_TECHUNLOCKS" Index="10"/>
     <Row Name="ICON_TECHUNLOCK_11"            Atlas="ICON_ATLAS_TECHUNLOCKS" Index="11"/>
     <Row Name="ICON_TECHUNLOCK_12"            Atlas="ICON_ATLAS_TECHUNLOCKS" Index="12"/>
+    <Row Name="ICON_TECHUNLOCK_13"            Atlas="ICON_ATLAS_TECHUNLOCKS" Index="13"/>
 
     <Row Name="ICON_TECHUNLOCK_0_FOW"             Atlas="ICON_ATLAS_TECHUNLOCKS_FOW" Index="0"/>
     <Row Name="ICON_TECHUNLOCK_1_FOW"             Atlas="ICON_ATLAS_TECHUNLOCKS_FOW" Index="1"/>
@@ -32,5 +33,6 @@
     <Row Name="ICON_TECHUNLOCK_10_FOW"            Atlas="ICON_ATLAS_TECHUNLOCKS_FOW" Index="10"/>
     <Row Name="ICON_TECHUNLOCK_11_FOW"            Atlas="ICON_ATLAS_TECHUNLOCKS_FOW" Index="11"/>
     <Row Name="ICON_TECHUNLOCK_12_FOW"            Atlas="ICON_ATLAS_TECHUNLOCKS_FOW" Index="12"/>
+    <Row Name="ICON_TECHUNLOCK_13_FOW"            Atlas="ICON_ATLAS_TECHUNLOCKS_FOW" Index="13"/>
   </IconDefinitions>
 </GameInfo>

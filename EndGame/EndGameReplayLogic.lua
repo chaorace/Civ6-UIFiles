@@ -360,7 +360,8 @@ function ReplayGraphRefresh()
 				return GameInfo.Colors[playerColor.SecondaryColor];
 			else
 				for color in GameInfo.Colors() do
-					if(IsUniqueColor(color)) then
+					-- Ensure we only use unique and opaque colors
+					if(IsUniqueColor(color) and color.Alpha == 1) then
 						return color;
 					end
 				end
@@ -457,13 +458,11 @@ local function RefreshGraphDataSets()
 	local count = GameSummary.GetDataSetCount();
 	local dataSets = {};
 	for i = 0, count - 1, 1 do
-		local visible = GameSummary.GetDataSetVisible(i);
-		if(visible) then
+		if(GameSummary.GetDataSetVisible(i) and GameSummary.HasDataSetValues(i)) then
 			local name = GameSummary.GetDataSetName(i);
 			local displayName = GameSummary.GetDataSetDisplayName(i);
 			table.insert(dataSets, {i, name, Locale.Lookup(displayName)});
 		end
-
 	end
 	table.sort(dataSets, function(a,b) return Locale.Compare(a[3], b[3]) == -1; end);
 	

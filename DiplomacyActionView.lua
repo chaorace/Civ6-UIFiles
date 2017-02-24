@@ -6,6 +6,7 @@ include( "SupportFunctions" );
 include( "Civ6Common" );
 include( "LeaderSupport" );
 include( "DiplomacyStatementSupport" );
+include( "TeamSupport" );
 
 -- ===========================================================================
 --	CONSTANTS
@@ -33,6 +34,10 @@ local COLOR_BUTTONTEXT_NORMAL_SHADOW	= 0xA291F10;
 local COLOR_BUTTONTEXT_DISABLED			= 0xFF90999F;
 local DIPLOMACY_RIBBON_OFFSET			= 64;
 local MAX_BEFORE_TRUNC_BUTTON_INST		= 280;
+
+local TEAM_RIBBON_SIZE				:number = 53;
+local TEAM_RIBBON_SMALL_SIZE		:number = 30;
+local TEAM_RIBBON_PREFIX			:string = "ICON_TEAM_RIBBON_";
 
 local VOICEOVER_SUPPORT: table = {"KUDOS", "WARNING", "DECLARE_WAR_FROM_HUMAN", "DECLARE_WAR_FROM_AI", "FIRST_MEET", "DEFEAT","ENRAGED"};
 
@@ -82,6 +87,8 @@ local ms_DiplomacyRibbon =	nil;
 
 local ms_LocalPlayer =		nil;
 local ms_LocalPlayerID =	-1;
+local ms_LocalPlayerLeaderID = -1;
+
 -- The 'other' player who may have contacted local player, which brought us to this view.  Can be nil.
 local ms_OtherPlayer =		nil;
 local ms_OtherPlayerID =	-1;
@@ -1021,7 +1028,7 @@ function OnActivateIntelRelationshipPanel(rootControl : table)
 	end
 
 	-- Set the advisor icon
-	intelSubPanel.AdvisorIcon:SetTexture(IconManager:FindIconAtlas("ADVISOR", 32));
+	intelSubPanel.AdvisorIcon:SetTexture(IconManager:FindIconAtlas("ADVISOR_GENERIC", 32));
 
 	-- Get the advisor text
 	local advisorText = "";
@@ -1144,7 +1151,7 @@ function OnActivateIntelAccessLevelPanel(rootControl : table)
 	intelSubPanel.NextAccessLevelText:SetText(szNextAccessLevelText);
 
 	-- Set the advisor icon
-	intelSubPanel.AdvisorIcon:SetTexture(IconManager:FindIconAtlas("ADVISOR", 32));
+	intelSubPanel.AdvisorIcon:SetTexture(IconManager:FindIconAtlas("ADVISOR_GENERIC", 32));
 
 	-- Get the advisor text
 	local advisorText = "";
@@ -1299,8 +1306,14 @@ function AddIntelPanel(rootControl : table)
 			-- Get the selected player's Diplomactic AI
 			local selectedPlayerDiplomaticAI = ms_SelectedPlayer:GetDiplomaticAI();
 			-- What do they think of us?
-			local iState :number = selectedPlayerDiplomaticAI:GetDiplomaticStateIndex(ms_LocalPlayerID);		
-			intelPanel.RelationshipText:LocalizeAndSetText( GameInfo.DiplomaticStates[iState].Name );
+			local iState :number = selectedPlayerDiplomaticAI:GetDiplomaticStateIndex(ms_LocalPlayerID);
+			local relationshipString:string = Locale.Lookup(GameInfo.DiplomaticStates[iState].Name);
+			-- Add team name to relationship text for our own teams
+			if Players[ms_LocalPlayerID]:GetTeam() == Players[ms_SelectedPlayerID]:GetTeam() then
+				relationshipString = "(" .. Locale.Lookup("LOC_WORLD_RANKINGS_TEAM", Players[ms_LocalPlayerID]:GetTeam()) .. ") " .. relationshipString;
+			end
+			intelPanel.RelationshipText:SetText( relationshipString );
+
 			if (GameInfo.DiplomaticStates[iState].StateType == "DIPLO_STATE_DENOUNCED") then
 			    local szDenounceTooltip;
 				local iRemainingTurns;
@@ -1477,10 +1490,23 @@ function AddIntelPanel(rootControl : table)
 						-- Tool tip
 						local leaderDesc = playerConfig:GetLeaderName();
 						relationshipIcon.Background:LocalizeAndSetToolTip("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, playerConfig:GetCivilizationDescription());
+						
+						-- Show team ribbon for ourselves and civs we've met
+						local teamID:number = playerConfig:GetTeam();
+						if #Teams[teamID] > 1 then
+							local teamRibbonName:string = TEAM_RIBBON_PREFIX .. tostring(teamID);
+							relationshipIcon.TeamRibbon:SetIcon(teamRibbonName, TEAM_RIBBON_SMALL_SIZE);
+							relationshipIcon.TeamRibbon:SetHide(false);
+							relationshipIcon.TeamRibbon:SetColor(GetTeamColor(teamID));
+						else
+							-- Hide team ribbon if team only contains one player
+							relationshipIcon.TeamRibbon:SetHide(true);
+						end
 					else
 						-- IF the local player has not met the civ that this civ has a relationship, do not reveal that information through this icon.  Instead, set to generic leader and "Unmet Civ"
 						relationshipIcon.Icon:SetTexture(IconManager:FindIconAtlas("ICON_LEADER_DEFAULT", 32));
 						relationshipIcon.Background:LocalizeAndSetToolTip("LOC_DIPLOPANEL_UNMET_PLAYER");
+						relationshipIcon.TeamRibbon:SetHide(true);
 					end
 				end				
 			end
@@ -1493,8 +1519,6 @@ function AddIntelPanel(rootControl : table)
 		else
 			intelPanel.RelationshipSectionStack:SetHide(false);
 		end
-		intelPanel.RelationshipsStack:CalculateSize();
-		intelPanel.RelationshipsStack:ReprocessAnchoring();
 		-- Calculate the size of the scrollpanel
 		rootControl:CalculateSize();
 		rootControl:ReprocessAnchoring();
@@ -1577,6 +1601,24 @@ function PopulateLeader(rootControl : table, player : table, isUniqueLeader : bo
 				-- The selection background
 				rootControl.SelectedBackground:SetHide( not (player:GetID() == ms_SelectedPlayerID) );
 				-- Your relationship
+
+				-- Set team ribbon
+				if(player:GetID() == Game.GetLocalPlayer() or Players[Game.GetLocalPlayer()]:GetDiplomacy():HasMet(player:GetID())) then
+					-- Show team ribbon for ourselves and civs we've met
+					local teamID:number = playerConfig:GetTeam();
+					if #Teams[teamID] > 1 then
+						local teamRibbonName:string = TEAM_RIBBON_PREFIX .. tostring(teamID);
+						rootControl.TeamRibbon:SetIcon(teamRibbonName, TEAM_RIBBON_SIZE);
+						rootControl.TeamRibbon:SetHide(false);
+						rootControl.TeamRibbon:SetColor(GetTeamColor(teamID));
+					else
+						-- Hide team ribbon if team only contains one player
+						rootControl.TeamRibbon:SetHide(true);
+					end
+				else
+					-- Hide team ribbon for civs we haven't met
+					rootControl.TeamRibbon:SetHide(true);
+				end
 
 				-- Humans don't show anything, unless we are at war
 				local ourRelationship = player:GetDiplomaticAI():GetDiplomaticStateIndex(ms_LocalPlayerID);
@@ -1826,7 +1868,7 @@ function PopulateDiplomacyRibbon(diplomacyRibbon : table)
 		local coordinateOffsetIncrement = 64;
 
 		-- Set the advisor icon
-		-- diplomacyRibbon.Advisor:SetTexture(IconManager:FindIconAtlas("ADVISOR", 48));
+		-- diplomacyRibbon.Advisor:SetTexture(IconManager:FindIconAtlas("ADVISOR_GENERIC", 48));
 
 		-- Add an entry for the local player at the top
 		local leaderEntry = ms_DiplomacyRibbonLeaderIM:GetInstance(diplomacyRibbon.Leaders);
@@ -1911,7 +1953,10 @@ function SetupPlayers()
 		end
 		if (ms_LocalPlayerID == PlayerTypes.OBSERVER) then
 			ms_LocalPlayerID = 0;
+            ms_LocalPlayerLeaderID = -1;
 		end
+    else
+        ms_LocalPlayerLeaderID = PlayerConfigurations[ms_LocalPlayerID]:GetLeaderTypeID();
 	end
 
 	ms_LocalPlayer = Players[ms_LocalPlayerID];
@@ -2198,12 +2243,33 @@ function OnLeaderLoaded()
 	end
 
     if (bDoAudio == true) then
+		-- if current civ is unknown, give mods a chance to handle it
+		if (UI.GetCivilizationSoundSwitchValueByLeader(ms_LocalPlayerLeaderID) == -1) then
+			UI.PauseModCivMusic();
+		end
+
+		-- if leader IDs don't match
         if (m_lastLeaderPlayedMusicFor ~= ms_OtherLeaderID) then
-            UI.SetSoundSwitchValue("LEADER_SCREEN_CIVILIZATION", UI.GetCivilizationSoundSwitchValueByLeader(ms_OtherLeaderID));
-			UI.SetSoundSwitchValue("Game_Location", UI.GetNormalEraSoundSwitchValue(ms_OtherID));
-            UI.SetSoundStateValue("Game_Views", "Leader_Screen");
-            UI.PlaySound("Play_Leader_Music");
-            m_lastLeaderPlayedMusicFor = ms_OtherLeaderID;
+
+			-- stop modder civ's leader music if necessary
+			if (m_lastLeaderPlayedMusicFor == -1) then
+				UI.StopModCivLeaderMusic(m_lastLeaderPlayedMusicFor);
+			end
+
+			-- and Wwise IDs don't match
+			if (UI.GetCivilizationSoundSwitchValueByLeader(m_lastLeaderPlayedMusicFor) ~= UI.GetCivilizationSoundSwitchValueByLeader(ms_OtherLeaderID)) then
+				-- if new leader is also a modder civ, take care of that
+				UI.SetSoundSwitchValue("LEADER_SCREEN_CIVILIZATION", UI.GetCivilizationSoundSwitchValueByLeader(ms_OtherLeaderID));
+				UI.SetSoundSwitchValue("Game_Location", UI.GetNormalEraSoundSwitchValue(ms_OtherID));
+				UI.SetSoundStateValue("Game_Views", "Leader_Screen");
+				UI.PlaySound("Play_Leader_Music");
+				m_lastLeaderPlayedMusicFor = ms_OtherLeaderID;
+			end
+
+			-- always restart modder music if the leader IDs don't match
+			if (UI.GetCivilizationSoundSwitchValueByLeader(ms_OtherLeaderID) == -1) then
+				UI.PlayModCivLeaderMusic(ms_OtherID);
+			end
         end
     end
 end
@@ -2585,9 +2651,25 @@ function Close()
 
 	local localPlayer = Game.GetLocalPlayer();
 	UI.SetSoundSwitchValue("Game_Location", UI.GetNormalEraSoundSwitchValue(ms_LocalPlayer:GetID()));
-	-- Stop the leader music, this will cause the current playlist to resume.
-	UI.PlaySound("Stop_Leader_Music");
-	UI.PlaySound("Exit_Leader_Screen");
+
+    -- always Stop_Leader_Music to resume the game music properly...
+    UI.PlaySound("Stop_Leader_Music");
+
+    -- check if we need to also stop modder civ music
+    if (UI.GetCivilizationSoundSwitchValueByLeader(m_lastLeaderPlayedMusicFor) == -1) then
+		UI.StopModCivLeaderMusic(m_lastLeaderPlayedMusicFor);
+    end
+
+    -- if it's not an observer game...
+    if (ms_LocalPlayerLeaderID ~= -1) then
+        -- and the local player is not a known Wwise leader...
+        if (UI.GetCivilizationSoundSwitchValueByLeader(ms_LocalPlayerLeaderID) == -1) then
+            -- resume modder music, instead of Roland's
+            UI.ResumeModCivMusic();
+        end
+	end
+
+    UI.PlaySound("Exit_Leader_Screen");
     UI.SetSoundStateValue("Game_Views", "Normal_View");
 end
 
@@ -2615,7 +2697,7 @@ function OnShow()
 	ms_IconAndTextIM:ResetInstances();
 
 	SetupPlayers();
-	UpdateSelectedPlayer();
+	UpdateSelectedPlayer(true);
 
 	LuaEvents.DiploBasePopup_HideUI(true);
 	LuaEvents.DiploScene_SceneOpened(ms_SelectedPlayerID);			-- Signal the LeaderScene background system that the scene should be shown

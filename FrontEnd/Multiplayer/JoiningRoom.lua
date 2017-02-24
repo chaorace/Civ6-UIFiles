@@ -6,6 +6,8 @@ local MIN_SIZE_X:number = 250;
 local MIN_SIZE_Y:number = 200;
 local g_waitingForContentConfigure : boolean = false;
 
+local downloadPendingStr = Locale.Lookup("LOC_MODS_SUBSCRIPTION_DOWNLOAD_PENDING");
+
 ----------------------------------------------------------------        
 -- Input Handler
 ----------------------------------------------------------------        
@@ -56,9 +58,9 @@ end
 function OnJoinRoomFailed( iExtendedError)
 	if (not ContextPtr:IsHidden()) then
 		if iExtendedError == JoinGameErrorType.JOINGAME_ROOM_FULL then
-			Events.FrontEndPopup.CallImmediate( "LOC_MP_ROOM_FULL" );
+			LuaEvents.MultiplayerPopup( "LOC_MP_ROOM_FULL" );
 		else
-			Events.FrontEndPopup.CallImmediate( "LOC_MP_JOIN_FAILED" );
+			LuaEvents.MultiplayerPopup( "LOC_MP_JOIN_FAILED" );
 		end
 		Network.LeaveGame();
 		UIManager:DequeuePopup( ContextPtr );
@@ -89,12 +91,16 @@ end
 -------------------------------------------------
 -- Event Handler: FinishedGameplayContentConfigure
 -------------------------------------------------
-function OnFinishedGameplayContentConfigure()
+function OnFinishedGameplayContentConfigure( kEvent )
 	print("OnFinishedGameplayContentConfigure() g_waitingForContentConfigure=" .. tostring(g_waitingForContentConfigure));
 	-- This event triggers when the game has finished content configuration.
 	-- For remote clients, this is the last step before transitioning to the staging room.
 	-- Game hosts don't perform a content configuration so they will transition in OnJoinGameComplete.
-	if (not ContextPtr:IsHidden() and g_waitingForContentConfigure == true) then
+
+	-- If FinishedGameplayContentConfigure failed, we do nothing and the NetworkManager will abandon the game for us.
+	if (not ContextPtr:IsHidden() 
+		and g_waitingForContentConfigure == true
+		and kEvent.Success == true) then
 		g_waitingForContentConfigure = false;
 		TransitionToStagingRoom();
 	end 
@@ -106,15 +112,18 @@ end
 function OnMultiplayerGameAbandoned(eReason)
 	if (not ContextPtr:IsHidden()) then
 		if (eReason == KickReason.KICK_HOST) then
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_KICKED" );
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_KICKED" );
 		elseif (eReason == KickReason.KICK_NO_ROOM) then
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_ROOM_FULL" );
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_ROOM_FULL" );
 		elseif (eReason == KickReason.KICK_VERSION_MISMATCH) then
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_VERSION_MISMATCH" );
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_VERSION_MISMATCH" );
 		elseif (eReason == KickReason.KICK_MOD_ERROR) then
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_MOD_ERROR" );
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_MOD_ERROR" );
+		elseif (eReason == KickReason.KICK_MOD_MISSING) then
+			local modMissingErrorStr = Modding.GetLastModErrorString();
+			LuaEvents.MultiplayerPopup(modMissingErrorStr);
 		else
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_JOIN_FAILED" );
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_JOIN_FAILED" );
 		end
 		Network.LeaveGame();
 		UIManager:DequeuePopup( ContextPtr );	
@@ -129,6 +138,20 @@ function OnBeforeMultiplayerInviteProcessing()
 	UIManager:DequeuePopup( ContextPtr );
 end
 
+-- ===========================================================================
+-- Event Handler: ModStatusUpdated
+-- ===========================================================================
+function OnModStatusUpdated(playerID: number, modState : number, bytesDownloaded : number, bytesTotal : number,
+							modsRemaining : number, modsRequired : number)
+	-- If we're getting a mod status update for ourself, use it to update the joining label.
+	if (not ContextPtr:IsHidden() and playerID == Network.GetLocalPlayerID()) then	
+		if(modState == 1) then -- MOD_STATE_DOWNLOADING
+			local modStatusString = downloadPendingStr;
+			modStatusString = modStatusString .. "[NEWLINE][Icon_AdditionalContent]" .. tostring(modsRemaining) .. "/" .. tostring(modsRequired);
+			Controls.JoiningLabel:SetText(modStatusString);
+		end
+	end
+end
 
 -- APPNETTODO - Implement these events for better join game status reporting
 --[[
@@ -138,7 +161,7 @@ end
 function OnMultiplayerConnectionFailed()
 	if (not ContextPtr:IsHidden()) then
 		-- We should only get this if we couldn't complete the connection to the host of the room	
-		Events.FrontEndPopup.CallImmediate( "LOC_MP_JOIN_FAILED" );
+		LuaEvents.MultiplayerPopup( "LOC_MP_JOIN_FAILED" );
 		Network.LeaveGame();
 		UIManager:DequeuePopup( ContextPtr );
 	end
@@ -171,10 +194,10 @@ Events.MultiplayerNetRegistered.Add( OnNetRegistered );
 function OnVersionMismatch( iPlayerID, playerName, bIsHost )
 	if (not ContextPtr:IsHidden()) then
     if( bIsHost ) then
-        Events.FrontEndPopup.CallImmediate( Locale.ConvertTextKey( "LOC_MP_VERSION_MISMATCH_FOR_HOST", playerName ) );
+        LuaEvents.MultiplayerPopup( Locale.ConvertTextKey( "LOC_MP_VERSION_MISMATCH_FOR_HOST", playerName ) );
     	Matchmaking.KickPlayer( iPlayerID );
     else
-        Events.FrontEndPopup.CallImmediate( Locale.ConvertTextKey( "LOC_MP_VERSION_MISMATCH_FOR_PLAYER" ) );
+        LuaEvents.MultiplayerPopup( Locale.ConvertTextKey( "LOC_MP_VERSION_MISMATCH_FOR_PLAYER" ) );
         HandleExitRequest();
     end
 	end
@@ -256,6 +279,7 @@ function Initialize()
 	Events.MultiplayerGameAbandoned.Add( OnMultiplayerGameAbandoned );
 	Events.SystemUpdateUI.Add( OnUpdateUI );
 	Events.BeforeMultiplayerInviteProcessing.Add( OnBeforeMultiplayerInviteProcessing );
+	Events.ModStatusUpdated.Add( OnModStatusUpdated );
 
 	Controls.CancelButton:RegisterCallback(Mouse.eLClick, HandleExitRequest);
 	AdjustScreenSize();

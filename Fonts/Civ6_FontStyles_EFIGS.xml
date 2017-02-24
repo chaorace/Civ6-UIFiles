@@ -43,6 +43,11 @@
 	<FontBoldFlair21 Font="MinionPro-Semibold.otf"	FontSize="21"/>
 	<FontBoldFlair26 Font="MinionPro-Semibold.otf"	FontSize="26"/>
 	<FontBoldFlair60 Font="MinionPro-Semibold.otf"	FontSize="60"/>
+	<FontItalicFlair18 Font="MinionPro-MediumIt.otf"	FontSize="18"/>
+	<FontItalicFlair21 Font="MinionPro-MediumIt.otf"	FontSize="21"/>
+	<FontItalicFlair22 Font="MinionPro-MediumIt.otf"	FontSize="22"/>
+	<FontItalicFlair26 Font="MinionPro-MediumIt.otf"	FontSize="26"/>
+	<FontItalicFlair60 Font="MinionPro-MediumIt.otf"	FontSize="60"/>
 
 	<FontNormalMedium12	Font="MyriadPro-Regular.otf"			FontSize="12"/>
 	<FontNormalMedium13	Font="MyriadPro-Regular.otf"			FontSize="13"/>

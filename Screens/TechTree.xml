@@ -192,7 +192,7 @@
 		<Container				ID="Top"																					Size="370,1">
 			<GridButton			ID="NodeButton"			Offset="0,-74"								Size="370,84"					Texture="TechTree_GearButton"	SliceCorner="77,45" SliceSize="2,1" SliceTextureSize="133,84" StateOffsetIncrement="0,84" >
 				<GridButton		ID="OtherStates"		Offset="0,0"									Size="parent,parent"	Texture="TechTree_GearButton"	SliceCorner="77,45" SliceSize="2,1" SliceTextureSize="133,84" NoStateChange="1" />
-				<Image				ID="FillTexture"		Offset="76,1"									Size="241,78"					Texture="TechTree_GearButtonTile_Disabled"	StretchMode="Tile" />
+				<Image				ID="FillTexture"		Offset="76,1"									Size="242,78"					Texture="TechTree_GearButtonTile_Disabled"	StretchMode="Tile" />
 				<Stack				ID="UnlockStack"		Offset="72,22" StackGrowth="Right" />									
 				<Grid					ID="BoostedBack"		Offset="7,6"		Anchor="L,B"	Size="357,39"					Texture="Controls_BoostSlotTech"	SliceCorner="28,26"	SliceSize="1,1" SliceTextureSize="39,39" />
 				<Image				ID="BoostIcon"			Offset="10,7"		Anchor="L,B"												Texture="BoostTech" /> 

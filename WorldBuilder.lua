@@ -67,6 +67,13 @@ function OnOpenPlayerEditor()
 
 end
 
+-- ===========================================================================    
+function OnOpenMapEditor()
+
+	Controls.WorldBuilderMapEditor:SetHide( not Controls.WorldBuilderMapEditor:IsHidden() );
+
+end
+
 -- ===========================================================================
 --	Init
 -- ===========================================================================
@@ -77,6 +84,7 @@ function OnInit()
 	ContextPtr:SetInputHandler( InputHandler, true );
 	Events.LoadGameViewStateDone.Add( OnLoadGameViewStateDone );
 	LuaEvents.WorldBuilderLaunchBar_OpenPlayerEditor.Add( OnOpenPlayerEditor );
+	LuaEvents.WorldBuilderLaunchBar_OpenMapEditor.Add( OnOpenMapEditor );
 
 end
 ContextPtr:SetInitHandler( OnInit );

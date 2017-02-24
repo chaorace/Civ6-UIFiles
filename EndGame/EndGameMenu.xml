@@ -157,10 +157,10 @@
 
 	<!-- Top/Bottom cutoffs -->
 	<Box ID="BarTop" Anchor="C,T" Size="full,10" Color="0,0,0,255" >
-		<Image Anchor="C,B" Size="parent,10" Texture="Loading_LetterboxEdge" StretchMode="Tile" AnchorSide="O,O" />
+		<Image Anchor="C,B" Size="parent,10" Texture="Loading_LetterboxEdge" StretchMode="TileX" AnchorSide="O,O" />
 	</Box>
 	<Box ID="BarBottom" Anchor="C,B" Size="full,10" Color="0,0,0,255" >
-		<Image Anchor="C,T" Size="parent,10" Texture="Loading_LetterboxEdge" StretchMode="Tile" AnchorSide="O,O" FlipY="1" />
+		<Image Anchor="C,T" Size="parent,10" Texture="Loading_LetterboxEdge" StretchMode="TileX" AnchorSide="O,O" FlipY="1" />
 	</Box>
 
 	<BoxButton	ID="MovieFill" Size="full,full" Color="0,0,0,255" Hidden="1" ConsumeAllMouse="1">

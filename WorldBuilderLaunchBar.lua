@@ -13,11 +13,19 @@ function OnOpenPlayerEditor()
 end
 
 -- ===========================================================================
+function OnOpenMapEditor()
+
+	LuaEvents.WorldBuilderLaunchBar_OpenMapEditor();
+
+end
+
+-- ===========================================================================
 --	Init
 -- ===========================================================================
 function OnInit()
 
 	Controls.PlayerEditorButton:RegisterCallback( Mouse.eLClick, OnOpenPlayerEditor );
+	Controls.MapEditorButton:RegisterCallback( Mouse.eLClick, OnOpenMapEditor );
 
 end
 ContextPtr:SetInitHandler( OnInit );

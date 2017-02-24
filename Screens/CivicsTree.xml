@@ -288,6 +288,13 @@
   <Instance Name="WildcardPolicyInstance">
     <Button ID="WildcardPolicy" Size="37,44"  Texture="Governments_WildcardCard_Small" NoStateChange="1"/>
   </Instance>
+
+  <Instance Name="EnvoyAwardedInstance">
+    <GridButton ID="EnvoyAwardedGrid" Texture="Controls_FrameInfo" Anchor="L,C" Size="40,28" Offset="2,1" SliceCorner="9,9" SliceSize="5,5" SliceTextureSize="23,23">
+      <Label ID="EnvoyAwardedLabel" Anchor="L,C" Offset="5,1" Style="FontNormal18" String="3"/>
+      <Label Anchor="R,C" Offset="4,-1" Style="FontNormal16" String="[Icon_Envoy]"/>
+    </GridButton>
+  </Instance>
   
 	<!-- Lines between "nodes" -->
 	<Instance Name="LineInstance">

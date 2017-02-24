@@ -317,11 +317,6 @@ function OnLoadScreenContentReady()
     if (m_isResyncLoad) then
         bPlayDOM = false;
     end
-    if (GameConfiguration.IsHotseat()) then
-        bPlayDOM = true;
-    end
-
-	
 
     if bPlayDOM then
         UI.SetSoundSwitchValue("Leader_Screen_Civilization", UI.GetCivilizationSoundSwitchValueByLeader(leaderID));

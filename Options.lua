@@ -422,6 +422,13 @@ function PopulateGraphicsOptions()
 		{"LOC_OPTIONS_WINDOW_MODE_BORDERLESS", BORDERLESS_OPTION}
 	};
 
+	local uiscale_options =
+    {
+        {"LOC_OPTIONS_100_PERCENT", 0.0},        
+        {"LOC_OPTIONS_150_PERCENT", 0.5},
+        {"LOC_OPTIONS_200_PERCENT", 1.0}
+    };
+
     local performanceImpact_options =
     { 
         [0]="LOC_OPTIONS_MINIMUM",
@@ -622,22 +629,26 @@ function PopulateGraphicsOptions()
 		end
 	);
 
-    -- UI Upscale
-	local iUIScaling = 0;
-	if (Options.GetAppOption("Video", "UIUpscale") > 0.0) then iUIScaling = 1 end;
-    PopulateCheckBox(Controls.UIUpscaleCheckbox, iUIScaling,
+ -- UI Upscaling
+	local available_scales = {};
+	for k, v in pairs(uiscale_options) do
+		if (Options.IsUIUpscaleAllowed(v[2] + 1.0)) then
+			table.insert(available_scales, v);
+		end
+	end
+	
+    Controls.UIScalePulldown:ClearEntries();
+    PopulateComboBox(Controls.UIScalePulldown, available_scales, Options.GetAppOption("Video", "UIUpscale"), 
         function(option)
-			local value = 0.0;
-			if (option) then value = 1.0 end;
-            Options.SetAppOption("Video", "UIUpscale", value);
-        end
+	    	Options.SetAppOption("Video", "UIUpscale", option);
+	    end
     );
-    Controls.UIUpscaleCheckbox:SetDisabled( Options.IsUIUpscaleAllowed() == 0 );
+	Controls.UIScalePulldown:SetDisabled( not Options.IsUIUpscaleAllowed() );
 
+    -- Performance Impact
     local performance_customStep = Controls.PerformanceSlider:GetNumSteps();
     local memory_customStep = Controls.MemorySlider:GetNumSteps();
 
-    -- Performance Impact
     local performance_sliderStep = ImpactValueToSliderStep(Controls.PerformanceSlider, Options.GetGraphicsOption("Video", "PerformanceImpact"));
     
     Controls.PerformanceSlider:SetStep(performance_sliderStep);
@@ -1037,7 +1048,7 @@ function PopulateGraphicsOptions()
     );
     
     -- Disable things we aren't allowed to change when game is running
-    Controls.UIUpscaleCheckbox:SetDisabled( is_in_game or (Options.IsUIUpscaleAllowed()==0) )
+    Controls.UIScalePulldown:SetDisabled( is_in_game or (not Options.IsUIUpscaleAllowed()) )
     Controls.FullScreenPullDown:SetDisabled( is_in_game )
     Controls.TerrainSynthesisCheckbox:SetDisabled( is_in_game )
     Controls.TerrainQualityPullDown:SetDisabled( is_in_game )
@@ -1144,6 +1155,10 @@ function TemporaryHardCodedGoodness()
 	PopulateComboBox(Controls.TunerPullDown, boolean_options, Options.GetAppOption("Debug", "EnableTuner"), function(option)
 		Options.SetAppOption("Debug", "EnableTuner", option);
 		_PromptRestartApp = true;
+	end);	
+
+	PopulateComboBox(Controls.AutoDownloadPullDown, boolean_options, Options.GetUserOption("Multiplayer", "AutoModDownload"), function(option)
+		Options.SetUserOption("Multiplayer", "AutoModDownload", option);
 	end);	
 
 	PopulateComboBox(Controls.TutorialPullDown, tutorial_options, Options.GetUserOption("Gameplay", "TutorialLevel"), function(option)
@@ -1544,25 +1559,25 @@ function Initialize()
 	Controls.GraphicsOptionsPanel:CalculateSize();
 
 	m_tabs = {
-		{Controls.GameTab,		Controls.GameOptions,				"LOC_OPTIONS_GAME_OPTIONS"},
-		{Controls.GraphicsTab,	Controls.GraphicsOptions,			"LOC_OPTIONS_GRAPHICS_OPTIONS"},
-		{Controls.AudioTab,		Controls.AudioOptions,				"LOC_OPTIONS_AUDIO_OPTIONS"},
-		{Controls.InterfaceTab, Controls.InterfaceOptions,			"LOC_OPTIONS_INTERFACE_OPTIONS"},
-		{Controls.AppTab,		Controls.ApplicationOptions,		"LOC_OPTIONS_APPLICATION_OPTIONS"},
+		{Controls.GameTab,		Controls.GameOptions,				"LOC_OPTIONS_GAME_OPTIONS",         0},
+		{Controls.GraphicsTab,	Controls.GraphicsOptions,			"LOC_OPTIONS_GRAPHICS_OPTIONS",     0},
+		{Controls.AudioTab,		Controls.AudioOptions,				"LOC_OPTIONS_AUDIO_OPTIONS",        0},
+		{Controls.InterfaceTab, Controls.InterfaceOptions,			"LOC_OPTIONS_INTERFACE_OPTIONS",    0},
+		{Controls.AppTab,		Controls.ApplicationOptions,		"LOC_OPTIONS_APPLICATION_OPTIONS",  0},
 	};
 
 	-- TODO: Some platforms set language outside of the application at which point we must disable this panel.
 	local supportsChangingLanguage = true;
 
 	if(supportsChangingLanguage) then
-		table.insert(m_tabs, {Controls.LanguageTab, Controls.LanguageOptions,"LOC_OPTIONS_LANGUAGE_OPTIONS"});
+		table.insert(m_tabs, {Controls.LanguageTab, Controls.LanguageOptions,"LOC_OPTIONS_LANGUAGE_OPTIONS",0});
 	end
 
 	-- TODO: Some platforms don't allow for key binding.  Disable this panel.
 	local supportsKeyBinding = true;
 
 	if(supportsKeyBinding) then
-		table.insert(m_tabs, {Controls.KeyBindingsTab, Controls.KeyBindings,"LOC_OPTIONS_KEY_BINDINGS_OPTIONS"});
+		table.insert(m_tabs, {Controls.KeyBindingsTab, Controls.KeyBindings,"LOC_OPTIONS_KEY_BINDINGS_OPTIONS",1});
 		InitializeKeyBinding();
 	end
 	
@@ -1574,6 +1589,11 @@ function Initialize()
 			for i, v in ipairs(m_tabs) do
 				v[2]:SetHide(true);
 				v[1]:SetSelected(false);
+                if tab[4] == 1 then
+                    Controls.ResetButton:SetHide(true);
+                else
+                    Controls.ResetButton:SetHide(false);
+                end
 			end	
 			button:SetSelected(true);
 			panel:SetHide(false);		

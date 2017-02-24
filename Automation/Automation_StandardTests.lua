@@ -125,6 +125,12 @@ Tests["PlayGame"].Run = function()
 		UpdatePlayerCounts();
 	end
 
+	-- Did they have a game speed?
+	local gameSpeed = Automation.GetSetParameter("CurrentTest", "GameSpeed");
+	if ( gameSpeed ~= nil ) then
+		GameConfiguration.SetGameSpeedType(gameSpeed);
+	end
+
 	-- Convert any human slots to AI
 	local aHumanIDs = GameConfiguration.GetHumanPlayerIDs();
 	for _, id in ipairs(aHumanIDs) do

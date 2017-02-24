@@ -141,12 +141,32 @@ PageLayouts["Resource" ] = function(page)
 	AddRightColumnStatBox("LOC_UI_PEDIA_REQUIREMENTS", function(s)
 		s:AddSeparator();
 
+		local unlockedBy;
 		if(resource.PrereqTech) then
 			local tech = GameInfo.Technologies[resource.PrereqTech];
 			if(tech) then
-				s:AddHeader("LOC_UI_PEDIA_UNLOCKED_BY");
-				s:AddIconLabel({"ICON_" .. tech.TechnologyType, tech.Name, tech.TechnologyType}, tech.Name);
+				unlockedBy = {
+					Icon = "ICON_" .. tech.TechnologyType,
+					Name = tech.Name,
+					PediaKey = tech.TechnologyType
+				};
 			end
+		end
+
+		if(resource.PrereqCivic) then
+			local civic = GameInfo.Civics[resource.PrereqCivic];
+			if(civic) then
+				unlockedBy = {
+					Icon = "ICON_" .. civic.CivicType,
+					Name = civic.Name,
+					PediaKey = civic.CivicType
+				};
+			end
+		end
+
+		if(unlockedBy) then
+			s:AddHeader("LOC_UI_PEDIA_UNLOCKED_BY");
+			s:AddIconLabel({unlockedBy.Icon, unlockedBy.Name, unlockedBy.PediaKey}, unlockedBy.Name);
 			s:AddSeparator();
 		end
 

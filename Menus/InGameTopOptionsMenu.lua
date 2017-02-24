@@ -45,14 +45,19 @@ function OnRetireGame()
 	-- If we're in an extended game AND we're the winner.  Just re-open the end-game menu.
 	-- Otherwise, prompt for retirement.
 	local me = Game.GetLocalPlayer();
-	if(Game.GetWinningPlayer() == me) then
-		LuaEvents.ShowEndGame(me);	
-	else
-		if (not m_kPopupDialog:IsOpen()) then
-			m_kPopupDialog:AddText(	  Locale.Lookup("LOC_GAME_MENU_RETIRE_WARNING"));
-			m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_NO_BUTTON_CAPTION"), nil );
-			m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnReallyRetire, nil, nil, "PopupButtonInstanceAlt" );
-			m_kPopupDialog:Open();
+	if(me) then
+		local localPlayer = Players[me];
+		if(localPlayer) then
+			if(Game.GetWinningTeam() == localPlayer:GetTeam()) then
+				LuaEvents.ShowEndGame(me);	
+			else
+				if (not m_kPopupDialog:IsOpen()) then
+					m_kPopupDialog:AddText(	  Locale.Lookup("LOC_GAME_MENU_RETIRE_WARNING"));
+					m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_NO_BUTTON_CAPTION"), nil );
+					m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnReallyRetire, nil, nil, "PopupButtonInstanceAlt" );
+					m_kPopupDialog:Open();
+				end
+			end
 		end
 	end
 end
@@ -178,6 +183,11 @@ end
 -- ===========================================================================
 function OnSimpleInGameMenu( isSimpleMenu )
 
+	-- For the demo, always keep it simple
+	if UI.HasFeature("Demo") then
+		isSimpleMenu = true;
+	end
+
 	if isSimpleMenu == nil then isSimpleMenu = true; end
 	m_isSimpleMenu = isSimpleMenu;
 
@@ -211,8 +221,13 @@ function SetupButtons()
 	-- so long as we update the tooltip to no longer state the player will be defeated.
 	local bAlreadyWon = false;
 	local me = Game.GetLocalPlayer();
-	if(Game.GetWinningPlayer() == me) then
-		bAlreadyWon = true;
+	if(me) then
+		local localPlayer = Players[me];
+		if(localPlayer) then
+			if(Game.GetWinningTeam() == localPlayer:GetTeam()) then
+				bAlreadyWon = true;
+			end
+		end
 	end
 
 	Controls.RetireButton:SetHide(m_isSimpleMenu or bIsAutomation or bIsMultiplayer or bAlreadyWon);
@@ -331,11 +346,18 @@ function RefreshModsInUse()
 	local mods = Modding.GetActiveMods();
 	
 	g_ModListingsManager:ResetInstances();
-	
+
+	local modNames = {};
 	for i,v in ipairs(mods) do
+		modNames[i] = Locale.Lookup(v.Name);
+	end
+
+	table.sort(modNames, function(a,b) return Locale.Compare(a,b) == -1 end);
+	
+	for i,v in ipairs(modNames) do
 		local instance = g_ModListingsManager:GetInstance();
 		
-		instance.ModTitle:LocalizeAndSetText(v.Name);	
+		instance.ModTitle:SetText(v);	
 	end
 	
 	Controls.ModListingsStack:CalculateSize();
@@ -459,5 +481,10 @@ function Initialize()
 	m_kPopupDialog:SetInstanceNames( "PopupButtonInstance", "Button", "PopupTextInstance", "Text", "RowInstance", "Row");
 	m_kPopupDialog:SetOpenAnimationControls( Controls.PopupAlphaIn, Controls.PopupSlideIn );	
 	m_kPopupDialog:SetSize(400,200);
+
+	if UI.HasFeature("Demo") then
+		m_isSimpleMenu = true;
+	end
+
 end
 Initialize();

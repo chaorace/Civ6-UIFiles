@@ -1171,7 +1171,7 @@ function OnInit( isHotload )
 				AddToListener("GovernmentScreenOpened",			item );
 				AddToListener("GovernmentPoliciesOpened",		item );
 				AddToListener("GovernmentPolicyChanged",		item );
-				AddToListener("PlayerVictory",					item );
+				AddToListener("TeamVictory",					item );
 				AddToListener("GoodyHutReward",					item );
 				AddToListener("CivicsTreeOpened",				item );
 				AddToListener("CivicsTreeClosed",				item );
@@ -1311,7 +1311,7 @@ function OnInit( isHotload )
 					AddWithCheckToListener("GovernmentScreenOpened",		notificationName, item );
 					AddWithCheckToListener("GovernmentPoliciesOpened",		notificationName, item );
 					AddWithCheckToListener("GovernmentPolicyChanged",		notificationName, item );
-					AddWithCheckToListener("PlayerVictory",					notificationName, item );
+					AddWithCheckToListener("TeamVictory",					notificationName, item );
 					AddWithCheckToListener("GoodyHutReward",				notificationName, item );
 					AddWithCheckToListener("CivicsTreeOpened",				notificationName, item );
 					AddWithCheckToListener("CivicsTreeClosed",				notificationName, item );
@@ -2699,9 +2699,9 @@ function OnGovernmentPolicyChanged(player:number, ePolicy:number)
 end
 
 -- ===========================================================================
-function OnPlayerVictory()
+function OnTeamVictory()
 	-- TODO(asherburne): Ensure the local player is victorious.
-	TutorialCheck("PlayerVictory")
+	TutorialCheck("TeamVictory")
 end
 
 -- ===========================================================================
@@ -3015,7 +3015,7 @@ function OnShutdown()
 	Events.UnitVisibilityChanged.Remove(	OnUnitVisibilityChanged );
 	Events.NotificationAdded.Remove(		OnNotificationAdded );
 	Events.GovernmentPolicyChanged.Remove(	OnGovernmentPolicyChanged );
-	Events.PlayerVictory.Remove(			OnPlayerVictory );
+	Events.TeamVictory.Remove(				OnTeamVictory );
 	Events.GoodyHutReward.Remove(			OnGoodyHutReward );
 	Events.CivicChanged.Remove(				OnCivicChanged );
 	
@@ -3264,7 +3264,7 @@ function Initialize()
 	Events.CivicCompleted.Add(			OnCivicCompleted );
 	Events.EndTurnDirty.Add(			OnEndTurnDirty );
 	Events.GovernmentPolicyChanged.Add( OnGovernmentPolicyChanged );
-	Events.PlayerVictory.Add(			OnPlayerVictory );
+	Events.TeamVictory.Add(				OnTeamVictory );
 	Events.GoodyHutReward.Add(			OnGoodyHutReward );
 	Events.ImprovementAddedToMap.Add(	OnImprovementAddedToMap );
 	Events.ImprovementChanged.Add(		OnImprovementChanged );

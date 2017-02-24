@@ -159,6 +159,7 @@ end
 -- ===========================================================================
 function RefreshDestinationList()
 	m_RouteChoiceIM:ResetInstances();
+	local localPlayer = Players[Game.GetLocalPlayer()];
 
 	-- Add each players cities to destination list
 	local players:table = Game.GetPlayers();
@@ -166,7 +167,9 @@ function RefreshDestinationList()
 		local playerInfluence:table = player:GetInfluence();
 		-- Ignore city states (only they can receive influence)
 		if playerInfluence and not playerInfluence:CanReceiveInfluence() then
-			AddPlayerCities(player)
+			if (player:GetID() == localPlayer:GetID() or player:GetTeam() == -1 or localPlayer:GetTeam() == -1 or player:GetTeam() ~= localPlayer:GetTeam()) then
+				AddPlayerCities(player)
+			end
 		end
 	end
 

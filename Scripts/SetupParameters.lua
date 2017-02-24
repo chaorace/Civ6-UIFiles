@@ -99,6 +99,14 @@ end
 -- Perform a refresh with the supplied parameters.
 -------------------------------------------------------------------------------
 function SetupParameters:Refresh(parameters)
+	
+	--if(self.Refreshing == true) then
+	--	error("Refresh inception! This is bad");
+	--end
+
+	self.Refreshing = true;
+	
+
 	print("Refreshing Parameters - " .. tostring(self.PlayerId or "Game"));
 	local old_params = self.Parameters or {};
 	local new_params = parameters or {}; 
@@ -180,8 +188,8 @@ function SetupParameters:Refresh(parameters)
 			end
 		
 			-- With values properly synchronized, it's time to notify UI of the changes.
-			self:UI_SetParameterValue(p);
 			self:UI_SetParameterPossibleValues(p);   
+			self:UI_SetParameterValue(p);
 			self:UI_SetParameterEnabled(p);
 			self:UI_SetParameterVisible(p);
  
@@ -224,6 +232,8 @@ function SetupParameters:Refresh(parameters)
 	else
 		print("Nothing to change.");
 	end	
+
+	self.Refreshing = nil;
 
 	self:UI_AfterRefresh();
 
@@ -510,6 +520,11 @@ function SetupParameters:Data_DiscoverParameters()
 		table.insert(domain_override_queries, row);
 	end
 
+	local domain_range_queries = {};
+	for i, row in ipairs(CachedQuery("SELECT * from DomainRangeQueries")) do
+		table.insert(domain_range_queries, row);
+	end
+
 	local domain_value_union_queries = {};
 	local domain_value_intersect_queries = {};
 	local domain_value_difference_queries = {};
@@ -630,7 +645,7 @@ function SetupParameters:Data_DiscoverParameters()
 					if(default_value ~= nil) then
 						if(p.Domain == "bool") then
 							p.DefaultValue = self.Utility_ToBool(default_value);		
-						elseif(p.Domain == "int") then
+						elseif(p.Domain == "int" or p.Domain == "uint") then
 							p.DefaultValue = tonumber(default_value);
 						end
 					end				
@@ -659,10 +674,33 @@ function SetupParameters:Data_DiscoverParameters()
 	local pod_domains = {
 		["bool"] = true,
 		["int"] = true,
+		["uint"] = true,
 		["text"] = true
 	};
 
 	local domains = {};
+
+	-- Query for Domain Ranges.
+	for _, drq in ipairs(domain_range_queries) do
+		local q = queries[drq.QueryId];
+		if(q) then
+			for i, row in ipairs(self:Data_Query(q)) do
+				local dr = {
+					Type = "IntRange",
+					Query = drq,
+					Domain = row[drq.DomainField],
+					MinimumValue = tonumber(row[drq.MinimumValueField]) or 0,
+					MaximumValue = tonumber(row[drq.MaximumValueField]) or 0,
+				}
+
+				if(dr.MinimumValue ~= nil and dr.MaximumValue ~= nil) then
+					domains[dr.Domain] = dr;
+				else
+					print("Setup Parameter Error! IntRange domain lacks constraints Min: " .. tostring(dr.MinimumValue) .. " Max: " .. tostring(dr.MaximumValue));
+				end
+			end
+		end
+	end
 
 	-- Query for Domain Values.
 	for _, dvq in ipairs(domain_value_union_queries) do
@@ -686,7 +724,7 @@ function SetupParameters:Data_DiscoverParameters()
 				-- Add domain value.
 				local values = domains[dv.Domain];
 				if(values == nil) then 
-					values = {}; 
+					values = {};
 					domains[dv.Domain] = values;	
 				end
 					 
@@ -793,27 +831,32 @@ function SetupParameters:Data_DiscoverParameters()
 
 		-- Is this a multi-value domain?
 		if(pod_domains[p.Domain] == nil) then
-			
-			-- Each parameter gets a unique list of values.
-			local values = {};
 
-			-- TODO: Support semi-colon delimited list. for concatenating values.				
-			local domain_values = domains[p.Domain];
-			if(domain_values ~= nil) then
-				for i, v in ipairs(domain_values) do
-					table.insert(values, v);
+			local domain = domains[p.Domain];
+			if(domain) then
+				if(domain.Type == "IntRange") then
+					p.Values = domain;
+				else
+					-- Each parameter gets a unique list of values.
+					local values = {};
+			
+					local domain_values = domains[p.Domain];
+					if(domain_values ~= nil) then
+						for i, v in ipairs(domain_values) do
+							table.insert(values, v);
+						end
+					end
+			
+					-- Sort Values.
+					self.Utility_SortValues(values);	
+
+					-- Call a hook to filter possible values for the parameter.
+					values = self:Parameter_FilterValues(p, values);	
+
+					-- Assign.
+					p.Values = values;
 				end
 			end
-			
-			-- Sort Values.
-			self.Utility_SortValues(values);	
-
-			-- Call a hook to filter possible values for the parameter.
-			values = self:Parameter_FilterValues(p, values);	
-
-			-- Assign.
-			p.Values = values;
-					
 		end
 		
 		p.Enabled = self:Parameter_GetEnabled(p);
@@ -936,8 +979,10 @@ function SetupParameters:Parameter_GetEnabled(parameter)
 		return false;
 	end
 
-	-- Disable the ruleset parameter the moment a network session has been created.
-	if(parameter.ParameterId == "Ruleset") then
+	-- Some parameters can only be changed before the network session is created.
+	if(parameter.ParameterId == "Ruleset"			-- Can't change because the ruleset cascades to pretty much everything.
+		or parameter.ParameterId == "NoTeams") then -- Can't change because the no teams setting cascades to the player configuration team setting.
+													-- This should be removed once the player configuration team pulldown is handled like a proper player parameter.
 		return not Network.IsInSession();
 	else
 		return (not Network.IsInSession() or Network.IsHost() or self.PlayerId == Network.GetLocalPlayerID());
@@ -1062,6 +1107,9 @@ function SetupParameters:Parameter_SyncAuxConfigurationValues(parameter)
 	end
 
 	if(parameter.ValueNameConfigurationId) then
+		if(parameter.Value.RawName == nil) then
+			foo = 5;
+		end
 		local bundle = (parameter.Value ~= nil) and Locale.Bundle(parameter.Value.RawName);
 		local config_bundle = self:Config_Read(parameter.ConfigurationGroup, parameter.ValueNameConfigurationId);
 		if(bundle ~= config_bundle) then
@@ -1092,7 +1140,52 @@ function SetupParameters:Parameter_SyncConfigurationValues(parameter)
 	-- Wipe error state.
 	parameter.Error = nil;
 
-	if(parameter.Values ~= nil) then
+	if(parameter.Values and parameter.Values.Type == "IntRange") then
+		local minValue = parameter.Values.MinimumValue;
+		local maxValue = parameter.Values.MaximumValue;
+
+		if(config_value) then
+			-- Does the current Value match config_value?
+			if(parameter.Value == config_value) then
+				-- Only worry about auxiliary values if we can actually write them.
+				if(self:Config_CanWriteParameter(parameter)) then
+					return self:Parameter_SyncAuxConfigurationValues(parameter); 
+				else
+					return false;
+				end
+			else
+				-- Is the value between our minimum and maximum value?
+				if(config_value >= minValue and config_value <= maxValue) then
+					parameter.Value = config_value;
+
+					-- Only worry about auxiliary values if we can actually write them.
+					if(self:Config_CanWriteParameter(parameter)) then
+						return self:Parameter_SyncAuxConfigurationValues(parameter); 
+					else
+						return false;
+					end
+				end
+			end
+		end
+
+		if(self:Config_CanWriteParameter(parameter)) then
+			-- Try default value.
+			local default_value = parameter.DefaultValue;
+			if(default_value) then
+				if(default_value >= minValue and default_value <= maxValue) then
+					parameter.Value = default_value;
+					return true;
+				end
+			end
+
+			parameter.Value = minValue;
+			return true;
+		else
+			-- We're in an error state :(
+			parameter.Error = {Id = "MissingDomainValue"};
+			return false;
+		end
+	elseif(parameter.Values) then
 		if(config_value) then
 			-- Does the current Value match config_value?
 			if(parameter.Value and parameter.Value.Value == config_value) then
@@ -1134,8 +1227,7 @@ function SetupParameters:Parameter_SyncConfigurationValues(parameter)
 			parameter.Error = {Id = "MissingDomainValue"};
 			return false;
 		end
-	else		
-
+	else
 		-- Start with either the configuration value or the default value.
 		local old_value = config_value;
 		if(old_value == nil) then
@@ -1146,8 +1238,7 @@ function SetupParameters:Parameter_SyncConfigurationValues(parameter)
 		local domain = parameter.Domain;
 		if(domain == "bool") then	
 			parameter.Value = self.Utility_ToBool(old_value);	
-		elseif(domain == "int") then
-			-- TODO: Constrain to min/max values.
+		elseif(domain == "int" or domain == "uint") then
 			parameter.Value = tonumber(old_value);
 		else
 			parameter.Value = old_value;

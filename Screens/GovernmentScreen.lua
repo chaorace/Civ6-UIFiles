@@ -1381,7 +1381,11 @@ end
 -- ===========================================================================
 function OnOpenGovernmentScreenPolicies()
 	RefreshAllData();
-	OnOpenGovernmentScreen( SCREEN_ENUMS.POLICIES );
+	if not m_kCurrentGovernment then
+		OnOpenGovernmentScreenGovernments();
+	else
+		OnOpenGovernmentScreen( SCREEN_ENUMS.POLICIES );
+	end	
 end
 
 

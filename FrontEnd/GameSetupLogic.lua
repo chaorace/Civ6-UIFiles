@@ -5,8 +5,9 @@ include( "InstanceManager" );
 include ("SetupParameters");
 
 -- Instance managers for dynamic game options.
-g_PullDownParameterManager = InstanceManager:new("PullDownParameterInstance", "Root", Controls.PullDownParent);
 g_BooleanParameterManager = InstanceManager:new("BooleanParameterInstance", "CheckBox", Controls.CheckBoxParent);
+g_PullDownParameterManager = InstanceManager:new("PullDownParameterInstance", "Root", Controls.PullDownParent);
+g_SliderParameterManager = InstanceManager:new("SliderParameterInstance", "Root", Controls.SliderParent);
 g_StringParameterManager = InstanceManager:new("StringParameterInstance", "StringRoot", Controls.EditBoxParent);
 
 g_ParameterFactories = {};
@@ -37,13 +38,14 @@ end
 -------------------------------------------------------------------------------
 function Parameters_Config_EndWrite(o, config_changed)
 	SetupParameters.Config_EndWrite(o, config_changed);
-
-
+	
 	-- Dispatch a Lua event notifying that the configuration has changed.
 	-- This will eventually be handled by the configuration layer itself.
 	if(config_changed) then
 		print("Marking Configuration as Changed.");
-		LuaEvents.GameSetup_ConfigurationChanged();
+		if(GameSetup_ConfigurationChanged) then
+			GameSetup_ConfigurationChanged();
+		end
 	end
 end
 
@@ -124,9 +126,12 @@ function GameParameters_UI_DefaultCreateParameterDriver(o, parameter)
 
 		control = {
 			Control = c,
-			UpdateValue = function(value)
-				--c.CheckBox:SetCheck(value)
-
+			UpdateValue = function(value, parameter)
+				
+				-- Sometimes the parameter name is changed, be sure to update it.
+				c.CheckBox:SetText(parameter.Name);
+				c.CheckBox:SetToolTipString(parameter.Description);
+				
 				-- We have to invalidate the selection state in order
 				-- to trick the button to use the right vis state..
 				-- Please change this to a real check box in the future...please
@@ -144,7 +149,7 @@ function GameParameters_UI_DefaultCreateParameterDriver(o, parameter)
 			end,
 		};
 
-	elseif(parameter.Domain == "int" or parameter.Domain == "text") then
+	elseif(parameter.Domain == "int" or parameter.Domain == "uint" or parameter.Domain == "text") then
 		local c = g_StringParameterManager:GetInstance();		
 
 		-- Store the root control, NOT the instance table.
@@ -158,6 +163,14 @@ function GameParameters_UI_DefaultCreateParameterDriver(o, parameter)
 			c.StringEdit:SetMaxCharacters(16);
 			c.StringEdit:RegisterCommitCallback(function(textString)
 				o:SetParameterValue(parameter, tonumber(textString));	
+				Network.BroadcastGameConfig();
+			end);
+		elseif(parameter.Domain == "uint") then
+			c.StringEdit:SetNumberInput(true);
+			c.StringEdit:SetMaxCharacters(16);
+			c.StringEdit:RegisterCommitCallback(function(textString)
+				local value = math.max(tonumber(textString) or 0, 0);
+				o:SetParameterValue(parameter, value);	
 				Network.BroadcastGameConfig();
 			end);
 		else
@@ -187,7 +200,57 @@ function GameParameters_UI_DefaultCreateParameterDriver(o, parameter)
 				g_StringParameterManager:ReleaseInstance(c);
 			end,
 		};
-	else	-- MultiValue!
+	elseif (parameter.Values and parameter.Values.Type == "IntRange") then -- Range
+		
+		local minimumValue = parameter.Values.MinimumValue;
+		local maximumValue = parameter.Values.MaximumValue;
+
+		-- Get the UI instance
+		local c = g_SliderParameterManager:GetInstance();	
+
+		-- Store the root control, NOT the instance table.
+		g_SortingMap[tostring(c.Root)] = parameter;
+
+		c.Root:ChangeParent(parent);
+		if c.StringName ~= nil then
+			c.StringName:SetText(parameter.Name);
+		end
+
+		c.OptionTitle:SetText(parameter.Name);
+		c.Root:SetToolTipString(parameter.Description);
+		c.OptionSlider:RegisterSliderCallback(function()
+			local stepNum = c.OptionSlider:GetStep();
+			
+			-- This method can get called pretty frequently, try and throttle it.
+			if(parameter.Value ~= minimumValue + stepNum) then
+				o:SetParameterValue(parameter, minimumValue + stepNum);
+				Network.BroadcastGameConfig();
+			end
+		end);
+
+
+		control = {
+			Control = c,
+			UpdateValue = function(value)
+				if(value) then
+					c.OptionSlider:SetStep(value - minimumValue);
+					c.NumberDisplay:SetText(tostring(value));
+				end
+			end,
+			UpdateValues = function(values)
+				c.OptionSlider:SetNumSteps(values.MaximumValue - values.MinimumValue);
+			end,
+			SetEnabled = function(enabled, parameter)
+				c.OptionSlider:SetHide(not enabled or parameter.Values == nil or parameter.Values.MinimumValue == parameter.Values.MaximumValue);
+			end,
+			SetVisible = function(visible, parameter)
+				c.Root:SetHide(not visible or parameter.Value == nil );
+			end,
+			Destroy = function()
+				g_SliderParameterManager:ReleaseInstance(c);
+			end,
+		};	
+	elseif (parameter.Values) then -- MultiValue
 		
 		-- Get the UI instance
 		local c = g_PullDownParameterManager:GetInstance();	
@@ -276,12 +339,12 @@ function UI_SetParameterPossibleValues(o, parameter)
 	local control = o.Controls[parameter.ParameterId];
 	if(control) then
 		if(control.UpdateValues) then
-			control.UpdateValues(parameter.Values);
+			control.UpdateValues(parameter.Values, parameter);
 		end
 
 		for i,v in ipairs(control) do
 			if(v.UpdateValues) then
-				v.UpdateValues(parameter.Values);
+				v.UpdateValues(parameter.Values, parameter);
 			end	
 		end
 	end
@@ -292,12 +355,12 @@ function UI_SetParameterValue(o, parameter)
 	local control = o.Controls[parameter.ParameterId];
 	if(control) then
 		if(control.UpdateValue) then
-			control.UpdateValue(parameter.Value);
+			control.UpdateValue(parameter.Value, parameter);
 		end
 
 		for i,v in ipairs(control) do
 			if(v.UpdateValue) then
-				v.UpdateValue(parameter.Value);
+				v.UpdateValue(parameter.Value, parameter);
 			end	
 		end
 	end
@@ -324,12 +387,12 @@ function UI_SetParameterVisible(o, parameter)
 	local control = o.Controls[parameter.ParameterId];
 	if(control) then
 		if(control.SetVisible) then
-			control.SetVisible(parameter.Visible);
+			control.SetVisible(parameter.Visible, parameter);
 		end
 
 		for i,v in ipairs(control) do
 			if(v.SetVisible) then
-				v.SetVisible(parameter.Visible);
+				v.SetVisible(parameter.Visible, parameter);
 			end	
 		end
 	end
@@ -432,7 +495,6 @@ function BuildGameSetup(createParameterFunc:ifunction)
 		g_GameParameters.Parameter_FilterValues = GameParameters_FilterValues;
 	end
 
-
 	g_GameParameters:Initialize();
 	g_GameParameters:FullRefresh();
 end
@@ -449,8 +511,9 @@ function HideGameSetup(hideParameterFunc)
 
 	-- Reset all UI instances.
 	if(hideParameterFunc == nil) then
-		g_PullDownParameterManager:ResetInstances();
 		g_BooleanParameterManager:ResetInstances();
+		g_PullDownParameterManager:ResetInstances();
+		g_SliderParameterManager:ResetInstances();
 		g_StringParameterManager:ResetInstances();
 	else
 		hideParameterFunc();
@@ -486,6 +549,12 @@ function MapSize_ValueNeedsChanging(p)
 	elseif(MapConfiguration.GetMaxMajorPlayers() ~= maxPlayers) then
 		print("Max Major Players: " .. MapConfiguration.GetMaxMajorPlayers() .. " should be " .. maxPlayers);
 		return true;
+	elseif(MapConfiguration.GetMinMinorPlayers() ~= minCityStates) then
+		print("Min Minior Players: " .. MapConfiguration.GetMinMinorPlayers() .. " should be " .. minCityStates);
+		return true;
+	elseif(MapConfiguration.GetMaxMinorPlayers() ~= maxCityStates) then
+		print("Max Minior Players: " .. MapConfiguration.GetMaxMinorPlayers() .. " should be " .. maxCityStates);
+		return true;
 	end
 
 	return false;
@@ -516,9 +585,11 @@ function MapSize_ValueChanged(p)
 		end
 	end
 
-	-- TODO: Add Min/Max city states, set defaults.
 	MapConfiguration.SetMinMajorPlayers(minPlayers);
 	MapConfiguration.SetMaxMajorPlayers(maxPlayers);
+	MapConfiguration.SetMinMinorPlayers(minCityStates);
+	MapConfiguration.SetMaxMinorPlayers(maxCityStates);
+	GameConfiguration.SetValue("CITY_STATE_COUNT", defCityStates);
 
 	-- Clamp participating player count in network multiplayer so we only ever auto-spawn players up to the supported limit. 
 	local mpMaxSupportedPlayers = 8; -- The officially supported number of players in network multiplayer games.
@@ -533,5 +604,7 @@ function MapSize_ValueChanged(p)
 	-- NOTE: This used to only be called if playerCountChange was non-zero.
 	-- This needs to be called more frequently than that because each player slot entry's add/remove button
 	-- needs to be potentially updated to reflect the min/max player constraints.
-	LuaEvents.GameSetup_PlayerCountChanged();
+	if(GameSetup_PlayerCountChanged) then
+		GameSetup_PlayerCountChanged();
+	end
 end

@@ -7,7 +7,7 @@
     <ScrollPanel ID="LeaderBGClip" Anchor="R,T" Size="full,80" Disabled="1" Offset="-20,5" FullClip="1">
       <Grid ID="LeaderBG" Anchor="R,T" Size="500,100" Style="DropShadow2" Offset="0,-30" Color="255,255,255,150"/>
     </ScrollPanel>
-    <ScrollPanel ID="LeaderScroll" Anchor="R,T" Size="10,80" FullClip="1">
+    <ScrollPanel ID="LeaderScroll" Anchor="R,T" Size="10,86" FullClip="1">
       <Stack ID="LeaderStack" Anchor="R,T" StackGrowth="Left" StackPadding="2" Offset="3,4"/>
       <Image    ID="NextButtonContainer" Texture="ActionPanel_Badge" Offset="-32,-45" Size="40,37" Anchor="R,B" AnchorSide="O,O">
         <Button ID="NextButton" Anchor="R,B" Offset="4,2" Style="ArrowButtonRight"/>
@@ -47,6 +47,7 @@
           <Image Texture="Controls_CircleBacking45" Size="51,51" Anchor="C,C" Offset="0,1"/>
           <Image Anchor="C,C" ID="YouIndicator" Hidden="1" Size="55,53" Texture="Diplomacy_YouIndicator45"/>
           <Image ID="Portrait" Anchor="C,C" Size="45,45" Texture="Leaders45" />
+          <Image ID="TeamRibbon" Anchor="C,B" Offset="0,-8" Texture="TeamRibbon53" Size="53,53"/>
           <Button ID="Relationship" StretchMode="None" Style="DiplomacyRelationshipPips" Anchor="L,B" Disabled="1" ConsumeMouse="0"/>
         </Button>
         <Image ID="CivIndicator" Anchor="R,T" Texture="CircleBacking22" Size="22,22" Offset="-5,-2" Hidden="1">

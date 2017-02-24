@@ -131,8 +131,7 @@ function RemovePlayer(voidValue1, voidValue2, control)
 	
 	GameConfiguration.RemovePlayer(voidValue1);
 
-	LuaEvents.GameSetup_PlayerCountChanged();
-	GameSetup_RefreshParameters();
+	GameSetup_PlayerCountChanged();
 end
 
 -- ===========================================================================
@@ -216,8 +215,10 @@ function RefreshPlayerSlots()
 	Controls.NonLocalPlayersSlotStack:ReprocessAnchoring();
 	Controls.NonLocalPlayersStack:CalculateSize();
 	Controls.NonLocalPlayersStack:ReprocessAnchoring();
-	
 	Controls.NonLocalPlayersPanel:CalculateInternalSize();
+	Controls.NonLocalPlayersPanel:CalculateSize();
+
+	-- Queue another refresh
 	GameSetup_RefreshParameters();
 end
 
@@ -245,16 +246,14 @@ end
 
 
 -- ===========================================================================
-function OnPlayerCountChanged()
+function GameSetup_PlayerCountChanged()
 	print("Player Count Changed");
 	RefreshPlayerSlots();
 end
 
 -- ===========================================================================
 function OnShow()
-	BuildGameSetup();
-	RefreshPlayerSlots();
-	GameSetup_RefreshParameters();
+	RefreshPlayerSlots();	-- Will trigger a game parameter refresh.
 	AutoSizeGridButton(Controls.DefaultButton,50,22,10,"H");
 	AutoSizeGridButton(Controls.CloseButton,133,36,10,"H");
 end
@@ -288,9 +287,7 @@ function OnAddAIButton()
 			playerConfig:SetSlotStatus(SlotStatus.SS_COMPUTER);
 			playerConfig:SetMajorCiv();
 
-			LuaEvents.GameSetup_PlayerCountChanged();
-			GameSetup_RefreshParameters();
-			Controls.NonLocalPlayersPanel:CalculateSize();
+			GameSetup_PlayerCountChanged();
 			break;
 		end
 
@@ -310,18 +307,9 @@ end
 -- ===========================================================================
 function OnDefaultButton()
 	print("Reseting Setup Parameters");
-	g_Refreshing = true;
-	g_GameParameters:ResetDefaults();
+	GameConfiguration.SetToDefaults();
 	GameConfiguration.RegenerateSeeds();
-    g_GameParameters:FullRefresh();
-	ResetPlayerParameters();
-	g_Refreshing = false;
-	if(g_NeedsAdditionalRefresh) then
-		g_NeedsAdditionalRefresh = false;
-		print("Refreshing again, to be sure.")
-		return GameSetup_RefreshParameters();
-	end
-
+	return GameSetup_PlayerCountChanged();
 end
 
 -- ===========================================================================
@@ -400,9 +388,7 @@ function Initialize()
 	Controls.StartButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.CloseButton:RegisterCallback( Mouse.eLClick, OnBackButton );
 	Controls.CloseButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-
-	LuaEvents.GameSetup_PlayerCountChanged.Add(OnPlayerCountChanged);
-
+	
 	Events.SystemUpdateUI.Add( OnUpdateUI );
 	Events.BeforeMultiplayerInviteProcessing.Add( OnBeforeMultiplayerInviteProcessing );
 	Resize();

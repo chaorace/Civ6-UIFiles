@@ -80,7 +80,7 @@ end
 function OnMultplayerPlayerConnected( playerID )
 	if( ContextPtr:IsHidden() == false and GameConfiguration.IsNetworkMultiplayer() ) then
 		local pPlayerConfig = PlayerConfigurations[playerID];
-		local statusMessage = pPlayerConfig:GetPlayerName() .. " " .. PlayerConnectedChatStr;
+		local statusMessage = Locale.Lookup(pPlayerConfig:GetPlayerName()) .. " " .. PlayerConnectedChatStr;
 		OnStatusMessage( statusMessage, DEFAULT_TIME_TO_DISPLAY, ReportingStatusTypes.DEFAULT );
 	end
 end

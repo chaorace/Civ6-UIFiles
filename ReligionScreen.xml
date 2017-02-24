@@ -225,7 +225,7 @@
         <Image Texture="Religion_BraceDeco" Anchor="R,C" Offset="-16,0"/>
 
         <Image ID="PendingReligionImage" Texture="Religion_Generic" Anchor="C,C" Offset="-280,0" />
-        <Label ID="PendingReligionTitle" Offset="-280,50" Anchor="C,C" Size="400" Style="ReligionHeadingSmall" String="PendingReligionTitle" WrapWidth="500" />
+        <Label ID="PendingReligionTitle" Offset="-280,50" Anchor="C,C" Size="400" Style="ReligionHeadingSmall" String="" WrapWidth="500" />
         <Label ID="PendingReligionStatus" Offset="550,100" Size="400" Style="ReligionSubHeading" String="PendingReligionStatus" />
         <Label ID="PendingReligionEffect" Offset="550,125" Size="400" Style="ReligionObjective" String="PendingReligionEffect" />
       </Grid>

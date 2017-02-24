@@ -81,7 +81,7 @@ ToolTipHelper.GetAdjacencyBonuses = function(t, field, key)
 
 					if(item) then
 						local text = Locale.Lookup("LOC_TYPE_TRAIT_ADJACENT_BONUS_REQUIRES_TECH_OR_CIVIC", item.Name);
-						value = value .. text;
+						value = value .. "  " .. text;
 					end
 				end
 
@@ -95,7 +95,7 @@ ToolTipHelper.GetAdjacencyBonuses = function(t, field, key)
 				
 					if(item) then
 						local text = Locale.Lookup("LOC_TYPE_TRAIT_ADJACENT_BONUS_OBSOLETE_WITH_TECH_OR_CIVIC", item.Name);
-						value = value .. text;
+						value = value .. "  " .. text;
 					end
 				end
 

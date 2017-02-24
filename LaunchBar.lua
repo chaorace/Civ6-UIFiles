@@ -198,15 +198,15 @@ end
 --	Refresh Data and View
 -- ===========================================================================
 function RealizeHookVisibility()
-	--if (m_isGreatPeopleUnlocked) then
-	--	Controls.GreatPeopleButton:SetHide(false);
-	--	Controls.GreatPeopleBolt:SetHide(false);
-	--else
-	--	if (not isDebug) then
-	--		Controls.GreatPeopleButton:SetHide(true);
-	--		Controls.GreatPeopleBolt:SetHide(true);
-	--	end
-	--end
+	if (m_isGreatPeopleUnlocked) then
+		Controls.GreatPeopleButton:SetHide(false);
+		Controls.GreatPeopleBolt:SetHide(false);
+	else
+		if (not isDebug) then
+			Controls.GreatPeopleButton:SetHide(true);
+			Controls.GreatPeopleBolt:SetHide(true);
+		end
+	end
 
 	if (m_isReligionUnlocked) then
 		Controls.ReligionButton:SetHide(false);
@@ -334,6 +334,24 @@ function RefreshGreatWorks()
 	RealizeHookVisibility();
 end
 
+function RefreshGreatPeople()
+	local ePlayer:number = Game.GetLocalPlayer();
+	if ePlayer == -1 then
+		-- Likely auto playing.
+		return;
+	end
+	if m_isGreatPeopleUnlocked then
+		return;
+	end
+
+	-- Show button if we have any great people in the game
+	for greatPerson in GameInfo.GreatPersonIndividuals() do
+		m_isGreatPeopleUnlocked = true;
+		break;
+	end
+	RealizeHookVisibility();
+end
+
 -- *****************************************************************************
 --	Government Hook 
 --	1/2) OnCivicCompleted - triggered off of the CivicCompleted event - check to see if the unlocked civic unlocked our first policy
@@ -457,6 +475,7 @@ function OnTurnBegin()
 
 	RefreshGovernment();
 	RefreshGreatWorks();
+	RefreshGreatPeople();
 	RefreshReligion();
 	RefreshView();
 end
@@ -499,6 +518,7 @@ function OnLocalPlayerChanged()
 	m_isReligionUnlocked	= false;	
 	m_isGovernmentUnlocked	= false;
 	RefreshGovernment();
+	RefreshGreatPeople();
 	RefreshGreatWorks();
 	RefreshReligion();
 end

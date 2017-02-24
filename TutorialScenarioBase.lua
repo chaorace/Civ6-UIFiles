@@ -385,7 +385,7 @@ function TutorialItemBank1()
 		function(advisorInfo)
 			LuaEvents.OpenCivilopedia("CONCEPTS", "CITIES_16")  -- Happiness
 			LuaEvents.AdvisorPopup_ClearActive(advisorInfo)
-			UI.PlaySound("Play_ADVISOR_LINE_LISTENER_87")
+--			UI.PlaySound("Play_ADVISOR_LINE_LISTENER_87")
 		end)
 	item_lowAmenities:SetIsDoneFunction(
 		function()
@@ -404,13 +404,12 @@ function TutorialItemBank1()
 	item_housingLimit:AddAdvisorButton("LOC_ADVISOR_BUTTON_OK",
 		function(advisorInfo)
 			LuaEvents.AdvisorPopup_ClearActive(advisorInfo)
-			UI.PlaySound("Stop_ADVISOR_LINE_LISTENER_86")
+--			UI.PlaySound("Stop_ADVISOR_LINE_LISTENER_86")
 		end)
 	item_housingLimit:AddAdvisorButton("LOC_ADVISOR_BUTTON_TELL_ME_MORE",
 		function(advisorInfo)
 			LuaEvents.OpenCivilopedia("CONCEPTS", "CITIES_14")  -- Housing
 			LuaEvents.AdvisorPopup_ClearActive(advisorInfo)
-			UI.PlaySound("Play_ADVISOR_LINE_LISTENER_86")
 		end)
 	item_housingLimit:SetIsDoneFunction(
 		function()
@@ -928,7 +927,7 @@ function TutorialItemBank1()
 		function(advisorInfo)
 			LuaEvents.OpenCivilopedia("CONCEPTS", "DIPLO_10")  -- Research Agreements
 			LuaEvents.AdvisorPopup_ClearActive(advisorInfo)
-			UI.PlaySound("Play_ADVISOR_LINE_LISTENER_81")
+--			UI.PlaySound("Play_ADVISOR_LINE_LISTENER_81")
 		end)
 	item_researchAgreementsUnlocked:SetIsDoneFunction(
 		function()

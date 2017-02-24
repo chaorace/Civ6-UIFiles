@@ -376,17 +376,17 @@ function GetData()
 		end
 	end
 
-	-- Assume that resources not yet accounted for have come from Great People
+	-- Resources not yet accounted for come from other gameplay bonuses
 	if pResources then
 		for row in GameInfo.Resources() do
 			local internalResourceAmount:number = pResources:GetResourceAmount(row.Index);
 			if (internalResourceAmount > 0) then
 				if (kResources[row.Index] ~= nil) then
 					if (internalResourceAmount > kResources[row.Index].Total) then
-						AddResourceData(kResources, row.Index, "LOC_GOVT_FILTER_GREAT_PERSON", "-", internalResourceAmount - kResources[row.Index].Total);
+						AddResourceData(kResources, row.Index, "LOC_HUD_REPORTS_MISC_RESOURCE_SOURCE", "-", internalResourceAmount - kResources[row.Index].Total);
 					end
 				else
-					AddResourceData(kResources, row.Index, "LOC_GOVT_FILTER_GREAT_PERSON", "-", internalResourceAmount);
+					AddResourceData(kResources, row.Index, "LOC_HUD_REPORTS_MISC_RESOURCE_SOURCE", "-", internalResourceAmount);
 				end
 			end
 		end

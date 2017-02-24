@@ -460,6 +460,51 @@ function SetUniqueCivLeaderData(info:table, tooltipControls:table)
 	tooltipControls.InfoScrollPanel:CalculateSize();
 end
 
+-- Checks external conditions where this player parameter should be disabled.
+function CheckExternalEnabled(playerID:number, inputEnabled:boolean, lockCheck:boolean)
+	-- Early out if the input enabled status is already disabled.
+	if(not inputEnabled) then
+		return false;
+	end
+
+	-- Just use inputEnabled if this is singleplayer. 
+	if(not GameConfiguration.IsAnyMultiplayer()) then
+		return inputEnabled;
+	end
+
+	local pPlayerConfig = PlayerConfigurations[playerID];
+	
+	-- Disable if player has readied up.
+	if(pPlayerConfig:GetReady()) then
+		return false;
+	end
+
+	-- Disable if the game is already in progress.
+	local gameInProgress:boolean = GameConfiguration.GetGameState() ~= GameStateTypes.GAMESTATE_PREGAME;
+	if(gameInProgress) then
+		return false;
+	end
+
+	-- Disable if the local player doesn't have control over this player slot.
+	local localPlayerID = Network.GetLocalPlayerID();
+	local localPlayerConfig = PlayerConfigurations[localPlayerID];
+	local slotStatus = pPlayerConfig:GetSlotStatus();
+	if(not GameConfiguration.IsHotseat() -- local player can change everything in hotseat.
+		and playerID ~= localPlayerID -- local player always has control of themselves.
+		-- Game host can alter all the non-human slots if the host is not ready.
+		and (not Network.IsHost()
+			or slotStatus == SlotStatus.SS_TAKEN
+			or localPlayerConfig:GetReady())) then
+		return false;
+	end
+
+	if(lockCheck and pPlayerConfig:IsLocked()) then
+		return false;
+	end
+
+	return true;
+end
+
 -------------------------------------------------------------------------------
 -- Setup Player Interface
 -- This gets or creates player parameters for a given player id.
@@ -567,7 +612,7 @@ function SetupLeaderPulldown(playerId:number, instance:table, pulldownControlNam
 			control:CalculateInternals();
 		end,
 		SetEnabled = function(enabled)
-			control:SetDisabled(not enabled);
+			control:SetDisabled(not CheckExternalEnabled(playerId, enabled, true));
 		end,
 	--	SetVisible = function(visible)
 	--		control:SetHide(not visible);
@@ -600,6 +645,9 @@ function SetupHandicapPulldown(playerId, control)
 			end
 			control:CalculateInternals();
 		end,
+		SetEnabled = function(enabled)
+			control:SetDisabled(not CheckExternalEnabled(playerId, enabled, false));
+		end,
 	};
 end
 
@@ -627,17 +675,23 @@ end
 g_Refreshing = false;
 g_NeedsAdditionalRefresh = false;
 function GameSetup_RefreshParameters()
-	print("Configuration Changed!");
 	if(g_Refreshing) then
-		print("Configuration changed while refreshing!");
+		print("An additional refresh was requested!");
 		g_NeedsAdditionalRefresh = true;
 	else
 		g_Refreshing = true;
-		print("Refreshing all parameters");
-		if(g_GameParameters) then
+		g_NeedsAdditionalRefresh = false;
+
+		print("Refreshing Game parameters");
+		if(g_GameParameters == nil) then
+			BuildGameSetup();
+		else
 			g_GameParameters:FullRefresh();
 		end
+		
+		print("Refreshing Player parameters");
 		RefreshPlayerParameters();
+		
 		g_Refreshing = false;
 		print("Finished Refreshing");
 
@@ -652,5 +706,9 @@ function GameSetup_RefreshParameters()
 		end
 	end
 end
-LuaEvents.GameSetup_ConfigurationChanged.Add(GameSetup_RefreshParameters);
+
+function GameSetup_ConfigurationChanged()
+	print("Configuration Changed!");
+	GameSetup_RefreshParameters();
+end
 

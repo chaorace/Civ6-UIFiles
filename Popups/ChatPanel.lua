@@ -46,14 +46,16 @@ end
 function IsFriendRequestValidPull(iPlayerID :number)
 	if(Network.GetTransportType() == TransportType.TRANSPORT_STEAM and iPlayerID ~= Game.GetLocalPlayer()) then
 		local playerSteamID = PlayerConfigurations[iPlayerID]:GetNetworkIdentifer();
-		local numFriends:number = Steam.GetFriendCount();
-		for i:number = 0, numFriends - 1 do
-			local friend:table = Steam.GetFriendByIndex(i);
-			if friend.ID == playerSteamID then
-				return false;
+		if(playerSteamID ~= nil) then
+			local numFriends:number = Steam.GetFriendCount();
+			for i:number = 0, numFriends - 1 do
+				local friend:table = Steam.GetFriendByIndex(i);
+				if friend.ID == playerSteamID then
+					return false;
+				end
 			end
+			return true;
 		end
-		return true;
 	end
 	return false;
 end
@@ -72,7 +74,7 @@ local g_playerListPullData =
 -------------------------------------------------
 function OnChat( fromPlayer, toPlayer, text, eTargetType, playSounds :boolean )
 	local pPlayerConfig :table	= PlayerConfigurations[fromPlayer];
-	local playerName	:string = pPlayerConfig:GetPlayerName(); 
+	local playerName	:string = Locale.Lookup(pPlayerConfig:GetPlayerName()); 
 	
 	-- Selecting chat text color based on eTargetType	
 	local chatColor :string = "[color:ChatMessage_Global]";
@@ -88,7 +90,7 @@ function OnChat( fromPlayer, toPlayer, text, eTargetType, playSounds :boolean )
 	if(eTargetType == ChatTargetTypes.CHATTARGET_PLAYER) then
 		local pTargetConfig :table	= PlayerConfigurations[toPlayer];
 		if(pTargetConfig ~= nil) then
-			local targetName :string = pTargetConfig:GetPlayerName();
+			local targetName = Locale.Lookup(pTargetConfig:GetPlayerName());
 			chatString = chatString .. " [" .. targetName .. "]";
 		end
 	end
@@ -442,7 +444,8 @@ end
 -------------------------------------------------
 
 function OnMultiplayerPrePlayerDisconnected( playerID )
-	if(GameConfiguration.IsNetworkMultiplayer()) then
+	local playerCfg = PlayerConfigurations[playerID];
+	if( GameConfiguration.IsNetworkMultiplayer() and playerCfg:IsHuman()) then
 		if(Network.IsPlayerKicked(playerID)) then
 			OnChat( playerID, -1, PlayerKickedChatStr, false );
 		else

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Context>
+  <!-- Darken the screen -->
+  <Box Color="0,0,0,150" Size="Full,Full" ConsumeMouse="1"/>
+  <Image Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="R,B"/>
+  <Image Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="R,T" FlipY="1"/>
+  <Image Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="L,T" FlipY="1" FlipX="1"/>
+  <Image Texture="Controls_Vignette" Size="500,500"   Color="0,0,0,255" Anchor="L,B" FlipX="1"/>
+  <Image Texture="Controls_Gradient" Size="150,full"  Color="0,0,0,255" Anchor="L,T" Rotate="90"/>
+  <Image Texture="Controls_Gradient" Size="150,full"  Color="0,0,0,255" Anchor="R,T" Rotate="270"/>
+  <Image Texture="Controls_Gradient" Size="full,150"  Color="0,0,0,255" Anchor="L,T" FlipY="1"/>
+  <Image Texture="Controls_Gradient" Size="full,150"  Color="0,0,0,255" Anchor="L,B"/>
+
+  <AlphaAnim ID="WarConfirmAlpha" AlphaBegin="0" AlphaEnd="1" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+    <SlideAnim ID="WarConfirmSlide" Start="0,-20" End="0,0" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+      <Grid ID="DropShadow" Size="595,768" Anchor="C,C" Offset="0,0" Style="DropShadow2" Color="255,255,255,200">
+        <Grid ID="Window" Size="parent-5,parent+8" Anchor="C,C" Offset="0,0" SizePadding="0,20" Style="EventPopupFrame">
+					<Container Size="parent-32,65" Offset="0,17" Anchor="C,T">
+						<Grid Style="EventPopupTitleBar" Size="parent,parent" Anchor="C,T"/>
+						<Image Texture="Event_Default" Offset="10,0" Anchor="L,C"/>
+						<Label ID="Title" Style="EventPopupTitle" Offset="0,2" Align="Center" WrapWidth="420" String="" Anchor="C,C"/>
+					</Container>
+					<Container ID="DescriptionContainer" Size="parent-32,60" Offset="0,80" Anchor="C,T">
+						<Label ID="Description" Style="EventPopupDescription" Align="Center" WrapWidth="500" String="" Anchor="C,C"/>
+						<Line Start="1,0" End="parent-2,0" Width="2" Color="35,66,92,150" Anchor="C,B"/>
+					</Container>
+					<Container ID="ImageContainer" Size="parent-32,parent" Anchor="C,T">
+						<Image ID="BackgroundImage" Texture="EventBG_Default" Anchor="C,C"/>
+						<Image ID="ForegroundImage" Texture="EventFG_Default" Anchor="C,C"/>
+						<Label ID="ImageText" Offset="0,70" Style="EventPopupJournal" Align="Center" WrapWidth="270" String="" Anchor="C,B"/>
+					</Container>
+					<Grid Style="EventPopupEffectsDeco" Offset="0,70" Size="parent-50,90"  Anchor="C,B">
+						<ScrollPanel ID="EffectsScrollPanel" Offset="7,5" Size="parent-14,parent-10" Style="ScrollPanelHighContrast" >
+							<Label ID="Effects" Style="EventPopupEffects" Align="Center" WrapWidth="460" String="" Anchor="C,C"/>
+						</ScrollPanel>
+					</Grid>
+          <Stack ID="ButtonStack" Anchor="C,B" Offset="0,23" StackPadding="15" StackGrowth="Right">
+            <GridButton ID="Continue" Style="MainButton" Size="200,41" Anchor="C,T" Offset="0,0"  Hidden="0" String="LOC_CONTINUE"/>
+          </Stack>
+        </Grid>
+      </Grid>
+    </SlideAnim>
+  </AlphaAnim>
+  
+</Context>

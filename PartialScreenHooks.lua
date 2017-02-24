@@ -272,8 +272,10 @@ function OnInputActionTriggered( actionId )
         UI.PlaySound("Play_UI_Click");
 	end
 	if actionId == m_ToggleEspId then
-        OnToggleEspionage();
-        UI.PlaySound("Play_UI_Click");
+        if UI.QueryGlobalParameterInt("DISABLE_ESPIONAGE_HOTKEY") ~= 1 then
+            OnToggleEspionage();
+            UI.PlaySound("Play_UI_Click");
+        end
 	end
 	if actionId == m_ToggleRankingsId then
         OnToggleWorldRankings();

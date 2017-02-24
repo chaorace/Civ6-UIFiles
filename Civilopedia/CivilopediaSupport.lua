@@ -36,6 +36,7 @@ local _RightColumnStatIconLabelManager = InstanceManager:new("RightColumnStatIco
 local _RightColumnStatIconNumberLabelManager = InstanceManager:new("RightColumnStatIconNumberLabel", "Root", nil);
 local _RightColumnStatIconListManager = InstanceManager:new("RightColumnStatIconList", "Root", nil);
 
+_HasSection = {};
 _Sections = {};
 _PagesBySection = {};
 _PageGroupsBySection = {};
@@ -53,36 +54,73 @@ local _SearchQuery = nil;
 --
 -------------------------------------------------------------------------------
 function CacheData_FetchData()
+
+	local exclude = {};
+	
+	if(GameInfo.CivilopediaSectionExcludes) then
+		for row in GameInfo.CivilopediaSectionExcludes() do
+			exclude[row.SectionId] = true;
+		end
+	end
+	
+	if(GameInfo.CivilopediaPageExcludes) then
+		for row in GameInfo.CivilopediaPageExcludes() do
+			exclude[row.SectionId .. "::" .. row.PageId] = true;
+		end
+	end
+
+		if(GameInfo.CivilopediaPageGroupExcludes) then
+		for row in GameInfo.CivilopediaPageGroupExcludes() do
+			exclude[row.SectionId .. "|:" .. row.PageGroupId] = true;
+		end
+	end
+
+	
+
 	-- Cache Sections
 	if(GameInfo.CivilopediaSections) then
 		for row in GameInfo.CivilopediaSections() do
-			local section = {
-				SectionId = row.SectionId,
-				Name = row.Name,
-				Tooltip = row.Tooltip,
-				Icon = row.Icon,
-				SortIndex = row.SortIndex
-			};
-			table.insert(_Sections, section);
+			if(exclude[row.SectionId] ~= true) then
+				local section = {
+					SectionId = row.SectionId,
+					Name = row.Name,
+					Tooltip = row.Tooltip,
+					Icon = row.Icon,
+					SortIndex = row.SortIndex
+				};
+				_HasSection[row.SectionId] = true;
+				table.insert(_Sections, section);
+			end
 		end
 	end
 	
 	function AddPage(page)
-		local sectionId = page.SectionId;
-		if(_PagesBySection[sectionId] == nil) then
-			_PagesBySection[sectionId] = {};
-		end
+		if(	exclude[page.SectionId] ~= true and 
+			exclude[page.SectionId .. "::" .. page.PageId] ~= true and
+			(page.PageGroupId == nil or exclude[page.SectionId .. "|:" .. page.PageGroupId] ~= true)) then
+			local sectionId = page.SectionId;
+			if(_HasSection[sectionId]) then
+				if(_PagesBySection[sectionId] == nil) then
+					_PagesBySection[sectionId] = {};
+				end
 			
-		table.insert(_PagesBySection[sectionId], page);
+				table.insert(_PagesBySection[sectionId], page);
+			end
+		end
 	end
 	
 	function AddPageGroup(page_group)
-		local sectionId = page_group.SectionId;
-		if(_PageGroupsBySection[sectionId] == nil) then
-			_PageGroupsBySection[sectionId] = {};
-		end
+		if(	exclude[page_group.SectionId] ~= true and 
+			(page_group.PageGroupId == nil or exclude[page_group.SectionId .. "|:" .. page_group.PageGroupId] ~= true)) then
+			local sectionId = page_group.SectionId;
+			if(_HasSection[sectionId]) then
+				if(_PageGroupsBySection[sectionId] == nil) then
+					_PageGroupsBySection[sectionId] = {};
+				end
 			
-		table.insert(_PageGroupsBySection[sectionId], page_group);
+				table.insert(_PageGroupsBySection[sectionId], page_group);
+			end
+		end
 	end
 	
 	-- Cache PageGroups and Pages.
@@ -101,7 +139,7 @@ function CacheData_FetchData()
 	end
 
 	if(GameInfo.CivilopediaPages) then
-		for row in GameInfo.CivilopediaPages() do 
+		for row in GameInfo.CivilopediaPages() do 	
 			local page = {
 				SectionId = row.SectionId,
 				PageId = row.PageId,
@@ -111,6 +149,7 @@ function CacheData_FetchData()
 				Tooltip = row.Tooltip,
 				SortIndex = row.SortIndex
 			};
+
 			AddPage(page);
 		end
 	end
@@ -296,6 +335,7 @@ end
 -- initialization time.
 -------------------------------------------------------------------------------
 function CacheData()
+	_HasSection = {};
 	_Sections = {};
 	_PagesBySection = {};
 	_PageGroupsBySection = {};

@@ -2,6 +2,7 @@
 --	Leader container list on top of the HUD
 -- ===========================================================================
 include("InstanceManager");
+include("TeamSupport");
 
 -- ===========================================================================
 --	CONSTANTS
@@ -17,6 +18,9 @@ local MIN_LEFT_HOOKS		:number	= 260;
 local MINIMUM_BG_SIZE		:number = 100;
 local WORLD_TRACKER_OFFSET	:number	= 40;
 local BAR_PADDING			:number	= 50;
+
+local TEAM_RIBBON_SIZE		:number = 53;
+local TEAM_RIBBON_PREFIX	:string = "ICON_TEAM_RIBBON_";
 
 local VALID_RELATIONSHIPS	:table = {
 	"DIPLO_STATE_ALLIED",
@@ -136,6 +140,25 @@ function AddLeader(iconName : string, playerID : number, isUniqueLeader: boolean
 			end
 		end
 	end
+
+	-- Team Ribbon
+	if(playerID == localPlayerID or Players[localPlayerID]:GetDiplomacy():HasMet(playerID)) then
+		-- Show team ribbon for ourselves and civs we've met
+		local teamID:number = pPlayerConfig:GetTeam();
+		if #Teams[teamID] > 1 then
+			local teamRibbonName:string = TEAM_RIBBON_PREFIX .. tostring(teamID);
+			instance.TeamRibbon:SetIcon(teamRibbonName, TEAM_RIBBON_SIZE);
+			instance.TeamRibbon:SetHide(false);
+			instance.TeamRibbon:SetColor(GetTeamColor(teamID));
+		else
+			-- Hide team ribbon if team only contains one player
+			instance.TeamRibbon:SetHide(true);
+		end
+	else
+		-- Hide team ribbon for civs we haven't met
+		instance.TeamRibbon:SetHide(true);
+	end
+
 end
 
 -- ===========================================================================

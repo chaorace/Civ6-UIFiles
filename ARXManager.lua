@@ -5,6 +5,7 @@ include("TabSupport");
 include("InstanceManager");
 include("SupportFunctions");
 include("AnimSidePanelSupport");
+include("TeamSupport");
 
 -- ===========================================================================
 --	CONSTANTS
@@ -29,11 +30,18 @@ function DrawTop5()
 	local playersData:table = {};
     for i = 0, PlayerManager.GetWasEverAliveCount() - 1 do
 		local pPlayer = Players[i];
+        local lTeamID = -1;
+        local team = Teams[pPlayer:GetTeam()];
+        if(team ~= nil and #team ~= 1) then
+            lTeamID = pPlayer:GetTeam();
+        end
+
 		if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
 			table.insert(playersData, {
 				Player = pPlayer,
 				Score = pPlayer:GetScore(),
-                OriginalID = i
+                OriginalID = i,
+                TeamID = lTeamID;
 			});
 			numPlayers = numPlayers + 1;
 		end
@@ -63,17 +71,25 @@ function DrawTop5()
 				end
 
                 local name:string;
+                local teamName:string;
                 local imgname:string;
                 local detailsText:string = "";
                 local scoreCategories = GameInfo.ScoringCategories;
                 local numCategories:number = #scoreCategories;
+                local bUseTick = false;
                 for i = 0, numCategories - 1 do
                     if scoreCategories[i].Multiplier > 0 then
                         local category:table = scoreCategories[i];
-                        detailsText = detailsText .. Locale.Lookup(category.Name) .. ":&nbsp;" .. pPlayer:GetCategoryScore(i);
-                        if(i <= numCategories) then
+                        if bUseTick then
                             detailsText = detailsText .. " - ";
                         end
+                        if category.Name == "LOC_CATEGORY_INCOME_NAME" then
+                            detailsText = detailsText .. Locale.Lookup("LOC_HUD_REPORTS_TOTAL_INCOME_PER_TURN") .. "&nbsp; " .. pPlayer:GetCategoryScore(i);
+                            -- " <img src=ICON_Gold.png/>";
+                        else
+                            detailsText = detailsText .. Locale.Lookup(category.Name) .. ":&nbsp;" .. pPlayer:GetCategoryScore(i);
+                        end
+                        bUseTick = true;
                     end
                 end
 
@@ -81,7 +97,12 @@ function DrawTop5()
                     name = Locale.Lookup(playerConfig:GetPlayerName());
                     imgname = Locale.Lookup(playerConfig:GetLeaderTypeName());
                     -- Civ name and score
-                    fullStr = fullStr.."<p><span class=title><img src='Civ_"..imgname..".png' align=left>"..name..": "..Locale.Lookup("LOC_WORLD_RANKINGS_SCORE_TAB")..":  "..pPlayer:GetScore().."</span><br>";
+                    if playersData[iPlayer].TeamID ~= -1 then
+                        teamName = GameConfiguration.GetTeamName(playersData[iPlayer].TeamID); 
+                        fullStr = fullStr.."<p><span class=title><img src='Civ_"..imgname..".png' align=left>"..name.." ("..Locale.Lookup("LOC_WORLD_RANKINGS_TEAM", teamName).."): "..Locale.Lookup("LOC_WORLD_RANKINGS_SCORE_TAB")..":  "..pPlayer:GetScore().."</span><br>";
+                    else
+                        fullStr = fullStr.."<p><span class=title><img src='Civ_"..imgname..".png' align=left>"..name..": "..Locale.Lookup("LOC_WORLD_RANKINGS_SCORE_TAB")..":  "..pPlayer:GetScore().."</span><br>";
+                    end
                 else
                     name = Locale.Lookup("LOC_WORLD_RANKING_UNMET_PLAYER");
                     -- Civ name and score
@@ -155,7 +176,7 @@ function PopulateVictoryType(victoryType:string, typeText:string)
 		if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
 			table.insert(playersData, {
 				Player = pPlayer,
-				Score = Game.GetVictoryProgressForPlayer(victoryType, i), -- Game Core Call
+				Score = Game.GetVictoryProgressForTeam(victoryType, pPlayer:GetTeam()), -- Game Core Call
 				FirstTiebreakScore = firstTiebreakerFunction(pPlayer),
 				SecondTiebreakScore = secondTiebreakerFunction(pPlayer),
 				FirstTiebreakSummary = Locale.Lookup(firstTiebreakerText, Round(firstTiebreakerFunction(pPlayer), 1)),
@@ -211,33 +232,55 @@ function PopulateVictoryType(victoryType:string, typeText:string)
     fullStr = fullStr.."</span>";
 end
 
+local STANDARD_VICTORY_TYPES:table = {
+	"VICTORY_TECHNOLOGY",
+	"VICTORY_CULTURE",
+	"VICTORY_CONQUEST",
+	"VICTORY_RELIGIOUS"
+};
+
+function IsCustomVictoryType(victoryType:string)
+	for _, checkVictoryType in ipairs(STANDARD_VICTORY_TYPES) do
+		if victoryType == checkVictoryType then
+			return false;
+		end
+	end
+	return true;
+end
+
 function DrawVictoryProgress()
     local strDate = Calendar.MakeYearStr(Game.GetCurrentGameTurn());
     local playerConfig:table = PlayerConfigurations[Game.GetLocalPlayer()];
     local name:string = Locale.Lookup(playerConfig:GetPlayerName());
+    local bShownAType = false;
 
     fullStr = fullStr.."<p><span class=title>" .. Locale.Lookup("LOC_ARX_VICTORY_PROGRESS", name) .."</span><br><br>";
 
 	if(Game.IsVictoryEnabled("VICTORY_TECHNOLOGY")) then
 		PopulateVictoryType("VICTORY_TECHNOLOGY", "<img src=Victory_Science.png align=left>" .. Locale.Lookup("LOC_WORLD_RANKINGS_SCIENCE_TAB").."<br>");
+        bShownAType = true;
 	end
 	if(Game.IsVictoryEnabled("VICTORY_CULTURE")) then
 		PopulateVictoryType("VICTORY_CULTURE", "<img src=Victory_Culture.png align=left>" .. Locale.Lookup("LOC_WORLD_RANKINGS_CULTURE_TAB").."<br>");
+        bShownAType = true;
 	end
 	if(Game.IsVictoryEnabled("VICTORY_CONQUEST")) then
 		PopulateVictoryType("VICTORY_CONQUEST", "<img src=Victory_Domination.png align=left>" .. Locale.Lookup("LOC_WORLD_RANKINGS_DOMINATION_TAB").."<br>");
+        bShownAType = true;
 	end
 	if(Game.IsVictoryEnabled("VICTORY_RELIGIOUS")) then
 		PopulateVictoryType("VICTORY_RELIGIOUS", "<img src=Victory_Religion.png align=left>" .. Locale.Lookup("LOC_WORLD_RANKINGS_RELIGION_TAB").."<br>");
+        bShownAType = true;
 	end
 
 	-- Add custom (modded) victory types
---	for row in GameInfo.Victories() do
---		local victoryType:string = row.VictoryType;
---		if IsCustomVictoryType(victoryType) and Game.IsVictoryEnabled(victoryType) then
---			PopulateVictoryType(victoryType);
---		end
---	end
+	for row in GameInfo.Victories() do
+		local victoryType:string = row.VictoryType;
+		if IsCustomVictoryType(victoryType) and Game.IsVictoryEnabled(victoryType) and not bShownAType then
+            fullStr = fullStr .. Locale.Lookup("LOC_HUD_CITY_NOT_APPLICABLE");
+            bShownAType = true;
+		end
+	end
 
     UI.SetARXTagContentByID("Content", fullStr);
 end
@@ -324,7 +367,17 @@ function RefreshARX()
         -- header with civ name
 		local playerName;
 		if(m_LocalPlayerID and PlayerConfigurations[m_LocalPlayerID]) then
-			playerName = Locale.Lookup(PlayerConfigurations[m_LocalPlayerID]:GetPlayerName());
+            local bOnTeam = false;
+            local team = Teams[m_LocalPlayer:GetTeam()];
+            if(team ~= nil and #team ~= 1) then
+                bOnTeam = true;
+            end
+
+            if bOnTeam then
+                playerName = Locale.Lookup(PlayerConfigurations[m_LocalPlayerID]:GetPlayerName())..", "..Locale.Lookup("LOC_WORLD_RANKINGS_TEAM", m_LocalPlayer:GetTeam());
+            else
+                playerName = Locale.Lookup(PlayerConfigurations[m_LocalPlayerID]:GetPlayerName());
+            end
 		else
 			playerName = Locale.Lookup("LOC_MULTIPLAYER_UNKNOWN");
 		end

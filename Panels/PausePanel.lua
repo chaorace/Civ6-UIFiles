@@ -16,6 +16,19 @@ function StartPanelClose()
 	Controls.SlideOut:Play();
 end
 
+-- Play panel opening animations if it is not already open or opening.
+function StartPanelOpen()
+	if(Controls.SlideIn:IsStopped()							-- Not currently running
+		and Controls.SlideIn:GetProgress() > 0) then		-- Not fully open
+		Controls.AlphaIn:SetToBeginning(); 
+		Controls.SlideIn:SetToBeginning();
+		Controls.AlphaOut:SetToBeginning();
+		Controls.SlideOut:SetToBeginning();
+		Controls.AlphaIn:Play(); 
+		Controls.SlideIn:Play();
+	end
+end
+
 function CheckPausedState()
 	if(not GameConfiguration.IsPaused()) then
 		StartPanelClose();
@@ -34,13 +47,7 @@ function CheckPausedState()
 		local pausePlayerName : string = pausePlayer:GetPlayerName();
 		Controls.WaitingLabel:LocalizeAndSetText("LOC_GAME_PAUSED_BY", pausePlayerName);
 
-		-- Slide in
-		Controls.AlphaIn:SetToBeginning(); 
-		Controls.SlideIn:SetToBeginning();
-		Controls.AlphaOut:SetToBeginning();
-		Controls.SlideOut:SetToBeginning();
-		Controls.AlphaIn:Play(); 
-		Controls.SlideIn:Play();
+		StartPanelOpen();
 	end
 end
 

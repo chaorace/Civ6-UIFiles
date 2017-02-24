@@ -10,6 +10,7 @@ include( "ChatLogic" );
 include( "NetConnectionIconLogic" );
 include( "PopupDialogSupport" );
 include( "Civ6Common" );
+include( "TeamSupport" );
 
 ----------------------------------------------------------------  
 -- Globals
@@ -17,7 +18,7 @@ include( "Civ6Common" );
 local g_PlayerEntries = {};					-- All the current player entries, indexed by playerID.
 local g_PlayerRootToPlayerID = {};  -- maps the string name of a player entry's Root control to a playerID.
 local g_PlayerReady = {};			-- cached player ready status, indexed by playerID.
-
+local g_PlayerModStatus = {};		-- cached player localized mod status strings.
 local g_cachedTeams = {};				-- A cached mapping of PlayerID->TeamID.
 
 local m_playerTarget = { targetType = ChatTargetTypes.CHATTARGET_ALL, targetID = GetNoPlayerTargetID() };
@@ -30,6 +31,9 @@ local m_playersIM = InstanceManager:new( "PlayerListEntry", "Root", Controls.Pla
 local g_GridLinesIM = InstanceManager:new( "HorizontalGridLine", "Control", Controls.GridContainer );
 local m_gameSetupParameterIM = InstanceManager:new( "GameSetupParameter", "Root", nil );
 local m_kPopupDialog:table;
+
+-- Additional Content 
+local m_modsIM = InstanceManager:new("AdditionalContentInstance", "Root", Controls.AdditionalContentStack);
 
 -- Reusable tooltip control
 local m_CivTooltip:table = {};
@@ -103,14 +107,19 @@ local BadMapSizeSlotStatusStr = Locale.Lookup("LOC_INVALID_SLOT_MAP_SIZE");
 local BadMapSizeSlotStatusStrTT = Locale.Lookup("LOC_INVALID_SLOT_MAP_SIZE_TT");
 local UnsupportedText = Locale.Lookup("LOC_READY_UNSUPPORTED");
 local UnsupportedTextTT = Locale.Lookup("LOC_READY_UNSUPPORTED_TT");
+local downloadPendingStr = Locale.Lookup("LOC_MODS_SUBSCRIPTION_DOWNLOAD_PENDING");
 
 local COLOR_GREEN				:number = 0xFF00FF00;
 local COLOR_RED					:number = 0xFF0000FF;
+local ColorString_ModGreen		:string = "[color:ModStatusGreen]";
 local PLAYER_LIST_SIZE_DEFAULT	:number = 325;
 local PLAYER_LIST_SIZE_HOTSEAT	:number = 535;
 local GRID_LINE_WIDTH			:number = 1020;
 local GRID_LINE_HEIGHT			:number = 51;
 local NUM_COLUMNS				:number = 5;
+
+local TEAM_ICON_SIZE			:number = 38;
+local TEAM_ICON_PREFIX			:string = "ICON_TEAM_ICON_";
 
 -------------------------------------------------
 -- Localized Constants
@@ -172,6 +181,7 @@ end
 function OnGameConfigChanged()
 	if(ContextPtr:IsHidden() == false) then
 		RealizeGameSetup(); -- Rebuild the game settings UI.
+		RebuildTeamPulldowns();	-- NoTeams setting might have changed.
 		SetLocalReady(false);  -- unready so player can acknowledge the new settings.
 		CheckGameAutoStart();  -- Toggling "No Duplicate Leaders" can affect the start countdown.
 	end
@@ -275,7 +285,7 @@ end
 function OnChat( fromPlayer, toPlayer, text, eTargetType, playSounds :boolean )
 	if(ContextPtr:IsHidden() == false) then
 		local pPlayerConfig = PlayerConfigurations[fromPlayer];
-		local playerName = pPlayerConfig:GetPlayerName();
+		local playerName = Locale.Lookup(pPlayerConfig:GetPlayerName());
 
 		-- Selecting chat text color based on eTargetType	
 		local chatColor :string = "[color:ChatMessage_Global]";
@@ -291,7 +301,7 @@ function OnChat( fromPlayer, toPlayer, text, eTargetType, playSounds :boolean )
 		if(eTargetType == ChatTargetTypes.CHATTARGET_PLAYER) then
 			local pTargetConfig :table	= PlayerConfigurations[toPlayer];
 			if(pTargetConfig ~= nil) then
-				local targetName :string = pTargetConfig:GetPlayerName();
+				local targetName = Locale.Lookup(pTargetConfig:GetPlayerName());
 				chatString = chatString .. " [" .. targetName .. "]";
 			end
 		end
@@ -379,12 +389,15 @@ end
 
 function OnMultiplayerPrePlayerDisconnected( playerID )
 	if( ContextPtr:IsHidden() == false ) then
-		if(Network.IsPlayerKicked(playerID)) then
-			OnChat( playerID, -1, PlayerKickedChatStr, false );
-		else
-    		OnChat( playerID, -1, PlayerDisconnectedChatStr, false );
+		local playerCfg = PlayerConfigurations[playerID];
+		if(playerCfg:IsHuman()) then
+			if(Network.IsPlayerKicked(playerID)) then
+				OnChat( playerID, -1, PlayerKickedChatStr, false );
+			else
+    			OnChat( playerID, -1, PlayerDisconnectedChatStr, false );
+			end
+			UI.PlaySound("Play_MP_Player_Disconnect");
 		end
-		UI.PlaySound("Play_MP_Player_Disconnect");
 	end
 end
 
@@ -393,6 +406,17 @@ end
 
 function OnModStatusUpdated(playerID: number, modState : number, bytesDownloaded : number, bytesTotal : number,
 							modsRemaining : number, modsRequired : number)
+	
+	if(modState == 1) then -- MOD_STATE_DOWNLOADING
+		local modStatusString = downloadPendingStr;
+		modStatusString = modStatusString .. "[NEWLINE][Icon_AdditionalContent]" .. tostring(modsRemaining) .. "/" .. tostring(modsRequired);
+		g_PlayerModStatus[playerID] = modStatusString;
+	else
+		g_PlayerModStatus[playerID] = nil;
+	end
+	UpdatePlayerEntry(playerID);
+
+	--[[ Prototype Mod Status Progress Bars
 	local playerEntry = g_PlayerEntries[playerID];
 	if(playerEntry ~= nil) then
 		if(modState ~= 1) then
@@ -438,6 +462,7 @@ function OnModStatusUpdated(playerID: number, modState : number, bytesDownloaded
 			playerEntry.ModProgressRemaining:SetText(modProgressStr);
 		end
 	end
+	--]]
 end
 
 -------------------------------------------------
@@ -445,18 +470,26 @@ end
 
 function OnAbandoned(eReason)
 	if (not ContextPtr:IsHidden()) then
+
+		-- We need to CheckLeaveGame before triggering the reason popup because the reason popup hides the staging room
+		-- and would block the leave game incorrectly.  This fixes TTP 22192.
+		CheckLeaveGame();
+
 		if (eReason == KickReason.KICK_HOST) then
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_KICKED" );
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_KICKED" );
 		elseif (eReason == KickReason.KICK_NO_HOST) then
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_HOST_LOSTED" );
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_HOST_LOSTED" );
 		elseif (eReason == KickReason.KICK_NO_ROOM) then
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_ROOM_FULL" );
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_ROOM_FULL" );
 		elseif (eReason == KickReason.KICK_VERSION_MISMATCH) then
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_VERSION_MISMATCH" );
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_VERSION_MISMATCH" );
 		elseif (eReason == KickReason.KICK_MOD_ERROR) then
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_MOD_ERROR" );
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_MOD_ERROR" );
+		elseif (eReason == KickReason.KICK_MOD_MISSING) then
+			local modMissingErrorStr = Modding.GetLastModErrorString();
+			LuaEvents.MultiplayerPopup(modMissingErrorStr);
 		else
-			Events.FrontEndPopup.CallImmediate( "LOC_GAME_ABANDONED_CONNECTION_LOST");
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_CONNECTION_LOST");
 		end
 		LuaEvents.Multiplayer_ExitShell();
 	end
@@ -792,18 +825,20 @@ end
 -------------------------------------------------
 -- Leave the Game
 -------------------------------------------------
+function CheckLeaveGame()
+	-- Leave the network session if we're in a state where the staging room should be triggering the exit.
+	if not ContextPtr:IsHidden()	-- If the screen is not visible, this exit might be part of a general UI state change (like Multiplayer_ExitShell)
+									-- and should not trigger a game exit.
+		and Network.IsInSession()	-- Still in a network session.
+		and not Network.IsInGameStartedState() then -- Don't trigger leave game if we're being used as an ingame screen. Worldview is handling this instead.
+		Network.LeaveGame();
+	end
+end
+
 function HandleExitRequest()
 	print("Staging Room -Handle Exit Request");
 
-	-- Handle LeaveGame when exiting the staging room.
-	-- If the screen is visible, we assume the staging room commanded the exit and should 
-	-- also leave the associated game.  
-	-- IF the screen is not visible, this exit might be part of a general UI state change (like Multiplayer_ExitShell)
-	-- and should not trigger a game exit.
-	if not ContextPtr:IsHidden() 
-		and not Network.IsInGameStartedState() then -- When used as an ingame screen, an exit request just closes the screen.	
-		Network.LeaveGame();
-	end
+	CheckLeaveGame();
 	
 	-- Force close all popups because they are modal and will remain visible even if the screen is hidden
 	for _, playerEntry:table in ipairs(g_PlayerEntries) do
@@ -835,7 +870,7 @@ function GetPlayerEntry(playerID)
 		--print("creating playerEntry for player " .. tostring(playerID));
 		playerEntry = m_playersIM:GetInstance();
 
-		SetupTeamPulldown( playerID, playerEntry.TeamPullDown );
+		--SetupTeamPulldown( playerID, playerEntry.TeamPullDown );
 
 		local civTooltipData : table = {
 			InfoStack			= m_CivTooltip.InfoStack,
@@ -849,14 +884,19 @@ function GetPlayerEntry(playerID)
 		};
 
 		SetupLeaderPulldown(playerID, playerEntry,"PlayerPullDown",nil,nil,civTooltipData);
+		SetupTeamPulldown(playerID, playerEntry.TeamPullDown);
 		SetupHandicapPulldown(playerID, playerEntry.HandicapPullDown);
+
+
 		--playerEntry.PlayerCard:RegisterCallback( Mouse.eLClick, OnSwapButton );
 		--playerEntry.PlayerCard:SetVoid1(playerID);
 		playerEntry.KickButton:RegisterCallback( Mouse.eLClick, OnKickButton );
 		playerEntry.KickButton:SetVoid1(playerID);
 		playerEntry.AddPlayerButton:RegisterCallback( Mouse.eLClick, OnAddPlayer );
 		playerEntry.AddPlayerButton:SetVoid1(playerID);
+		--[[ Prototype Mod Status Progress Bars
 		playerEntry.PlayerModProgressStack:SetHide(true);
+		--]]
 		playerEntry.ReadyImage:RegisterCallback( Mouse.eLClick, OnPlayerEntryReady );
 		playerEntry.ReadyImage:SetVoid1(playerID);
 
@@ -947,8 +987,14 @@ function AddTeamPulldownEntry( playerID :number, pullDown :table, teamID :number
 	local controlTable = {};
 	pullDown:BuildEntry( "InstanceOne", controlTable );
 	
-	controlTable.Button:LocalizeAndSetText( teamName, teamID );
-	controlTable.Button:SetVoids( playerID, teamID);	
+	if teamID >= 0 then
+		local teamIconName:string = TEAM_ICON_PREFIX .. tostring(teamID);
+		controlTable.ButtonImage:SetSizeVal(TEAM_ICON_SIZE, TEAM_ICON_SIZE);
+		controlTable.ButtonImage:SetIcon(teamIconName, TEAM_ICON_SIZE);
+		controlTable.ButtonImage:SetColor(GetTeamColor(teamID));
+	end
+
+	controlTable.Button:SetVoids( playerID, teamID);
 end
 
 function SetupTeamPulldown( playerID :number, pullDown :table )
@@ -958,6 +1004,7 @@ function SetupTeamPulldown( playerID :number, pullDown :table )
 	GetTeamCounts(teamCounts);
 
 	local pulldownEntries = {};
+	local noTeams = GameConfiguration.GetValue("NO_TEAMS");
 
 	-- Always add "None" entry
 	local newPulldownEntry:table = {};
@@ -965,12 +1012,14 @@ function SetupTeamPulldown( playerID :number, pullDown :table )
 	newPulldownEntry.teamName = GameConfiguration.GetTeamName(-1);
 	table.insert(pulldownEntries, newPulldownEntry);
 
-	for teamID, playerCount in pairs(teamCounts) do
-		if teamID ~= -1 then
-			newPulldownEntry = {};
-			newPulldownEntry.teamID = teamID;
-			newPulldownEntry.teamName = GameConfiguration.GetTeamName(teamID);
-			table.insert(pulldownEntries, newPulldownEntry);
+	if(not noTeams) then
+		for teamID, playerCount in pairs(teamCounts) do
+			if teamID ~= -1 then
+				newPulldownEntry = {};
+				newPulldownEntry.teamID = teamID;
+				newPulldownEntry.teamName = GameConfiguration.GetTeamName(teamID);
+				table.insert(pulldownEntries, newPulldownEntry);
+			end
 		end
 	end
 
@@ -980,13 +1029,15 @@ function SetupTeamPulldown( playerID :number, pullDown :table )
 		AddTeamPulldownEntry(playerID, pullDown, curPulldownEntry.teamID, curPulldownEntry.teamName);
 	end
 
-	-- Add an empty team slot so players can join/create a new team
-	local newTeamID :number = 0;
-	while(teamCounts[newTeamID] ~= nil) do
-		newTeamID = newTeamID + 1;
+	if(not noTeams) then
+		-- Add an empty team slot so players can join/create a new team
+		local newTeamID :number = 0;
+		while(teamCounts[newTeamID] ~= nil) do
+			newTeamID = newTeamID + 1;
+		end
+		local newTeamName : string = tostring(newTeamID);
+		AddTeamPulldownEntry(playerID, pullDown, newTeamID, newTeamName);
 	end
-	local newTeamName : string = tostring(newTeamID);
-	AddTeamPulldownEntry(playerID, pullDown, newTeamID, newTeamName);
 
 	pullDown:CalculateInternals();
 	pullDown:RegisterSelectionCallback( OnTeamPull);
@@ -1068,6 +1119,8 @@ function UpdatePlayerEntry(playerID)
 		-- Has this game aleady been started?  Hot joining or loading a save game.
 		local gameInProgress:boolean = GameConfiguration.GetGameState() ~= GameStateTypes.GAMESTATE_PREGAME;
 
+		-- NOTE: UpdatePlayerEntry() currently only has control over the team player attribute.  Everything else is controlled by 
+		--		PlayerConfigurationValuesToUI() and the PlayerSetupLogic.  See CheckExternalEnabled().
 		-- Can the local player change this slot's attributes (handicap; civ, etc) at this time?
 		local bCanChangePlayerValues = not pPlayerConfig:GetReady()  -- Can't change a slot once that player is ready.
 										and not gameInProgress -- Can't change player values once the game has been started.
@@ -1126,7 +1179,12 @@ function UpdatePlayerEntry(playerID)
 			-- Update status string
 			local statusString = NotReadyStatusStr;
 			local statusTTString = "";
-			if(playerID >= g_currentMaxPlayers) then
+			if(slotStatus == SlotStatus.SS_TAKEN 
+				and not pPlayerConfig:GetModReady() 
+				and g_PlayerModStatus[playerID] ~= nil 
+				and g_PlayerModStatus[playerID] ~= "") then
+				statusString = g_PlayerModStatus[playerID];
+			elseif(playerID >= g_currentMaxPlayers) then
 				-- Player is invalid slot for this map size.
 				statusString = BadMapSizeSlotStatusStr;
 				statusTTString = BadMapSizeSlotStatusStrTT;
@@ -1198,11 +1256,13 @@ function UpdatePlayerEntry(playerID)
 			end
 		end
 
+		--[[ Prototype Mod Status Progress Bars
 		-- Hide the player's mod progress if they are mod ready.
 		-- This is how the mod progress is hidden once mod downloads are completed.
 		if(pPlayerConfig:GetModReady()) then
 			playerEntry.PlayerModProgressStack:SetHide(true);
 		end
+		--]]
 
 		PopulateSlotTypePulldown( playerEntry.AlternateSlotTypePulldown, playerID, g_slotTypeData );
 		PopulateSlotTypePulldown(playerEntry.SlotTypePulldown, playerID, g_slotTypeData);
@@ -1211,15 +1271,23 @@ function UpdatePlayerEntry(playerID)
 		if(isActiveSlot) then
 			PlayerConfigurationValuesToUI(playerID); -- Update player configuration pulldown values.
 		end
-		playerEntry.PlayerPullDown:SetDisabled(not bCanChangePlayerValues);
-		playerEntry.HandicapPullDown:SetDisabled(not bCanChangePlayerValues);
-
-
-		-- IMPORTANT: DISABLING TEAM PULLDOWNS UNTIL DAY 0 PATCH
-		--playerEntry.TeamPullDown:SetDisabled(not bCanChangePlayerValues);
-		playerEntry.TeamPullDown:SetHide(true);
-
-		playerEntry.TeamPullDown:GetButton():SetText(pPlayerConfig:GetTeamName()); 
+		
+		-- TeamPullDown is not controlled by PlayerConfigurationValuesToUI and is set manually.
+		local noTeams = GameConfiguration.GetValue("NO_TEAMS");
+		playerEntry.TeamPullDown:SetDisabled(not bCanChangePlayerValues or noTeams);
+		local teamID:number = pPlayerConfig:GetTeam();
+		if teamID >= 0 then
+			-- Adjust the texture offset based on the selected team
+			local teamIconName:string = TEAM_ICON_PREFIX .. tostring(teamID);
+			playerEntry.ButtonSelectedTeam:SetSizeVal(TEAM_ICON_SIZE, TEAM_ICON_SIZE);
+			playerEntry.ButtonSelectedTeam:SetIcon(teamIconName, TEAM_ICON_SIZE);
+			playerEntry.ButtonSelectedTeam:SetColor(GetTeamColor(teamID));
+			playerEntry.ButtonSelectedTeam:SetHide(false);
+			playerEntry.ButtonNoTeam:SetHide(true);
+		else
+			playerEntry.ButtonSelectedTeam:SetHide(true);
+			playerEntry.ButtonNoTeam:SetHide(false);
+		end
 
 		-- NOTE: order matters. you MUST call this after all other setup and before resize as hotseat will hide/show manipulate elements specific to that mode.
 		if(isHotSeat) then
@@ -1273,7 +1341,9 @@ function UpdatePlayerEntry_Hotseat(playerID)
 			end
 
 			playerEntry.KickButton:SetHide(true);
+			--[[ Prototype Mod Status Progress Bars
 			playerEntry.PlayerModProgressStack:SetHide(true);
+			--]]
 
 			playerEntry.HotseatEditButton:RegisterCallback(Mouse.eLClick, function()
 				UIManager:PushModal(Controls.EditHotseatPlayer, true);
@@ -1357,6 +1427,10 @@ function UpdateReadyButton_Hotseat()
 			Controls.StartLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_READY_BLOCKED_HOTSEAT_INVALID_TEAMS")));
 			Controls.ReadyButton:LocalizeAndSetToolTip("LOC_READY_BLOCKED_HOTSEAT_INVALID_TEAMS_TT");
 			Controls.ReadyButton:SetDisabled(true);
+		elseif(g_badPlayerForMapSize) then
+			Controls.StartLabel:LocalizeAndSetText("LOC_READY_BLOCKED_PLAYER_MAP_SIZE");
+			Controls.ReadyButton:LocalizeAndSetToolTip( "LOC_READY_BLOCKED_PLAYER_MAP_SIZE_TT", g_currentMaxPlayers);
+			Controls.ReadyButton:SetDisabled(true);
 		elseif(g_duplicateLeaders) then
 			Controls.StartLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS")));
 			Controls.ReadyButton:LocalizeAndSetToolTip("LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS");
@@ -1406,7 +1480,7 @@ function UpdateReadyButton()
 			local curPlayerConfig = PlayerConfigurations[iPlayer];
 			local curSlotStatus = curPlayerConfig:GetSlotStatus();
 			if(curSlotStatus == SlotStatus.SS_TAKEN and not Network.IsPlayerConnected(playerID)) then
-				waitingForJoinersTooltip = waitingForJoinersTooltip .. "[NEWLINE]" .. "(" .. curPlayerConfig:GetPlayerName() .. ") ";
+				waitingForJoinersTooltip = waitingForJoinersTooltip .. "[NEWLINE]" .. "(" .. Locale.Lookup(curPlayerConfig:GetPlayerName()) .. ") ";
 			end
 		end
 		Controls.ReadyButton:SetToolTipString( waitingForJoinersTooltip );
@@ -1437,7 +1511,7 @@ function UpdateReadyButton()
 			local curPlayerConfig = PlayerConfigurations[iPlayer];
 			local curSlotStatus = curPlayerConfig:GetSlotStatus();
 			if(curSlotStatus == SlotStatus.SS_TAKEN and not curPlayerConfig:GetModReady()) then
-				waitingForModReadyTooltip = waitingForModReadyTooltip .. "[NEWLINE]" .. "(" .. curPlayerConfig:GetPlayerName() .. ") ";
+				waitingForModReadyTooltip = waitingForModReadyTooltip .. "[NEWLINE]" .. "(" .. Locale.Lookup(curPlayerConfig:GetPlayerName()) .. ") ";
 			end
 		end
 		Controls.ReadyButton:SetToolTipString( waitingForModReadyTooltip );
@@ -1776,6 +1850,29 @@ end
 function RealizeGameSetup()
 	m_gameSetupParameterIM:ResetInstances();
 	BuildGameSetup(BuildGameSetupParameter);
+
+	BuildAdditionalContent();
+end
+
+function BuildAdditionalContent()
+	m_modsIM:ResetInstances();
+
+	local enabledMods = GameConfiguration.GetEnabledMods();
+	for _, curMod in ipairs(enabledMods) do
+		local modControl = m_modsIM:GetInstance();
+		local modTitleStr : string = curMod.Title;
+
+		-- Color unofficial mods to call them out.
+		if(not curMod.Official) then
+			modTitleStr = ColorString_ModGreen .. modTitleStr .. "[ENDCOLOR]";
+		end
+		modControl.ModTitle:SetText(modTitleStr);
+	end
+
+	Controls.AdditionalContentStack:CalculateSize();
+	Controls.AdditionalContentStack:ReprocessAnchoring();
+
+	Controls.ParametersScrollPanel:CalculateInternalSize();
 end
 
 -- ===========================================================================
@@ -1888,7 +1985,7 @@ function IsFriendInGame(friend:table)
 	for i, iPlayer in ipairs(player_ids) do	
 		local curPlayerConfig = PlayerConfigurations[iPlayer];
 		local steamID = curPlayerConfig:GetNetworkIdentifer();
-		if( steamID == friend.ID and Network.IsPlayerConnected(iPlayer) ) then
+		if( steamID ~= nil and steamID == friend.ID and Network.IsPlayerConnected(iPlayer) ) then
 			return true;
 		end
 	end

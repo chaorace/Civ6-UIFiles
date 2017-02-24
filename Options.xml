@@ -49,6 +49,10 @@
                 <PullDown ID="TunerPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0"/>
                 <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_TUNER"/>
               </Stack>
+				<Stack Anchor="R,T" StackGrowth="Left" Padding="5">
+					<PullDown ID="AutoDownloadPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0"/>
+					<Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_AUTO_DOWNLOAD_ADDITIONAL_CONTENT" ToolTip="LOC_OPTIONS_AUTO_DOWNLOAD_ADDITIONAL_CONTENT_TOOLTIP"/>
+				</Stack>
               <Stack Anchor="R,T" StackGrowth="Left" Padding="5">
                 <PullDown ID="TutorialPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0"/>
                 <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_TUTORIAL"/>
@@ -72,8 +76,8 @@
                 <GridButton ID="TimeOfDayCheckbox" Anchor="L,C" Offset="0,0" Size="300,24" Style="CheckBoxControl" String="LOC_OPTIONS_TIME_OF_DAY_TEXT" />
               </Stack>
 				<Stack Anchor="R,T" StackGrowth="Left" Padding="5">
-					<Grid Style="EditTextArea" Size="300,30">
-						<EditBox ID="LANPlayerNameEdit" Anchor="L,C" Offset="6,0" Size="343,23" EditMode="1" Style="FontNormal14" ColorSet="BodyTextCool" FontStyle="stroke" MaxLength="22"/>
+					<Grid Style="EditTextArea" Size="300,30" InnerPadding="6,6">
+						<EditBox ID="LANPlayerNameEdit" Anchor="L,C" Offset="0,0" Size="parent,23" EditMode="1" Style="FontNormal14" ColorSet="BodyTextCool" FontStyle="stroke" MaxLength="22"/>
 					</Grid>
 					<Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_LAN_PLAYER_NAME"/>
 				</Stack>
@@ -99,7 +103,8 @@
                   <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_VIDEO_RESOLUTION_TEXT"/>
                 </Stack>
                 <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
-                  <GridButton ID="UIUpscaleCheckbox" Anchor="L,L" Offset="5,0" Size="300,24" Style="CheckBoxControl" String="LOC_OPTIONS_VIDEO_UI_UPSCALE_TEXT" ToolTip="LOC_OPTIONS_VIDEO_UI_UPSCALE_TOOLTIP"/>
+                  <PullDown ID="UIScalePulldown" Style="PullDownBlue" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_VIDEO_UI_UPSCALE_TOOLTIP"/>
+                  <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_VIDEO_UI_UPSCALE_TEXT"/>
                 </Stack>
                 <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
                   <PullDown ID="FullScreenPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_VIDEO_WINDOW_MODE_TOOLTIP"/>

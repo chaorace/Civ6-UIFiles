@@ -145,7 +145,9 @@
   <!-- An instance of an Icon, with optional Amount Text that overlaps the icon -->
   <Instance	Name="RelationshipIcon">
     <Container ID="Background" Size="40,40">
-      <Image ID="Icon" StretchMode="None" Size="32,32" Anchor="R,T"/>
+      <Image ID="Icon" StretchMode="None" Size="32,32" Anchor="R,T">
+        <Image ID="TeamRibbon" Anchor="C,B" Offset="0,-7" Size="30,30" Texture="TeamRibbon32"/>
+      </Image>
       <Button ID="Status" StretchMode="None" Style="DiplomacyRelationshipPips" Anchor="L,B" Disabled="1"/>
     </Container>
   </Instance>
@@ -409,6 +411,7 @@
             <Image Texture="Controls_CircleBacking68" Size="68,68" Anchor="C,C"/>
             <Image  ID="YouIndicator" Hidden="1" Size="64,62" Texture="Diplomacy_YouIndicator" Anchor="C,C"/>
             <Image  ID="LeaderIcon" Anchor="C,C" Size="55,55" Texture="Leaders55" />
+            <Image ID="TeamRibbon" Anchor="C,B" Offset="0,-4" Texture="TeamRibbon53" Size="53,53"/>
             <Button ID="Relationship" StretchMode="None" Style="DiplomacyRelationshipPips" Anchor="L,B" Disabled="1" ConsumeMouse="0"/>
             <Image ID="CivIndicator" Anchor="L,T" Texture="CircleBacking22" Size="22,22" Offset="0,0" Hidden="1">
               <Image ID="CivIcon" Anchor="C,C" Texture="CivSymbols22" Size="22,22"/>

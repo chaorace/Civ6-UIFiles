@@ -38,6 +38,7 @@ local m_ToggleAppealLensId		= Input.GetActionId("LensAppeal");
 local m_ToggleSettlerLensId		= Input.GetActionId("LensSettler");
 local m_ToggleGovernmentLensId	= Input.GetActionId("LensGovernment");
 local m_TogglePoliticalLensId	= Input.GetActionId("LensPolitical");
+local m_ToggleTourismLensId	    = Input.GetActionId("LensTourism");
 
 
 local m_isMouseDragEnabled		:boolean = true; -- Can the camera be moved by dragging on the minimap?
@@ -119,6 +120,7 @@ end
 function RefreshMinimapOptions()
     Controls.ToggleYieldsButton:SetCheck(UserConfiguration.ShowMapYield());
     Controls.ToggleGridButton:SetCheck(bGridOn);
+    Controls.ToggleResourcesButton:SetCheck(UserConfiguration.ShowMapResources());
 end
 
 -- ===========================================================================
@@ -576,6 +578,12 @@ function OnInputActionTriggered( actionId )
         ToggleOwnerLens();
         UI.PlaySound("Play_UI_Click");
 	end
+	if m_ToggleTourismLensId ~= nil and (actionId == m_ToggleTourismLensId) then
+        LensPanelHotkeyControl( Controls.TourismLensButton );
+        ToggleTourismLens();
+        UI.PlaySound("Play_UI_Click");
+	end
+
 end
 
 -- ===========================================================================

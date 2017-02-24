@@ -4,41 +4,41 @@
 
   <Stack Size="parent,parent" StackGrowth="Bottom" Padding="10">
     
-    <Label ID="SelectedPlotLabel" FontSize="26" String="No plot selected"/>
+    <Label ID="SelectedPlotLabel" FontSize="26" String="LOC_WORLD_BUILDER_NO_PLOT_SELECTED_HELP"/>
 
     <Stack StackGrowth="Right" Padding="5"  Size="250,29">
-      <Label FontSize="18" Size="125,29" String="Terrain:"/>
+      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_TERRAIN"/>
       <SimplePullDown ID="TerrainPullDown" Style="MainPullDown" ScrollThreshold="300" Size="250,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
     </Stack>
 
     <Stack StackGrowth="Right" Padding="5" Offset="0,-40">
-      <Label FontSize="18" Size="125,29" String="Feature:"/>
+      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_FEATURE"/>
       <SimplePullDown ID="FeaturePullDown" Style="MainPullDown" ScrollThreshold="300" Size="250,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
     </Stack>
 
     <Stack StackGrowth="Right" Padding="5" Offset="0,-40">
-      <Label FontSize="18" Size="125,29" String="Resource:"/>
+      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_RESOURCE"/>
       <SimplePullDown ID="ResourcePullDown" Style="MainPullDown" ScrollThreshold="280" Size="250,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
     </Stack>
 
     <Stack StackGrowth="Right" Padding="5" Offset="0,-40">
-      <Label FontSize="18" Size="200,29" String="Resource Amount:"/>
+      <Label FontSize="18" Size="200,29" String="LOC_WORLDBUILDER_ATTRIBUTE_RESOURCE_AMOUNT"/>
       <EditBox ID="ResourceAmount" Offset="0,0" Size="148,23" EditMode="1" String="" NumberInput="1"/>
     </Stack>
     
     <Stack StackGrowth="Right" Padding="5" Offset="0,-10">
-      <Label FontSize="18" Size="125,29" String="Improvement:"/>
+      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_IMPROVEMENT"/>
       <SimplePullDown ID="ImprovementPullDown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
     </Stack>
 
-    <CheckBox ID="ImprovementPillagedCheck" Style="MainMenuCheck" Offset="15,-40" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="Improvement Pillaged:"/>
+    <CheckBox ID="ImprovementPillagedCheck" Style="MainMenuCheck" Offset="15,-40" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="LOC_WORLDBUILDER_ATTRIBUTE_IMPROVEMENT_PILLAGED"/>
 
     <Stack StackGrowth="Right" Padding="5" Offset="0,-10">
-      <Label FontSize="18" Size="125,29" String="Route:"/>
+      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_ROUTE"/>
       <SimplePullDown ID="RoutePullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
     </Stack>
 
-    <CheckBox ID="RoutePillagedCheck" Style="MainMenuCheck" Offset="15,-40" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="Route Pillaged:"/>
+    <CheckBox ID="RoutePillagedCheck" Style="MainMenuCheck" Offset="15,-40" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="LOC_WORLDBUILDER_ATTRIBUTE_ROUTE_PILLAGED"/>
 
     <Label FontSize="18" Size="125,29" String="Start Position:"/>
     <Stack StackGrowth="Right" Padding="5">
@@ -53,7 +53,7 @@
     </Stack>
 
     <Stack StackGrowth="Right" Padding="5" Offset="0,-40">
-      <Label FontSize="18" Size="125,29" String="Owner:"/>
+      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_OWNER"/>
       <SimplePullDown ID="OwnerPulldown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
     </Stack>
   

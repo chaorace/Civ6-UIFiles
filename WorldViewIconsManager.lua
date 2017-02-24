@@ -121,7 +121,6 @@ function SetResourceIcon( pInstance:table, pPlot, type, state)
 				table.insert(toolTipItems, Locale.Lookup("LOC_TOOLTIP_ARTIFACT_RESOURCE"));
 				table.insert(toolTipItems, Locale.Lookup("LOC_TOOLTIP_ARTIFACT_RESOURCE_DETAILS"));
 			end
-			local resourceTechType;
 
 			local tValidImprovements:table = {}
 			for row in GameInfo.Improvement_ValidResources() do
@@ -131,6 +130,7 @@ function SetResourceIcon( pInstance:table, pPlot, type, state)
 			end
 
 			local resourceTechType;
+			local resourceCivicType;
 			if (table.count(tValidImprovements) > 0) then
 				if (table.count(tValidImprovements) > 1) then
 					for i, improvement in ipairs(tValidImprovements) do
@@ -162,12 +162,14 @@ function SetResourceIcon( pInstance:table, pPlot, type, state)
 
 						if(valid_feature and valid_terrain) then
 							resourceTechType = GameInfo.Improvements[improvementType].PrereqTech;
+							resourceCivicType = GameInfo.Improvements[improvementType].PrereqCivic;
 							break;
 						end
 					end
 				else
 					local improvementType = tValidImprovements[1];
 					resourceTechType = GameInfo.Improvements[improvementType].PrereqTech;
+					resourceCivicType = GameInfo.Improvements[improvementType].PrereqCivic;
 				end
 			end
 
@@ -181,6 +183,18 @@ function SetResourceIcon( pInstance:table, pPlot, type, state)
 					end
 				end
 			end
+
+			if (resourceCivicType ~= nil) then
+				local localPlayer	= Players[Game.GetLocalPlayer()];
+				if (localPlayer ~= nil) then
+					local playerCulture	= localPlayer:GetCulture();
+					local civicType = GameInfo.Civics[resourceCivicType];
+					if (civicType ~= nil and not playerCulture:HasCivic(civicType.Index)) then
+						table.insert(toolTipItems,"[COLOR:Civ6Red](".. Locale.Lookup("LOC_TOOLTIP_REQUIRES") .. " " .. Locale.Lookup(civicType.Name) .. ")[ENDCOLOR]");
+					end
+				end
+			end
+
 			table.insert(toolTipItems, resourceString)
 			pInstance.ResourceIcon:SetToolTipString(table.concat(toolTipItems, "[NEWLINE]"));
 		end
@@ -563,10 +577,10 @@ function ClearImprovementRecommendations()
 end
 
 -- ===========================================================================
-function AddImprovementRecommendationsForCity( pCity:table )
+function AddImprovementRecommendationsForCity( pCity:table, pSelectedUnit:table )
 	local pCityAI:table = pCity:GetCityAI();
 	if pCityAI then
-		local recommendList:table = pCityAI:GetImprovementRecommendations();
+		local recommendList:table = pCityAI:GetImprovementRecommendationsForBuilder(pSelectedUnit:GetComponentID());
 		for key,value in pairs(recommendList) do
 			local pRecommendedPlotInstance = GetInstanceAt(value.ImprovementLocation);
 
@@ -632,12 +646,12 @@ function OnUnitSelectionChanged(player, unitId, locationX, locationY, locationZ,
 	-- Are we a builder?
 	local pSelectedUnit:table = UI.GetHeadSelectedUnit();
 	if pSelectedUnit then 
-		if pSelectedUnit:GetBuildCharges() > 0 and GameInfo.Units[pSelectedUnit:GetUnitType()].UnitType == "UNIT_BUILDER" then
+		if pSelectedUnit:GetBuildCharges() > 0 then
 			-- If we're within a city then look for any recommended improvements
 			local pPlot = Map.GetPlotIndex(pSelectedUnit:GetX(), pSelectedUnit:GetY());
 			local pCity:table = Cities.GetPlotPurchaseCity(pPlot);
 			if pCity and pCity:GetOwner() == player then
-				AddImprovementRecommendationsForCity(pCity);
+				AddImprovementRecommendationsForCity(pCity, pSelectedUnit);
 			end
 		elseif GameInfo.Units[pSelectedUnit:GetUnitType()].FoundCity then
 			-- Add settlement recommendations if we're a settler

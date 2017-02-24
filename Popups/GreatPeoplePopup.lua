@@ -402,7 +402,7 @@ function ViewCurrent( data:table )
 	-- Clamp overall popup size to not be larger than contents (overspills in 4k and eyefinitiy rigs.)
 	local screenX,_			:number = UIManager:GetScreenSizeVal();
 	local popupContainerX	:number = screenX;
-	if peopleAreaWidth < screenX then	
+	if peopleAreaWidth > 0 and peopleAreaWidth < screenX then	
 		popupContainerX = peopleAreaWidth;
 	end	
 	
@@ -1017,12 +1017,14 @@ end
 -- ===========================================================================
 function OnInputActionTriggered( actionId )
 	if actionId == m_ToggleGreatPeopleId then
-        UI.PlaySound("Play_UI_Click");
-		if(ContextPtr:IsHidden()) then
-			LuaEvents.LaunchBar_OpenGreatPeoplePopup();
-		else
-			OnClose();
-		end
+        if UI.QueryGlobalParameterInt("DISABLE_GREAT_PEOPLE_HOTKEY") ~= 1 then
+            UI.PlaySound("Play_UI_Click");
+    		if(ContextPtr:IsHidden()) then
+    			LuaEvents.LaunchBar_OpenGreatPeoplePopup();
+    		else
+    			OnClose();
+    		end
+        end
 	end
 end
 

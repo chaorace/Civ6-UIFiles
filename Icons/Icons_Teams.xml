@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameInfo>
+  <IconTextureAtlases>
+		<Row Name="ICON_ATLAS_TEAM_ICONS" IconSize="38" IconsPerRow="8" IconsPerColumn="8" Filename="TeamNumbered38.dds"/>
+		
+		<Row Name="ICON_ATLAS_TEAM_RIBBONS" IconSize="60" IconsPerRow="8" IconsPerColumn="8" Filename="TeamRibbon60.dds"/>
+		<Row Name="ICON_ATLAS_TEAM_RIBBONS" IconSize="53" IconsPerRow="8" IconsPerColumn="8" Filename="TeamRibbon53.dds"/>
+		<Row Name="ICON_ATLAS_TEAM_RIBBONS" IconSize="44" IconsPerRow="8" IconsPerColumn="8" Filename="TeamRibbon44.dds"/>
+		<Row Name="ICON_ATLAS_TEAM_RIBBONS" IconSize="30" IconsPerRow="8" IconsPerColumn="8" Filename="TeamRibbon32.dds"/>
+  </IconTextureAtlases>
+  <IconDefinitions>
+    <!-- Team Icons -->
+	  <Row Name="ICON_TEAM_ICON_0"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="0"/>
+	  <Row Name="ICON_TEAM_ICON_1"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="1"/>
+	  <Row Name="ICON_TEAM_ICON_2"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="2"/>
+	  <Row Name="ICON_TEAM_ICON_3"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="3"/>
+	  <Row Name="ICON_TEAM_ICON_4"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="4"/>
+	  <Row Name="ICON_TEAM_ICON_5"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="5"/>
+	  <Row Name="ICON_TEAM_ICON_6"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="6"/>
+	  <Row Name="ICON_TEAM_ICON_7"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="7"/>
+	  <Row Name="ICON_TEAM_ICON_8"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="8"/>
+	  <Row Name="ICON_TEAM_ICON_9"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="9"/>
+	  <Row Name="ICON_TEAM_ICON_10"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="10"/>
+	  <Row Name="ICON_TEAM_ICON_11"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="11"/>
+	  <Row Name="ICON_TEAM_ICON_12"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="12"/>
+	  <Row Name="ICON_TEAM_ICON_13"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="13"/>
+	  <Row Name="ICON_TEAM_ICON_14"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="14"/>
+	  <Row Name="ICON_TEAM_ICON_15"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="15"/>
+	  <Row Name="ICON_TEAM_ICON_16"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="16"/>
+	  <Row Name="ICON_TEAM_ICON_17"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="17"/>
+	  <Row Name="ICON_TEAM_ICON_18"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="18"/>
+	  <Row Name="ICON_TEAM_ICON_19"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="19"/>
+	  <Row Name="ICON_TEAM_ICON_20"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="20"/>
+	  <Row Name="ICON_TEAM_ICON_21"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="21"/>
+	  <Row Name="ICON_TEAM_ICON_22"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="22"/>
+	  <Row Name="ICON_TEAM_ICON_23"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="23"/>
+	  <Row Name="ICON_TEAM_ICON_24"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="24"/>
+	  <Row Name="ICON_TEAM_ICON_25"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="25"/>
+	  <Row Name="ICON_TEAM_ICON_26"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="26"/>
+	  <Row Name="ICON_TEAM_ICON_27"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="27"/>
+	  <Row Name="ICON_TEAM_ICON_28"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="28"/>
+	  <Row Name="ICON_TEAM_ICON_29"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="29"/>
+	  <Row Name="ICON_TEAM_ICON_30"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="30"/>
+	  <Row Name="ICON_TEAM_ICON_31"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="31"/>
+	  <Row Name="ICON_TEAM_ICON_32"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="32"/>
+	  <Row Name="ICON_TEAM_ICON_33"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="33"/>
+	  <Row Name="ICON_TEAM_ICON_34"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="34"/>
+	  <Row Name="ICON_TEAM_ICON_35"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="35"/>
+	  <Row Name="ICON_TEAM_ICON_36"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="36"/>
+	  <Row Name="ICON_TEAM_ICON_37"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="37"/>
+	  <Row Name="ICON_TEAM_ICON_38"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="38"/>
+	  <Row Name="ICON_TEAM_ICON_39"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="39"/>
+	  <Row Name="ICON_TEAM_ICON_40"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="40"/>
+	  <Row Name="ICON_TEAM_ICON_41"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="41"/>
+	  <Row Name="ICON_TEAM_ICON_42"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="42"/>
+	  <Row Name="ICON_TEAM_ICON_43"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="43"/>
+	  <Row Name="ICON_TEAM_ICON_44"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="44"/>
+	  <Row Name="ICON_TEAM_ICON_45"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="45"/>
+	  <Row Name="ICON_TEAM_ICON_46"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="46"/>
+	  <Row Name="ICON_TEAM_ICON_47"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="47"/>
+	  <Row Name="ICON_TEAM_ICON_48"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="48"/>
+	  <Row Name="ICON_TEAM_ICON_49"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="49"/>
+	  <Row Name="ICON_TEAM_ICON_50"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="50"/>
+	  <Row Name="ICON_TEAM_ICON_51"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="51"/>
+	  <Row Name="ICON_TEAM_ICON_52"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="52"/>
+	  <Row Name="ICON_TEAM_ICON_53"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="53"/>
+	  <Row Name="ICON_TEAM_ICON_54"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="54"/>
+	  <Row Name="ICON_TEAM_ICON_55"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="55"/>
+	  <Row Name="ICON_TEAM_ICON_56"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="56"/>
+	  <Row Name="ICON_TEAM_ICON_57"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="57"/>
+	  <Row Name="ICON_TEAM_ICON_58"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="58"/>
+	  <Row Name="ICON_TEAM_ICON_59"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="59"/>
+	  <Row Name="ICON_TEAM_ICON_60"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="60"/>
+	  <Row Name="ICON_TEAM_ICON_61"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="61"/>
+	  <Row Name="ICON_TEAM_ICON_62"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="62"/>
+	  <Row Name="ICON_TEAM_ICON_63"	Atlas="ICON_ATLAS_TEAM_ICONS" Index="63"/>
+	
+	  <!-- Team Ribbons -->
+	  <Row Name="ICON_TEAM_RIBBON_0"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="0"/>
+	  <Row Name="ICON_TEAM_RIBBON_1"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="1"/>
+	  <Row Name="ICON_TEAM_RIBBON_2"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="2"/>
+	  <Row Name="ICON_TEAM_RIBBON_3"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="3"/>
+	  <Row Name="ICON_TEAM_RIBBON_4"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="4"/>
+	  <Row Name="ICON_TEAM_RIBBON_5"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="5"/>
+	  <Row Name="ICON_TEAM_RIBBON_6"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="6"/>
+	  <Row Name="ICON_TEAM_RIBBON_7"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="7"/>
+	  <Row Name="ICON_TEAM_RIBBON_8"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="8"/>
+	  <Row Name="ICON_TEAM_RIBBON_9"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="9"/>
+	  <Row Name="ICON_TEAM_RIBBON_10"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="10"/>
+	  <Row Name="ICON_TEAM_RIBBON_11"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="11"/>
+	  <Row Name="ICON_TEAM_RIBBON_12"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="12"/>
+	  <Row Name="ICON_TEAM_RIBBON_13"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="13"/>
+	  <Row Name="ICON_TEAM_RIBBON_14"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="14"/>
+	  <Row Name="ICON_TEAM_RIBBON_15"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="15"/>
+	  <Row Name="ICON_TEAM_RIBBON_16"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="16"/>
+	  <Row Name="ICON_TEAM_RIBBON_17"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="17"/>
+	  <Row Name="ICON_TEAM_RIBBON_18"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="18"/>
+	  <Row Name="ICON_TEAM_RIBBON_19"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="19"/>
+	  <Row Name="ICON_TEAM_RIBBON_20"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="20"/>
+	  <Row Name="ICON_TEAM_RIBBON_21"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="21"/>
+	  <Row Name="ICON_TEAM_RIBBON_22"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="22"/>
+	  <Row Name="ICON_TEAM_RIBBON_23"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="23"/>
+	  <Row Name="ICON_TEAM_RIBBON_24"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="24"/>
+	  <Row Name="ICON_TEAM_RIBBON_25"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="25"/>
+	  <Row Name="ICON_TEAM_RIBBON_26"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="26"/>
+	  <Row Name="ICON_TEAM_RIBBON_27"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="27"/>
+	  <Row Name="ICON_TEAM_RIBBON_28"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="28"/>
+	  <Row Name="ICON_TEAM_RIBBON_29"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="29"/>
+	  <Row Name="ICON_TEAM_RIBBON_30"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="30"/>
+	  <Row Name="ICON_TEAM_RIBBON_31"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="31"/>
+	  <Row Name="ICON_TEAM_RIBBON_32"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="32"/>
+	  <Row Name="ICON_TEAM_RIBBON_33"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="33"/>
+	  <Row Name="ICON_TEAM_RIBBON_34"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="34"/>
+	  <Row Name="ICON_TEAM_RIBBON_35"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="35"/>
+	  <Row Name="ICON_TEAM_RIBBON_36"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="36"/>
+	  <Row Name="ICON_TEAM_RIBBON_37"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="37"/>
+	  <Row Name="ICON_TEAM_RIBBON_38"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="38"/>
+	  <Row Name="ICON_TEAM_RIBBON_39"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="39"/>
+	  <Row Name="ICON_TEAM_RIBBON_40"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="40"/>
+	  <Row Name="ICON_TEAM_RIBBON_41"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="41"/>
+	  <Row Name="ICON_TEAM_RIBBON_42"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="42"/>
+	  <Row Name="ICON_TEAM_RIBBON_43"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="43"/>
+	  <Row Name="ICON_TEAM_RIBBON_44"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="44"/>
+	  <Row Name="ICON_TEAM_RIBBON_45"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="45"/>
+	  <Row Name="ICON_TEAM_RIBBON_46"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="46"/>
+	  <Row Name="ICON_TEAM_RIBBON_47"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="47"/>
+	  <Row Name="ICON_TEAM_RIBBON_48"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="48"/>
+	  <Row Name="ICON_TEAM_RIBBON_49"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="49"/>
+	  <Row Name="ICON_TEAM_RIBBON_50"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="50"/>
+	  <Row Name="ICON_TEAM_RIBBON_51"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="51"/>
+	  <Row Name="ICON_TEAM_RIBBON_52"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="52"/>
+	  <Row Name="ICON_TEAM_RIBBON_53"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="53"/>
+	  <Row Name="ICON_TEAM_RIBBON_54"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="54"/>
+	  <Row Name="ICON_TEAM_RIBBON_55"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="55"/>
+	  <Row Name="ICON_TEAM_RIBBON_56"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="56"/>
+	  <Row Name="ICON_TEAM_RIBBON_57"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="57"/>
+	  <Row Name="ICON_TEAM_RIBBON_58"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="58"/>
+	  <Row Name="ICON_TEAM_RIBBON_59"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="59"/>
+	  <Row Name="ICON_TEAM_RIBBON_60"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="60"/>
+	  <Row Name="ICON_TEAM_RIBBON_61"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="61"/>
+	  <Row Name="ICON_TEAM_RIBBON_62"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="62"/>
+	  <Row Name="ICON_TEAM_RIBBON_63"	Atlas="ICON_ATLAS_TEAM_RIBBONS" Index="63"/>
+	</IconDefinitions>
+</GameInfo>
+
+

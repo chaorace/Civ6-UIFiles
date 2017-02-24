@@ -18,8 +18,11 @@ end
 
 function ShowStore()
     if (Steam ~= nil) then
-	    Steam.ActivateGameOverlayToStore();
+	    Steam.ActivateGameOverlayToStore(289070);
     end
+	-- Change to exit to main menu.
+	Controls.MenuButton:LocalizeAndSetText("LOC_GAME_MENU_EXIT_TO_MAIN");
+	
 end
 
 -- ===========================================================================
@@ -44,7 +47,7 @@ function OnPlayerDefeat( player, defeat)
 end
 
 -- ===========================================================================
-function OnPlayerVictory( player, victory)
+function OnTeamVictory( team, victory)
 	local localPlayer = Game.GetLocalPlayer();
 
 	if (localPlayer >= 0) then		-- Check to see if there is any local player
@@ -56,7 +59,12 @@ end
 function Initialize()
 	Controls.MenuButton:RegisterCallback(Mouse.eLClick, OnClose);
 	Controls.StoreButton:RegisterCallback(Mouse.eLClick, ShowStore);
-	Events.PlayerDefeat.Add(OnPlayerDefeat);
-	Events.PlayerVictory.Add(OnPlayerVictory);
+	-- Let the Tutorial handle the victory/defeat.
+	local ruleset = GameConfiguration.GetValue("RULESET");
+	if(ruleset ~= "RULESET_TUTORIAL") then
+		Events.TeamVictory.Add(OnTeamVictory);
+		Events.PlayerDefeat.Add(OnPlayerDefeat);
+	end
+	Events.DemoTurnLimitReached.Add(ShowPopup);
 end
 Initialize();

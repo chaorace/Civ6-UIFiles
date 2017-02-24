@@ -2,110 +2,192 @@
 <Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
 				 ColorSet="BodyTextCool" Style="FontNormal22" FontEffect="Stroke">
 
-				 
-	<Box ID="MainGrid" Size="1024,full" Anchor="C,T" Color="9,44,72,200" TutorialActive="1">
-      <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="R,T" Color="0,0,0,200" Rotate="270" Offset="0,0"/>
-      <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="L,T" Color="0,0,0,200" Rotate="90" Offset="0,0"/>
-      <Box Color="32,70,101,150" Anchor="L,T" Size="2,parent"/>
-      <Box Color="32,70,101,150" Anchor="R,T" Size="2,parent"/>
-	
-	<Container ID="MainWindow" Size="1024,768" Anchor="C,C">
-        <!-- Logo -->
-        <Grid ID="LogoContainer" Style="SubContainer4" Size="parent-10,116" Anchor="C,T" Color="7,28,50" AnchorSide="I,O" Offset="0,4">
-          <Image ID="Logo"				Anchor="C,C" Texture="MainLogo.dds" StretchMode="Auto"/>
+
+  <Box ID="MainGrid" Size="1024,full" Anchor="C,T" Color="9,44,72,200" TutorialActive="1">
+    <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="R,T" Color="0,0,0,200" Rotate="270" Offset="0,0"/>
+    <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="L,T" Color="0,0,0,200" Rotate="90" Offset="0,0"/>
+    <Box Color="32,70,101,150" Anchor="L,T" Size="2,parent"/>
+    <Box Color="32,70,101,150" Anchor="R,T" Size="2,parent"/>
+
+    <Container ID="MainWindow" Size="1024,768" Anchor="C,C">
+      <!-- Logo -->
+      <Grid ID="LogoContainer" Style="SubContainer4" Size="parent-10,116" Anchor="C,T" Color="7,28,50" AnchorSide="I,O" Offset="0,4">
+        <Image ID="Logo"				Anchor="C,C" Texture="MainLogo.dds" StretchMode="Auto"/>
+      </Grid>
+
+      <!-- Header -->
+      <Container Size="parent,54">
+        <Grid Anchor="C,T" Size="parent-10,39" Texture="Controls_DecoFrame" SliceCorner="19,18" SliceSize="1,1" SliceTextureSize="40,38" Color="41,74,108,255" Offset="0,6">
+          <GridButton ID="CloseButton" Style="ShellButtonOrnateFlat" Anchor="R,C" Size="150,36" Offset="1,0" String="LOC_MULTIPLAYER_BACK"/>
+        </Grid>
+        <Label Style="ShellHeader" Anchor="C,C" String="LOC_MODS_TITLE"/>
+        <Grid Style="Divider3Grid" Size="parent+4, 8" Anchor="L,B" Offset="-2,0"/>
+        <Grid Style="Divider3Grid" Size="parent+4, 8" Anchor="L,T" Offset="-2,0" Color="150,150,150,255"/>
+      </Container>
+
+
+
+      <Stack Anchor="L,T" Offset="15,65" Padding="5" StackGrowth="Right">
+        <GridButton ID="InstalledTab" Style="ShellTab" Size="300,41"  String="LOC_MODS_INSTALLED"/>
+        <GridButton ID="SubscriptionsTab" Style="ShellTab" Size="300,41"  String="LOC_MODS_SUBSCRIPTIONS"/>
+      </Stack>
+
+      <GridButton ID="WorldBuilder"  Anchor="R,T" Offset="30,65" Style="MainButton" Size="300,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_WORLD_BUILDER" />
+
+      <Container ID="InstalledTabPanel" Size="parent-30,parent-115"  Anchor="L,T" Offset="15,115">
+        <Stack Padding="5">
+          <Stack StackGrowth="Right">
+            <PullDown ID="ModGroupPullDown" Anchor="L,T" Style="PullDownBlue" Size="350,24" ScrollThreshold="110" AutoSizePopUp="1" SpaceForScroll="0" Offset="0,0"/>
+            <GridButton ID="CreateModGroup" Style="ButtonControl" Size="24,24" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_GROUP_ADD_NAME" ToolTip="LOC_MODS_GROUP_ADD_DESCRIPTION"/>
+            <GridButton ID="DeleteModGroup" Style="ButtonControl" Size="24,24" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_GROUP_DELETE_NAME" ToolTip="LOC_MODS_GROUP_DELETE_DESCRIPTION"/>
+          </Stack>
+          
+          <Stack StackGrowth="Right" Anchor="C,T" Padding="15">
+            <GridButton ID="EnableAll" Style="ButtonControl" Size="180,24" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_ENABLE_ALL" />
+            <GridButton ID="DisableAll" Style="ButtonControl" Size="180,24" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_DISABLE_ALL" />
+          </Stack>          
+        </Stack>
+
+        <Grid Style="SubContainer" Size="402,parent-55"  Anchor="L,T" Offset="0,55"  >
+          <Stack>
+            <Grid Texture="Controls_Search2" SliceCorner="30,13" SliceTextureSize="41,26" Offset="0,10" Size="parent,26">
+              <EditBox ID="SearchEditBox" Style="FontNormal16" Anchor="L,C" Offset="24,0" Size="parent-10,16" MaxLength="40" String="LOC_MODS_SEARCH_NAME" ToolTip="LOC_MODS_SEARCH_DESCRIPTION" CallOnChar="1" />
+            </Grid>
+						<PullDown ID="SortListingsPullDown" Anchor="C,T" Style="PullDownBlue" Size="390,24" ScrollThreshold="110" AutoSizePopUp="1" SpaceForScroll="0" Offset="0,0"/>
+						<CheckBox ID="ShowOfficialContent" Style="CheckBoxModsControl" String="LOC_MODS_FIRAXIAN_CONTENT"   Anchor="R,T"  Size="150,24" Offset="0,4" />
+						<CheckBox ID="ShowCommunityContent" Style="CheckBoxModsControl" String="LOC_MODS_USER_CONTENT"  Anchor="R,T"  Size="150,24" Offset="0,4"/>
+            <Box ID="ModListDividerTop" Color="10,60,78,255" Anchor="L,B" Size="Parent,3" Offset="0,4" />
+            
+
+						<ScrollPanel ID="ModListings" Anchor="L,T" Vertical="1" Offset="0,0" Size="parent,parent-134" AutoScrollBar="1" >
+
+              <!-- Listing Stack (Dynamic) -->
+              <Stack Anchor="L,T" ID="ModListingsStack" StackGrowth="Bottom" Padding="5" />
+
+              <!-- Scroll Controls -->
+              <ScrollBar Style="Slider_Blue" Offset="7,0" Anchor="R,T" AnchorSide="O,I" />
+            </ScrollPanel>
+            <Box ID="ModListDividerBottom" Color="10,60,78,255" Anchor="L,T" Size="Parent,3" Offset="0,0" />
+          </Stack>
+            
+       
+          <Label  ID="NoModsInstalled" Style="FontFlair26" FontStyle="Shadow" ColorSet="ResGoldLabelCS" Anchor="C,C" Offset="0,0"  String="LOC_MODS_NONE_INSTALLED" Hidden="1"/>
         </Grid>
 
-        <!-- Header -->
-        <Container Size="parent,54">
-          <Grid Anchor="C,T" Size="parent-10,39" Texture="Controls_DecoFrame" SliceCorner="19,18" SliceSize="1,1" SliceTextureSize="40,38" Color="41,74,108,255" Offset="0,6">
-            <GridButton ID="CloseButton" Style="ShellButtonOrnateFlat" Anchor="R,C" Size="150,36" Offset="1,0" String="LOC_MULTIPLAYER_BACK"/>
+        <Grid Style="SubContainer" Size="parent-415,parent"  Anchor="R,T" Offset="0,0"  >
+
+          <Label ID="NoModSelected" Style="FontNormal16" Anchor="C,C" Offset="0,0" String="LOC_MODS_NONE_SELECTED" />
+
+          <ScrollPanel ID="ModDetails" Anchor="L,T" Vertical="1" Offset="0,15" Size="parent,parent-30" AutoScrollBar="1" >
+            <GridButton ID="EnableButton" Style="ButtonControl" Anchor="C,B" Size="250,30" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_ENABLE"/>
+            <GridButton ID="DisableButton" Style="ButtonControl" Anchor="C,B" Size="250,30" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_DISABLE"/>
+            <!--Details Container -->
+            <Stack Anchor="L,T" ID="ModDetailsStack" StackGrowth="Bottom" Padding="5" Size="parent,10">
+
+              <Label ID="ModContent" Style="FontNormal14" Anchor="C,T" Offset="0,5" String="LOC_MODS_FIRAXIAN_CONTENT" />
+              <Label ID="ModTitle" Style="FontFlair22" FontStyle="glow"	Color0="208,212,217,255" Color1="0,0,0,200" Anchor="C,T" Offset="0,5" String="Title" />
+
+
+              <Label ID="ModIdVersion" Style="FontNormal12" Anchor="C,T" Offset="0,5" String="111-111-111-1111 (version 1.0.0)" />
+        
+              
+              <Stack ID="ModPropertiesStack" StackGrowth="Right" Anchor="C,T" Padding="5">
+                <Stack ID="ModPropertiesCaptionStack">
+                  <Label ID="ModAuthorsCaption" Style="FontNormal14" Anchor="R,T" Offset="0,5" String="LOC_MODS_DETAILS_AUTHOR" />
+                  <Label ID="ModSpecialThanksCaption" Style="FontNormal14" Anchor="R,T" Offset="0,5" String="LOC_MODS_DETAILS_SPECIAL_THANKS" />
+                  <Label ID="ModOwnershipCaption" Style="FontNormal14" Anchor="R,T" Offset="0,5" String="LOC_MODS_DETAILS_OWNERSHIP" />
+                  <Label ID="ModAffectsSavedGamesCaption" Style="FontNormal14" Anchor="R,T" Offset="0,5" String="LOC_MODS_DETAILS_AFFECTS_SAVED_GAMES" />
+                  <Label ID="ModSupportsSinglePlayerCaption" Style="FontNormal14" Anchor="R,T" Offset="0,5" String="LOC_MODS_DETAILS_SINGLEPLAYER" />
+                  <Label ID="ModSupportsMultiplayerCaption" Style="FontNormal14" Anchor="R,T" Offset="0,5" String="LOC_MODS_DETAILS_MULTIPLAYER" />
+                  
+                </Stack>
+                <Stack ID="ModPropertiesValuesStack">
+                  <Label ID="ModAuthorsValue" Style="FontNormal14" Anchor="L,T" Offset="0,5" String="Joe Bob" />
+                  <Label ID="ModSpecialThanksValue" Style="FontNormal14" Anchor="L,T" Offset="0,5" String="My kitty, Jasper" />
+                  <Label ID="ModOwnershipValue" Style="FontNormal14" Anchor="L,T" Offset="0,5" String="LOC_MODS_DETAILS_OWNERSHIP_NO" />
+                  <Label ID="ModAffectsSavedGamesValue" Style="FontNormal14" Anchor="L,T" Offset="0,5" String="LOC_MODS_NO" />
+                  <Label ID="ModSupportsSinglePlayerValue" Style="FontNormal14" Anchor="L,T" Offset="0,5" String="LOC_MODS_YES" />
+                  <Label ID="ModSupportsMultiplayerValue" Style="FontNormal14" Anchor="L,T" Offset="0,5" String="LOC_MODS_YES" />
+                </Stack>
+              </Stack>
+
+              <Label ID="ModDescription" Style="FontNormal14" Anchor="L,T" Offset="10,5" WrapWidth="parent-10" String="aaasdf asdf asdf asdf asdf asd fasd fasdf asdf asd fasdfas dfas dfad fasd fasd fa d sf asdf asd fasdf asdf asdf adf " />
+
+            </Stack>
+
+            <!-- Scroll Controls -->
+            <ScrollBar Style="Slider_Blue" Length="530" Offset="3,0" Anchor="R,T" AnchorSide="O,I" />
+
+          </ScrollPanel>
+ 
+        </Grid>
+      </Container>
+     
+      <Container ID="SubscriptionsTabPanel" Size="parent-30,parent-115"  Anchor="L,T" Offset="15,115" Hidden="1">
+        <Grid Style="SubContainer" Size="parent,parent-50"  Anchor="L,T" Offset="0,0">
+          <ScrollPanel ID="SubscriptionListings" Anchor="L,T" Vertical="1" Offset="0,15" Size="parent,parent-30" AutoScrollBar="1" >
+
+            <!-- Listing Stack (Dynamic) -->
+            <Stack Anchor="L,T" ID="SubscriptionListingsStack" StackGrowth="Bottom" Padding="5" />
+
+            <!-- Scroll Controls -->
+            <ScrollBar Style="Slider_Blue" Offset="3,0" Anchor="R,T" AnchorSide="O,I" />
+
+          </ScrollPanel>
+
+          <Label  ID="NoSubscriptions" Style="FontFlair26" FontStyle="Shadow" ColorSet="ResGoldLabelCS" Anchor="C,C" Offset="0,0"  String="LOC_MODS_NO_SUBSCRIPTIONS" />
+        </Grid>
+        <GridButton ID="BrowseWorkshop"  Anchor="C,B" Offset="0,0" Style="MainButton" Size="300,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_BROWSE_WORKSHOP" />
+
+      </Container>
+    </Container>
+  </Box>
+
+  <Box ID="NameModGroupPopup" Color="0,0,0,150" Size="Full,Full" ConsumeMouseOver="1" Hidden="1" IgnoreTutorial="1">
+    <AlphaAnim ID="NameModGroupPopupAlpha" AlphaBegin="0" AlphaEnd="1" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+      <SlideAnim ID="NameModGroupPopupSlide" Start="0,-20" End="0,0" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
+        <Grid Size="500,250" Anchor="C,C" Offset="0,0" Style="DropShadow2"  Hidden="0" Color="255,255,255,200">
+          <Grid ID="NameModGroupPopupWindow" Size="parent-50,parent-50" Anchor="C,C" Offset="0,-50" SizePadding="0,20" Style="WindowFrameTitle"  Hidden="0" AutoSize="1">
+            <Label ID="BindingTitle" Anchor="C,T" String="LOC_MODS_GROUP_ENTER_NAME" Align="Center" Style="BlueGlow" Offset="0,15"/>
+            <Stack Offset="10,60" StackGrowth="Down" Anchor="L,T" Padding="15">
+              <Grid Style="EditTextButton" Anchor="C,T" Size="parent-100,26">
+                <EditBox ID="ModGroupEditBox" Style="FontNormal16" Anchor="L,C" Offset="24,0" Size="parent-10,16" MaxLength="40" String="" CallOnChar="1" />
+              </Grid>
+              <Container Size="parent,50" Anchor="C,T">
+                <GridButton ID="CancelBindingButton" Style="ButtonRed" Size="200,41" Offset="10,0" Anchor="L,T" String="LOC_CANCEL"/>
+                <GridButton ID="CreateModGroupButton" Style="MainButton" Size="200,41" Offset="10,0" Anchor="R,T" String="LOC_OK"/>
+              </Container>
+            </Stack>
           </Grid>
-          <Label Style="ShellHeader" Anchor="C,C" String="{LOC_MODS_TITLE:upper}"/>
-          <Grid Style="Divider3Grid" Size="parent+4, 8" Anchor="L,B" Offset="-2,0"/>
-          <Grid Style="Divider3Grid" Size="parent+4, 8" Anchor="L,T" Offset="-2,0" Color="150,150,150,255"/>
-        </Container>			 
-				 
-				 
-				 
-				 
-				 
-				 
-				 
-	<Container ID="PullDownParent"/>
-	<Container ID="CheckBoxParent"/>
+        </Grid>
+      </SlideAnim>
+    </AlphaAnim>
+  </Box>
+  
+  
+  <Instance Name="ModInstance">
+    <GridButton ID="ModInstanceRoot" Style="SubContainer3" Size="parent-4,60" Anchor="L,T" Offset="2,0" Color="2,89,148,255" >
+      <Image Texture="Controls_SubContainer3" Size="40,40" Anchor="L,C" Offset="0,0" Color="2,87,145,255">
+        <Image ID="OfficialIcon" Anchor="C,C"	Size="32,32" Texture="Firaxis32"/>
+      </Image>
+      
+      <Label ID="ModTitle" Style="FontNormal16" Anchor="L,C" Offset="50,0" WrapWidth="250" />
+      <Label ID="ModEnabled" Style="FontNormal12" Anchor="R,C" Offset="0,0" />
+    </GridButton>
+  </Instance>
 
-	
+  <Instance Name="SubscriptionInstance">
+    <Grid ID="SubscriptionInstanceRoot"  Style="SubContainer3" Size="parent-30,80" Anchor="L,T" Offset="15,0" Color="2,89,148,255" >
+      <Label ID="SubscriptionTitle" Style="FontNormal16" Anchor="L,C" Offset="15,5" String="title" />
+      <Label ID="SubscriptionStatus" Style="FontNormal14" Anchor="L,T" Offset="15,5" String="Installed" />
+      <Label ID="LastUpdated" Style="FontNormal14" Anchor="R,T" Offset="15,5" String="Last Updated: forever" />
 
+      <Box ID="SubscriptionDownloadProgress" Color="0,100,0,100" Anchor="L,T" Size="400,Parent" Offset="0,0" />
+      <Stack Anchor="R,B" StackGrowth="Left">
+        <GridButton ID="SubscriptionViewButton" Style="TabButton" Anchor="R,B" Offset="0,5" Size="150,36" String="LOC_MODS_VIEW" />
+        <GridButton ID="SubscriptionUpdateButton" Style="TabButton" Anchor="R,B" Offset="0,5" Size="150,36" String="LOC_MODS_UPDATE" />
+      </Stack>
+    </Grid>
+  </Instance>
 
-		<Stack Anchor="L,T" Offset="15,50" Padding="5" StackGrowth="Right">
-			<GridButton ID="InstalledTab" Style="MainButton" Size="300,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_INSTALLED" Hidden="1"/>
-			<GridButton ID="SubscriptionsTab" Style="MainButton" Size="300,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_SUBSCRIPTIONS" Hidden="1"/>
-		</Stack>
-
-		<GridButton ID="BrowseWorkshop"  Anchor="R,T" Offset="30,65" Style="MainButton" Size="300,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_BROWSE_WORKSHOP" />
-		<GridButton ID="WorldBuilder"  Anchor="L,T" Offset="30,65" Style="MainButton" Size="300,41" FontStyle="Stroke" ColorSet="ButtonCS" String="LOC_MODS_WORLD_BUILDER" />
-
-		<Grid ID="InstalledTabPanel" Style="SubContainer" Size="970,560"  Anchor="C,T" Offset="0,110"  >
-
-			<ScrollPanel ID="ModListings" Anchor="L,T" Vertical="1" Offset="0,15" Size="944,530" AutoScrollBar="1" >
-
-				<!-- Listing Stack (Dynamic) -->
-				<Stack Anchor="L,T" ID="ModListingsStack" StackGrowth="Bottom" Padding="5" />
-
-				<!-- Scroll Controls -->
-				<ScrollBar Style="Slider_Blue" Length="530" Offset="3,0" Anchor="R,T" AnchorSide="O,I" />
-
-			</ScrollPanel>
-
-			<Label  ID="NoModsInstalled" Style="FontFlair26" FontStyle="Shadow" ColorSet="ResGoldLabelCS" Anchor="C,C" Offset="0,0"  String="LOC_MODS_NONE_INSTALLED" Hidden="1" />
-
-		</Grid>
-
-
-
-		<Grid ID="SubscriptionsTabPanel" Style="SubContainer" Size="970,560"  Anchor="L,T" Offset="15,100" Hidden="1"  >
-
-			<ScrollPanel ID="SubscriptionListings" Anchor="L,T" Vertical="1" Offset="0,15" Size="944,530" AutoScrollBar="1" >
-
-				<!-- Listing Stack (Dynamic) -->
-				<Stack Anchor="L,T" ID="SubscriptionListingsStack" StackGrowth="Bottom" Padding="5" />
-
-				<!-- Scroll Controls -->
-				<ScrollBar Style="Slider_Blue" Length="530" Offset="3,0" Anchor="R,T" AnchorSide="O,I" />
-
-			</ScrollPanel>
-
-			<Label  ID="NoSubscriptions" Style="FontFlair26" FontStyle="Shadow" ColorSet="ResGoldLabelCS" Anchor="C,C" Offset="0,0"  String="LOC_MODS_NO_SUBSCRIPTIONS" />
-
-		</Grid>
-
-	
-	</Container>
-	</Box>
-	
-	<Instance Name="ModInstance">
-		<Grid ID="ModInstanceRoot" Style="SubContainer3" Size="930,80" Anchor="L,T" Offset="15,0" Color="2,89,148,255" >
-			<Stack Anchor="L,T" Offset="15,5" StackGrowth="Bottom" Padding="0">
-				<Label ID="ModTitle" Style="FontNormal16" Anchor="L,T" Offset="0,5" String="LOC_MODS_MOD_TITLE" />
-				<Label ID="ModDescription" Style="FontNormal12" Anchor="L,T" Offset="0,0" String="LOC_MODS_MOD_TEASER" WrapWidth="750" />
-			</Stack>
-			<CheckBox ID="ModEnabled" Style="CheckBoxModsControl" Anchor="R,C" Offset="15,0" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="LOC_MODS_ENABLE"  />
-		</Grid>
-	</Instance>
-
-	<Instance Name="SubscriptionInstance">
-		<Grid ID="SubscriptionInstanceRoot"  Style="SubContainer3" Size="930,80" Anchor="L,T" Offset="15,0" Color="2,89,148,255" >
-			<Stack Anchor="L,T" Offset="15,5" StackGrowth="Bottom" Padding="0">
-				<Label ID="SubscriptionTitle" Style="FontNormal16" Anchor="L,T" Offset="0,5" String="LOC_MODS_MOD_TITLE" />
-				<Label ID="SubscriptionDescription" Style="FontNormal12" Anchor="L,T" Offset="0,0" String="LOC_MODS_MOD_TEASER" />
-			</Stack>
-			<Box ID="SubscriptionDownloadProgress" Color="0,100,0,100" Anchor="L,T" Size="400,Parent" Offset="0,0" />
-			<Label ID="SubscriptionDownloadStatus" Style="FontNormal14" Anchor="C,B" Offset="0,15" String="LOC_MODS_DOWNLOADING" />
-			<Stack Anchor="R,B" Offset="15,10" StackGrowth="Left">
-				<GridButton ID="SubscriptionViewButton" Style="TabButton" Anchor="L,T" Size="150,36" String="LOC_MODS_UPDATE" />
-				<GridButton ID="SubscriptionUpdateButton" Style="TabButton" Anchor="L,T" Size="150,36" String="LOC_MODS_VIEW" />
-			</Stack>
-		</Grid>
-	</Instance>
-	
 </Context>

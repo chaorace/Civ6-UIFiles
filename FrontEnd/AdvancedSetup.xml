@@ -218,18 +218,6 @@
 
   
   <!-- INSTANCES -->
-
-  <!-- Slider with number display -->
-  <Instance Name="Slider">
-    <Container ID="Root" Size="285,50" Anchor="C,T">
-      <Slider ID="OptionSlider" Style="SliderControl" Anchor="L,B"/>
-      <Label ID="OptionTitle" Style="ShellOptionText" Anchor="L,T" FontSize="18" String="LOC_NUMBER_OF_CIVILIZATIONS" WrapWidth="220"/>
-      <Image Texture="Controls_CircleCompass" Size="52,53" Anchor="R,T" Color="ShellControl">
-        <Label ID="NumberDisplay" Style="FontFlair40" String="10" Anchor="C,C" FontStyle="stroke" Color0="208,212,217,255"	Color1="0,0,0,50"/>
-      </Image>
-    </Container>
-  </Instance>
-  
   <!-- Non Local Player Slot Instance -->
   <Instance Name="NonLocalPlayerSlotInstance" >
 		<!-- Local Player Civ -->
@@ -247,6 +235,21 @@
   <!-- Instance for a boolean parameters -->
   <Instance Name="BooleanParameterInstance">
     <GridButton ID="CheckBox" Anchor="C,T" Style="CheckBoxControl"  Size="340,24" States="8"/>
+  </Instance>
+
+  <!-- Slider with number display -->
+  <Instance Name="SliderParameterInstance">
+    <Container ID="Root" Size="450,55" Anchor="C,T">
+      <Container Size="250,55" Anchor="C,T">    
+        <Label ID="OptionTitle" Style="ShellOptionText" AnchorSide="O,I" Anchor="L,C" String=""/>
+        <Stack StackGrowth="Right" Anchor="C,T">
+          <Slider ID="OptionSlider" Style="SliderControl" Size="198,13" Anchor="L,C" />
+          <Image Texture="Controls_CircleCompass" Size="52,53" Color="ShellControl">
+            <Label ID="NumberDisplay" Style="FontFlair40" String="10" Anchor="C,C" FontStyle="stroke" Color0="208,212,217,255"	Color1="0,0,0,50"/>
+          </Image>
+        </Stack>
+      </Container>
+    </Container>
   </Instance>
 
 	<!-- Instance for a string parameters -->

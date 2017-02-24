@@ -525,51 +525,83 @@ function SortAndDisplayListings(resetSelection:boolean)
 
 		-- Mod Info
 		local hasMods = listing.EnabledMods ~= nil;
-		local hasModsStr : string = (hasMods and "LOC_YES_BUTTON") or "LOC_NO_BUTTON";
-		local modTTStr : string = "";
+		local hasModsStr = "LOC_YES_BUTTON"
+		local modTTStr;
 		if(hasMods) then
-			local modsInstalled = true;
-			local modsDownloadable = true;
-					
+			
+			local blocked = false;
+			local needsDownload = false;
+			local hasUnofficialMods = false;
+
+			local modNames = {};
+				
 			local mods = Modding.GetModsFromConfigurationString(listing.EnabledMods);
 			if(mods) then
 				for i,v in ipairs(mods) do
+					
+					local modColor = nil;
 
-					-- TODO: Add Version.
-					if(Modding.IsModInstalled(v.ModId) and Modding.IsJoinGameAllowed(v.ModId)) then
-						--Mod is installed and we join games with it.
-						-- Mod installed, this should be GREEN
-						modColor = ColorString_ModGreen;
+					local handle = Modding.GetModHandle(v.ModId);
+					if(handle) then
+						if(not Modding.IsJoinGameAllowed(v.ModId)) then
+							blocked = true;
+							modColor = ColorString_ModRed;
+						else
+							local info = Modding.GetModInfo(handle);
+							if(not info.Official) then
+								hasUnofficialMods = true;
+								modColor = ColorString_ModGreen;
+							end
+						end
 					elseif(v.SubscriptionId and #v.SubscriptionId > 0) then
 						-- Mod isn't installed but is downloadable from Steam.
 						modColor = ColorString_ModYellow;
-						modsInstalled = false;
+						needsDownload = true;
 					else
-						-- show RED for now.
 						modColor = ColorString_ModRed;
-						modsInstalled = false;
-						modsDownloadable = false;
+						blocked = true;
 					end
-
-					modTTStr = modTTStr .. modColor .. v.Name .. "[ENDCOLOR][NEWLINE]";
+					
+					table.insert(modNames, {v.Name, modColor});
 				end
 			end
 
-			-- Set general Mod Yes/No color.
-			if(modsInstalled) then
-				controlTable.DLCHostedLabel:SetColorByName(ColorSet_ModGreen);
-			elseif(modsDownloadable) then
-				controlTable.DLCHostedLabel:SetColorByName(ColorSet_ModYellow);
-			else
-				controlTable.DLCHostedLabel:SetColorByName(ColorSet_ModRed);
+			if(blocked) then
+				hasModsStr = "LOC_NO_BUTTON"
 			end
 
+			-- Sort mods.
+			table.sort(modNames, function(a,b) return Locale.Compare(a[1], b[1]) == -1; end);
+
+			-- Colorize.
+			for i,v in ipairs(modNames) do
+				if(v[2]) then
+					modNames[i] = v[2] .. v[1] .. "[ENDCOLOR]";
+				else
+					modNames[i] = v[1];
+				end
+			end
+
+			-- Generate list.
+			modTTStr = table.concat(modNames, "[NEWLINE]");
+
+			-- Set general Mod Yes/No color.
+			if(blocked) then
+				controlTable.DLCHostedLabel:SetColorByName(ColorSet_ModRed);
+			elseif(needsDownload) then
+				controlTable.DLCHostedLabel:SetColorByName(ColorSet_ModYellow);
+			elseif(hasUnofficialMods) then
+				controlTable.DLCHostedLabel:SetColorByName(ColorSet_ModGreen);
+			else
+				-- Game only has installed, official mods.
+				controlTable.DLCHostedLabel:SetColorByName(ColorSet_Faded);
+			end
 		else
 			controlTable.DLCHostedLabel:SetColorByName(ColorSet_Faded);
 		end
 		controlTable.DLCHostedLabel:LocalizeAndSetText(hasModsStr);
-		controlTable.DLCHostedLabel:LocalizeAndSetToolTip(modTTStr);
-		
+		controlTable.DLCHostedLabel:SetToolTipString(modTTStr);
+
 		-- Enable the Button's Event Handler
 		local selectAndJoinGame:ifunction = function() g_SelectedServerID = serverID; ServerListingButtonClick(); end
 		controlTable.Button:SetVoid1( serverID ); -- List ID

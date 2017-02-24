@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Context Name="WorldBuilderMapModEditor">
+
+	<Container Style="ModalScreen">
+
+		<Grid Size="980,700" Offset="20,50" Texture="Religion_OverviewFrame" SliceCorner="15,15" SliceTextureSize="34,33">
+
+			<Container ID="TabsContainer" Size="parent, parent" Offset="0,0" InnerPadding="20, 20">
+
+				<Stack StackGrowth="Down" Anchor="L,T" StackPadding="4">
+
+					<Container ID="TabArea" Anchor="C,T" Offset="0,0" Size="parent,42">
+						<Image Anchor="C,T" Offset="0,4" Size="parent-8,22" Color="0,0,0,255" Texture="Controls_GradientSmall" />
+						<Container ID="TabContainer" Offset="0,0" Size="parent,34" />
+						<Grid Anchor="C,B" Offset="0,0" Size="parent-6,8" Style="Divider3Grid" />
+					</Container>
+
+					<ScrollPanel ID="Scroll" Offset="4,4" Size="parent-8,parent" Vertical="1" AutoScrollBar="1">
+						<Stack ID="Stack" Anchor="L,T" Offset="0,1" StackPadding="4"/>
+						<ScrollBar Anchor="R,C" Offset="2,0" Size="11,parent" AnchorSide="I,I" Style="ScrollVerticalBarAlt" />
+					</ScrollPanel>
+
+				</Stack>
+			</Container>
+		</Grid>
+
+	</Container>
+
+	<!-- ==================================================================	-->
+	<!--	Instances																													-->
+	<!-- ==================================================================	-->
+	<Instance Name="TabInstance">
+		<GridButton ID="Button" Size="50,34" Style="TabButton" FontSize="14" TextOffset="0,2">
+			<AlphaAnim ID="Selection" Offset="-2,0"	Size="parent+3,parent" Speed="4" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
+				<GridButton Size="parent,parent" Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
+			</AlphaAnim>
+		</GridButton>
+	</Instance>
+
+	<!-- Non-Collapsable Rows -->
+	<Instance Name="SimpleInstance">
+		<Stack ID="Top"	StackGrowth="Down" />
+	</Instance>
+
+	<!-- General Tab -->
+	<Instance Name="GeneralInstance">
+		<Stack StackGrowth="Bottom" StackPadding="5">
+
+			<!-- ID -->
+			<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+				<Label Style="FontNormal14" Anchor="L,C" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_ID"/>
+				<Box Anchor="R,C" Offset="4,0" Size="340,24" Color="255,255,200,255">
+					<Box Anchor="C,C" Offset="0,0" Size="parent-2,parent-2" Color="0,0,0,255">
+						<EditBox ID="IDEdit" Anchor="L,C" Offset="0,0" Size="parent,parent" EditMode="1" Style="FontNormal14"/>
+					</Box>
+				</Box>
+				<GridButton ID="GenerateNewIDButton" String="LOC_WORLDBUILDER_GENERATE_NEW_ID" Size="130,26" Style="SquareButton14" />
+			</Stack>
+
+			<!-- Width -->
+			<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+				<Label Style="FontNormal14" Anchor="L,C" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_WIDTH"/>
+				<Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
+					<Box Anchor="C,C" Offset="0,0" Size="parent-2,parent-2" Color="0,0,0,255">
+						<EditBox ID="WidthEdit" Style="FontNormal14" Anchor="L,C" Offset="0,0" Size="parent,parent" EditMode="0" NumberInput="1"/>
+					</Box>
+				</Box>
+			</Stack>
+
+			<!-- Height -->
+			<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+				<Label Style="FontNormal14" Anchor="L,C" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_HEIGHT"/>
+				<Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
+					<Box Anchor="C,C" Offset="0,0" Size="parent-2,parent-2" Color="0,0,0,255">
+						<EditBox ID="HeightEdit" Style="FontNormal14" Anchor="L,C" Offset="0,0" Size="parent,parent" EditMode="0" NumberInput="1"/>
+					</Box>
+				</Box>
+			</Stack>
+
+			<!-- Ruleset -->
+			<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+				<Label Style="FontNormal14" Anchor="L,C" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_RULESET"/>
+				<Box Anchor="R,C" Offset="4,0" Size="340,24" Color="255,255,200,255">
+					<Box Anchor="C,C" Offset="0,0" Size="parent-2,parent-2" Color="0,0,0,255">
+						<EditBox ID="RulesetEdit" Style="FontNormal14" Anchor="L,C" Offset="0,0" Size="parent,parent" EditMode="1"/>
+					</Box>
+				</Box>
+			</Stack>
+
+			<!-- MapScript -->
+			<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+				<Label Style="FontNormal14" Anchor="L,C" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_MAP_SCRIPT"/>
+				<Box Anchor="R,C" Offset="4,0" Size="340,24" Color="255,255,200,255">
+					<Box Anchor="C,C" Offset="0,0" Size="parent-2,parent-2" Color="0,0,0,255">
+						<EditBox ID="MapScriptEdit" Style="FontNormal14" Anchor="L,C" Offset="0,0" Size="parent,parent" EditMode="1"/>
+					</Box>
+				</Box>
+			</Stack>
+
+		</Stack>
+	</Instance>
+
+	<!-- Mod Tab -->
+	<Instance Name="ModInstance">
+		<Stack StackGrowth="Bottom" StackPadding="5" >
+
+			<CheckBox ID="IsModCheckbox" Size="240,24" Style="MainCheckBox" Anchor="L,T" BoxOnLeft="1" String="LOC_WORLDBUILDER_ATTRIBUTE_IS_MOD" ToolTip="LOC_WORLDBUILDER_ATTRIBUTE_IS_MOD_TT"/>
+
+		</Stack>
+	</Instance>
+
+	<!-- Text Tab -->
+	<Instance Name="TextInstance">
+		<Container Offset="0,0" Size="parent,480" InnerPadding="8,8">
+			<Stack StackGrowth="Bottom" StackPadding="5">
+
+				<SimplePullDown ID="LanguagePullDown" Style="WBPullDown" ScrollThreshold="400" Size="250,29" SpaceForScroll="0" EntryInstance="InstanceOne"/>
+
+				<!-- Key/String List-->
+
+				<ListBox ID="KeyStringList" Size="parent,280" ListContainer="KeyStringListContainer">
+
+					<Grid Style="UnitFrame" Anchor="L,T" Size="parent,parent" InnerPadding="4,4">
+						<ScrollPanel Size="parent,parent" Anchor="L,T" Vertical="1">
+							<Stack ID="KeyStringListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
+
+							<ScrollBar Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+							<UpButton Offset="0,0"  Style="ScrollUpButton" Anchor="R,T" />
+							<DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+						</ScrollPanel>
+					</Grid>
+
+					<InstanceData Name="EntryInstance" >
+						<BoxButton ID="Button" Size="parent,64" NormalColor="0,0,0,0" SelectedNormalColor="0,0,100,255">
+							<Stack StackGrowth="Bottom" Anchor="L,T" StackPadding="3">
+								<EditBox ID="KeyEdit" Style="FontNormal14" Anchor="L,C" Size="parent,30" EditMode="1"/>
+								<EditBox ID="StringEdit" Style="FontNormal14" Anchor="L,C" Size="parent,30" EditMode="1"/>
+								<Box Anchor="C,C" Offset="0,0" Size="parent,1" Color="255,255,255,255"/>
+							</Stack>
+						</BoxButton>
+					</InstanceData>
+
+				</ListBox>
+
+				<Container Size="parent, 30">
+					<Stack StackGrowth="Right" StackPadding="5">
+						<GridButton ID="AddText" String="LOC_WORLDBUILDER_ADD_BUTTON" Size="130, parent" Style="SquareButton14" />
+						<GridButton ID="RemoveText" String="LOC_WORLDBUILDER_REMOVE_BUTTON" Size="130, parent" Style="SquareButton14" />
+					</Stack>
+				</Container>
+
+			</Stack>
+		</Container>
+	</Instance>
+
+</Context>

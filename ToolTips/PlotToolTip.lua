@@ -213,7 +213,7 @@ function View(data:table, bIsUpdate:boolean)
 
 		local pPlayer = Players[data.Owner];
 		if(GameConfiguration:IsAnyMultiplayer() and pPlayer:IsHuman()) then
-			szOwnerString = szOwnerString .. " (" .. pPlayerConfig:GetPlayerName() .. ")";
+			szOwnerString = szOwnerString .. " (" .. Locale.Lookup(pPlayerConfig:GetPlayerName()) .. ")";
 		end
 
 		table.insert(details, Locale.Lookup("LOC_TOOLTIP_CITY_OWNER",szOwnerString, data.OwningCityName));

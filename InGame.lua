@@ -217,5 +217,12 @@ function Initialize()
 	LuaEvents.Tutorial_ToggleInGameOptionsMenu.Add( OnTutorialToggleInGameOptionsMenu );
 	LuaEvents.Tutorial_TutorialEndHideBulkUI.Add( OnTutorialEndHide );
 	
+	-- The End Game screen is different for the demo
+	if (UI.HasFeature("Demo")) then
+		ContextPtr:LoadNewContext("EndDemo", Controls.EndGame, true);
+	else
+		ContextPtr:LoadNewContext("EndGameMenu", Controls.EndGame, true);
+	end
+
 end
 Initialize();

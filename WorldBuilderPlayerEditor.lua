@@ -21,6 +21,9 @@ local m_EraEntries         : table = {};
 local m_TechEntries        : table = {};
 local m_CivicEntries       : table = {};
 local m_CivLevelEntries	   : table = {};
+local m_CityEntries		   : table = {};
+local m_DistrictEntries	   : table = {};
+local m_BuildingEntries	   : table = {};
 local m_ViewingTab		   : table = {};
 local m_tabs				:table;
 
@@ -37,13 +40,13 @@ local m_uiGroups			:table = nil;	-- Track the groups on-screen for collapse all 
 -- ===========================================================================
 --
 -- ===========================================================================
-function AddTabSection( name:string, populateCallback:ifunction )
-	local kTab		:table				= m_tabIM:GetInstance();	
+function AddTabSection( tabs:table, name:string, populateCallback:ifunction, parent )
+	local kTab		:table				= m_tabIM:GetInstance(parent);	
 	kTab.Button[DATA_FIELD_SELECTION]	= kTab.Selection;
 
 	local callback	:ifunction	= function()
-		if m_tabs.prevSelectedControl ~= nil then
-			m_tabs.prevSelectedControl[DATA_FIELD_SELECTION]:SetHide(true);
+		if tabs.prevSelectedControl ~= nil then
+			tabs.prevSelectedControl[DATA_FIELD_SELECTION]:SetHide(true);
 		end
 		kTab.Selection:SetHide(false);
 		populateCallback();
@@ -53,7 +56,7 @@ function AddTabSection( name:string, populateCallback:ifunction )
 	kTab.Button:SetSizeToText( 40, 20 );
     kTab.Button:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
-	m_tabs.AddTab( kTab.Button, callback );
+	tabs.AddTab( kTab.Button, callback );
 end
 
 -- ===========================================================================
@@ -345,6 +348,48 @@ function UpdatePlayerList()
 end
 
 -- ===========================================================================
+function GetSelectedCity()
+
+	if m_SelectedPlayer ~= nil then
+		if (m_ViewingTab.SelectedCityID ~= nil) then
+			return CityManager.GetCity(m_SelectedPlayer.Index, m_ViewingTab.SelectedCityID);
+		end			
+	end
+
+	return nil;
+end
+
+-- ===========================================================================
+function UpdatePlayerCityList()
+
+	m_CityEntries = {};
+
+	if (m_SelectedPlayer ~= nil) then
+	
+		local pPlayer = Players[m_SelectedPlayer.Index];
+		if (pPlayer ~= nil) then
+			local pPlayerCities = pPlayer:GetCities();
+			if (pPlayerCities ~= nil) then
+				for iCity, pCity in pPlayerCities:Members() do
+					table.insert(m_CityEntries, { Text=pCity:GetName(), Type=pCity:GetID() });
+				end
+			end
+		end
+	end
+
+end
+
+-- ===========================================================================
+function CalculatePrimaryTabScrollArea()
+
+	Controls.Stack:CalculateSize();
+	Controls.Scroll:CalculateSize();
+
+	local xOffset, yOffset = Controls.Scroll:GetParentRelativeOffset();
+	Controls.Scroll:SetSizeY( Controls.TabsContainer:GetSizeY() - yOffset );
+end
+
+-- ===========================================================================
 --	Tab Callback
 -- ===========================================================================
 function ViewPlayerTechsPage()	
@@ -362,11 +407,7 @@ function ViewPlayerTechsPage()
 	m_ViewingTab.TechInstance.TechList:SetEntrySelectedCallback( OnTechSelected );
 	UpdateTechTabValues();
 
-	Controls.Scroll:CalculateSize();
-	Controls.Stack:CalculateSize();
-
-	local xOffset, yOffset = Controls.Scroll:GetParentRelativeOffset();
-	Controls.Scroll:SetSizeY( Controls.TabsContainer:GetSizeY() - yOffset );
+	CalculatePrimaryTabScrollArea();
 
 end
 
@@ -388,13 +429,408 @@ function ViewPlayerCivicsPage()
 	m_ViewingTab.CivicsInstance.CivicsList:SetEntrySelectedCallback( OnCivicSelected );
 	UpdateCivicsTabValues();
 
-	Controls.Stack:CalculateSize();
-	Controls.Scroll:CalculateSize();
-
-	local xOffset, yOffset = Controls.Scroll:GetParentRelativeOffset();
-	Controls.Scroll:SetSizeY( Controls.TabsContainer:GetSizeY() - yOffset );
+	CalculatePrimaryTabScrollArea();
 end
 
+-- ======================================================================================================================================================
+-- City General Tab Functions
+-- ======================================================================================================================================================
+
+-- ===========================================================================
+function OnCityPopulationEdited()
+
+	if (m_ViewingTab ~= nil and m_ViewingTab.SubTab ~= nil and m_ViewingTab.SubTab.CityGeneralInstance ~= nil) then
+
+		local pCity = GetSelectedCity();
+		if (pCity ~= nil) then
+
+			local text = m_ViewingTab.SubTab.CityGeneralInstance.PopulationEdit:GetText();
+			if text ~= nil then
+				local value = tonumber(text);
+				local population = WorldBuilder.CityManager():GetCityValue(pCity, "Population");
+				if (population == nil or value ~= population) then
+					WorldBuilder.CityManager():SetCityValue(pCity, "Population", value);
+				end
+			end
+		end
+
+	end
+end
+
+
+-- ===========================================================================
+function UpdatePlayerCityGeneralPage()
+
+	if (m_ViewingTab ~= nil and m_ViewingTab.SubTab ~= nil and m_ViewingTab.SubTab.CityGeneralInstance ~= nil) then
+
+		local pCity = GetSelectedCity();
+		if (pCity ~= nil) then
+			m_ViewingTab.SubTab.CityGeneralInstance.PopulationEdit:SetDisabled(false);
+			local population = WorldBuilder.CityManager():GetCityValue(pCity, "Population");
+			if (population ~= nil) then
+				m_ViewingTab.SubTab.CityGeneralInstance.PopulationEdit:SetText(population);
+			end
+		else
+			m_ViewingTab.SubTab.CityGeneralInstance.PopulationEdit:SetDisabled(true);
+		end
+	end
+end
+
+-- ===========================================================================
+function ViewPlayerCityGeneralPage()	
+
+	ResetCitySubTabForNewPageContent();
+	
+	m_ViewingTab.SubTab.CityGeneralInstance = {};
+
+	ContextPtr:BuildInstanceForControl( "CityGeneralInstance", m_ViewingTab.SubTab.CityGeneralInstance, m_ViewingTab.CitiesInstance.Stack ) ;	
+
+	m_ViewingTab.SubTab.CityGeneralInstance.PopulationEdit:RegisterStringChangedCallback( OnCityPopulationEdited );
+
+	UpdatePlayerCityGeneralPage();
+	
+end
+
+-- ======================================================================================================================================================
+-- City Districts Tab Functions
+-- ======================================================================================================================================================
+
+local ms_SelectDistrictType = nil;
+local ms_SelectDistrictTypeHash = nil;
+
+-- ===========================================================================
+function UpdateSelectedDistrictInfo()
+
+	local bEnable = false;
+
+	if (m_ViewingTab ~= nil and m_ViewingTab.SubTab ~= nil and m_ViewingTab.SubTab.CityDistrictsInstance ~= nil) then
+
+		if ms_SelectDistrictType ~= nil then
+			if m_SelectedPlayer ~= nil then
+				local pCity = GetSelectedCity();
+				if pCity ~= nil then
+					local pCityDistricts = pCity:GetDistricts();
+					local pDistrict = pCityDistricts:GetDistrict(ms_SelectDistrictTypeHash);
+					if pDistrict ~= nil then
+						
+						m_ViewingTab.SubTab.CityDistrictsInstance.PillagedCheckbox:SetCheck(pDistrict:IsPillaged());
+						m_ViewingTab.SubTab.CityDistrictsInstance.GarrisonDamageEdit:SetText( tostring( pDistrict:GetDamage(DefenseTypes.DISTRICT_GARRISON) ) );
+						m_ViewingTab.SubTab.CityDistrictsInstance.OuterDamageEdit:SetText( tostring( pDistrict:GetDamage(DefenseTypes.DISTRICT_OUTER) ) );
+					
+						bEnable = true;
+					end
+				end
+			end
+		end
+
+	end
+
+	m_ViewingTab.SubTab.CityDistrictsInstance.PillagedCheckbox:SetEnabled(bEnable);
+	m_ViewingTab.SubTab.CityDistrictsInstance.GarrisonDamageEdit:SetEnabled(bEnable);
+	m_ViewingTab.SubTab.CityDistrictsInstance.OuterDamageEdit:SetEnabled(bEnable);
+end
+-- ===========================================================================
+function OnDistrictSelected(entry)
+
+	ms_SelectDistrictType = entry.Type.DistrictType;
+	ms_SelectDistrictTypeHash = entry.Type.Hash;
+
+	UpdateSelectedDistrictInfo();
+
+end
+
+-- ===========================================================================
+function OnDistrictEntryButton(control, entry)
+
+	if control:GetID() == "HasEntry" then
+		local wantDistrict = control:IsChecked();
+
+		if wantDistrict == true then
+				
+			-- Signal we want to go into placement mode.
+			-- This is a deferred event because we are not in a good spot at this time.
+
+			if (m_ViewingTab ~= nil and m_ViewingTab.SubTab ~= nil and m_ViewingTab.SubTab.CityDistrictsInstance ~= nil) then
+
+				if m_SelectedPlayer ~= nil then
+					local pCity = GetSelectedCity();
+					if pCity ~= nil then
+
+						local kParams = {};
+
+						kParams.DistrictType = entry.Type.Hash;
+						kParams.PlayerID = m_SelectedPlayer.Index;
+						kParams.CityID = pCity:GetID();
+
+						LuaEvents.WorldBuilderModeChangeRequest(WorldBuilderModes.PLACE_DISTRICTS, kParams);
+					end
+				end
+			end
+		end
+	end
+
+end
+
+-- ===========================================================================
+function UpdatePlayerCityDistrictsPage()
+
+	if (m_ViewingTab ~= nil and m_ViewingTab.SubTab ~= nil and m_ViewingTab.SubTab.CityDistrictsInstance ~= nil) then
+	
+		local pCity = GetSelectedCity();
+		local pCityDistricts = nil;
+
+		if (pCity ~= nil) then
+			pCityDistricts = pCity:GetDistricts();
+		end
+
+		for i, entry in ipairs(m_DistrictEntries) do
+			local hasDistrict = pCityDistricts ~= nil and pCityDistricts:HasDistrict( entry.Type.Index );
+			local controlEntry = m_ViewingTab.SubTab.CityDistrictsInstance.DistrictsList:GetIndexedEntry( i );
+			if controlEntry ~= nil and controlEntry.Root ~= nil then
+				if controlEntry.Root.HasEntry ~= nil then
+					controlEntry.Root.HasEntry:SetCheck(hasDistrict);
+				end
+			end
+		end
+
+		UpdateSelectedDistrictInfo();
+
+	end
+
+end
+
+-- ===========================================================================
+function ViewPlayerCityDistrictsPage()	
+
+	ResetCitySubTabForNewPageContent();
+
+	m_ViewingTab.SubTab.CityDistrictsInstance = {};
+
+	ContextPtr:BuildInstanceForControl( "CityDistrictsInstance", m_ViewingTab.SubTab.CityDistrictsInstance, m_ViewingTab.CitiesInstance.Stack ) ;	
+	m_ViewingTab.SubTab.CityDistrictsInstance.DistrictsList:SetEntries( m_DistrictEntries, 0 );
+	m_ViewingTab.SubTab.CityDistrictsInstance.DistrictsList:SetEntrySelectedCallback( OnDistrictSelected );
+	m_ViewingTab.SubTab.CityDistrictsInstance.DistrictsList:SetEntrySubButtonClickedCallback( OnDistrictEntryButton );
+	
+	ms_SelectDistrictType = nil;
+	ms_SelectDistrictTypeHash = nil;
+
+	UpdatePlayerCityDistrictsPage();
+end
+
+
+-- ======================================================================================================================================================
+-- City Buildings Tab Functions
+-- ======================================================================================================================================================
+
+local ms_SelectBuildingType = nil;
+local ms_SelectBuildingTypeHash = nil;
+
+-- ===========================================================================
+function UpdateSelectedBuildingInfo()
+
+	local bEnable = false;
+
+	if (m_ViewingTab ~= nil and m_ViewingTab.SubTab ~= nil and m_ViewingTab.SubTab.CityBuildingsInstance ~= nil) then
+
+		if ms_SelectBuildingType ~= nil then
+			if m_SelectedPlayer ~= nil then
+				local pCity = GetSelectedCity();
+				if pCity ~= nil then
+					local pCityBuildings = pCity:GetBuildings();
+					if pCityBuildings ~= nil then
+						
+						if pCityBuildings:HasBuilding(ms_SelectBuildingTypeHash) == true then
+							m_ViewingTab.SubTab.CityBuildingsInstance.PillagedCheckbox:SetCheck(pCityBuildings:IsPillaged(ms_SelectBuildingTypeHash));
+					
+							bEnable = true;
+						end
+					end
+				end
+			end
+		end
+
+	end
+
+	m_ViewingTab.SubTab.CityBuildingsInstance.PillagedCheckbox:SetEnabled(bEnable);
+end
+
+-- ===========================================================================
+function OnBuildingSelected(entry, selected)
+
+	ms_SelectBuildingType = entry.Type.BuildingType;
+	ms_SelectBuildingTypeHash = entry.Type.Hash;
+
+	UpdateSelectedBuildingInfo();
+
+end
+
+-- ===========================================================================
+function OnBuildingEntryButton(control, entry)
+
+	if control:GetID() == "HasEntry" then
+		local hasBuilding = control:IsChecked();
+
+		if hasBuilding == true then
+				
+			if (entry.Type.RequiresPlacement == true) then
+				-- Building requires placement, go into that mode.
+				-- This is a deferred event because we are not in a good spot at this time.
+				if m_SelectedPlayer ~= nil then
+					local pCity = GetSelectedCity();
+					if pCity ~= nil then
+
+						local kParams = {};
+
+						kParams.BuildingType = entry.Type.Hash;
+						kParams.PlayerID = m_SelectedPlayer.Index;
+						kParams.CityID = pCity:GetID();
+
+						LuaEvents.WorldBuilderModeChangeRequest(WorldBuilderModes.PLACE_BUILDINGS, kParams);
+					end
+				end
+
+			else
+				-- Just create it, it will go in its district.
+				if WorldBuilder.CityManager():CreateBuilding(pCity, entry.Type.BuildingType, 100) == false then
+					-- Failed.  Uncheck the box
+					control:SetCheck(false);
+				end
+			end
+
+		end
+	end
+end
+
+-- ===========================================================================
+function UpdatePlayerCityBuildingsPage()
+
+	if (m_ViewingTab ~= nil and m_ViewingTab.SubTab ~= nil and m_ViewingTab.SubTab.CityBuildingsInstance ~= nil) then
+	
+		local pCity = GetSelectedCity();
+		local pCityBuildings = nil;
+		if (pCity ~= nil) then
+			pCityBuildings = pCity:GetBuildings();
+		end
+
+		for i, entry in ipairs(m_BuildingEntries) do
+			local hasBuilding = pCityBuildings ~= nil and pCityBuildings:HasBuilding( entry.Type.Index );
+
+			local controlEntry = m_ViewingTab.SubTab.CityBuildingsInstance.BuildingsList:GetIndexedEntry( i );
+			if controlEntry ~= nil and controlEntry.Root ~= nil then
+				if controlEntry.Root.HasEntry ~= nil then
+					controlEntry.Root.HasEntry:SetCheck(hasBuilding);
+				end
+			end
+
+		end
+	end
+
+end
+
+-- ===========================================================================
+function ViewPlayerCityBuildingsPage()	
+
+	ResetCitySubTabForNewPageContent();
+	
+	m_ViewingTab.SubTab.CityBuildingsInstance = {};
+
+	ContextPtr:BuildInstanceForControl( "CityBuildingsInstance", m_ViewingTab.SubTab.CityBuildingsInstance, m_ViewingTab.CitiesInstance.Stack ) ;	
+	m_ViewingTab.SubTab.CityBuildingsInstance.BuildingsList:SetEntries( m_BuildingEntries, 0 );
+	m_ViewingTab.SubTab.CityBuildingsInstance.BuildingsList:SetEntrySelectedCallback( OnBuildingSelected );
+	m_ViewingTab.SubTab.CityBuildingsInstance.BuildingsList:SetEntrySubButtonClickedCallback( OnBuildingEntryButton );
+
+	ms_SelectBuildingType = nil;
+	ms_SelectBuildingTypeHash = nil;
+
+	UpdatePlayerCityBuildingsPage();
+end
+
+-- ======================================================================================================================================================
+-- City Tab Functions
+-- ======================================================================================================================================================
+
+-- ===========================================================================
+function ResetCitySubTabForNewPageContent()
+
+	if (m_ViewingTab ~= nil) then
+		m_ViewingTab.SubTab = {};
+
+		if (m_ViewingTab.CitiesInstance ~= nil and m_ViewingTab.CitiesInstance.Stack ~= nil) then
+			m_ViewingTab.CitiesInstance.Stack:DestroyAllChildren();
+		end
+	end
+
+end
+
+-- ===========================================================================
+function OnSelectedCityChanged()
+	if (m_ViewingTab ~= nil) then
+		if (m_ViewingTab.SubTab ~= nil) then
+			if (m_ViewingTab.SubTab.CityGeneralInstance ~= nil) then
+				UpdatePlayerCityGeneralPage();
+			elseif (m_ViewingTab.SubTab.CityDistrictsInstance ~= nil) then
+				UpdatePlayerCityDistrictsPage();
+			elseif (m_ViewingTab.SubTab.CityBuildingsInstance ~= nil) then
+				UpdatePlayerCityBuildingsPage();			
+			end
+		else
+			-- Not viewing any sub-tab.  Are we viewing the Cities tab?
+			if (m_ViewingTab.Name == "Cities") then
+				-- Show the General sub-tab.
+				m_ViewingTab.m_subTabs.SelectTab(1);
+			end
+		end
+	end
+end
+
+
+-- ===========================================================================
+function OnNewCity()
+	if (m_ViewingTab ~= nil) then
+
+		if (m_SelectedPlayer ~= nil) then
+			-- Go into city placement mode
+			local kParams = {};
+
+			kParams.PlayerID = m_SelectedPlayer.Index;
+			LuaEvents.WorldBuilderModeChangeRequest(WorldBuilderModes.PLACE_CITIES, kParams);
+		end
+	end
+
+end
+
+-- ===========================================================================
+function OnRemoveCity()
+	if (m_ViewingTab ~= nil) then
+
+		if (m_SelectedPlayer ~= nil) then
+			local pCity = GetSelectedCity();
+			if (pCity ~= nil) then
+				WorldBuilder.CityManager():Remove(pCity);
+			end
+		end
+	end
+
+end
+
+-- ===========================================================================
+function OnCityListChange_CitiesPage()
+	if m_ViewingTab ~= nil then
+		if m_ViewingTab.Name == "Cities" then	
+
+			m_ViewingTab.SelectedCityID = nil;
+			m_ViewingTab.CitiesInstance.CityList:SetEntries( m_CityEntries, 0 );
+			if m_ViewingTab.CitiesInstance.CityList:HasEntries() then
+				m_ViewingTab.CitiesInstance.CityList:SetSelectedIndex( 1, true );
+			end
+
+			m_ViewingTab.CitiesInstance.Stack:CalculateSize();
+			m_ViewingTab.CitiesInstance.Scroll:CalculateSize();
+
+			OnSelectedCityChanged();
+		end
+	end
+end
 -- ===========================================================================
 --	Tab Callback
 -- ===========================================================================
@@ -404,55 +840,41 @@ function ViewPlayerCitiesPage()
 
 	if (m_SelectedPlayer ~= nil) then
 	
+		local instance:table = m_simpleIM:GetInstance();	
+		instance.Top:DestroyAllChildren();
+
 		m_ViewingTab.Name = "Cities";
+		m_ViewingTab.CitiesInstance = {};
+		m_ViewingTab.SelectedCityID = nil;
+		ContextPtr:BuildInstanceForControl( "CityMainInstance", m_ViewingTab.CitiesInstance, instance.Top ) ;	
 
-		local pPlayer = Players[m_SelectedPlayer.Index];
+		UpdatePlayerCityList();
+	
+		m_ViewingTab.CitiesInstance.CityList:SetEntrySelectedCallback( OnCitySelected );
+		m_ViewingTab.CitiesInstance.CityList:SetEntries( m_CityEntries, 0 );
+	
+		m_ViewingTab.m_subTabs = CreateTabs( m_ViewingTab.CitiesInstance.TabContainer, 42, 34, 0xFF331D05 );
+		AddTabSection( m_ViewingTab.m_subTabs, "LOC_WORLDBUILDER_TAB_GENERAL",		ViewPlayerCityGeneralPage, m_ViewingTab.CitiesInstance.TabContainer );
+		AddTabSection( m_ViewingTab.m_subTabs, "LOC_WORLDBUILDER_TAB_DISTRICTS",	ViewPlayerCityDistrictsPage, m_ViewingTab.CitiesInstance.TabContainer );
+		AddTabSection( m_ViewingTab.m_subTabs, "LOC_WORLDBUILDER_TAB_BUILDINGS",	ViewPlayerCityBuildingsPage, m_ViewingTab.CitiesInstance.TabContainer );
+	
+		m_ViewingTab.m_subTabs.SameSizedTabs(50);
+		m_ViewingTab.m_subTabs.CenterAlignTabs(-10);		
 
-		local pPlayerCities = pPlayer:GetCities();
+		m_ViewingTab.CitiesInstance.Stack:CalculateSize();
+		m_ViewingTab.CitiesInstance.Scroll:CalculateSize();
 
-		for iCity, pCity in pPlayerCities:Members() do
-			-- City
+		m_ViewingTab.CitiesInstance.NewCityButton:RegisterCallback( Mouse.eLClick, OnNewCity );
+		m_ViewingTab.CitiesInstance.RemoveCityButton:RegisterCallback( Mouse.eLClick, OnRemoveCity );
 
-			local instance:table = NewCollapsibleGroupInstance();	
-			instance.RowHeaderButton:LocalizeAndSetText( pCity:GetName() );
-			instance.Top:SetID("City");
+		local xOffset, yOffset = m_ViewingTab.CitiesInstance.Scroll:GetParentRelativeOffset();
+		m_ViewingTab.CitiesInstance.Scroll:SetSizeY( Controls.TabsContainer:GetSizeY() - yOffset );
 
-			local pCityBldgs = pCity:GetBuildings();
+		CalculatePrimaryTabScrollArea();
 
-			-- District
-			local pCityDistricts = pCity:GetDistricts();
-			for iDistrict, pDistrict in pCityDistricts:Members() do
-				local pDistrictType = GameInfo.Districts[ pDistrict:GetType() ];
-				if (pDistrictType ~= nil) then
-					local pDistrictLineItemInstance:table = {};
-					ContextPtr:BuildInstanceForControl("DistrictEntryInstance", pDistrictLineItemInstance, instance.ContentStack );
-					pDistrictLineItemInstance.DistrictName:LocalizeAndSetText( pDistrictType.Name );
-				end
-
-				-- Buildings
-				local districtBuildings = pCityBldgs:GetBuildingsAtLocation( pDistrict:GetLocation() );
-
-				for iBuilding, eBuilding in ipairs(districtBuildings) do
-					local pBuildingType = GameInfo.Buildings[ eBuilding ];
-					if (pBuildingType ~= nil) then
-						local pBuildingLineItemInstance:table = {};
-						ContextPtr:BuildInstanceForControl("BuildingEntryInstance", pBuildingLineItemInstance, instance.ContentStack );
-						pBuildingLineItemInstance.BuildingName:LocalizeAndSetText( pBuildingType.Name );
-					end
-				end
-			end		
-
-			SetGroupCollapsePadding(instance, 0 );
-			RealizeGroup( instance );
-				
+		if m_ViewingTab.CitiesInstance.CityList:HasEntries() then
+			m_ViewingTab.CitiesInstance.CityList:SetSelectedIndex( 1, true );
 		end
-	
-	
-		Controls.Stack:CalculateSize();
-		Controls.Scroll:CalculateSize();
-
-		local xOffset, yOffset = Controls.Scroll:GetParentRelativeOffset();
-		Controls.Scroll:SetSizeY( Controls.TabsContainer:GetSizeY() - yOffset );
 	end
 end
 
@@ -631,12 +1053,54 @@ function OnFaithEdited()
 end
 
 -- ===========================================================================
+function OnCitySelected(entry)
+
+	if m_SelectedPlayer ~= nil then
+		m_ViewingTab.SelectedCityID = entry.Type;
+	else
+		m_ViewingTab.SelectedCityID = nil;
+	end
+
+	OnSelectedCityChanged();
+end
+
+-- ===========================================================================
+function OnShowPlayerEditor(bShow)
+	if bShow == nil or bShow == true then
+		if ContextPtr:IsHidden() then
+			ContextPtr:SetHide(false);
+		end
+	else
+		if not ContextPtr:IsHidden() then
+			ContextPtr:SetHide(true);
+		end
+	end
+			
+end
+
+-- ===========================================================================
+function OnCityAddedToMap()
+	if ContextPtr:IsVisible() then
+		UpdatePlayerCityList();
+		OnCityListChange_CitiesPage();
+	end
+end
+
+-- ===========================================================================
+function OnCityRemovedFromMap()
+	if ContextPtr:IsVisible() then
+		UpdatePlayerCityList();
+		OnCityListChange_CitiesPage();
+	end
+end
+
+-- ===========================================================================
 --	Init
 -- ===========================================================================
 function OnInit()
 
 	-- Title
-	Controls.ModalScreenTitle:SetText( Locale.ToUpper("Player Editor") );
+	Controls.ModalScreenTitle:SetText( Locale.ToUpper(Locale.Lookup("LOC_WORLD_BUILDER_PLAYER_EDITOR_TT")) );
 
 	-- PlayerList
 	Controls.PlayerList:SetEntrySelectedCallback( OnPlayerSelected );
@@ -697,11 +1161,20 @@ function OnInit()
 		table.insert(m_CivicEntries, { Text=type.Name, Type=type });
 	end
 
+	-- District list
+	for type in GameInfo.Districts() do
+		table.insert(m_DistrictEntries, { Text=type.Name, Type=type });
+	end
+
+	-- Building list
+	for type in GameInfo.Buildings() do
+		table.insert(m_BuildingEntries, { Text=type.Name, Type=type });
+	end
+
 	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
-	AddTabSection( "LOC_WORLDBUILDER_TAB_TECHS",		ViewPlayerTechsPage );
-	AddTabSection( "LOC_WORLDBUILDER_TAB_CIVICS",		ViewPlayerCivicsPage );
-	AddTabSection( "LOC_WORLDBUILDER_TAB_CITIES",		ViewPlayerCitiesPage );
-	
+	AddTabSection( m_tabs, "LOC_WORLDBUILDER_TAB_TECHS",		ViewPlayerTechsPage, Controls.TabContainer );
+	AddTabSection( m_tabs, "LOC_WORLDBUILDER_TAB_CIVICS",		ViewPlayerCivicsPage, Controls.TabContainer );
+	AddTabSection( m_tabs, "LOC_WORLDBUILDER_TAB_CITIES",		ViewPlayerCitiesPage, Controls.TabContainer );	
 
 	m_tabs.SameSizedTabs(50);
 	m_tabs.CenterAlignTabs(-10);		
@@ -718,12 +1191,14 @@ function OnInit()
 	-- Register for events
 	ContextPtr:SetShowHandler( OnShow );
 	Events.LoadGameViewStateDone.Add( OnLoadGameViewStateDone );
+	Events.CityAddedToMap.Add( OnCityAddedToMap );
+	Events.CityRemovedFromMap.Add( OnCityRemovedFromMap );
 	Controls.ModalScreenClose:RegisterCallback( Mouse.eLClick, OnClose );
 	LuaEvents.WorldBuilder_PlayerAdded.Add( OnPlayerAdded );
 	LuaEvents.WorldBuilder_PlayerRemoved.Add( OnPlayerRemoved );
 	LuaEvents.WorldBuilder_PlayerEdited.Add( OnPlayerEdited );
 	LuaEvents.WorldBuilder_PlayerTechEdited.Add( OnPlayerTechEdited );
 	LuaEvents.WorldBuilder_PlayerCivicEdited.Add( OnPlayerCivicEdited );
-
+	LuaEvents.WorldBuilder_ShowPlayerEditor.Add( OnShowPlayerEditor );
 end
 ContextPtr:SetInitHandler( OnInit );

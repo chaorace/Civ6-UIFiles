@@ -15,6 +15,8 @@ local m_ContinentTypeEntries   : table = {};
 local m_ResourceTypeEntries    : table = {};
 local m_ImprovementTypeEntries : table = {};
 local m_RouteTypeEntries       : table = {};
+local m_DistrictTypeEntries    : table = {};
+local m_BuildingTypeEntries    : table = {};
 local m_PlayerEntries          : table = {};
 local m_ScenarioPlayerEntries  : table = {}; -- Scenario players are players that don't have a random civ and can therefore have cities and units
 local m_CityEntries            : table = {};
@@ -83,6 +85,8 @@ function OnPlacementTypeSelected(mode)
 	if m_Mode.OnEntered ~= nil then
 		m_Mode.OnEntered();
 	end
+
+	Controls.Root:CalculateSize();
 end
 
 -- ===========================================================================
@@ -177,6 +181,8 @@ function UpdatePlayerEntries()
 
 	m_TabButtons[Controls.PlaceStartPos]:SetDisabled( not hasPlayers );
 	m_TabButtons[Controls.PlaceCity]:SetDisabled( not hasScenarioPlayers );
+	m_TabButtons[Controls.PlaceDistrict]:SetDisabled( not hasScenarioPlayers );
+	m_TabButtons[Controls.PlaceBuilding]:SetDisabled( not hasScenarioPlayers );
 	m_TabButtons[Controls.PlaceUnit]:SetDisabled( not hasScenarioPlayers );
 	m_TabButtons[Controls.PlaceVisibility]:SetDisabled( not hasScenarioPlayers );
 
@@ -200,6 +206,8 @@ function UpdateCityEntries()
 
 	local hasCities = m_CityEntries[1] ~= nil;
 	Controls.OwnerPullDown:SetEntries( m_CityEntries, hasCities and 1 or 0 );
+	Controls.DistrictCityPullDown:SetEntries( m_CityEntries, hasCities and 1 or 0 );
+	Controls.BuildingCityPullDown:SetEntries( m_CityEntries, hasCities and 1 or 0 );
 	m_TabButtons[Controls.PlaceOwnership]:SetDisabled( not hasCities );
 end
 
@@ -285,6 +293,60 @@ function PlaceCity(plot, edge, bAdd)
 		end
 	else
 		WorldBuilder.CityManager():RemoveAt(plot);
+	end
+end
+
+-- ===========================================================================
+function PlaceDistrict(plot, edge, bAdd)
+
+	if bAdd then
+		local cityEntry = Controls.DistrictCityPullDown:GetSelectedEntry();
+		if cityEntry ~= nil then
+			local city = CityManager.GetCity(cityEntry.Player, cityEntry.ID);
+			if city ~= nil then
+				local districtEntry = Controls.DistrictPullDown:GetSelectedEntry();
+				WorldBuilder.CityManager():CreateDistrict(city, districtEntry.Type.DistrictType, 100, plot);
+			end
+
+		end
+	else
+		-- Get the district at the plot
+		local pDistrict = CityManager.GetDistrictAt(plot);
+		if (pDistrict ~= nil) then
+			WorldBuilder.CityManager():RemoveDistrict(pDistrict);
+		end
+	end
+end
+
+-- ===========================================================================
+function PlaceBuilding(plot, edge, bAdd)
+
+	if bAdd then
+		local cityEntry = Controls.BuildingCityPullDown:GetSelectedEntry();
+		if cityEntry ~= nil then
+			local city = CityManager.GetCity(cityEntry.Player, cityEntry.ID);
+			if city ~= nil then
+				local buildingEntry = Controls.BuildingPullDown:GetSelectedEntry();
+				if buildingEntry ~= nil then
+					WorldBuilder.CityManager():CreateBuilding(city, buildingEntry.Type.BuildingType, 100, plot);
+				end
+			end
+
+		end
+	else
+		-- Get the district at the plot
+		local pDistrict = CityManager.GetDistrictAt(plot);
+		if (pDistrict ~= nil) then
+			-- Then its city
+			local pCity = pDistrict:GetCity();
+			if pCity ~= nil then
+				-- Remove the building from the city
+				local buildingEntry = Controls.BuildingPullDown:GetSelectedEntry();
+				if buildingEntry ~= nil then
+					WorldBuilder.CityManager():RemoveBuilding(pCity, buildingEntry.Type.BuildingType);
+				end
+			end
+		end
 	end
 end
 
@@ -428,20 +490,162 @@ end
 -- ===========================================================================
 local m_PlacementModes : table =
 {
-	{ Text="Terrain",         Tab=Controls.PlaceTerrain,      PlacementFunc=PlaceTerrain,     PlacementValid=nil                   },
-	{ Text="Features",        Tab=Controls.PlaceFeatures,     PlacementFunc=PlaceFeature,     PlacementValid=PlaceFeature_Valid    },
-	{ Text="Continent",       Tab=Controls.PlaceContinent,    PlacementFunc=PlaceContinent,   PlacementValid=PlaceContinent_Valid, OnEntered=OnContinentToolEntered, OnLeft=OnContinentToolLeft, NoMouseOverHighlight=true },
-	{ Text="Rivers",          Tab=Controls.PlaceRivers,       PlacementFunc=PlaceRiver,       PlacementValid=nil,                  NoMouseOverHighlight=true },
-	{ Text="Cliffs",          Tab=Controls.PlaceCliffs,       PlacementFunc=PlaceCliff,       PlacementValid=nil                   },
-	{ Text="Resources",       Tab=Controls.PlaceResources,    PlacementFunc=PlaceResource,    PlacementValid=PlaceResource_Valid   },
-	{ Text="City",            Tab=Controls.PlaceCity,         PlacementFunc=PlaceCity,        PlacementValid=nil                   },
-	{ Text="Unit",            Tab=Controls.PlaceUnit,         PlacementFunc=PlaceUnit,        PlacementValid=nil                   },
-	{ Text="Improvements",    Tab=Controls.PlaceImprovements, PlacementFunc=PlaceImprovement, PlacementValid=nil                   },
-	{ Text="Routes",          Tab=Controls.PlaceRoutes,       PlacementFunc=PlaceRoute,       PlacementValid=nil                   },
-	{ Text="Start Position",  Tab=Controls.PlaceStartPos,     PlacementFunc=PlaceStartPos,    PlacementValid=nil                   },
-	{ Text="Owner",           Tab=Controls.PlaceOwnership,    PlacementFunc=PlaceOwnership,   PlacementValid=nil                   },
-	{ Text="Revealed",        Tab=Controls.PlaceVisibility,   PlacementFunc=PlaceVisibility,  PlacementValid=nil,                  OnEntered=OnVisibilityToolEntered, OnLeft=OnVisibilityToolLeft },
+	{ ID=WorldBuilderModes.PLACE_TERRAIN,		Text="LOC_WORLDBUILDER_PLACEMENT_MODE_TERRAIN",         Tab=Controls.PlaceTerrain,      PlacementFunc=PlaceTerrain,     PlacementValid=nil                   },
+	{ ID=WorldBuilderModes.PLACE_FEATURES,		Text="LOC_WORLDBUILDER_PLACEMENT_MODE_FEATURES",        Tab=Controls.PlaceFeatures,     PlacementFunc=PlaceFeature,     PlacementValid=PlaceFeature_Valid    },
+	{ ID=WorldBuilderModes.PLACE_CONTINENTS,	Text="LOC_WORLDBUILDER_PLACEMENT_MODE_CONTINENT",       Tab=Controls.PlaceContinent,    PlacementFunc=PlaceContinent,   PlacementValid=PlaceContinent_Valid, OnEntered=OnContinentToolEntered, OnLeft=OnContinentToolLeft, NoMouseOverHighlight=true },
+	{ ID=WorldBuilderModes.PLACE_RIVERS,		Text="LOC_WORLDBUILDER_PLACEMENT_MODE_RIVERS",          Tab=Controls.PlaceRivers,       PlacementFunc=PlaceRiver,       PlacementValid=nil,                  NoMouseOverHighlight=true },
+	{ ID=WorldBuilderModes.PLACE_CLIFFS,		Text="LOC_WORLDBUILDER_PLACEMENT_MODE_CLIFFS",          Tab=Controls.PlaceCliffs,       PlacementFunc=PlaceCliff,       PlacementValid=nil                   },
+	{ ID=WorldBuilderModes.PLACE_RESOURCES,		Text="LOC_WORLDBUILDER_PLACEMENT_MODE_RESOURCES",       Tab=Controls.PlaceResources,    PlacementFunc=PlaceResource,    PlacementValid=PlaceResource_Valid   },
+	{ ID=WorldBuilderModes.PLACE_CITIES,		Text="LOC_WORLDBUILDER_PLACEMENT_MODE_CITIES",            Tab=Controls.PlaceCity,         PlacementFunc=PlaceCity,        PlacementValid=nil                   },
+	{ ID=WorldBuilderModes.PLACE_DISTRICTS,		Text="LOC_WORLDBUILDER_PLACEMENT_MODE_DISTRICTS",        Tab=Controls.PlaceDistrict,     PlacementFunc=PlaceDistrict,    PlacementValid=nil                   },
+	{ ID=WorldBuilderModes.PLACE_BUILDINGS,		Text="LOC_WORLDBUILDER_PLACEMENT_MODE_BUILDINGS",        Tab=Controls.PlaceBuilding,     PlacementFunc=PlaceBuilding,    PlacementValid=nil                   },
+	{ ID=WorldBuilderModes.PLACE_UNITS,			Text="LOC_WORLDBUILDER_PLACEMENT_MODE_UNITS",            Tab=Controls.PlaceUnit,         PlacementFunc=PlaceUnit,        PlacementValid=nil                   },
+	{ ID=WorldBuilderModes.PLACE_IMPROVEMENTS,	Text="LOC_WORLDBUILDER_PLACEMENT_MODE_IMPROVEMENTS",    Tab=Controls.PlaceImprovements, PlacementFunc=PlaceImprovement, PlacementValid=nil                   },
+	{ ID=WorldBuilderModes.PLACE_ROUTES,		Text="LOC_WORLDBUILDER_PLACEMENT_MODE_ROUTES",          Tab=Controls.PlaceRoutes,       PlacementFunc=PlaceRoute,       PlacementValid=nil                   },
+	{ ID=WorldBuilderModes.PLACE_START_POSITIONS, Text="LOC_WORLDBUILDER_PLACEMENT_MODE_START_POSITIONS",  Tab=Controls.PlaceStartPos,     PlacementFunc=PlaceStartPos,    PlacementValid=nil                   },
+	{ ID=WorldBuilderModes.PLACE_TERRAIN_OWNER,	Text="LOC_WORLDBUILDER_PLACEMENT_MODE_OWNER",           Tab=Controls.PlaceOwnership,    PlacementFunc=PlaceOwnership,   PlacementValid=nil                   },
+	{ ID=WorldBuilderModes.SET_VISIBILITY,		Text="LOC_WORLDBUILDER_PLACEMENT_MODE_SET_VISIBILITY",	Tab=Controls.PlaceVisibility,   PlacementFunc=PlaceVisibility,  PlacementValid=nil,                  OnEntered=OnVisibilityToolEntered, OnLeft=OnVisibilityToolLeft },
 };
+
+local m_PlacementModesByID = {};
+
+-- ==========================================================================
+function SelectPlacementTab()
+	-- Make sure this tab is visibile
+	if not ContextPtr:IsVisible() then
+		-- Get our parent tab container.
+		local pParent = ContextPtr:GetParentByType("TabControl");
+		if pParent ~= nil then
+			pParent:SelectTabByID(ContextPtr:GetID());
+		end
+	end
+end
+
+local ms_eNextMode = WorldBuilderModes.INVALID;
+local ms_kNextModeParams = nil;
+
+-- ===========================================================================
+function OnWorldBuilderModeChangeRequest(eMode, kParams)
+
+	-- Store the request, then send out an event to handle it.
+	-- Doing this in a deferred way prevents any issue with changing modes at a 'bad' time, such as
+	-- while handling a UI control callback.  However, it does mean that we must be careful
+	-- because there will be time for anything to happen btween the time we send the event and it getting handled.
+
+	ms_eNextMode = eMode;
+	ms_kNextModeParams = kParams;
+
+	Events.WorldBuilderSignal(WorldBuilderSignals.MODE_CHANGE);
+end
+
+-- ===========================================================================
+function SelectMode(id)
+
+	for i,entry in ipairs(m_PlacementModes) do
+		if entry.ID == id then
+			Controls.PlacementPullDown:SetSelectedIndex(i, true);
+			break;
+		end
+	end
+
+end
+
+-- ===========================================================================
+function SelectDistrictOwner(player, city)
+
+	for i,entry in ipairs(m_CityEntries) do
+		if entry.Player == player and entry.ID == city then
+			Controls.DistrictCityPullDown:SetSelectedIndex(i, true);
+			break;
+		end
+	end
+
+end
+
+-- ===========================================================================
+function SelectDistrictType(typeHash)
+
+	for i,entry in ipairs(m_DistrictTypeEntries) do
+		if entry.Type.Hash == typeHash then
+			Controls.DistrictPullDown:SetSelectedIndex(i, true);
+			break;
+		end
+	end
+
+end
+
+-- ===========================================================================
+function SelectBuildingOwner(player, city)
+
+	for i,entry in ipairs(m_CityEntries) do
+		if entry.Player == player and entry.ID == city then
+			Controls.BuildingCityPullDown:SetSelectedIndex(i, true);
+			break;
+		end
+	end
+
+end
+
+-- ===========================================================================
+function SelectBuildingType(typeHash)
+
+	for i,entry in ipairs(m_DistrictTypeEntries) do
+		if entry.Type.Hash == typeHash then
+			Controls.BuildingPullDown:SetSelectedIndex(i, true);
+			break;
+		end
+	end
+
+end
+
+-- ===========================================================================
+function SelectCityOwner(playerIndex)
+
+	Controls.CityOwnerPullDown:SetSelectedIndex(playerIndex + 1, true);
+
+end
+
+-- ===========================================================================
+function OnWorldBuilderSignal(eType)
+
+	if (eType == WorldBuilderSignals.MODE_CHANGE) then
+
+		local eMode = ms_eNextMode;
+		local kParams = ms_kNextModeParams;
+
+		-- Remove the reference now, in case the mode change triggers another mode change.
+		ms_eNextMode = WorldBuilderModes.INVALID;
+		ms_kNextModeParams = nil;
+
+		-- Hide UI
+		LuaEvents.WorldBuilder_ShowPlayerEditor( false );
+
+		-- Make sure this tab is visible
+		SelectPlacementTab();
+
+		-- Switch
+		if eMode == WorldBuilderModes.PLACE_DISTRICTS then
+			-- Select the mode
+			SelectMode(eMode);
+			-- Select the mode's sub-items
+			SelectDistrictOwner(kParams.PlayerID, kParams.CityID);
+			SelectDistrictType(kParams.DistrictType);
+		elseif eMode == WorldBuilderModes.PLACE_BUILDINGS then
+			-- Select the mode
+			SelectMode(eMode);
+			-- Select the mode's sub-items
+			SelectBuildingOwner(kParams.PlayerID, kParams.CityID);
+			SelectBuildingType(kParams.BuildingType);
+		elseif eMode == WorldBuilderModes.PLACE_CITIES then
+			-- Select the mode
+			SelectMode(eMode);
+			-- Select the mode's sub-items
+			SelectCityOwner(kParams.PlayerID);
+		end
+
+	end
+		
+end
 
 -- ===========================================================================
 --	Init
@@ -455,6 +659,10 @@ function OnInit()
 	-- Track Tab Buttons
 	for i,tabEntry in ipairs(m_PlacementModes) do
 		m_TabButtons[tabEntry.Tab] = tabEntry.Button;
+	end
+
+	for i,entry in ipairs(m_PlacementModes) do
+		m_PlacementModesByID[entry.ID] = entry;
 	end
 
 	-- TerrainPullDown
@@ -500,6 +708,22 @@ function OnInit()
 	end
 	Controls.RoutePullDown:SetEntries( m_RouteTypeEntries, 1 );
 
+	-- DistricPullDown
+	for type in GameInfo.Districts() do
+		if type.RequiresPlacement == true then
+			table.insert(m_DistrictTypeEntries, { Text=type.Name, Type=type });
+		end
+	end
+	Controls.DistrictPullDown:SetEntries( m_DistrictTypeEntries, 1 );
+
+	-- BuildingPullDown
+	for type in GameInfo.Buildings() do
+		if type.RequiresPlacement == true then
+			table.insert(m_BuildingTypeEntries, { Text=type.Name, Type=type });
+		end
+	end
+	Controls.BuildingPullDown:SetEntries( m_BuildingTypeEntries, 1 );
+
 	-- VisibilityPullDown
 	Controls.VisibilityPullDown:SetEntrySelectedCallback( OnVisibilityPlayerChanged );
 
@@ -512,6 +736,9 @@ function OnInit()
 
 	Events.CityAddedToMap.Add( UpdateCityEntries );
 	Events.CityRemovedFromMap.Add( UpdateCityEntries );
+
+	Events.WorldBuilderSignal.Add( OnWorldBuilderSignal );
+	LuaEvents.WorldBuilderModeChangeRequest.Add( OnWorldBuilderModeChangeRequest );
 
 	LuaEvents.WorldBuilder_PlayerAdded.Add( UpdatePlayerEntries );
 	LuaEvents.WorldBuilder_PlayerRemoved.Add( UpdatePlayerEntries );

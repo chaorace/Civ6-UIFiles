@@ -75,13 +75,25 @@
   </Instance>
 
 	<Container	ID="My2KContents"	Anchor="R,B"	Offset="5,5"				Size="128,75">
-		<Image											Anchor="R,B"	Offset="-345,-195"	Size="700,400"		Texture="Controls_Glow" Color="9,57,93,255" />
+	<Image											Anchor="R,B"	Offset="-345,-195"	Size="700,400"		Texture="Controls_Glow" Color="9,57,93,255" />
     <Grid												Anchor="C,B"	Offset="0,-10"			Size="parent,32"	Style="DropShadow2"			Color="0,0,0,100"/>
     <Button		ID="My2KLogin"		Anchor="C,T"											Size="128,64"			Style="My2KLogoButton"	Disabled="1" />
     <Label		ID="My2KStatus"		Anchor="C,B"  Style="FontNormal12" ColorSet="ButtonCS"  String="TXT_KEY_MY2K_MODE_ANONYMOUS"/>
   </Container>
-	
-  <Label				ID="VersionLabel" Anchor="L,B"  Offset="2,2" Style="FontNormal12" ColorSet="ButtonCS"  />
+
+	<Container ID="MotDContainter" Anchor="C,B"	Size="parent,120" InnerPadding="300,0" Offset="0,24">
+		<Grid ID="MotDFrame" Style="SubContainer3" Color="204,207,245,100" Size="parent,parent" AutoSize="V" Anchor="C,C">
+			<Stack ID="MotDStack" Size="parent,0" Anchor="L,T" StackGrowth="Right" StackPadding="10" AutoSize="V" ClampSize="V">
+				<Button ID="MotDLogo" States="1" Anchor="R,C"	Size="32,32" Texture="Firaxis32"/>
+				<ScrollPanel ID="MotDScroll" Anchor="L,C"  Size="parent-60, parent" Vertical="1" AutoScollbar="1" AutoSize="V" ClampSize="V">
+					<Label ID="MotDText" Style="FontNormal16" WrapWidth="parent-8" Anchor="L,C"/>
+					<ScrollBar Anchor="R,T" AnchorSide="I,I" Style="ScrollVerticalBarHighContrast" Size="9,parent-10"/>
+				</ScrollPanel>
+			</Stack>
+		</Grid>
+	</Container>
+
+	<Label				ID="VersionLabel" Anchor="L,B"  Offset="2,2" Style="FontNormal12" ColorSet="ButtonCS"  />
 	<LuaContext		ID="Options"							DeferLoad="1"	FileName="Options"						Hidden="1" />
 	<LuaContext		ID="ModsContext"					DeferLoad="1"	FileName="Mods"								Hidden="1" />
 	<LuaContext		ID="AdvancedSetup"				DeferLoad="1"	FileName="AdvancedSetup"			Hidden="1" />

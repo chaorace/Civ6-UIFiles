@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContextDefaults ColorSet="Beige_Black" Style="FontNormal22" FontStyle="Shadow" Name="FrontEnd">
+
+	<Box Anchor="C,C" Size="Full,Full" Color="0,0,0,255"/>
+
+	<Movie ID="BackgroundMovie" Movie="TitleBG.bk2" Size="full,full" LoopMovie="1" StretchMode="UniformToFill"/>
+
+	<Container		ID="FrontEndContainer" Size="full,full" >
+		<LuaContext ID="MainMenu" FileName="DemoMainMenu" Hidden="1" />
+		<LuaContext	ID="PopupGeneric" FileName="PopupGeneric" Hidden="1" />
+		<LuaContext	ID="JoiningRoom" FileName="JoiningRoom" Hidden="1" />
+		<LuaContext	ID="UserSetupWarning" FileName="UserSetupWarning" Hidden="1" />
+	</Container>
+
+</ContextDefaults>

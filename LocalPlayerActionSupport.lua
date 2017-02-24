@@ -16,16 +16,21 @@ end
 
 -- ===========================================================================
 function CanLocalPlayerSaveGame()
-	if IsLocalPlayerTurnActive() or WorldBuilder:IsActive() then
-		return true;
+	if UI.HasFeature("Saving") then
+		if GameConfiguration.IsNetworkMultiplayer() or IsLocalPlayerTurnActive() or WorldBuilder:IsActive() then
+			return true;
+		end
 	end
 	return false;
 end
 
 -- ===========================================================================
 function CanLocalPlayerLoadGame()
-	if IsLocalPlayerTurnActive() then
-		return true;
+	if UI.HasFeature("Loading") then
+		if IsLocalPlayerTurnActive() 
+			and not GameConfiguration.IsNetworkMultiplayer() then -- Mechanically, players have to load multiplayer games from the front end.
+			return true;
+		end
 	end
 	return false;
 end

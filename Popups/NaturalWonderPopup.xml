@@ -58,7 +58,7 @@
 					<Label			ID="Quote"							Anchor="C,T"								Align="center"				Style="BodyFont"		WrapWidth="400"			String="$Quote$"/>
 					<Label			ID="Description"				Anchor="C,T"								Align="center"				Style="BodyFont16"	WrapWidth="400"			String="$Description$"/>
 					<Label															Anchor="C,T"								Align="center"				Style="BodyFont16"	WrapWidth="400"			String="LOC_FEATURE_NATURAL_WONDER_DESCRIPTION" />
-					<GridButton ID="ContinueButton"			Anchor="C,T"								Size="200,41"					Style="MainButton"	FontStyle="Shadow"	String="Continue"/>
+					<GridButton ID="ContinueButton"			Anchor="C,T"								Size="200,41"					Style="MainButton"	FontStyle="Shadow"	String="LOC_CONTINUE"/>
 				</Stack>
 			</Grid>
 		</Grid>

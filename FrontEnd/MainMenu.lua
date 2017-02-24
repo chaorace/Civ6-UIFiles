@@ -139,6 +139,38 @@ function OnMy2KLogin()
 	Close();
 end
 
+-- Allow for cycling through the MotD text languages.  For previewing only.
+local ms_MotDIndex = nil;
+
+-- ===========================================================================
+function UpdateMotD()
+	
+	local bShow = false;
+	-- Have a MotD that the user has not dismissed (its still open)?
+	local MotDData = UI.GetPushData("MotD", 0, PushDataSearchOptions.IsOpen, ms_MotDIndex);
+
+	if ms_MotDIndex ~= nil and MotDData.Message == "" then
+		ms_MotDIndex = nil;
+		MotDData = UI.GetPushData("MotD", 0, PushDataSearchOptions.IsOpen, ms_MotDIndex);
+	end
+
+	if MotDData ~= nil and MotDData.Message ~= nil then
+		Controls.MotDText:SetText(MotDData.Message);
+		Controls.MotDText:DoAutoSize();
+		bShow = true;
+	end
+			
+	Controls.MotDContainter:SetShow( bShow );
+	ResizeMOTD();
+end
+
+-- ===========================================================================
+function OnMarketingPushDataUpdated()
+	UpdateMotD();
+end
+
+Events.MarketingPushDataUpdated.Add( OnMarketingPushDataUpdated );
+
 -- ===========================================================================
 --	Engine Event
 -- ===========================================================================
@@ -677,10 +709,25 @@ function Resize()
 	local adjustedWidth = screenY*1.9;
 	Controls.Logo:ReprocessAnchoring();
 	Controls.ShellMenuAndLogo:ReprocessAnchoring();
-		Controls.VersionLabel:ReprocessAnchoring();
+	Controls.VersionLabel:ReprocessAnchoring();
 	Controls.ShellStack:ReprocessAnchoring();
 	Controls.My2KContents:ReprocessAnchoring();
+	ResizeMOTD();
 end
+
+function ResizeMOTD()
+	if Controls.MotDContainter:IsVisible() then
+		Controls.MotDScroll:CalculateSize();
+		Controls.MotDScroll:ReprocessAnchoring();
+		Controls.MotDStack:CalculateSize();
+		Controls.MotDStack:ReprocessAnchoring();
+		Controls.MotDFrame:DoAutoSize();
+		Controls.MotDFrame:ReprocessAnchoring();
+		Controls.MotDContainter:DoAutoSize();
+		Controls.MotDContainter:ReprocessAnchoring();
+	end
+end
+
 -- ===========================================================================
 --	UI Callback
 --	Restart animation on show
@@ -743,6 +790,17 @@ function OnFileListQueryResults( fileList, queryID )
 end
 
 -- ===========================================================================
+function OnCycleMotD()
+	if (ms_MotDIndex == nil) then
+		ms_MotDIndex = 0;
+	else
+		ms_MotDIndex = ms_MotDIndex + 1;
+	end
+
+	UpdateMotD();
+end
+
+-- ===========================================================================
 function Initialize()
 	m_kPopupDialog = PopupDialogLogic:new( "MainMenu", Controls.PopupDialog, Controls.StackContents );
     m_kPopupDialog:SetInstanceNames( "PopupButtonInstance", "Button", "PopupTextInstance", "Text", "RowInstance", "Row");
@@ -757,6 +815,10 @@ function Initialize()
 	Controls.My2KLogin:RegisterCallback( Mouse.eLClick, OnMy2KLogin );
 	Controls.My2KLogin:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
+	if (not UI.IsFinalRelease()) then
+		Controls.MotDLogo:RegisterCallback( Mouse.eLClick, OnCycleMotD );
+	end
+
 	-- Game Events
 	Events.SteamServersConnected.Add( UpdateInternetButton );
 	Events.SteamServersDisconnected.Add( UpdateInternetButton );
@@ -768,6 +830,7 @@ function Initialize()
 	LuaEvents.FileListQueryResults.Add( OnFileListQueryResults );
 
 	BuildAllMenus();
+	UpdateMotD();
 	Resize();
 end
 Initialize();

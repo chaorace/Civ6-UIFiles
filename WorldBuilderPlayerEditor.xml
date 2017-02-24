@@ -27,9 +27,9 @@
 				</ListBox>
 
 				<Stack StackGrowth="Right" Anchor="L,B" Offset="15,15" StackPadding="5">
-					<GridButton ID="NewPlayerButton"    String="Add Player"     Size="130,26" Style="MainMenuSquareButton" />
-					<GridButton ID="NewAIPlayerButton"  String="Add AI Player"  Size="130,26" Style="MainMenuSquareButton" />
-					<GridButton ID="RemovePlayerButton" String="Remove Player"  Size="130,26" Style="MainMenuSquareButton" />
+					<GridButton ID="NewPlayerButton"    String="LOC_WORLDBUILDER_BUTTON_ADD_PLAYER"     Size="130,26" Style="SquareButton14" />
+					<GridButton ID="NewAIPlayerButton"  String="LOC_WORLDBUILDER_BUTTON_ADD_AI_PLAYER"  Size="130,26" Style="SquareButton14" />
+					<GridButton ID="RemovePlayerButton" String="LOC_WORLDBUILDER_BUTTON_REMOVE_PLAYER"  Size="130,26" Style="SquareButton14" />
 				</Stack>
 
 				<Container ID="ValuesContainer" Size="parent-430, parent-30" Offset="430,15">
@@ -49,19 +49,19 @@
 							<SimplePullDown ID="EraPullDown" Style="MainPullDown" ScrollThreshold="400" Size="200,29" Offset="0,-30" SpaceForScroll="0" EntryInstance="InstanceOne"/>
 
 							<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
-								<Label Anchor="L,C" FontSize="18" Size="125,29" String="Gold:"/>
+								<Label Anchor="L,C" FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_GOLD"/>
 								<Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
 									<Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
-										<EditBox ID="GoldEdit" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
+										<EditBox ID="GoldEdit" Style="FontNormal14" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
 									</Box>
 								</Box>
 							</Stack>
 
 							<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
-								<Label Anchor="L,C" FontSize="18" Size="125,29" String="Faith:"/>
+								<Label Anchor="L,C" FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_FAITH"/>
 								<Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
 									<Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
-										<EditBox ID="FaithEdit" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
+										<EditBox ID="FaithEdit" Style="FontNormal14" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
 									</Box>
 								</Box>
 							</Stack>
@@ -169,78 +169,176 @@
 			</MultiSelectListBox>
 		</Stack>
 	</Instance>
-	
-	<Instance Name="CityHeaderInstance">
+
+	<Instance Name="CityMainInstance">
 		<Container ID="Top" Offset="8,0" Size="parent,22" >
-			<Image Offset="4,0" Size="parent-24,parent" Texture="Controls_GradientSmall" FlipY="1" Color="39,89,137,125" />
-			<Stack StackGrowth="Right" >
-				<Container Offset="1,0" Size="232,parent">
-					<Label Style="ReportHeaderText" String="City" />
-				</Container>
-				<Box Size="2,parent" Color="46,70,95,255" />
-				<Container Size="237,parent">
-					<Label Style="ReportHeaderText" String="District" />
-				</Container>
-				<Box Size="2,parent" Color="46,70,95,255" />
-				<Container Size="237,parent">
-					<Label Style="ReportHeaderText" String="Building" />
-				</Container>
-				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128" />
+			<!-- City List -->
+			<Stack StackGrowth="Bottom" StackPadding="5" >
+				<ListBox ID="CityList" Size="265,300" ListContainer="CityListContainer">
+
+					<Grid Style="UnitFrame" Anchor="L,T" Size="parent,parent" >
+						<ScrollPanel Size="255,310" Anchor="L,T" Vertical="1" Offset="5,10" >
+							<Stack ID="CityListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
+
+							<ScrollBar  Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+							<UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
+							<DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+						</ScrollPanel>
+					</Grid>
+
+					<InstanceData Name="EntryInstance" >
+						<GridButton  Size="parent,24" Style="ButtonLightweightSmall"  Anchor="C,C" ID="Button" />
+					</InstanceData>
+
+				</ListBox>
+
+				<Stack Anchor="L,B" StackGrowth="Right" Padding="5">
+					<GridButton ID="NewCityButton"    String="LOC_WORLDBUILDER_BUTTON_ADD_CITY"     Size="130,26" Style="SquareButton14" />
+					<GridButton ID="RemoveCityButton" String="LOC_WORLDBUILDER_BUTTON_REMOVE_CITY"  Size="130,26" Style="SquareButton14" />
+				</Stack>
+
 			</Stack>
+
+			<Container ID="TabsContainer" Size="parent-300, parent" Offset="300,0">
+
+				<Stack StackGrowth="Down" Anchor="L,T" StackPadding="4">
+
+					<Container ID="TabArea" Anchor="C,T" Offset="0,0" Size="parent,42">
+						<Image Anchor="C,T" Offset="0,4" Size="parent-8,22" Color="0,0,0,255" Texture="Controls_GradientSmall" />
+						<Container ID="TabContainer" Offset="0,0" Size="parent,34" />
+						<Grid Anchor="C,B" Offset="0,0" Size="parent-6,8" Style="Divider3Grid" />
+					</Container>
+
+					<ScrollPanel ID="Scroll" Offset="4,4" Size="parent-8,parent" Vertical="1" AutoScrollBar="1">
+						<Stack ID="Stack" Anchor="L,T" Offset="0,1" StackPadding="4"/>
+						<ScrollBar Anchor="R,C" Offset="2,0" Size="11,parent" AnchorSide="I,I" Style="ScrollVerticalBarAlt" />
+					</ScrollPanel>
+
+				</Stack>
+			</Container>
+
 		</Container>
+		
+	</Instance>
+	
+	<Instance Name="CityGeneralInstance">
+		<Container Offset="8,0" Size="parent,200" >
+
+			<Stack StackGrowth="Bottom" Anchor="T,L" Offset="15,15" StackPadding="5">
+
+				<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+					<Label Anchor="L,C" FontSize="18" Size="125,29" String="Population:"/>
+					<Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
+						<Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
+							<EditBox ID="PopulationEdit" Style="FontNormal14" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
+						</Box>
+					</Box>
+				</Stack>
+
+			</Stack>
+
+		</Container>
+
 	</Instance>
 
-	<Instance Name="CityEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="parent,32">
-			<Grid Offset="-8,-1" Size="parent,parent" SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255" />
-			<Stack StackGrowth="Right" >
-				<Container Offset="1,0" Size="232,parent">
-					<Label ID="CityName" Style="ReportValueLeftName" />
-				</Container>
-				<Box Anchor="C,C" Size="2,19" Color="46,70,95,255" />
-				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128" />
+	<Instance Name="CityDistrictsInstance">
+		<Container Offset="8,0" Size="parent,280" >
+			
+			<Stack Anchor="L,T" StackGrowth="Right" Padding="5">
+
+				<!-- District List-->
+				
+				<ListBox ID="DistrictsList" Size="265,parent" ListContainer="DistrictsListContainer">
+
+					<Grid Style="UnitFrame" Anchor="L,T" Size="parent,parent" >
+						<ScrollPanel Size="255,parent-20" Anchor="L,T" Vertical="1" Offset="5,10" >
+							<Stack ID="DistrictsListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"  />
+
+							<ScrollBar Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+							<UpButton Offset="0,0"  Style="ScrollUpButton" Anchor="R,T" />
+							<DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+						</ScrollPanel>
+					</Grid>
+
+					<InstanceData Name="EntryInstance" >
+						<Stack StackGrowth="Right" Anchor="L,T" StackPadding="3">
+							<CheckBox  ID="HasEntry" Size="24,24" Style="MainCheckBox" Anchor="C,C" BoxOnLeft="1" />
+							<GridButton ID="Button" Size="parent-24,24" Style="ButtonLightweightSmall" Anchor="C,C" />
+						</Stack>
+					</InstanceData>
+
+				</ListBox>
+				
+				<Stack StackGrowth="Bottom" Anchor="T,L" Offset="15,15" StackPadding="5">
+
+					<!-- Pillaged? -->
+					<CheckBox ID="PillagedCheckbox" Size="240,24" Style="MainCheckBox" Anchor="L,T" BoxOnLeft="1" String="LOC_WORLDBUILDER_ATTRIBUTE_PILLAGED"/>
+
+					<!-- Garrison Damage -->
+					<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+						<Label Anchor="L,C" FontSize="18" Size="200,29" String="LOC_WORLDBUILDER_ATTRIBUTE_GARRISON_DAMAGE"/>
+						<Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
+							<Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
+								<EditBox ID="GarrisonDamageEdit" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
+							</Box>
+						</Box>
+					</Stack>
+
+					<!-- Outer Damage -->
+					<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+						<Label Anchor="L,C" FontSize="18" Size="200,29" String="LOC_WORLDBUILDER_ATTRIBUTE_OUTER_DAMAGE"/>
+						<Box Anchor="R,C" Offset="4,0" Size="80,24" Color="255,255,200,255">
+							<Box Anchor="C,C" Offset="0,0" Size="78,22" Color="0,0,0,255">
+								<EditBox ID="OuterDamageEdit" Anchor="L,C" Offset="0,0" Size="78,23" EditMode="1" NumberInput="1"/>
+							</Box>
+						</Box>
+					</Stack>
+
+				</Stack>
+
 			</Stack>
+
 		</Container>
+
 	</Instance>
 
-	<Instance Name="DistrictEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="parent,32">
-			<Grid Offset="-8,-1" Size="parent,parent" SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255" />
-			<Stack StackGrowth="Right" >
-				<Container Size="10,parent"/>
-				<Button	ID="RemoveButton" Anchor="R,C" Offset="0,0" Size="21,21" Texture="Controls_CloseButtonAltSmall"	StateOffsetIncrement="0,21" />
-				<Box Anchor="C,C" Size="2,22" Color="46,70,95,128" />
-				<Container Size="237,parent">
-					<Label ID="DistrictName" Style="ReportValueLeftName" />
-				</Container>
-				<Box Anchor="C,C" Size="2,19" Color="46,70,95,255" />
-				<Container Size="200,parent">
-					<CheckBox Size="parent,17" Style="MainCheckBox" Anchor="L,C" ID="PillagedCheck" BoxOnLeft="1" String="Pillaged"/>
-				</Container>
-				<Box Anchor="C,C" Size="2,19" Color="46,70,95,255" />
-				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128" />
-			</Stack>
-		</Container>
-	</Instance>
+	<Instance Name="CityBuildingsInstance">
+		<Container Offset="8,0" Size="parent,280" >
 
-	<Instance Name="BuildingEntryInstance">
-		<Container ID="Top" Offset="8,0" Size="parent,32">
-			<Grid Offset="-8,-1" Size="parent,parent" SliceCorner="16,16" SliceSize="1,1" SliceTextureSize="32,32" Texture="Controls_LineItem" Color="200,199,212,255" />
-			<Stack StackGrowth="Right" >
-				<Container Size="20,parent"/>
-				<Button	ID="RemoveButton" Anchor="R,C" Offset="0,0" Size="21,21" Texture="Controls_CloseButtonAltSmall"	StateOffsetIncrement="0,21" />
-				<Box Anchor="C,C" Size="2,22" Color="46,70,95,128" />
-				<Container Size="227,parent">
-					<Label ID="BuildingName" Style="ReportValueLeftName" />
-				</Container>
-				<Box Anchor="C,C" Size="2,19" Color="46,70,95,255" />
-				<Container Size="200,parent">
-					<CheckBox Size="parent,17" Style="MainCheckBox" Anchor="L,C" ID="PillagedCheck" BoxOnLeft="1" String="Pillaged"/>
-				</Container>
-				<Box Anchor="C,C" Size="2,19" Color="46,70,95,255" />
-				<Box Offset="1,0" Size="2,parent" Color="46,70,95,128" />
+			<Stack Anchor="L,T" StackGrowth="Right" Padding="5">
+
+				<!-- Buildings List-->
+				<ListBox ID="BuildingsList" Size="265,parent" ListContainer="BuildingsListContainer">
+					
+					<Grid Style="UnitFrame" Anchor="L,T" Size="parent,parent" >
+						<ScrollPanel Size="255,parent-20" Anchor="L,T" Vertical="1" Offset="5,10" >
+							<Stack ID="BuildingsListContainer" StackGrowth="Bottom" Anchor="L,T" StackPadding="3"/>
+
+							<ScrollBar Style="ScrollVerticalBar" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+							<UpButton Offset="0,0" Style="ScrollUpButton" Anchor="R,T" />
+							<DownButton Offset="0,0" Style="ScrollDownButton" Anchor="R,B"  />
+						</ScrollPanel>
+					</Grid>
+
+					<InstanceData Name="EntryInstance" >
+						<Stack StackGrowth="Right" Anchor="L,T" StackPadding="3">
+							<CheckBox  ID="HasEntry" Size="24,24" Style="MainCheckBox" Anchor="C,C" BoxOnLeft="1" />
+							<GridButton ID="Button" Size="parent-24,24" Style="ButtonLightweightSmall" Anchor="C,C" />
+						</Stack>
+					</InstanceData>
+				</ListBox>
+
+				<Stack StackGrowth="Bottom" Anchor="T,L" Offset="15,15" StackPadding="5">
+
+					<!-- Pillaged? -->
+					<CheckBox ID="PillagedCheckbox" Size="240,24" Style="MainCheckBox" Anchor="L,T" BoxOnLeft="1" String="LOC_WORLDBUILDER_ATTRIBUTE_PILLAGED"/>
+
+				</Stack>
+
 			</Stack>
+
 		</Container>
+
 	</Instance>
 
 </Context>

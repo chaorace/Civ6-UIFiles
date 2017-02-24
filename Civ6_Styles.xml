@@ -97,6 +97,12 @@
   <BodyTextParchment16 FontStyle="glow" ColorSet="ParchmentBrown" Style="FontNormal16"/>
   <HeaderTextParchment16 Style="FontFlair14" FontStyle="glow" ColorSet="ParchmentBrown" SmallCaps="18" SmallCapsLeading="0" SmallCapsType="EveryWord" KerningAdjustment="0"/>
 
+	<!-- Event Popup Fonts -->
+	<EventPopupTitle FontStyle="Shadow"	Color0="179,185,192,255"	Color1="0,0,0,38"	Style="FontFlair20" Align="Center" SmallCaps="26" SmallCapsType="EveryWord" />
+	<EventPopupDescription Color0="179,185,176,255" Color1="0,0,0,43" Style="FontNormalMedium16" />
+	<EventPopupJournal Color="66,54,19,255" Style="FontItalicFlair22"/>
+	<EventPopupEffects Style="EventPopupDescription"/>
+
   <!-- Common Text Styles (used across the game) -->
   <PanelText        ColorSet="TopBarLabelCS"   FontStyle="stroke" Style="FontNormal20"/>
   <TutorialHeaderText WrapWidth="250" Anchor="C,T" ColorSet="TutorialCS" FontStyle="stroke" Style="FontBoldFlair18" SmallCaps="24" SmallCapsType="EveryWord"/>
@@ -160,19 +166,23 @@
   <!-- Slider and Scroll Bar Components -->
 
   <!-- Common scroll pieces: -->
-  <ScrollVerticalBacking		Texture="Controls_ScrollbarV"					Size="11,14"	StateOffsetIncrement="0,0" Vertical="1" SliceCorner="5,7" SliceTextureSize="11,14" Color="35,73,114,255"/>
-  <ScrollHorizontalBacking	Texture="Controls_ScrollbarH"					Size="12,8"		StateOffsetIncrement="0,0" Vertical="0" SliceCorner="6,0" SliceTextureSize="12,8" />
-  <!--<ScrollThumb							Texture="Controls_Handle"							Size="15,15"	StateOffsetIncrement="0,0" SliceCorner="7,7" /> Old Gold scroll handle-->
-  <ScrollThumb						Texture="Controls_ScrollHandle"						Size="5,12"		StateOffsetIncrement="0,0" SliceCorner="3,6" SliceTextureSize="5,12" Color="35,73,114,255" />
-  <ScrollUpButton						Texture="Controls_ScrollbarUp"				Size="17,17"	StateOffsetIncrement="0,17" />
+	<ScrollVerticalBacking		Texture="Controls_ScrollbarV"					Size="11,14"	StateOffsetIncrement="0,0" Vertical="1" SliceCorner="5,7" SliceTextureSize="11,14" Color="35,73,114,255"/>
+	<ScrollHorizontalBacking	Texture="Controls_ScrollbarH"					Size="12,8"		StateOffsetIncrement="0,0" Vertical="0" SliceCorner="6,0" SliceTextureSize="12,8" />
+	<!--<ScrollThumb							Texture="Controls_Handle"							Size="15,15"	StateOffsetIncrement="0,0" SliceCorner="7,7" /> Old Gold scroll handle-->
+	<ScrollThumb						Texture="Controls_ScrollHandle"						Size="5,12"		StateOffsetIncrement="0,0" SliceCorner="3,6" SliceTextureSize="5,12" Color="35,73,114,255" />
+	<ScrollUpButton						Texture="Controls_ScrollbarUp"				Size="17,17"	StateOffsetIncrement="0,17" />
   <ScrollDownButton					Texture="Controls_ScrollbarDown"			Size="17,17"	StateOffsetIncrement="0,17" />
   <ScrollVerticalBackingAlt	Style="ScrollVerticalBacking"							Color="46,54,60,255" />
   <ScrollHorizontalBackingAlt	Style="ScrollHorizontalBacking"					Color="90,90,80,255" />
   <ScrollThumbAlt						Texture="Controls_ScrollHandle"						Size="5,12"		StateOffsetIncrement="0,0" SliceCorner="3,6" SliceTextureSize="5,12" Color="46,54,60,255" />
   <ScrollThumbHAlt					Texture="Controls_ScrollHandleH"					Size="12,5"		StateOffsetIncrement="0,0" SliceCorner="5,3" SliceTextureSize="12,5" Color="90,90,80,255" />
 
+	<ScrollVerticalBackingHighContrast		Texture="Controls_ScrollbarV"					Size="11,14"	StateOffsetIncrement="0,0" Vertical="1" SliceCorner="5,7" SliceTextureSize="11,14" Color="64,76,87,255"/>
+	<ScrollHorizontalBackingHighContrast	Texture="Controls_ScrollbarH"					Size="12,8"		StateOffsetIncrement="0,0" Vertical="0" SliceCorner="6,0" SliceTextureSize="12,8" />
+	<ScrollThumbHighContrast							Texture="Controls_ScrollHandle"						Size="5,12"		StateOffsetIncrement="0,0" SliceCorner="3,6" SliceTextureSize="5,12" Color="150,153,157,255" />
 
-  <ScrollVerticalBar			Style="ScrollVerticalBacking">
+
+	<ScrollVerticalBar			Style="ScrollVerticalBacking">
     <Thumb								Style="ScrollThumb" />
   </ScrollVerticalBar>
 
@@ -193,6 +203,9 @@
     <Thumb									Style="ScrollThumbHAlt" />
   </ScrollHorizontalBarAlt>
 
+	<ScrollVerticalBarHighContrast		Style="ScrollVerticalBackingHighContrast">
+		<Thumb													Style="ScrollThumbHighContrast" />
+	</ScrollVerticalBarHighContrast>
 
 
   <!-- Scrollpanel with scrollbar on it's left side -->
@@ -208,6 +221,11 @@
     <UpButton					Anchor="R,T" AnchorSide="O,I"  Offset="-3,0"	Style="ScrollUpButton" />
     <DownButton				Anchor="R,B" AnchorSide="O,I"	 Offset="-3,0"	Style="ScrollDownButton" />
   </ScrollPanelWithRightBar>
+
+	<!-- Scrollpanel with scrollbar on it's right side -->
+	<ScrollPanelHighContrast Vertical="1" Size="18,18" AutoScrollBar="1" >
+		<ScrollBar				Anchor="R,C" AnchorSide="I,I"  Offset="0,0"		Style="ScrollVerticalBarHighContrast" />
+	</ScrollPanelHighContrast>
 
   <!-- Scrollpanel with scrollbar on it's right side -->
   <WorldRankingsScrollPanel Vertical="1" Size="18,18" AutoScrollBar="1" >
@@ -261,7 +279,25 @@
     </InstanceData>
   </MainPullDown>
 
-  <!--
+	<WBPullDown ID="SmallPulldown" Size="194,26" ScrollThreshold="450" SpaceForScroll="0" AutoSizePopup="1">
+		<ButtonData>
+			<GridButton Offset="0,0" Size="194,26" String="LOC_TREE_FILTER_W_DOTS" Style="TreeOptionText" >
+				<GridData Texture="Controls_Dropdown2" StateOffsetIncrement="0,26"	SliceCorner="30,14"	SliceSize="1,1"		SliceTextureSize="41,26" />
+			</GridButton>
+		</ButtonData>
+		<GridData Offset="0,27" Texture="Controls_OptionPanel" SliceCorner="3,3" SliceSize="10,52" SliceTextureSize="16,64" />
+		<ScrollPanelData Anchor="C,C" Vertical="1" Size="18,18" AutoScrollBar="1" >
+			<ScrollBar Style="Slider_Vert" Anchor="R,C" AnchorSide="O,I"   />
+			<UpButton Style="Scroll_Up" Anchor="R,T" AnchorSide="O,I"   />
+			<DownButton Style="Scroll_Down" Anchor="R,B" AnchorSide="O,I"   />
+		</ScrollPanelData>
+		<StackData StackGrowth="Bottom" Anchor="C,T" Padding="0"/>
+		<InstanceData Name="InstanceOne" >
+			<GridButton ID="Button" Size="200,24" Style="ButtonControl"  Anchor="C,C"/>
+		</InstanceData>
+	</WBPullDown>
+
+	<!--
 	<MainPullDown AutoSizePopup="1" >
 		<ButtonData>
 			<GridButton Style="PullDownButton" Anchor="L,C"/>
@@ -1195,8 +1231,21 @@
 
   <btn_mmenu Texture="UI/Art/styles/btn_mmenu"         Size="400,60" />
 
+	<SquareButton14 Texture="UI/Art/styles/btn_mainmenu_sq"
+	  StateOffsetIncrement="0,32"
+	  ULSize="10,10"  ULTexStart="0,0"
+	  UCSize="12,10" UCTexStart="10,0"
+	  URSize="10,10"  URTexStart="22,0"
+	  LSize="10,12"  LTexStart="0,10"
+	  CSize="12,12" CTexStart="10,10"
+	  RSize="10,12"  RTexStart="22,10"
+	  LLSize="10,10"  LLTexStart="0,22"
+	  LCSize="12,10" LCTexStart="10,22"
+	  LRSize="10,10"  LRTexStart="22,22"
+              Style="FontNormal14"/>
 
-  <!-- *********************************************************************************** -->
+
+	<!-- *********************************************************************************** -->
   <!--  Dividers -->
 
   <Divider6Grid Texture="Controls_Div6" Padding="0,0"
@@ -1399,11 +1448,14 @@
                 />
 
   <!-- Grids -->
-  <WindowFrameHUD			Texture="Controls_WindowLight"				SliceCorner="17,15"		SliceSize="1,1"		SliceTextureSize="34,34" InnerPadding="16,16" InnerOffset="7,7" MinSize="34,34"/>
-  <WindowFrame				Texture="Controls_Window"							SliceCorner="55,55"		SliceSize="1,1"		SliceTextureSize="118,118" MinSize="118,118"/>
-  <WindowFrameAlpha		Texture="Controls_WindowFrame"				SliceCorner="55,55"		SliceSize="1,1"		SliceTextureSize="118,118" MinSize="118,118"/>
-  <WindowFrameTitle		Texture="Controls_WindowTitle"				SliceCorner="55,55"		SliceSize="1,1"		SliceTextureSize="118,118" MinSize="118,118"/>
-	<WindowFrameTopOnly	Texture="Controls_WindowFrameTopOnly"	SliceCorner="61,62"		SliceSize="1,1"		SliceTextureSize="123,124" MinSize="123,124"/>
+  <WindowFrameHUD					Texture="Controls_WindowLight"				SliceCorner="17,15"		SliceSize="1,1"		SliceTextureSize="34,34" InnerPadding="16,16" InnerOffset="7,7" MinSize="34,34"/>
+  <WindowFrame						Texture="Controls_Window"							SliceCorner="55,55"		SliceSize="1,1"		SliceTextureSize="118,118" MinSize="118,118"/>
+	<EventPopupFrame				Texture="Controls_Window2"						SliceCorner="24,25"		SliceSize="4,4"		SliceTextureSize="52,54" MinSize="52,54"/>
+	<EventPopupTitleBar			Texture="Controls_TitleBarLight"			SliceCorner="8,8"			SliceSize="3,3"		SliceTextureSize="20,14" MinSize="20,14" />
+	<EventPopupEffectsDeco	Texture="Controls_FrameDeco"					SliceCorner="32,32"		SliceSize="6,6"		SliceTextureSize="70,70" MinSize="70,70" />
+  <WindowFrameAlpha				Texture="Controls_WindowFrame"				SliceCorner="55,55"		SliceSize="1,1"		SliceTextureSize="118,118" MinSize="118,118"/>
+  <WindowFrameTitle				Texture="Controls_WindowTitle"				SliceCorner="55,55"		SliceSize="1,1"		SliceTextureSize="118,118" MinSize="118,118"/>
+	<WindowFrameTopOnly			Texture="Controls_WindowFrameTopOnly"	SliceCorner="61,62"		SliceSize="1,1"		SliceTextureSize="123,124" MinSize="123,124"/>
   
   <TutorialCalloutGrid				Anchor="C,T" Size="325,325"  Style="DropShadow3" Color="255,255,255,200" AutoSize="V" InnerPadding="0,50"/>
   

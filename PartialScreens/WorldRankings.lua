@@ -5,6 +5,7 @@ include("TabSupport");
 include("InstanceManager");
 include("SupportFunctions");
 include("AnimSidePanelSupport");
+include("TeamSupport");
 
 -- ===========================================================================
 --	DEBUG
@@ -62,6 +63,14 @@ local SIZE_HEADER_MAX_Y:number = 270;
 local SIZE_HEADER_ICON:number = 80;
 local SIZE_LEADER_ICON:number = 55;
 local SIZE_CIV_ICON:number = 36;
+
+local TEAM_RIBBON_PREFIX:string = "ICON_TEAM_RIBBON_";
+local TEAM_RIBBON_SIZE_TOP_TEAM:number = 53;
+local TEAM_RIBBON_SIZE:number = 44;
+
+local TEAM_ICON_PREFIX:string = "Team";
+local TEAM_ICON_SIZE_TOP_TEAM:number = 38;
+local TEAM_ICON_SIZE:number = 28;
 
 local TAB_SCORE:string = Locale.Lookup("LOC_WORLD_RANKINGS_SCORE_TAB");
 local TAB_OVERALL:string = Locale.Lookup("LOC_WORLD_RANKINGS_OVERALL_TAB");
@@ -173,16 +182,32 @@ local m_GenericHeaderIM:table = InstanceManager:new("GenericHeaderInstance", "He
 local m_ScienceHeaderIM:table = InstanceManager:new("ScienceHeaderInstance", "HeaderTop", Controls.ScienceViewHeader);
 local m_CultureHeaderIM:table = InstanceManager:new("CultureHeaderInstance", "HeaderTop", Controls.CultureViewHeader);
 local m_OverallIM:table = InstanceManager:new("OverallInstance", "ButtonBG", Controls.OverallViewStack);
+
 local m_ScoreIM:table = InstanceManager:new("ScoreInstance", "ButtonBG", Controls.ScoreViewStack);
+local m_ScoreTeamIM:table = InstanceManager:new("ScoreTeamInstance", "ButtonFrame", Controls.ScoreViewStack);
+
 local m_ScienceIM:table = InstanceManager:new("ScienceInstance", "ButtonBG", Controls.ScienceViewStack);
+local m_ScienceTeamIM:table = InstanceManager:new("ScienceTeamInstance", "ButtonFrame", Controls.ScienceViewStack);
+
 local m_CultureIM:table = InstanceManager:new("CultureInstance", "ButtonBG", Controls.CultureViewStack);
+local m_CultureTeamIM:table = InstanceManager:new("CultureTeamInstance", "ButtonFrame", Controls.CultureViewStack);
+
 local m_DominationIM:table = InstanceManager:new("DominationInstance", "ButtonBG", Controls.DominationViewStack);
+local m_DominationTeamIM:table = InstanceManager:new("DominationTeamInstance", "ButtonFrame", Controls.DominationViewStack);
+
 local m_ReligionIM:table = InstanceManager:new("ReligionInstance", "ButtonBG", Controls.ReligionViewStack);
+local m_ReligionTeamIM:table = InstanceManager:new("ReligionTeamInstance", "ButtonFrame", Controls.ReligionViewStack);
+
 local m_GenericIM:table = InstanceManager:new("GenericInstance", "ButtonBG", Controls.GenericViewStack);
+local m_GenericTeamIM:table = InstanceManager:new("GenericTeamInstance", "ButtonFrame", Controls.GenericViewStack);
+
 local m_ExtraTabsIM:table = InstanceManager:new("ExtraTab", "Button", Controls.ExtraTabStack);
 
 local m_CivTooltip = {};
 TTManager:GetTypeControlTable("CivTooltip", m_CivTooltip);
+
+local m_TeamTooltip = {};
+TTManager:GetTypeControlTable("TeamTooltip", m_TeamTooltip);
 
 -- ===========================================================================
 --	Called once during Init
@@ -600,7 +625,7 @@ function PopulateOverallInstance(instance:table, victoryType:string, typeText:st
 	elseif (victoryType == "VICTORY_CONQUEST") then
 		firstTiebreakerText = "LOC_WORLD_RANKINGS_OVERVIEW_DOMINATION_MILITARY_STRENGTH";
 		firstTiebreakerFunction = function(p)
-			return p:GetStats():GetMilitaryStrength();
+			return p:GetStats():GetMilitaryStrengthWithoutTreasury();
 		end;
 	elseif (victoryType == "VICTORY_RELIGIOUS") then
 		firstTiebreakerText = "LOC_WORLD_RANKINGS_OVERVIEW_RELIGION_CITIES_FOLLOWING_RELIGION";
@@ -613,22 +638,86 @@ function PopulateOverallInstance(instance:table, victoryType:string, typeText:st
 		end;
 	end
 
-	local numPlayers:number = 0;
-	local playersData:table = {};
-	for i = 0, PlayerManager.GetWasEverAliveCount() - 1 do
-		local pPlayer = Players[i];
-		if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
-			table.insert(playersData, {
-				Player = pPlayer,
-				Score = Game.GetVictoryProgressForPlayer(victoryType, i), -- Game Core Call
-				FirstTiebreakScore = firstTiebreakerFunction(pPlayer),
-				SecondTiebreakScore = secondTiebreakerFunction(pPlayer),
-				FirstTiebreakSummary = Locale.Lookup(firstTiebreakerText, Round(firstTiebreakerFunction(pPlayer), 1)),
-				SecondTiebreakSummary = Locale.Lookup(secondTiebreakerText, Round(secondTiebreakerFunction(pPlayer), 1)),
-			});
-			numPlayers = numPlayers + 1;
+	-- Team tiebreaker score functions
+	local firstTeamTiebreakerFunction = function(playerData, playerCount)
+		local averageScore:number = 0;
+
+		-- Add player scores
+		for playerID, player in pairs(playerData) do
+			averageScore = averageScore + player.FirstTiebreakScore;
+		end
+
+		-- Divide by player count
+		averageScore = averageScore / playerCount;
+		
+		return averageScore;
+	end;
+	local secondTeamTiebreakerFunction = function(playerData, playerCount)
+		local averageScore:number = 0;
+
+		-- Add player scores
+		for playerID, player in pairs(playerData) do
+			averageScore = averageScore + player.SecondTiebreakScore;
+		end
+
+		-- Divide by player count
+		averageScore = averageScore / playerCount;
+		
+		return averageScore;
+	end;
+
+	-- Gather team data
+	local teamData:table = {};
+	for teamID, team in pairs(Teams) do
+		if (teamID >= 0) then
+			-- If progress is nil, then the team is not capable of earning a victory (ex: city-state teams and barbarian teams).
+			-- Skip any team that is incapable of earning a victory.
+			local progress = Game.GetVictoryProgressForTeam(victoryType, teamID);
+			if(progress ~= nil) then
+				-- PlayerData
+				local playerData:table = {};
+				local playerCount:number = 0;
+				for i, playerID in ipairs(team) do
+					if IsAliveAndMajor(playerID) then
+						local pPlayer = Players[playerID];
+						playerData[playerID] = {
+							Player = pPlayer,
+							FirstTiebreakScore = firstTiebreakerFunction(pPlayer),
+							SecondTiebreakScore = secondTiebreakerFunction(pPlayer),
+							FirstTiebreakSummary = Locale.Lookup(firstTiebreakerText, Round(firstTiebreakerFunction(pPlayer), 1)),
+							SecondTiebreakSummary = Locale.Lookup(secondTiebreakerText, Round(secondTiebreakerFunction(pPlayer), 1)),
+						};
+
+						playerCount = playerCount + 1;
+					end
+				end
+
+				table.insert(teamData, {
+					-- Team Data
+					TeamID = teamID,
+					TeamScore = progress,
+					PlayerData = playerData,
+					PlayerCount = playerCount,
+					FirstTeamTiebreakScore = firstTeamTiebreakerFunction(playerData, playerCount);
+					SecondTeamTiebreakScore = secondTeamTiebreakerFunction(playerData, playerCount);
+				});
+			end
 		end
 	end
+
+	-- Sort teams by score
+	table.sort(teamData, function(a, b)
+		if (a.TeamScore == b.TeamScore) then
+			if (a.FirstTeamTiebreakScore == b.FirstTeamTiebreakScore) then
+				if (a.SecondTeamTiebreakScore == b.SecondTeamTiebreakScore) then
+					return a.TeamID > b.TeamID;
+				end
+				return a.SecondTeamTiebreakScore > b.SecondTeamTiebreakScore;
+			end
+			return a.FirstTeamTiebreakScore > b.FirstTeamTiebreakScore;
+		end
+		return a.TeamScore > b.TeamScore;
+	end);
 
 	-- Ensure we have Instance Managers for the player meters
 	local playersIM:table = instance[DATA_FIELD_OVERALL_PLAYERS_IM];
@@ -637,101 +726,245 @@ function PopulateOverallInstance(instance:table, victoryType:string, typeText:st
 		instance[DATA_FIELD_OVERALL_PLAYERS_IM] = playersIM;
 	end
 	playersIM:ResetInstances();
-	
-	if(numPlayers > 0) then
-		-- Sort players by Score, including tiebreakers
-		table.sort(playersData, function(a, b)
-			if (a.Score == b.Score) then
-				if (a.FirstTiebreakScore == b.FirstTiebreakScore) then
-					if (a.SecondTiebreakScore == b.SecondTiebreakScore) then
-						return a.Player:GetID() < b.Player:GetID();
-					end
-					return a.SecondTiebreakScore > b.SecondTiebreakScore;
-				end
-				return a.FirstTiebreakScore > b.FirstTiebreakScore;
+
+	-- Populate top team/player icon
+	if teamData[1].PlayerCount > 1 then
+		PopulateOverallTeamIconInstance(instance, teamData[1], TEAM_ICON_SIZE_TOP_TEAM, TEAM_RIBBON_SIZE_TOP_TEAM);
+	else
+		PopulateOverallPlayerIconInstance(instance, teamData[1], SIZE_OVERALL_TOP_PLAYER_ICON);
+	end
+
+	-- Populate other team/player icons
+	if #teamData > 1 then
+		for i = 2, #teamData, 1 do
+			local playerInstance:table = playersIM:GetInstance();
+			if teamData[i].PlayerCount > 1 then
+				PopulateOverallTeamIconInstance(playerInstance, teamData[i], TEAM_ICON_SIZE, TEAM_RIBBON_SIZE);
+			else
+				PopulateOverallPlayerIconInstance(playerInstance, teamData[i], SIZE_OVERALL_PLAYER_ICON);
 			end
-			return a.Score > b.Score;
-		end);
+		end
+	end
 
-		-- Populate top player icon
-		PopulateOverallPlayerIconInstance(instance, playersData[1], SIZE_OVERALL_TOP_PLAYER_ICON);
+	-- Determine if local player is leading
+	local isLocalPlayerLeading:boolean = false;
+	local leadingTeam:table = teamData[1];
+	for playerID, data in pairs(teamData[1].PlayerData) do
+		if playerID == m_LocalPlayerID then
+			isLocalPlayerLeading = true;
+		end
+	end
 
-		-- Populate leading and local player labels
-		local topPlayer:number = playersData[1].Player:GetID();
-		if(topPlayer == m_LocalPlayerID) then
-			instance.VictoryPlayer:SetText("");
-			instance.VictoryLeading:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_FIRST_PLACE_YOU_SIMPLE"));
+	-- Populate leading and local player labels
+	if isLocalPlayerLeading then
+		-- You or your team is leading
+		instance.VictoryPlayer:SetText("");
+		if teamData[1].PlayerCount > 1 then
+			instance.VictoryLeading:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_FIRST_PLACE_TEAM_SIMPLE"));
 		else
-			-- Determine local player position
-			local localPlayerPosition:number = 1;
-			local localPlayerPositionText:string;
-			local localPlayerPositionLocTag:string;
-			for i = 1, numPlayers do
-				if(playersData[i].Player == m_LocalPlayer) then
-					localPlayerPosition = i;
-					break;
+			instance.VictoryLeading:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_FIRST_PLACE_YOU_SIMPLE"));
+		end
+	else
+		-- Set top team/player text
+		local topName:string = "";
+		if teamData[1].PlayerCount > 1 then
+			topName = Locale.Lookup("LOC_WORLD_RANKINGS_TEAM", GameConfiguration.GetTeamName(teamData[1].TeamID));
+		else
+			local topPlayerID:number = Teams[teamData[1].TeamID][1];
+			if(m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(topPlayerID))then
+				topName = Locale.Lookup(GameInfo.Civilizations[PlayerConfigurations[Teams[teamData[1].TeamID][1]]:GetCivilizationTypeID()].Name);
+			else
+				topName = LOC_UNKNOWN_CIV;
+			end
+		end
+		instance.VictoryLeading:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_FIRST_PLACE_OTHER_SIMPLE", topName));
+
+		-- Set local team/player text
+		for teamPosition, team in ipairs(teamData) do
+			for playerID, data in pairs(team.PlayerData) do
+				if playerID == m_LocalPlayerID then
+					local localPlayerPositionText:string = Locale.Lookup("LOC_WORLD_RANKINGS_" .. teamPosition .. "_PLACE");
+					local localPlayerDescription:string = "";
+
+					if team.PlayerCount > 1 then
+						localPlayerDescription = Locale.Lookup("LOC_WORLD_RANKINGS_OTHER_PLACE_TEAM_SIMPLE", localPlayerPositionText);
+					else
+						localPlayerDescription = Locale.Lookup("LOC_WORLD_RANKINGS_OTHER_PLACE_SIMPLE", localPlayerPositionText);
+					end
+
+					instance.VictoryPlayer:SetText(localPlayerDescription);
 				end
 			end
-
-			-- Generate position text (ex: "You are in third place" or "You are in position 15")
-			if(localPlayerPosition <= 12) then
-				localPlayerPositionText = Locale.Lookup("LOC_WORLD_RANKINGS_" .. localPlayerPosition .. "_PLACE");
-				localPlayerPositionLocTag = "LOC_WORLD_RANKINGS_OTHER_PLACE_";
-			else
-				localPlayerPositionText = tostring(localPlayerPosition);
-				localPlayerPositionLocTag = "LOC_WORLD_RANKINGS_OTHER_POSITION_";
-			end
-			localPlayerPositionLocTag = localPlayerPositionLocTag .. "SIMPLE";
-			instance.VictoryPlayer:SetText(Locale.Lookup(localPlayerPositionLocTag, localPlayerPositionText));
-
-			-- Set top player position text
-			local topCivName:string;
-			if(m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(topPlayer)) then
-				topCivName = Locale.Lookup(GameInfo.Civilizations[PlayerConfigurations[topPlayer]:GetCivilizationTypeID()].Name);
-			else
-				topCivName = LOC_UNKNOWN_CIV;
-			end
-			instance.VictoryLeading:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_FIRST_PLACE_OTHER_SIMPLE", topCivName));
 		end
-		
-		-- Spawn other player icons
-		if(numPlayers > 1) then
-			for i = 2, numPlayers do
-				local playerInstance:table = playersIM:GetInstance();
-				PopulateOverallPlayerIconInstance(playerInstance, playersData[i], SIZE_OVERALL_PLAYER_ICON);
-			end
+	end
+
+	instance.ButtonBG:SetSizeY(SIZE_OVERALL_BG_HEIGHT + math.max(instance.PlayerStack:GetSizeY(), SIZE_OVERALL_INSTANCE));
+end
+
+function PopulateOverallTeamIconInstance(instance:table, teamData:table, iconSize:number, ribbonSize:number)
+	-- Update team icon
+	local teamColor:number = GetTeamColor(teamData.TeamID);
+	local teamIconName:string = TEAM_ICON_PREFIX .. iconSize;
+	instance.CivIcon:SetSizeVal(iconSize, iconSize);
+	instance.CivIcon:SetTexture(teamIconName);
+	instance.CivIconFaded:SetSizeVal(iconSize, iconSize);
+	instance.CivIconFaded:SetTexture(teamIconName);
+	instance.CivIcon:SetPercent(teamData.TeamScore);
+	instance.CivIcon:SetColor(teamColor);
+	instance.CivIconBacking:SetPercent(teamData.TeamScore);
+	instance.CivIconBacking:SetColor(teamColor);
+
+	-- Determine if this is the local players team
+	instance.LocalPlayer:SetHide(true);
+	for playerID, data in pairs(teamData.PlayerData) do
+		if playerID == m_LocalPlayerID then
+			instance.LocalPlayer:SetHide(false);
+		end
+	end
+
+	-- Update team ribbon
+	local teamRibbonName = TEAM_RIBBON_PREFIX .. tostring(teamData.TeamID);
+	instance.TeamRibbon:SetIcon(teamRibbonName, ribbonSize);
+	instance.TeamRibbon:SetHide(false);
+	instance.TeamRibbon:SetColor(teamColor);
+
+	-- Update tooltip
+	SetTeamTooltip(instance.CivIcon, teamData);
+end
+
+function PopulateOverallPlayerIconInstance(instance:table, teamData:table, iconSize:number)
+	-- Take the player ID from the first team member who should be the only team member
+	local playerID:number = Teams[teamData.TeamID][1];
+	local playerData:table = teamData.PlayerData[playerID];
+	if(playerData ~= nil) then
+		ColorCivIcon(instance, playerID);
+
+		local civName:string, civIcon:string = GetCivNameAndIcon(playerID);
+
+		local details:string;
+		if playerData.FirstTiebreakSummary == playerData.SecondTiebreakSummary then
+			details = playerData.FirstTiebreakSummary;
+		else
+			details = playerData.FirstTiebreakSummary .. "[NEWLINE]" .. playerData.SecondTiebreakSummary;
 		end
 
-		instance.ButtonBG:SetSizeY(SIZE_OVERALL_BG_HEIGHT + math.max(instance.PlayerStack:GetSizeY(), SIZE_OVERALL_INSTANCE));
+		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, iconSize);
+		if(textureSheet == nil or textureSheet == "") then
+			UI.DataError("Could not find icon in PopulateOverallPlayerIconInstance: icon=\""..civIcon.."\", iconSize="..tostring(iconSize));
+		else
+			instance.CivIcon:SetSizeVal(iconSize, iconSize);
+			instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+			instance.CivIconFaded:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+			instance.CivIcon:SetPercent(teamData.TeamScore);
+			instance.CivIconBacking:SetPercent(teamData.TeamScore);
+			SetLeaderTooltip(instance, playerID, details);
+		end
+
+		instance.LocalPlayer:SetHide(playerID ~= m_LocalPlayerID);
+		instance.TeamRibbon:SetHide(true);
 	end
 end
 
-function PopulateOverallPlayerIconInstance(instance:table, playerData:table, iconSize:number)
-	local playerID:number = playerData.Player:GetID();
+function SetTeamTooltip(control:table, teamData)
+	control:SetToolTipType("TeamTooltip");
+	control:SetToolTipCallback(function() UpdateTeamTooltip(control, teamData); end);
+end
 
-	ColorCivIcon(instance, playerID);
-
-	local civName:string, civIcon:string = GetCivNameAndIcon(playerID);
-
-	local details:string;
-	if playerData.FirstTiebreakSummary == playerData.SecondTiebreakSummary then
-		details = playerData.FirstTiebreakSummary;
-	else
-		details = playerData.FirstTiebreakSummary .. "[NEWLINE]" .. playerData.SecondTiebreakSummary;
+function UpdateTeamTooltip(control, teamData)
+	if m_TeamTooltip.TooltipIM == nil then
+		m_TeamTooltip.TooltipIM = InstanceManager:new("TeamTooltipInstance", "BG", m_TeamTooltip.CivStack);
 	end
 
-	local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, iconSize);
-	if(textureSheet == nil or textureSheet == "") then
-		UI.DataError("Could not find icon in PopulateOverallPlayerIconInstance: icon=\""..civIcon.."\", iconSize="..tostring(iconSize));
-	else
-		instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		instance.CivIconFaded:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		instance.CivIcon:SetPercent(playerData.Score);
-		instance.CivIconBacking:SetPercent(playerData.Score);
-		SetLeaderTooltip(instance, playerID, details);
+	m_TeamTooltip.TooltipIM:ResetInstances();
+	
+	-- Tracks the widest instance
+	local maxWidth:number = 0;
+
+	-- Create an instance for each met player on this team
+	for playerID, playerData in pairs(teamData.PlayerData) do
+		if m_LocalPlayerID == playerID or m_LocalPlayer:GetDiplomacy():HasMet(playerID) then
+			local civInstance:table = m_TeamTooltip.TooltipIM:GetInstance();
+
+			-- Hide/show necessary controls
+			civInstance.LeaderIcon:SetHide(false);
+			civInstance.YouIndicator:SetHide(false);
+			civInstance.LeaderName:SetHide(false);
+			civInstance.UnmetLabel:SetHide(true);
+
+			-- Update local player indicator
+			civInstance.YouIndicator:SetHide(playerID ~= m_LocalPlayerID);
+		
+			local playerConfig:table = PlayerConfigurations[playerID];
+			local leaderTypeName:string = playerConfig:GetLeaderTypeName();
+			if(leaderTypeName ~= nil) then
+				-- Update player icon
+				local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas("ICON_"..leaderTypeName, SIZE_LEADER_ICON);
+				if(textureSheet == nil or textureSheet == "") then
+					UI.DataError("Could not find icon in UpdateLeaderTooltip: icon=\"".."ICON_"..leaderTypeName.."\", iconSize="..tostring(SIZE_LEADER_ICON));
+				else
+					civInstance.LeaderIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+				end
+
+				-- Update description string
+				local desc:string;
+				local leaderDesc:string = playerConfig:GetLeaderName();
+				local civDesc:string = playerConfig:GetCivilizationDescription();
+				if GameConfiguration.IsAnyMultiplayer() and playerData.Player:IsHuman() then
+					local name = Locale.Lookup(playerConfig:GetPlayerName());
+					desc = Locale.Lookup("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc) .. " (" .. name .. ")";
+				else
+					desc = Locale.Lookup("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc);
+				end
+
+				if playerData.FirstTiebreakSummary and playerData.FirstTiebreakSummary ~= "" then
+					desc = desc .. "[NEWLINE]" .. playerData.FirstTiebreakSummary;
+				end
+				
+				if playerData.SecondTiebreakSummary and playerData.SecondTiebreakSummary ~= "" and playerData.SecondTiebreakSummary ~= playerData.FirstTiebreakSummary then
+					desc = desc .. "[NEWLINE]" .. playerData.SecondTiebreakSummary;
+				end
+			
+				civInstance.LeaderName:SetText(desc);
+				civInstance.BG:DoAutoSize();
+			
+				-- Track the most wide instance so we can widen smaller instances to match
+				if civInstance.BG:GetSizeX() > maxWidth then
+					maxWidth = civInstance.BG:GetSizeX();
+				end
+			end
+		end
 	end
 
-	instance.LocalPlayer:SetHide(playerID ~= m_LocalPlayerID);
+	-- Create an unmet instance for each unmet player on this team
+	for playerID, playerData in pairs(teamData.PlayerData) do
+		if m_LocalPlayerID ~= playerID and not m_LocalPlayer:GetDiplomacy():HasMet(playerID) then
+			local civInstance:table = m_TeamTooltip.TooltipIM:GetInstance();
+
+			-- Hide/show necessary controls
+			civInstance.LeaderIcon:SetHide(true);
+			civInstance.YouIndicator:SetHide(true);
+			civInstance.LeaderName:SetHide(true);
+			civInstance.UnmetLabel:SetHide(false);
+
+			-- Set the unmet text based on whether this is human or AI
+			local playerConfig:table = PlayerConfigurations[playerID];
+			if GameConfiguration.IsAnyMultiplayer() and playerData.Player:IsHuman() then
+				civInstance.UnmetLabel:SetText(Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER") .. " (" .. playerConfig:GetPlayerName() .. ")");
+			else
+				civInstance.UnmetLabel:SetText(Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER"));
+			end
+
+			civInstance.BG:DoAutoSize();
+		end
+	end
+
+	-- Widen all instances to match up
+	for i=1,m_TeamTooltip.TooltipIM.m_iCount,1 do
+		local instance:table = m_TeamTooltip.TooltipIM:GetAllocatedInstance(i);
+		if instance and instance.BG:GetSizeX() < maxWidth then
+			instance.BG:SetSizeX(maxWidth);
+		end
+	end
 end
 
 function SetLeaderTooltip(instance:table, playerID:number, details:string)
@@ -771,7 +1004,8 @@ function UpdateLeaderTooltip(instance:table, playerID:number, details:string)
 			local leaderDesc:string = playerConfig:GetLeaderName();
 			local civDesc:string = playerConfig:GetCivilizationDescription();
 			if GameConfiguration.IsAnyMultiplayer() and pPlayer:IsHuman() then
-				desc = Locale.Lookup("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc) .. " (" .. playerConfig:GetPlayerName() .. ")";
+				local name = Locale.Lookup(playerConfig:GetPlayerName());
+				desc = Locale.Lookup("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc) .. " (" .. name .. ")";
 			else
 				desc = Locale.Lookup("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc);
 			end
@@ -796,50 +1030,109 @@ function ViewScore()
 	local subTitle:string = Locale.Lookup("LOC_WORLD_RANKINGS_SCORE_CONDITION", Game.GetMaxGameTurns());
 	PopulateGenericHeader(RealizeScoreStackSize, SCORE_TITLE, subTitle, SCORE_DETAILS, ICON_GENERIC);
 
-	m_ScoreIM:ResetInstances();
+	-- Gather data
+	local scoreData:table = GatherScoreData();
 
-	for i = 0, PlayerManager.GetWasEverAliveCount() - 1 do
-		local pPlayer = Players[i];
-		if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
-			PopulateScoreInstance(m_ScoreIM:GetInstance(), pPlayer);
+	-- Sort teams
+	table.sort(scoreData, function(a, b) return a.TeamScore > b.TeamScore; end);
+
+	m_ScoreIM:ResetInstances();
+	m_ScoreTeamIM:ResetInstances();
+
+	for i, teamData in ipairs(scoreData) do
+		if #teamData.PlayerData > 1 then
+			-- Sort players before displaying
+			table.sort(teamData.PlayerData, function(a, b) return a.PlayerScore> b.PlayerScore; end);
+
+			-- Display as team
+			PopulateScoreTeamInstance(m_ScoreTeamIM:GetInstance(), teamData);
+		elseif #teamData.PlayerData > 0 then
+			-- Display as single civ
+			PopulateScoreInstance(m_ScoreIM:GetInstance(), teamData.PlayerData[1]);
 		end
 	end
 
 	RealizeScoreStackSize();
 end
 
-function PopulateScoreInstance(instance:table, pPlayer:table)
-	local playerID:number = pPlayer:GetID();
-	local civName, civIcon:string = GetCivNameAndIcon(playerID, true);
+function GatherScoreData()
+	local data:table = {};
 
-	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(civIcon, SIZE_CIV_ICON);
-	if(textureSheet == nil or textureSheet == "") then
-		UI.DataError("Could not find icon in PopulateScoreInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_CIV_ICON));
-	else
-		instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		SetLeaderTooltip(instance, playerID);
+	for teamID, team in pairs(Teams) do
+		if teamID >= 0 then
+			local teamData:table = { TeamID = teamID, PlayerData = {}, TeamScore = 0 };
+
+			-- Add players
+			for i, playerID in ipairs(team) do
+				if IsAliveAndMajor(playerID) then
+					local pPlayer:table = Players[playerID];
+					local playerData:table = { PlayerID = playerID, PlayerScore = pPlayer:GetScore(), Categories = {} };
+
+					-- Add player score to team score
+					teamData.TeamScore = teamData.TeamScore + playerData.PlayerScore;
+
+					-- Look up category scores
+					local scoreCategories = GameInfo.ScoringCategories;
+					local numCategories:number = #scoreCategories;
+					for i = 0, numCategories - 1 do
+						if scoreCategories[i].Multiplier > 0 or m_isDebugForceShowAllScoreCategories then
+							table.insert(playerData.Categories, { CategoryID = i, CategoryScore = pPlayer:GetCategoryScore(i) });
+						end
+					end
+
+					table.insert(teamData.PlayerData, playerData);
+				end
+			end
+
+			-- Only add teams with at least one living, major player
+			if #teamData.PlayerData > 0 then
+				table.insert(data, teamData);
+			end
+		end
 	end
 
-	ColorCivIcon(instance, playerID);
-	instance.CivName:SetText(civName);
-	instance.Score:SetText(pPlayer:GetScore());
-	instance.LocalPlayer:SetHide(pPlayer ~= m_LocalPlayer);
+	return data;
+end
+
+function PopulateScoreTeamInstance(instance:table, teamData:table)
+	
+	PopulateTeamInstanceShared(instance, teamData.TeamID);
+
+	-- Add team members to player stack
+	if instance.PlayerStackIM == nil then
+		instance.PlayerStackIM = InstanceManager:new("ScoreInstance", "ButtonBG", instance.ScorePlayerInstanceStack);
+	end
+
+	instance.PlayerStackIM:ResetInstances();
+
+	for i, playerData in ipairs(teamData.PlayerData) do
+		PopulateScoreInstance(instance.PlayerStackIM:GetInstance(), playerData);
+	end
+
+	-- Update combined team score
+	instance.TeamScore:SetText(tostring(teamData.TeamScore));
+end
+
+function PopulateScoreInstance(instance:table, playerData:table)
+	PopulatePlayerInstanceShared(instance, playerData.PlayerID);
+
+	instance.Score:SetText(playerData.PlayerScore);
+	
 
 	if(m_ShowScoreDetails) then
 		instance.ButtonBG:SetSizeY(SIZE_SCORE_ITEM_DETAILS);
 		
 		local detailsText:string = "";
-		local scoreCategories = GameInfo.ScoringCategories;
-		local numCategories:number = #scoreCategories;
-		for i = 0, numCategories - 1 do
-			if scoreCategories[i].Multiplier > 0 or m_isDebugForceShowAllScoreCategories then
-				local category:table = scoreCategories[i];
-				detailsText = detailsText .. Locale.Lookup(category.Name) .. ": " .. pPlayer:GetCategoryScore(i);
-				if(i <= numCategories) then
-					detailsText = detailsText .. "[NEWLINE]";
-				end
+		for i, category in ipairs(playerData.Categories) do
+			local categoryInfo:table = GameInfo.ScoringCategories[category.CategoryID];
+			detailsText = detailsText .. Locale.Lookup(categoryInfo.Name) .. ": " .. category.CategoryScore;
+
+			-- Add new lines between categories but not at the end
+			if i <= #playerData.Categories then
+				detailsText = detailsText .. "[NEWLINE]";
 			end
 		end
+
 		instance.Details:SetText(detailsText);
 		instance.Details:SetHide(false);
 	else
@@ -966,11 +1259,18 @@ function ViewScience()
 	m_ActiveHeader.AdvisorTextNextStep:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_SCIENCE_NEXT_STEP", nextStep));
 
 	m_ScienceIM:ResetInstances();
+	m_ScienceTeamIM:ResetInstances();
 
-	for i = 0, PlayerManager.GetWasEverAliveCount() - 1 do
-		local pPlayer = Players[i];
-		if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
-			PopulateScienceInstance(m_ScienceIM:GetInstance(), pPlayer);
+	for teamID, team in pairs(Teams) do
+		if teamID >= 0 then
+			if #team > 1 then
+				PopulateScienceTeamInstance(m_ScienceTeamIM:GetInstance(), teamID);
+			else
+				local pPlayer = Players[team[1]];
+				if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
+					PopulateScienceInstance(m_ScienceIM:GetInstance(), pPlayer);
+				end
+			end
 		end
 	end
 
@@ -1001,22 +1301,113 @@ function GetNextStepForScienceProject(pPlayer:table, projectInfos:table, bHasSpa
 	return "";
 end
 
-function PopulateScienceInstance(instance:table, pPlayer:table)
-	local playerID:number = pPlayer:GetID();
-	local civName:string, civIcon:string = GetCivNameAndIcon(playerID, true);
+function PopulateTeamInstanceShared(instance, teamID)
+	-- Update team color
+	local teamColor:number = GetTeamColor(teamID);
+	instance.TeamButton:SetColor(teamColor);
+	instance.TeamIconBacking:SetColor(teamColor);
+	instance.TeamIcon:SetColor(teamColor);
+	
+	-- Update team ribbon
+	local teamRibbonName:string = TEAM_RIBBON_PREFIX .. tostring(teamID);
+	instance.TeamRibbon:SetIcon(teamRibbonName, TEAM_RIBBON_SIZE);
+	instance.TeamRibbon:SetColor(teamColor);
 
+	-- Update team name
+	instance.TeamName:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_TEAM", GameConfiguration.GetTeamName(teamID)));
+
+	-- Update Team Tooltip
+	local teamData:table = { PlayerData = {} };
+	for i, playerID in ipairs(Teams[teamID]) do
+		if IsAliveAndMajor(playerID) then
+			teamData.PlayerData[playerID] = { Player = Players[playerID] };
+		end
+	end
+	SetTeamTooltip(instance.TeamIcon, teamData);
+end
+
+function PopulatePlayerInstanceShared(instance, playerID)
+	local civName, civIcon:string = GetCivNameAndIcon(playerID, true);
+
+	-- Update civ icon and leader tooltip
 	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(civIcon, SIZE_CIV_ICON);
 	if(textureSheet == nil or textureSheet == "") then
-		UI.DataError("Could not find icon in PopulateScoreInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_CIV_ICON));
+		UI.DataError("Could not find icon in PopulatePlayerInstanceShared: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_CIV_ICON));
 	else
 		instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
 		SetLeaderTooltip(instance, playerID);
 	end
-
 	ColorCivIcon(instance, playerID);
-	TruncateStringWithTooltip(instance.CivName, 180, civName); 
-	instance.LocalPlayer:SetHide(pPlayer ~= m_LocalPlayer);
 
+	-- Update player name
+	if m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerID) or m_LocalPlayerID == playerID then
+		instance.CivName:SetText(civName);
+		TruncateStringWithTooltip(instance.CivName, 180, civName);
+	else
+		instance.CivName:SetText(LOC_UNKNOWN_CIV);
+	end
+
+	-- Update local player indicator
+	if instance.LocalPlayer then
+		instance.LocalPlayer:SetHide(playerID ~= m_LocalPlayerID);
+	end
+end
+
+function PopulateScienceTeamInstance(instance:table, teamID:number)
+
+	PopulateTeamInstanceShared(instance, teamID);
+
+	-- Add team members to player stack
+	if instance.PlayerStackIM == nil then
+		instance.PlayerStackIM = InstanceManager:new("ScienceInstance", "ButtonBG", instance.SciencePlayerInstanceStack);
+	end
+
+	instance.PlayerStackIM:ResetInstances();
+
+	local teamProgressData:table = {};
+	for i, playerID in ipairs(Teams[teamID]) do
+		if IsAliveAndMajor(playerID) then
+			local pPlayer:table = Players[playerID];
+			local progressData = PopulateScienceInstance(instance.PlayerStackIM:GetInstance(), pPlayer);
+			if progressData then
+				table.insert(teamProgressData, progressData);
+			end
+		end
+	end
+
+	-- Sort team progress data
+	table.sort(teamProgressData, function(a, b)
+		-- Compare stage 1 progress
+		local aScore = a.projectProgresses[1] / a.projectTotals[1];
+		local bScore = b.projectProgresses[1] / b.projectTotals[1];
+		if aScore == bScore then
+			-- Compare stage 2 progress
+			aScore = a.projectProgresses[2] / a.projectTotals[2];
+			bScore = b.projectProgresses[2] / b.projectTotals[2];
+			if aScore == bScore then
+				-- Compare stage 3 progress
+				aScore = a.projectProgresses[3] / a.projectTotals[3];
+				bScore = b.projectProgresses[3] / b.projectTotals[3];
+				if aScore == bScore then
+					return a.playerID < b.playerID;
+				end
+			end
+		end
+		return aScore > bScore;
+	end);
+
+	-- Populate the team progress with the progress of the furthest player
+	if teamProgressData and #teamProgressData > 0 then
+		PopulateScienceProgressMeters(instance, teamProgressData[1]);
+	end
+end
+
+function PopulateScienceInstance(instance:table, pPlayer:table)
+	local playerID:number = pPlayer:GetID();
+	PopulatePlayerInstanceShared(instance, playerID);
+	
+	-- Progress Data to be returned from function
+	local progressData = nil; 
 	local bHasMet = m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerID);
 	if (bHasMet == true or playerID == Game.GetLocalPlayer()) then
 
@@ -1082,25 +1473,15 @@ function PopulateScienceInstance(instance:table, pPlayer:table)
 			end
 		end
 
-		instance.ObjFill_1:SetHide(projectProgresses[1] == 0);
-		instance.ObjBar_1:SetPercent(projectProgresses[1] / projectTotals[1]);
-		instance.ObjToggle_ON_1:SetHide(projectTotals[1] == 0 or projectProgresses[1] ~= projectTotals[1]);
+		-- Save data to be returned
+		progressData = {};
+		progressData.playerID = playerID;
+		progressData.projectTotals = projectTotals;
+		progressData.projectProgresses = projectProgresses;
+		progressData.bHasSpaceport = bHasSpaceport;
+		progressData.finishedProjects = finishedProjects;
 
-		instance.ObjFill_2:SetHide(projectProgresses[2] == 0);
-		instance.ObjBar_2:SetPercent(projectProgresses[2] / projectTotals[2]);
-		instance.ObjToggle_ON_2:SetHide(projectTotals[2] == 0 or projectProgresses[2] ~= projectTotals[2]);
-
-		instance.ObjFill_3:SetHide(projectProgresses[3] == 0);
-		instance.ObjBar_3:SetPercent(projectProgresses[3] / projectTotals[3]);
-		instance.ObjToggle_ON_3:SetHide(projectTotals[3] == 0 or projectProgresses[3] ~= projectTotals[3]);
-		
-		instance.ObjBG_1:SetToolTipString(GetTooltipForScienceProject(pPlayer, EARTH_SATELLITE_PROJECT_INFOS, bHasSpaceport, finishedProjects[1]));
-		instance.ObjBG_2:SetToolTipString(GetTooltipForScienceProject(pPlayer, MOON_LANDING_PROJECT_INFOS, nil, finishedProjects[2]));
-		instance.ObjBG_3:SetToolTipString(GetTooltipForScienceProject(pPlayer, MARS_COLONY_PROJECT_INFOS, nil, finishedProjects[3]));
-
-		for i = 1, 3 do
-			instance["ObjHidden_" .. i]:SetHide(true);
-		end
+		PopulateScienceProgressMeters(instance, progressData);
 	else -- Unmet civ
 		for i = 1, 3 do
 			instance["ObjBar_" .. i]:SetPercent(0);
@@ -1111,6 +1492,22 @@ function PopulateScienceInstance(instance:table, pPlayer:table)
 			instance["ObjToggle_OFF_" .. i]:SetToolTipString("");
 		end
 	end
+
+	return progressData;
+end
+
+function PopulateScienceProgressMeters(instance:table, progressData:table)
+	for i = 1, 3 do
+		instance["ObjHidden_" .. i]:SetHide(true);
+		instance["ObjFill_" .. i]:SetHide(progressData.projectProgresses[i] == 0);
+		instance["ObjBar_" .. i]:SetPercent(progressData.projectProgresses[i] / progressData.projectTotals[i]);
+		instance["ObjToggle_ON_" .. i]:SetHide(progressData.projectTotals[i] == 0 or progressData.projectProgresses[i] ~= progressData.projectTotals[i]);
+	end
+		
+	local pPlayer = Players[progressData.playerID];
+	instance.ObjBG_1:SetToolTipString(GetTooltipForScienceProject(pPlayer, EARTH_SATELLITE_PROJECT_INFOS, progressData.bHasSpaceport, progressData.finishedProjects[1]));
+	instance.ObjBG_2:SetToolTipString(GetTooltipForScienceProject(pPlayer, MOON_LANDING_PROJECT_INFOS, nil, progressData.finishedProjects[2]));
+	instance.ObjBG_3:SetToolTipString(GetTooltipForScienceProject(pPlayer, MARS_COLONY_PROJECT_INFOS, nil, progressData.finishedProjects[3]));
 end
 
 function GetTooltipForScienceProject(pPlayer:table, projectInfos:table, bHasSpaceport:boolean, finishedProjects:table)
@@ -1220,84 +1617,118 @@ function ViewCulture()
 
 	PopulateGenericHeader(RealizeCultureStackSize, CULTURE_TITLE, "", detailsText, CULTURE_ICON);
 
-	-- Pre-populate compute number of tourists required for victory
-	local iTouristsNeededForWin = {};
-	for i = 0, PlayerManager.GetWasEverAliveCount() - 1 do
-		local pPlayer = Players[i];
-		if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
-			if(iTouristsNeededForWin[pPlayer] == nil) then
-				iTouristsNeededForWin[pPlayer] = 0;
-			end
-			local iStaycationers = pPlayer:GetCulture():GetStaycationers();
-			-- Raise numbers needed for all other players if higher
-			for j = 0, PlayerManager.GetWasEverAliveCount() - 1 do
-				local pTargetPlayer = Players[j];
-				if (i ~= j and pTargetPlayer:IsAlive() == true and pTargetPlayer:IsMajor() == true) then
-					if(iTouristsNeededForWin[pTargetPlayer] == nil) then
-						iTouristsNeededForWin[pTargetPlayer] = 0;
-					end
-					if (iStaycationers >= iTouristsNeededForWin[pTargetPlayer]) then
-						iTouristsNeededForWin[pTargetPlayer] = iStaycationers + 1;
-					end
-				end
-			end
-		end
-	end
-	table.sort(iTouristsNeededForWin, function(a, b) return a < b; end);
+	-- Gather data
+	local cultureData:table = GatherCultureData();
+
+	-- Sort by team
+	table.sort(cultureData, function(a, b) return a.BestNumVisitingUs / a.BestNumRequiredTourists > b.BestNumVisitingUs / b.BestNumRequiredTourists; end);
 
 	m_CultureIM:ResetInstances();
+	m_CultureTeamIM:ResetInstances();
 
-	for i = 0, PlayerManager.GetWasEverAliveCount() - 1 do
-		local pPlayer = Players[i];
-		if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
-			PopulateCultureInstance(m_CultureIM:GetInstance(), pPlayer, iTouristsNeededForWin[pPlayer]);
+	for i, teamData in ipairs(cultureData) do
+		if #teamData.PlayerData > 1 then
+			-- Display as team
+			PopulateCultureTeamInstance(m_CultureTeamIM:GetInstance(), teamData);
+		elseif #teamData.PlayerData > 0 then
+			-- Display as single civ
+			PopulateCultureInstance(m_CultureIM:GetInstance(), teamData.PlayerData[1]);
 		end
 	end
 
 	RealizeCultureStackSize();
 end
 
-function PopulateCultureInstance(instance:table, pPlayer:table, iTouristsNeededForWin:number)
-	local playerID:number = pPlayer:GetID();
-	local civName:string, civIcon:string = GetCivNameAndIcon(playerID, true);
+function GatherCultureData()
+	local data:table = {};
 
-	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(civIcon, SIZE_CIV_ICON);
-	if(textureSheet == nil or textureSheet == "") then
-		UI.DataError("Could not find icon in PopulateScoreInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_CIV_ICON));
-	else
-		local tourism:string = Locale.Lookup("LOC_WORLD_RANKINGS_OVERVIEW_CULTURE_TOURISM_RATE", Round(pPlayer:GetStats():GetTourism(), 1));
-		local culture:string = Locale.Lookup("LOC_WORLD_RANKINGS_OVERVIEW_CULTURE_CULTURE_RATE", Round(pPlayer:GetCulture():GetCultureYield(), 1));
-		local details:string = tourism .. "[NEWLINE]" .. culture;
+	for teamID, team in pairs(Teams) do
+		if teamID >= 0 then
+			local teamData:table = { TeamID = teamID, PlayerData = {}, BestNumVisitingUs = 0, BestNumRequiredTourists = 1 };
 
-		instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		SetLeaderTooltip(instance, playerID, details);
+			-- Add players
+			for i, playerID in ipairs(team) do
+				if IsAliveAndMajor(playerID) then
+					local pPlayer:table = Players[playerID];
+					local playerData:table = { 
+						PlayerID = playerID, 
+						NumRequiredTourists = 0,
+						NumStaycationers = pPlayer:GetCulture():GetStaycationers(),
+						NumVisitingUs = pPlayer:GetCulture():GetTouristsTo() };
+
+					-- Determine number of tourist needed for victory
+					-- Has to be one more than every other players number of domestic tourists
+					for i, player in ipairs(Players) do
+						if i ~= playerID and IsAliveAndMajor(i)  and player:GetTeam() ~= teamID then
+							local iStaycationers = player:GetCulture():GetStaycationers();
+							if iStaycationers >= playerData.NumRequiredTourists then
+								playerData.NumRequiredTourists = iStaycationers + 1;
+							end
+						end
+					end
+
+					-- See if this player has the best score for this team
+					local currentTeamScore:number = teamData.BestNumVisitingUs / teamData.BestNumRequiredTourists;
+					local playerScore:number = playerData.NumVisitingUs / playerData.NumRequiredTourists;
+					if currentTeamScore < playerScore or (currentTeamScore == playerScore and teamData.BestNumRequiredTourists < playerData.NumRequiredTourists) then
+						teamData.BestNumVisitingUs = playerData.NumVisitingUs;
+						teamData.BestNumRequiredTourists = playerData.NumRequiredTourists;
+					end
+
+					table.insert(teamData.PlayerData, playerData);
+				end
+			end
+
+			-- Only add teams with at least one living, major player
+			if #teamData.PlayerData > 0 then
+				table.insert(data, teamData);
+			end
+		end
 	end
+
+	return data;
+end
+
+function PopulateCultureTeamInstance(instance:table, teamData:table)
+	PopulateTeamInstanceShared(instance, teamData.TeamID);
+
+	-- Add team members to player stack
+	if instance.PlayerStackIM == nil then
+		instance.PlayerStackIM = InstanceManager:new("CultureInstance", "ButtonBG", instance.CulturePlayerInstanceStack);
+	end
+
+	instance.PlayerStackIM:ResetInstances();
+
+	for i, playerData in ipairs(teamData.PlayerData) do
+		PopulateCultureInstance(instance.PlayerStackIM:GetInstance(), playerData);
+	end
+
+	-- Show score for player closet to winning
+	instance.VisitingTourists:SetText(teamData.BestNumVisitingUs .. "/" .. teamData.BestNumRequiredTourists);
+end
+
+function PopulateCultureInstance(instance:table, playerData:table)
+	local pPlayer:table = Players[playerData.PlayerID];
 	
-	ColorCivIcon(instance, playerID);
-	instance.CivName:LocalizeAndSetText(civName);
-	instance.LocalPlayer:SetHide(pPlayer ~= m_LocalPlayer);
+	PopulatePlayerInstanceShared(instance, playerData.PlayerID);
 
-	local numTourists:number = pPlayer:GetCulture():GetTouristsTo();
-	instance.VisitingTourists:SetText(numTourists .. "/" .. iTouristsNeededForWin);
-	instance.TouristsFill:SetPercent(numTourists / iTouristsNeededForWin);
-	if(playerID == m_LocalPlayerID) then
-		instance.VisitingUsContainer:SetHide(true);
-	else
-		instance.VisitingUsContainer:SetHide(false);
-	end
-	local backColor, _ = UI.GetPlayerColors(playerID);
+	instance.VisitingTourists:SetText(playerData.NumVisitingUs .. "/" .. playerData.NumRequiredTourists);
+	instance.TouristsFill:SetPercent(playerData.NumVisitingUs / playerData.NumRequiredTourists);
+	instance.VisitingUsContainer:SetHide(playerData.PlayerID == m_LocalPlayerID);
+
+	local backColor, _ = UI.GetPlayerColors(playerData.PlayerID);
 	local brighterBackColor = DarkenLightenColor(backColor,35,255);
-	if(playerID == m_LocalPlayerID or m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
+	if(playerData.PlayerID == m_LocalPlayerID or m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerData.PlayerID)) then
 		instance.DomesticTouristsIcon:SetColor(brighterBackColor);
 	else
 		instance.DomesticTouristsIcon:SetColor(RGBAValuesToABGRHex(1, 1, 1, 0.35));
 	end
-	instance.DomesticTourists:SetText(pPlayer:GetCulture():GetStaycationers());
+	instance.DomesticTourists:SetText(playerData.NumStaycationers);
 
 	if (m_LocalPlayer ~= nil) then
-		instance.VisitingUsTourists:SetText(m_LocalPlayer:GetCulture():GetTouristsFrom(playerID));
-		instance.VisitingUsTourists:SetToolTipString(m_LocalPlayer:GetCulture():GetTouristsFromTooltip(playerID));
-		instance.VisitingUsIcon:SetToolTipString(m_LocalPlayer:GetCulture():GetTouristsFromTooltip(playerID));
+		instance.VisitingUsTourists:SetText(m_LocalPlayer:GetCulture():GetTouristsFrom(playerData.PlayerID));
+		instance.VisitingUsTourists:SetToolTipString(m_LocalPlayer:GetCulture():GetTouristsFromTooltip(playerData.PlayerID));
+		instance.VisitingUsIcon:SetToolTipString(m_LocalPlayer:GetCulture():GetTouristsFromTooltip(playerData.PlayerID));
 	end
 end
 
@@ -1348,78 +1779,73 @@ function ViewDomination()
 	ChangeActiveHeader("VICTORY_CONQUEST", m_GenericHeaderIM, Controls.DominationViewHeader);
 	PopulateGenericHeader(RealizeDominationStackSize, DOMINATION_TITLE, "", DOMINATION_DETAILS, DOMINATION_ICON);
 
-	-- Pre-populate captured capitals
 	local dominationData:table = {};
+	for teamID, team in pairs(Teams) do
+		if teamID >= 0 then
+			local teamData:table = { TeamID = teamID, TotalCapturedCapitals = 0, PlayerData = {} };
 
-	for i, playerId in ipairs(PlayerManager.GetWasEverAliveMajorIDs()) do
-		local pPlayer = Players[playerId];
+			for i, playerID in ipairs(team) do
+				if IsAliveAndMajor(playerID) then
+					local pPlayer = Players[playerID];
+					local pCities = pPlayer:GetCities();
 
-		if (pPlayer:IsAlive()) then
-			local pCities = pPlayer:GetCities();
+					-- Don't show player if they haven't founded a capital city yet
+					local pCapital = pCities:GetCapitalCity();
+					if(pCapital ~= nil) then
+						local playerData:table = {};
+						playerData.PlayerID				= playerID;
+						playerData.HasOriginalCapital	= false;
+						playerData.CapturedCapitals		= {};
 
-			-- Don't show player if they haven't founded a capital city yet
-			local pCapital = pCities:GetCapitalCity();
-			if(pCapital ~= nil) then
-			
-				local data = {};
-				for _, city in pCities:Members() do
-					local originalOwnerID:number = city:GetOriginalOwner();
-					local pOriginalOwner:table = Players[originalOwnerID];
-					if(playerId ~= originalOwnerID and pOriginalOwner:IsMajor() and city:IsOriginalCapital()) then
-						table.insert(data, originalOwnerID);
+						local data = {};
+						for _, city in pCities:Members() do
+							local originalOwnerID:number = city:GetOriginalOwner();
+							local pOriginalOwner:table = Players[originalOwnerID];
+							if(playerID ~= originalOwnerID and pOriginalOwner:IsMajor() and city:IsOriginalCapital()) then
+								table.insert(playerData.CapturedCapitals, originalOwnerID);
+								teamData.TotalCapturedCapitals = teamData.TotalCapturedCapitals + 1;
+							elseif(playerID == originalOwnerID and pOriginalOwner:IsMajor() and city:IsOriginalCapital()) then
+								playerData.HasOriginalCapital = true;
+							end
+						end
+
+						table.insert(teamData.PlayerData, playerData);
 					end
 				end
-				table.insert(dominationData, {playerId, data});
 			end
+
+			table.insert(dominationData, teamData);
 		end
 	end
 
 	m_DominationIM:ResetInstances();
+	m_DominationTeamIM:ResetInstances();
 
-	if (#dominationData > 0) then
-		table.sort(dominationData, function(a, b) return #a[2] > #b[2] end);
+	-- Sort players within teams by dominated capitals
+	for i, teamData in ipairs(dominationData) do 
+		table.sort(teamData.PlayerData, function(a, b) return #a.CapturedCapitals > #b.CapturedCapitals end);
 	end
 
-	for i, v in ipairs(dominationData) do
-		local pPlayer = Players[v[1]];
-		local dominatedCities = v[2];
-		PopulateDominationInstance(m_DominationIM:GetInstance(), pPlayer, dominatedCities);
+	-- Sort teams by most combined dominated capitals
+	table.sort(dominationData, function(a, b) return a.TotalCapturedCapitals > b.TotalCapturedCapitals end);
+
+	-- Populate teams
+	for i, teamData in ipairs(dominationData) do
+		if #teamData.PlayerData > 1 then
+			PopulateDominationTeamInstance(m_DominationTeamIM:GetInstance(), teamData);
+		elseif #teamData.PlayerData == 1 then
+			PopulateDominationInstance(m_DominationIM:GetInstance(), teamData.PlayerData[1]);
+		end
 	end
 
 	RealizeDominationStackSize();
 end
 
-function PopulateDominationInstance(instance:table, pPlayer:table, dominatedCities:table)
-	local playerID:number = pPlayer:GetID();
-	local backColor, frontColor = UI.GetPlayerColors(playerID);
-	local civName:string, civIcon:string = GetCivNameAndIcon(playerID, true);
-
-	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(civIcon, SIZE_CIV_ICON);
-	if(textureSheet == nil or textureSheet == "") then
-		UI.DataError("Could not find icon in PopulateDominationInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_CIV_ICON));
-	else
-		instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		SetLeaderTooltip(instance, playerID);
-	end
+function PopulateDominationTeamInstance(instance:table, teamData:table)
 	
-	ColorCivIcon(instance, playerID);
-	instance.CivName:SetText(civName);
-	instance.LocalPlayer:SetHide(pPlayer ~= m_LocalPlayer);
+	PopulateTeamInstanceShared(instance, teamData.TeamID);
 
-	local pCities = pPlayer:GetCities();
-	local pCapital = pCities:GetCapitalCity();
-
-	local hasOriginalCapital = false;
-	for _, city in pCities:Members() do
-		if(city:IsOriginalCapital() and city:GetOriginalOwner() == playerID) then
-			hasOriginalCapital = true;
-			break;
-		end
-	end
-
-	instance.HasCapital:SetHide(not hasOriginalCapital);
-	instance.HasCapital:SetToolTipString(DOMINATION_HAS_ORIGINAL_CAPITAL);
-
+	-- Update captured captials icon stack
 	local dominatedCitiesIM:table = instance[DATA_FIELD_DOMINATED_CITIES_IM];
 	if(dominatedCitiesIM == nil) then
 		dominatedCitiesIM = InstanceManager:new("DominatedCapitalInstance", "CivIconBacking", instance.CapitalsCapturedStack);
@@ -1427,11 +1853,8 @@ function PopulateDominationInstance(instance:table, pPlayer:table, dominatedCiti
 	end
 	dominatedCitiesIM:ResetInstances();
 
-	local numDominatedCities:number = 0;
-	if(dominatedCities ~= nil) then
-		for _, dominatedPlayerID in pairs(dominatedCities) do
-			numDominatedCities = numDominatedCities + 1;
-
+	for i, playerData in ipairs(teamData.PlayerData) do
+		for _, dominatedPlayerID in pairs(playerData.CapturedCapitals) do
 			local dominatedInstance = dominatedCitiesIM:GetInstance();
 			ColorCivIcon(dominatedInstance, dominatedPlayerID);
 			
@@ -1446,7 +1869,51 @@ function PopulateDominationInstance(instance:table, pPlayer:table, dominatedCiti
 		end
 	end
 
-	instance.CapitalsCaptured:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_DOMINATION_SUMMARY", numDominatedCities));
+	-- Update captured capitals label
+	instance.CapitalsCaptured:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_DOMINATION_SUMMARY", teamData.TotalCapturedCapitals));
+
+	-- Add team members to player stack
+	if instance.PlayerStackIM == nil then
+		instance.PlayerStackIM = InstanceManager:new("DominationInstance", "ButtonBG", instance.PlayerInstanceStack);
+	end
+
+	instance.PlayerStackIM:ResetInstances();
+
+	for i, playerData in ipairs(teamData.PlayerData) do
+		PopulateDominationInstance(instance.PlayerStackIM:GetInstance(), playerData);
+	end
+end
+
+function PopulateDominationInstance(instance:table, playerData:table)
+	local pPlayer:table = Players[playerData.PlayerID];
+
+	PopulatePlayerInstanceShared(instance, playerData.PlayerID);
+
+	instance.HasCapital:SetHide(not playerData.HasOriginalCapital);
+	instance.HasCapital:SetToolTipString(DOMINATION_HAS_ORIGINAL_CAPITAL);
+
+	local dominatedCitiesIM:table = instance[DATA_FIELD_DOMINATED_CITIES_IM];
+	if(dominatedCitiesIM == nil) then
+		dominatedCitiesIM = InstanceManager:new("DominatedCapitalInstance", "CivIconBacking", instance.CapitalsCapturedStack);
+		instance[DATA_FIELD_DOMINATED_CITIES_IM] = dominatedCitiesIM;
+	end
+	dominatedCitiesIM:ResetInstances();
+
+	for _, dominatedPlayerID in pairs(playerData.CapturedCapitals) do
+		local dominatedInstance = dominatedCitiesIM:GetInstance();
+		ColorCivIcon(dominatedInstance, dominatedPlayerID);
+			
+		local civName:string, civIcon:string = GetCivNameAndIcon(dominatedPlayerID, true);
+		textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, SIZE_RELIGION_CIV_ICON);
+		if(textureSheet == nil or textureSheet == "") then
+			UI.DataError("Could not find icon for dominated civ in PopulateDominationInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_RELIGION_CIV_ICON));
+		else
+			dominatedInstance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+			SetLeaderTooltip(dominatedInstance, dominatedPlayerID);
+		end
+	end
+
+	instance.CapitalsCaptured:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_DOMINATION_SUMMARY", #playerData.CapturedCapitals));
 end
 
 function RealizeDominationStackSize()
@@ -1475,26 +1942,18 @@ function ViewReligion()
 	PopulateGenericHeader(RealizeReligionStackSize, RELIGION_TITLE, "", RELIGION_DETAILS, RELIGION_ICON);
 
 	m_ReligionIM:ResetInstances();
+	m_ReligionTeamIM:ResetInstances();
 
-	-- Pre-compute total number of Civs
-	local numCivs:number = 0;
-	for i = 0, PlayerManager.GetWasEverAliveCount() - 1 do
-		local pPlayer = Players[i];
-		if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
-			numCivs = numCivs + 1;
-		end
-	end
+	local religionData:table, totalCivs:number = GatherReligionData();
 
-	for i = 0, PlayerManager.GetWasEverAliveCount() - 1 do
-		local pPlayer = Players[i];
-		-- Only show players with founded religions
-		if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
-			local pReligion = pPlayer:GetReligion();
-			if(pReligion ~= nil) then
-				local religionType:number = pReligion:GetReligionTypeCreated();
-				 if(religionType ~= -1) then
-					PopulateReligionInstance(m_ReligionIM:GetInstance(), pPlayer, religionType, numCivs);
-				end
+	for i, teamData in ipairs(religionData) do
+		if #teamData.PlayerData > 1 then
+			-- Display as team
+			PopulateReligionTeamInstance(m_ReligionTeamIM:GetInstance(), teamData, totalCivs);
+		elseif #teamData.PlayerData > 0 then
+			-- Display as single civ
+			if teamData.PlayerData[1].ReligionType > 0 then
+				PopulateReligionInstance(m_ReligionIM:GetInstance(), teamData.PlayerData[1], totalCivs);
 			end
 		end
 	end
@@ -1502,27 +1961,128 @@ function ViewReligion()
 	RealizeReligionStackSize();
 end
 
-function PopulateReligionInstance(instance:table, pPlayer:table, iReligion:number, iTotalCivs:number)
-	local playerID:number = pPlayer:GetID();
-	local civName:string, civIcon:string = GetCivNameAndIcon(playerID, true);
+function GatherReligionData()
+	local data:table = {};
+	local totalCivs:number = 0;
 
-	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(civIcon, SIZE_CIV_ICON);
-	if(textureSheet == nil or textureSheet == "") then
-		UI.DataError("Could not find icon in PopulateScoreInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_CIV_ICON));
-	else
-		instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		SetLeaderTooltip(instance, playerID);
+	for teamID, team in pairs(Teams) do
+		if teamID >= 0 then
+			local teamData:table = { TeamID = teamID, PlayerData = {}, ReligionTypes = {}, ConvertedCivs = {} };
+
+			-- Add players
+			for i, playerID in ipairs(team) do
+				if IsAliveAndMajor(playerID) then
+					totalCivs = totalCivs + 1;
+					local pPlayer:table = Players[playerID];
+					local playerData:table = { PlayerID = playerID, ConvertedCivs = {} };
+					
+					local pReligion = pPlayer:GetReligion();
+					if pReligion ~= nil then
+						playerData.ReligionType = pReligion:GetReligionTypeCreated();
+						if playerData.ReligionType ~= -1 then
+							
+							-- Add religion to team religions if unique
+							local containsReligion:boolean = false;
+							for i, religionType in ipairs(teamData.ReligionTypes) do
+								if religionType == playerData.ReligionType then
+									containsReligion = true;
+								end
+							end
+							if not containsReligion then
+								table.insert(teamData.ReligionTypes, playerData.ReligionType );
+							end
+
+							-- Determine which civs our religion has taken over
+							for otherID, player in ipairs(Players) do
+								if IsAliveAndMajor(otherID) then
+									local pOtherReligion = player:GetReligion();
+									if pOtherReligion ~= nil then
+										local otherReligionType:number = pOtherReligion:GetReligionInMajorityOfCities();
+										if otherReligionType == playerData.ReligionType then
+											table.insert(playerData.ConvertedCivs, otherID);
+											
+											-- Add convert civs to team converted civs if unique
+											local containsCiv:boolean = false;
+											for i, convertedCivID in ipairs(teamData.ConvertedCivs) do
+												if convertedCivID == otherID then
+													containsCiv = true;
+												end
+											end
+											if not containsCiv then
+												table.insert(teamData.ConvertedCivs, otherID );
+											end
+										end
+									end
+								end
+							end
+						end
+					end
+
+					table.insert(teamData.PlayerData, playerData);
+				end
+			end
+
+			-- Only add teams with at least one living, major player
+			if #teamData.PlayerData > 0 then
+				table.insert(data, teamData);
+			end
+		end
 	end
 
-	ColorCivIcon(instance, playerID);
-	instance.CivName:SetText(civName);
-	instance.LocalPlayer:SetHide(pPlayer ~= m_LocalPlayer);
+	return data, totalCivs;	
+end
 
-	local religionData = GameInfo.Religions[iReligion];
+function PopulateReligionTeamInstance(instance:table, teamData:table, totalCivs:number)
+	PopulateTeamInstanceShared(instance, teamData.TeamID);
+
+	-- Add team members to player stack
+	if instance.PlayerStackIM == nil then
+		instance.PlayerStackIM = InstanceManager:new("ReligionInstance", "ButtonBG", instance.PlayerInstanceStack);
+	end
+
+	instance.PlayerStackIM:ResetInstances();
+
+	for i, playerData in ipairs(teamData.PlayerData) do
+		if playerData.ReligionType > 0 then
+			PopulateReligionInstance(instance.PlayerStackIM:GetInstance(), playerData, totalCivs);
+		end
+	end
+
+	local convertedCivsIM:table = instance[DATA_FIELD_RELIGION_CONVERTED_CIVS_IM];
+	if(convertedCivsIM == nil) then
+		convertedCivsIM = InstanceManager:new("ConvertedReligionInstance", "CivIconBacking", instance.CivsConvertedStack);
+		instance[DATA_FIELD_RELIGION_CONVERTED_CIVS_IM] = convertedCivsIM;
+	end
+
+	convertedCivsIM:ResetInstances();
+
+	for i, convertedCivID in ipairs(teamData.ConvertedCivs) do
+		local convertedInstance:table = convertedCivsIM:GetInstance();
+
+		ColorCivIcon(convertedInstance, convertedCivID);
+
+		local civName:string, civIcon:string = GetCivNameAndIcon(convertedCivID, true);
+		textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, SIZE_RELIGION_CIV_ICON);
+		if(textureSheet == nil or textureSheet == "") then
+			UI.DataError("Could not find icon for converted religion in PopulateReligionInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_RELIGION_CIV_ICON));
+		else
+			convertedInstance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+			SetLeaderTooltip(convertedInstance, convertedCivID);
+		end
+	end
+
+	instance.CivsConverted:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_RELIGION_CONVERT_SUMMARY", #teamData.ConvertedCivs .. "/" .. totalCivs, "LOC_WORLD_RANKINGS_RELIGION_TEAMS_RELIGIONS"));
+end
+
+function PopulateReligionInstance(instance:table, playerData:table, totalCivs:number)
+
+	PopulatePlayerInstanceShared(instance, playerData.PlayerID);
+
+	local religionData = GameInfo.Religions[playerData.ReligionType];
 	local religionColor:number = UI.GetColorValue(religionData.Color);
 	
 	instance.ReligionName:SetColor(religionColor);
-	instance.ReligionName:SetText(Game.GetReligion():GetName(iReligion));
+	instance.ReligionName:SetText(Game.GetReligion():GetName(playerData.ReligionType));
 	instance.ReligionBG:SetSizeX(instance.ReligionName:GetSizeX() + PADDING_RELIGION_NAME_BG);
 	instance.ReligionBG:SetColor(religionColor);
 
@@ -1540,42 +2100,30 @@ function PopulateReligionInstance(instance:table, pPlayer:table, iReligion:numbe
 		instance[DATA_FIELD_RELIGION_CONVERTED_CIVS_IM] = convertedCivsIM;
 	end
 
-	local iConvertedCivs:number = 0;
 	convertedCivsIM:ResetInstances();
-	for i = 0, PlayerManager.GetWasEverAliveCount() - 1 do
-		local pOtherPlayer = Players[i];
-		if(pOtherPlayer:IsAlive() == true and pOtherPlayer:IsMajor() == true) then
-			local pReligion = pOtherPlayer:GetReligion();
-			if(pReligion ~= nil) then
-				local predominantReligion:number = pReligion:GetReligionInMajorityOfCities();
-				if(predominantReligion == iReligion) then
-					iConvertedCivs = iConvertedCivs + 1;
 
-					local convertedInstance:table = convertedCivsIM:GetInstance();
-					local iOtherPlayerID:number = pOtherPlayer:GetID();
+	for i, convertedCivID in ipairs(playerData.ConvertedCivs) do
+		local convertedInstance:table = convertedCivsIM:GetInstance();
 
-					ColorCivIcon(convertedInstance, iOtherPlayerID);
-					
-					local civName:string, civIcon:string = GetCivNameAndIcon(iOtherPlayerID, true);
-					textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, SIZE_RELIGION_CIV_ICON);
-					if(textureSheet == nil or textureSheet == "") then
-						UI.DataError("Could not find icon for converted religion in PopulateReligionInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_RELIGION_CIV_ICON));
-					else
-						convertedInstance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-						SetLeaderTooltip(convertedInstance, iOtherPlayerID);
-					end
-				end
-			end
+		ColorCivIcon(convertedInstance, convertedCivID);
+
+		local civName:string, civIcon:string = GetCivNameAndIcon(convertedCivID, true);
+		textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, SIZE_RELIGION_CIV_ICON);
+		if(textureSheet == nil or textureSheet == "") then
+			UI.DataError("Could not find icon for converted religion in PopulateReligionInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_RELIGION_CIV_ICON));
+		else
+			convertedInstance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+			SetLeaderTooltip(convertedInstance, convertedCivID);
 		end
 	end
 
-	if(iConvertedCivs == 0) then
+	if #playerData.ConvertedCivs == 0 then
 		instance.ButtonBG:SetSizeY(SIZE_RELIGION_BG_HEIGHT + instance.CivsConvertedStack:GetSizeY());
 	else
 		instance.ButtonBG:SetSizeY(PADDING_RELIGION_BG_HEIGHT + instance.CivsConvertedStack:GetSizeY());
 	end
 
-	instance.CivsConverted:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_RELIGION_CONVERT_SUMMARY", iConvertedCivs .. "/" .. iTotalCivs, Game.GetReligion():GetName(iReligion)));
+	instance.CivsConverted:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_RELIGION_CONVERT_SUMMARY", #playerData.ConvertedCivs .. "/" .. totalCivs, Game.GetReligion():GetName(playerData.ReligionType)));
 end
 
 function RealizeReligionStackSize()
@@ -1605,35 +2153,64 @@ function ViewGeneric(victoryType:string)
 	local victoryInfo:table = GameInfo.Victories[victoryType];
 	PopulateGenericHeader(RealizeGenericStackSize, victoryInfo.Name, nil, victoryInfo.Description, ICON_GENERIC);
 
-	m_GenericIM:ResetInstances();
+	local genericData:table = GatherGenericData();
 
-	for i = 0, PlayerManager.GetWasEverAliveCount() - 1 do
-		local pPlayer = Players[i];
-		if (pPlayer:IsAlive() == true and pPlayer:IsMajor() == true) then
-			PopulateGenericInstance(m_GenericIM:GetInstance(), pPlayer, victoryType);
+	m_GenericIM:ResetInstances();
+	m_GenericTeamIM:ResetInstances();
+
+	for i, teamData in ipairs(genericData) do
+		if #teamData.PlayerData > 1 then
+			PopulateGenericTeamInstance(m_GenericTeamIM:GetInstance(), teamData, victoryType);
+		else
+			PopulateGenericInstance(m_GenericIM:GetInstance(), teamData.PlayerData[1], victoryType, true);
 		end
 	end
 
 	RealizeGenericStackSize();
 end
 
-function PopulateGenericInstance(instance:table, pPlayer:table, victoryType:string)
-	local playerID:number = pPlayer:GetID();
-	local civName, civIcon:string = GetCivNameAndIcon(playerID, true);
+function GatherGenericData()
+	local data:table = {};
 
-	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(civIcon, SIZE_CIV_ICON);
-	if(textureSheet == nil or textureSheet == "") then
-		UI.DataError("Could not find icon in PopulateViewAncientRivalsInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_CIV_ICON));
-	else
-		instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		SetLeaderTooltip(instance, playerID);
+	for teamID, team in pairs(Teams) do
+		if teamID >= 0 then
+			local teamData:table = { TeamID = teamID, PlayerData = {} };
+
+			-- Add players
+			for i, playerID in ipairs(team) do
+				if IsAliveAndMajor(playerID) then
+					local pPlayer:table = Players[playerID];
+					local playerData:table = { PlayerID = playerID };
+
+					table.insert(teamData.PlayerData, playerData);
+				end
+			end
+
+			-- Only add teams with at least one living, major player
+			if #teamData.PlayerData > 0 then
+				table.insert(data, teamData);
+			end
+		end
 	end
 
-	ColorCivIcon(instance, playerID);
-	instance.CivName:SetText(civName);
-	instance.LocalPlayer:SetHide(pPlayer ~= g_LocalPlayer);
-	
-	local requirementSetID:number = Game.GetVictoryRequirements(playerID, victoryType);
+	return data;
+end
+
+function PopulateGenericTeamInstance(instance:table, teamData:table, victoryType:string)
+	PopulateTeamInstanceShared(instance, teamData.TeamID);
+
+	-- Add team members to player stack
+	if instance.PlayerStackIM == nil then
+		instance.PlayerStackIM = InstanceManager:new("GenericInstance", "ButtonBG", instance.PlayerInstanceStack);
+	end
+
+	instance.PlayerStackIM:ResetInstances();
+
+	for i, playerData in ipairs(teamData.PlayerData) do
+		PopulateGenericInstance(instance.PlayerStackIM:GetInstance(), playerData, victoryType, false);
+	end
+
+	local requirementSetID:number = Game.GetVictoryRequirements(teamData.TeamID, victoryType);
 	if requirementSetID ~= nil and requirementSetID ~= -1 then
 
 		local detailsText:string = "";
@@ -1664,6 +2241,66 @@ function PopulateGenericInstance(instance:table, pPlayer:table, victoryType:stri
 		instance.Details:SetText(detailsText);
 	else
 		instance.Details:LocalizeAndSetText("LOC_OPTIONS_DISABLED");
+	end
+
+	local itemSize:number = instance.Details:GetSizeY() + PADDING_GENERIC_ITEM_BG;
+	if itemSize < SIZE_GENERIC_ITEM_MIN_Y then
+		itemSize = SIZE_GENERIC_ITEM_MIN_Y;
+	end
+	
+	instance.ButtonFrame:SetSizeY(itemSize);
+end
+
+function PopulateGenericInstance(instance:table, playerData:table, victoryType:string, showTeamDetails:boolean )
+	local civName, civIcon:string = GetCivNameAndIcon(playerData.PlayerID, true);
+
+	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(civIcon, SIZE_CIV_ICON);
+	if(textureSheet == nil or textureSheet == "") then
+		UI.DataError("Could not find icon in PopulateViewAncientRivalsInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_CIV_ICON));
+	else
+		instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+		SetLeaderTooltip(instance, playerData.PlayerID);
+	end
+
+	ColorCivIcon(instance, playerData.PlayerID);
+	instance.CivName:SetText(civName);
+	instance.LocalPlayer:SetHide(playerData.PlayerID ~= m_LocalPlayerID);
+	
+	if showTeamDetails then
+		local requirementSetID:number = Game.GetVictoryRequirements(Players[playerData.PlayerID]:GetTeam(), victoryType);
+		if requirementSetID ~= nil and requirementSetID ~= -1 then
+
+			local detailsText:string = "";
+			local innerRequirements:table = GameEffects.GetRequirementSetInnerRequirements(requirementSetID);
+	
+			for _, requirementID in ipairs(innerRequirements) do
+
+				if detailsText ~= "" then
+					detailsText = detailsText .. "[NEWLINE]";
+				end
+
+				local requirementKey:string = GameEffects.GetRequirementTextKey(requirementID, REQUIREMENT_CONTEXT);
+				local requirementText:string = GameEffects.GetRequirementText(requirementID, requirementKey);
+
+				if requirementText ~= nil then
+					detailsText = detailsText .. requirementText;
+				else
+					local requirementState:string = GameEffects.GetRequirementState(requirementID);
+					local requirementDetails:table = GameEffects.GetRequirementDefinition(requirementID);
+					if requirementState == "Met" or requirementState == "AlwaysMet" then
+						detailsText = detailsText .. "[ICON_CheckmarkBlue] ";
+					else
+						detailsText = detailsText .. "[ICON_Bolt]";
+					end
+					detailsText = detailsText .. requirementDetails.ID;
+				end
+			end
+			instance.Details:SetText(detailsText);
+		else
+			instance.Details:LocalizeAndSetText("LOC_OPTIONS_DISABLED");
+		end
+	else
+		instance.Details:SetText("");
 	end
 
 	local itemSize:number = instance.Details:GetSizeY() + PADDING_GENERIC_ITEM_BG;

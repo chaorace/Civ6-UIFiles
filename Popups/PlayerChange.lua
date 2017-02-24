@@ -200,7 +200,7 @@ function OnPasswordEntryCommit()
 end
 
 -- ===========================================================================
-function OnPlayerVictory(player, victory, eventID)
+function OnTeamVictory(team, victory, eventID)
 	if(not ContextPtr:IsHidden()) then
 		UIManager:DequeuePopup(ContextPtr);
 		Events.LocalPlayerTurnBegin.Remove(OnLocalPlayerTurnBegin);
@@ -236,7 +236,7 @@ function Initialize()
 	Events.LocalPlayerTurnBegin.Add(OnLocalPlayerTurnBegin);
 	Events.PlayerTurnDeactivated.Add(OnPlayerTurnDeactivated);
 	Events.LoadScreenClose.Add(OnLoadScreenClose);
-	Events.PlayerVictory.Add(OnPlayerVictory);
+	Events.TeamVictory.Add(OnTeamVictory);
 
 	LuaEvents.EndGameMenu_OneMoreTurn.Add(OnEndGameMenu_OneMoreTurn);
 

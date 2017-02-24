@@ -85,6 +85,9 @@ function ShowTechBoost(techIndex, iTechProgress, eSource)
 	elseif eSource == BoostSources.BOOST_SOURCE_RESEARCH_AGREEMENT then
 		msgString = Locale.Lookup("LOC_TECH_BOOST_RESEARCH_AGREEMENT");
 
+	elseif eSource == BoostSources.BOOST_SOURCE_TEAMMATE then
+		msgString = Locale.Lookup("LOC_TECH_BOOST_TEAMMATE");
+
 	elseif currentTech ~= nil then
 		for row in GameInfo.Boosts() do
 			if(row.TechnologyType == currentTech.TechnologyType) then
@@ -129,7 +132,6 @@ function ShowTechBoost(techIndex, iTechProgress, eSource)
     if (m_isPastLoadingScreen) then
         UI.PlaySound("Receive_Tech_Boost");
     end
-    UI.PlaySound("Pause_TechCivic_Speech");
 end
 
 -- ===========================================================================
@@ -183,6 +185,9 @@ function ShowCivicBoost(civicIndex, iCivicProgress, eSource)
 	elseif eSource == BoostSources.BOOST_SOURCE_GREAT_PERSON then
 		msgString = Locale.Lookup("LOC_CIVIC_BOOST_GREAT_PERSON");
 		 
+	elseif eSource == BoostSources.BOOST_SOURCE_TEAMMATE then
+		msgString = Locale.Lookup("LOC_CIVIC_BOOST_TEAMMATE");
+		 
 	elseif currentCivic ~= nil then
 		
 		for row in GameInfo.Boosts() do
@@ -230,8 +235,6 @@ function ShowCivicBoost(civicIndex, iCivicProgress, eSource)
     if (m_isPastLoadingScreen) then
         UI.PlaySound("Receive_Culture_Boost");
     end
-
-    UI.PlaySound("Pause_TechCivic_Speech");
 end
 
 -- ===========================================================================
@@ -300,6 +303,7 @@ function OnClose()
 	-- Find first entry in table, display that, then remove it from the internal queue
 	for i, entry in ipairs(m_queuedBoosts) do
 		ShowBoost(m_queuedBoosts[i]);
+        UI.PlaySound("Pause_TechCivic_Speech");
 		table.remove(m_queuedBoosts, i);
 		break;
 	end

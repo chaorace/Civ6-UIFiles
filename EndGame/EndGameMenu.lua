@@ -571,6 +571,14 @@ function Data(playerId, victory_or_defeat_type)
 	local playerIcon = "ICON_" .. civType;
 	local playerPortrait:string;
 
+	local teamID:number = p:GetTeam();
+	local team:table = Teams[teamID];
+	if #team > 1 then
+		-- Display team information if more than one player on this team
+		playerName = Locale.Lookup("LOC_WORLD_RANKINGS_TEAM", tostring(teamID));
+		playerIcon = "ICON_TEAM_ICON_" .. tostring(teamID);
+	end
+
 	local loadingInfo:table = GameInfo.LoadingInfo[leaderType];
 	if loadingInfo and loadingInfo.ForegroundImage then
 		playerPortrait = loadingInfo.ForegroundImage;
@@ -635,23 +643,24 @@ end
 -- Called when a player is victorious.
 -- The UI is only displayed if this player is you.
 ----------------------------------------------------------------
-function OnPlayerVictory( player, victory, eventID)
-	print("Player " .. tostring(player) .. " has achieved a victory! (" .. tostring(victory) .. ")");
+function OnTeamVictory(team, victory, eventID)
+	print("Team " .. tostring(team) .. " has achieved a victory! (" .. tostring(victory) .. ")");
 	local localPlayer = Game.GetLocalPlayer();
 
 	if (localPlayer and localPlayer >= 0) then		-- Check to see if there is any local player
-		if (localPlayer == player) then
+		local p = Players[localPlayer]; 
+
+		if (p:GetTeam() == team) then
 			-- You were victorious!!
 			UI.SetPauseEventID( eventID );
 			local victoryInfo = GameInfo.Victories[victory];
 			victory = victoryInfo and victoryInfo.VictoryType or "VICTORY_DEFAULT";
-			View(Data(player, victory));
+			View(Data(localPlayer, victory));
 		else
 			-- Another player was victorious...
 			-- In the future, we'll want to be more specific stating that another player has won.
 			-- However we're lacking strings and time.
-			local p = Players[localPlayer];
-
+		
 			-- Only show the defeat screen to other living players.  If a player
 			-- was defeated, they would receive another notification.
 			if(p:IsAlive()) then
@@ -664,7 +673,7 @@ end
 
 local ruleset = GameConfiguration.GetValue("RULESET");
 if(ruleset ~= "RULESET_TUTORIAL") then
-	Events.PlayerVictory.Add(OnPlayerVictory);
+	Events.TeamVictory.Add(OnTeamVictory);
 end
 
 ----------------------------------------------------------------
@@ -677,11 +686,11 @@ function OnShowEndGame(playerId)
 
 	local player = Players[playerId];
 	if(player:IsAlive()) then
-		local victor, victoryType = Game.GetWinningPlayer();
-		if(victor == player:GetID()) then
+		local victor, victoryType = Game.GetWinningTeam();
+		if(victor == player:GetTeam()) then
 			local victory = GameInfo.Victories[victoryType];
 			if(victory) then
-				View(Data(playerId, victory.VictoryType));
+				View(Data(player:GetID(), victory.VictoryType));
 				return;
 			end		
 		end
@@ -702,7 +711,7 @@ function OnChat( fromPlayer, toPlayer, text, eTargetType )
 	-- EndGameMenu doesn't play sounds for chat events because the ingame chat panel already does so. 
 	if(ContextPtr:IsHidden() == false) then
 		local pPlayerConfig = PlayerConfigurations[fromPlayer];
-		local playerName = pPlayerConfig:GetPlayerName();
+		local playerName = Locale.Lookup(pPlayerConfig:GetPlayerName());
 
 		-- Selecting chat text color based on eTargetType	
 		local chatColor :string = "[color:ChatMessage_Global]";
@@ -718,7 +727,7 @@ function OnChat( fromPlayer, toPlayer, text, eTargetType )
 		if(eTargetType == ChatTargetTypes.CHATTARGET_PLAYER) then
 			local pTargetConfig :table	= PlayerConfigurations[toPlayer];
 			if(pTargetConfig ~= nil) then
-				local targetName :string = pTargetConfig:GetPlayerName();
+				local targetName = Locale.Lookup(pTargetConfig:GetPlayerName());
 				chatString = chatString .. " [" .. targetName .. "]";
 			end
 		end
