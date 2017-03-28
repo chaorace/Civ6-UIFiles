@@ -73,7 +73,7 @@
 
       <Grid ID="DestinationChooserButtons" Anchor="L,B" Size="parent,78" Offset="0,0" Texture="Controls_SubHeader3" SliceCorner="10,10" SliceSize="14,14" SliceTextureSize="34,34">
         <!-- Confirm Button -->
-        <GridButton ID="ConfirmButton" Size="270,26" Offset="0,40" Anchor="C,B" String="LOC_ESPIONAGECHOOSER_CONFIRM_PLACEMENT" Style="FontFlair14" FontStyle="Shadows" TextOffset="0,2" EffectColor="0,0,0,255" SmallCaps="20" SmallCapsType="EveryWord">
+        <GridButton ID="ConfirmButton" Size="270,26" Offset="0,40" Anchor="C,B" String="LOC_ESPIONAGECHOOSER_CONFIRM_PLACEMENT" Style="FontFlair14" FontStyle="Shadows" TextOffset="0,1" EffectColor="0,0,0,255" SmallCaps="20" SmallCapsType="EveryWord">
           <GridData Texture="Controls_ConfirmSmall" StateOffsetIncrement="0,26" SliceCorner="26,13" SliceSize="2,2" SliceTextureSize="51,26"/>
         </GridButton>
 

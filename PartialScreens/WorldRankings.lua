@@ -719,6 +719,14 @@ function PopulateOverallInstance(instance:table, victoryType:string, typeText:st
 		return a.TeamScore > b.TeamScore;
 	end);
 
+	-- Handle case where this victory type is not completable by any team.  
+	-- This can happen with Global Thermonuclear War's Proxy War victory if there are no city states to conquer.
+	if(#teamData < 1) then
+			instance.VictoryPlayer:SetText("");
+			instance.VictoryLeading:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_VICTORY_DISABLED"));
+		return;
+	end
+
 	-- Ensure we have Instance Managers for the player meters
 	local playersIM:table = instance[DATA_FIELD_OVERALL_PLAYERS_IM];
 	if(playersIM == nil) then

@@ -1,7 +1,7 @@
 -- ===========================================================================
 --	HUD Partial Screen Hooks
 -- ===========================================================================
-
+include("GameCapabilities");
 
 -- ===========================================================================
 --	Action Hotkeys
@@ -126,7 +126,7 @@ end
 -- ===========================================================================
 function Resize()
 	-- The Launch Bar width should accomodate how many hooks are currently in the stack.  
-	if (m_isTradeRoutesUnlocked) then
+	if (m_isTradeRoutesUnlocked and HasCapability("CAPABILITY_TRADE_VIEW")) then
 		Controls.TradeRoutesButton:SetHide(false);
 		Controls.TradeRoutesBolt:SetHide(false);
 	else
@@ -135,7 +135,7 @@ function Resize()
 			Controls.TradeRoutesBolt:SetHide(true);
 		end
 	end
-	if (m_isEspionageUnlocked) then
+	if (m_isEspionageUnlocked and HasCapability("CAPABILITY_ESPIONAGE_VIEW")) then
 		Controls.EspionageButton:SetHide(false);
 		Controls.EspionageBolt:SetHide(false);
 	else
@@ -271,17 +271,17 @@ function OnInputActionTriggered( actionId )
         OnToggleCityStates();
         UI.PlaySound("Play_UI_Click");
 	end
-	if actionId == m_ToggleEspId then
+	if actionId == m_ToggleEspId and HasCapability("CAPABILITY_ESPIONAGE_VIEW") then
         if UI.QueryGlobalParameterInt("DISABLE_ESPIONAGE_HOTKEY") ~= 1 then
             OnToggleEspionage();
             UI.PlaySound("Play_UI_Click");
         end
 	end
-	if actionId == m_ToggleRankingsId then
+	if actionId == m_ToggleRankingsId and HasCapability("CAPABILITY_WORLD_RANKINGS") then
         OnToggleWorldRankings();
         UI.PlaySound("Play_UI_Click");
 	end
-	if actionId == m_ToggleTradeId then
+	if actionId == m_ToggleTradeId and HasCapability("CAPABILITY_TRADE_VIEW") then
         OnToggleTradeOverview();
         UI.PlaySound("Play_UI_Click");
 	end

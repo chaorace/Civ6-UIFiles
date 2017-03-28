@@ -49,7 +49,7 @@ local GAMELISTUPDATE_ERROR		:number = 6;
 
 local GRID_LINE_WIDTH			:number = 1020;
 local GRID_LINE_HEIGHT			:number = 30;
-local NUM_COLUMNS				:number = 5;
+local NUM_COLUMNS				:number = 6;
 local FRIEND_HEIGHT				:number = 46;
 local FRIENDS_BG_WIDTH			:number = 236;
 local FRIENDS_BG_HEIGHT			:number = 342;
@@ -346,12 +346,27 @@ function AddServer(serverEntry)
 
 	local mapName = Locale.Lookup(serverEntry.MapName);
 
+
+	-- TODO: This needs to be modified to not reference GameInfo.
+	-- GameInfo should only be used in-game.
+	-- The map size name should instead be included as part of the server data.
+	local mapSizeName = serverEntry.MapSizeName;
+	if(mapSizeName == nil) then
+		local mapSizeInfo = GameInfo.Maps[serverEntry.MapSize];
+		if(mapSizeInfo) then
+			mapSizeName = Locale.Lookup(mapSizeInfo.Name);
+		end
+	end
+
+	if(mapSizeName == nil) then
+		mapSizeName = Locale.Lookup("LOC_MULTIPLAYER_UNKNOWN");
+	end
+
 	-- Fall-back to unknown.
 	if(gameSpeedName == nil or #gameSpeedName == 0) then
 		gameSpeedName = Locale.Lookup("LOC_MULTIPLAYER_UNKNOWN");
 	end
-
-
+	
 	local listing = {
 		Initialized = serverEntry.Initialized,
 		ServerID = serverEntry.serverID,
@@ -365,7 +380,8 @@ function AddServer(serverEntry)
 		RuleSetName = rulesetName,
 		GameSpeed = serverEntry.GameSpeed,
 		GameSpeedName = gameSpeedName,
-		EnabledMods = serverEntry.EnabledMods
+		EnabledMods = serverEntry.EnabledMods,
+		MapSizeName = mapSizeName
 	};
 				
 	-- Don't add servers that have an invalid Initialized value.  
@@ -514,7 +530,7 @@ function SortAndDisplayListings(resetSelection:boolean)
 		
 		-- Map Type info	
 		controlTable.ServerMapTypeLabel:LocalizeAndSetText(listing.MapName);
-		controlTable.ServerMapTypeLabel:LocalizeAndSetToolTip(GameInfo.Maps[listing.MapSize].Name);
+		controlTable.ServerMapTypeLabel:LocalizeAndSetToolTip(listing.MapSizeName);
 
 		-- Game Speed
 		if (listing.GameSpeedName) then
@@ -525,82 +541,60 @@ function SortAndDisplayListings(resetSelection:boolean)
 
 		-- Mod Info
 		local hasMods = listing.EnabledMods ~= nil;
-		local hasModsStr = "LOC_YES_BUTTON"
-		local modTTStr;
+		local hasOfficialMods = false;
+		local hasCommunityMods = false;
 		if(hasMods) then
 			
-			local blocked = false;
 			local needsDownload = false;
-			local hasUnofficialMods = false;
-
-			local modNames = {};
+			local officialModNames = {};
+			local communityModNames = {};
 				
 			local mods = Modding.GetModsFromConfigurationString(listing.EnabledMods);
 			if(mods) then
 				for i,v in ipairs(mods) do
 					
-					local modColor = nil;
+					local modIcon:string = nil;
 
-					local handle = Modding.GetModHandle(v.ModId);
-					if(handle) then
-						if(not Modding.IsJoinGameAllowed(v.ModId)) then
-							blocked = true;
-							modColor = ColorString_ModRed;
-						else
-							local info = Modding.GetModInfo(handle);
-							if(not info.Official) then
-								hasUnofficialMods = true;
-								modColor = ColorString_ModGreen;
-							end
-						end
+					-- Check if mod is installed
+					if(Modding.GetModHandle(v.ModId)) then
+						modIcon = Modding.IsJoinGameAllowed(v.ModId) and "[ICON_CheckSuccess]" or "[ICON_CheckFail]";
+					-- Mod isn't installed but is downloadable from Steam.
 					elseif(v.SubscriptionId and #v.SubscriptionId > 0) then
-						-- Mod isn't installed but is downloadable from Steam.
-						modColor = ColorString_ModYellow;
 						needsDownload = true;
+						modIcon = "[ICON_DownloadContent]";
+					-- Mod isn't installed and is not downloadable from Steam.
 					else
-						modColor = ColorString_ModRed;
-						blocked = true;
+						modIcon = "[ICON_CheckFail]";
 					end
 					
-					table.insert(modNames, {v.Name, modColor});
+					if(Modding.IsModOfficial(v.ModId)) then
+						table.insert(officialModNames, {v.Name, modIcon});
+					else
+						table.insert(communityModNames, {v.Name, modIcon});
+					end
 				end
 			end
 
-			if(blocked) then
-				hasModsStr = "LOC_NO_BUTTON"
+			SortAndColorizeMods(officialModNames);
+			SortAndColorizeMods(communityModNames);
+
+			if #officialModNames > 0 then
+				hasOfficialMods = true;
+				local ToolTipPrefix = Locale.Lookup("LOC_MULTIPLAYER_LOBBY_MODS_OFFICIAL") .. "[NEWLINE][NEWLINE]";
+				controlTable.ModsOfficial:SetToolTipString(ToolTipPrefix .. table.concat(officialModNames, "[NEWLINE]"));
+				controlTable.ModsOfficial:SetTexture(needsDownload and "OfficialContent_MissingIcon" or "OfficialContent_Owned");
 			end
 
-			-- Sort mods.
-			table.sort(modNames, function(a,b) return Locale.Compare(a[1], b[1]) == -1; end);
-
-			-- Colorize.
-			for i,v in ipairs(modNames) do
-				if(v[2]) then
-					modNames[i] = v[2] .. v[1] .. "[ENDCOLOR]";
-				else
-					modNames[i] = v[1];
-				end
+			if #communityModNames > 0 then
+				hasCommunityMods = true;
+				local ToolTipPrefix = Locale.Lookup("LOC_MULTIPLAYER_LOBBY_MODS_COMMUNITY") .. "[NEWLINE][NEWLINE]";
+				controlTable.ModsCommunity:SetToolTipString(ToolTipPrefix .. table.concat(communityModNames, "[NEWLINE]"));
+				controlTable.ModsCommunity:SetTexture(needsDownload and "CommunityContent_Missing" or "CommunityContent_Owned");
 			end
-
-			-- Generate list.
-			modTTStr = table.concat(modNames, "[NEWLINE]");
-
-			-- Set general Mod Yes/No color.
-			if(blocked) then
-				controlTable.DLCHostedLabel:SetColorByName(ColorSet_ModRed);
-			elseif(needsDownload) then
-				controlTable.DLCHostedLabel:SetColorByName(ColorSet_ModYellow);
-			elseif(hasUnofficialMods) then
-				controlTable.DLCHostedLabel:SetColorByName(ColorSet_ModGreen);
-			else
-				-- Game only has installed, official mods.
-				controlTable.DLCHostedLabel:SetColorByName(ColorSet_Faded);
-			end
-		else
-			controlTable.DLCHostedLabel:SetColorByName(ColorSet_Faded);
 		end
-		controlTable.DLCHostedLabel:LocalizeAndSetText(hasModsStr);
-		controlTable.DLCHostedLabel:SetToolTipString(modTTStr);
+
+		controlTable.ModsOfficial:SetHide(not hasOfficialMods);
+		controlTable.ModsCommunity:SetHide(not hasCommunityMods);
 
 		-- Enable the Button's Event Handler
 		local selectAndJoinGame:ifunction = function() g_SelectedServerID = serverID; ServerListingButtonClick(); end
@@ -633,6 +627,22 @@ function SortAndDisplayListings(resetSelection:boolean)
 	end
 	
 	Controls.GridContainer:SetSizeY(gridLineHeight);
+end
+
+function SortAndColorizeMods(modNames)
+	if #modNames > 0 then
+		-- Sort mods.
+		table.sort(modNames, function(a,b) return Locale.Compare(a[1], b[1]) == -1; end);
+
+		-- Colorize.
+		for i,v in ipairs(modNames) do
+			if(v[2]) then
+				modNames[i] = v[2] .. " " .. v[1];
+			else
+				modNames[i] = v[1];
+			end
+		end
+	end
 end
 
 -- ===========================================================================

@@ -34,6 +34,9 @@ function AddTabSection( tabs:table, name:string, populateCallback:ifunction, par
 
 	local callback	:ifunction	= function()
 		if tabs.prevSelectedControl ~= nil then
+			-- Restore proper color
+			tabs.prevSelectedControl:GetTextControl():SetColorByName("ShellOptionText");
+
 			tabs.prevSelectedControl[DATA_FIELD_SELECTION]:SetHide(true);
 		end
 		kTab.Selection:SetHide(false);
@@ -90,7 +93,9 @@ function PopulateTextEntries(forLanguage)
 	end
 
 	m_ViewingTab.TextInstance.KeyStringList:SetEntries( m_TextEntries, selected );
-
+	
+	-- Manually call selection callback since SetEntries does not trigger it
+	OnKeyStringListSelection(m_TextEntries[selected]);
 end
 
 -- ===========================================================================
@@ -116,13 +121,6 @@ function OnCommitTextString(text, control)
 end
 
 -- ===========================================================================
-function OnHasFocusTextEntry(control)
-	local i = control:GetVoid1();
-	-- Make sure the entry is selected.
-	m_ViewingTab.TextInstance.KeyStringList:SetSelectedIndex( i, false );
-end
-
--- ===========================================================================
 function UpdateTextPage()
 
 	if (m_ViewingTab ~= nil and m_ViewingTab.TextInstance ~= nil) then
@@ -135,17 +133,9 @@ function UpdateTextPage()
 			for i, entry in ipairs(m_TextEntries) do
 				local controlEntry = m_ViewingTab.TextInstance.KeyStringList:GetIndexedEntry( i );
 				if controlEntry ~= nil then
-					if controlEntry.Root.KeyEdit ~= nil then
-						controlEntry.Root.KeyEdit:SetText(entry.Key);
-						controlEntry.Root.KeyEdit:SetVoid1(i);
-						controlEntry.Root.KeyEdit:RegisterCommitCallback(OnCommitTextKey);
-						controlEntry.Root.KeyEdit:RegisterHasFocusCallback(OnHasFocusTextEntry);
-					end
-					if controlEntry.Root.StringEdit ~= nil then
-						controlEntry.Root.StringEdit:SetText(entry.Text);
-						controlEntry.Root.StringEdit:SetVoid1(i);
-						controlEntry.Root.StringEdit:RegisterCommitCallback(OnCommitTextString);						
-						controlEntry.Root.StringEdit:RegisterHasFocusCallback(OnHasFocusTextEntry);
+					if controlEntry.Root.Button ~= nil then
+						-- Set button text as 
+						TruncateString(controlEntry.Root.Button, controlEntry.Root.Button:GetSizeX()-20, entry.Text, "");
 					end
 				end
 			end
@@ -161,9 +151,20 @@ end
 
 -- ===========================================================================
 function OnKeyStringListSelection(entry)
+	if m_ViewingTab.TextInstance ~= nil then
+		-- Set text tag and callback
+		if m_ViewingTab.TextInstance.TextTagEditBox ~= nil then
+			m_ViewingTab.TextInstance.TextTagEditBox:SetText(entry.Key);
+			m_ViewingTab.TextInstance.TextTagEditBox:SetVoid1(entry.Index);
+			m_ViewingTab.TextInstance.TextTagEditBox:RegisterCommitCallback(OnCommitTextKey);
+		end
 
-	if entry.Key ~= nil then
-
+		-- Set text string and callback
+		if m_ViewingTab.TextInstance.TextStringEditBox ~= nil then
+			m_ViewingTab.TextInstance.TextStringEditBox:SetText(entry.Text);
+			m_ViewingTab.TextInstance.TextStringEditBox:SetVoid1(entry.Index);
+			m_ViewingTab.TextInstance.TextStringEditBox:RegisterCommitCallback(OnCommitTextString);						
+		end
 	end
 end
 
@@ -223,20 +224,19 @@ end
 
 -- ===========================================================================
 function UpdateModPage()
-
 	if (m_ViewingTab ~= nil and m_ViewingTab.ModInstance ~= nil) then
 		
-		m_ViewingTab.ModInstance.IsModCheckbox:SetCheck(  WorldBuilder.IsMod() );
+		m_ViewingTab.ModInstance.IsModCheckbox:SetSelected( WorldBuilder.IsMod() );
 	end
-
 end
 
 -- ===========================================================================
-function OnIsModChecked()
+function OnModCheckboxButton()
 	if (m_ViewingTab ~= nil and m_ViewingTab.ModInstance ~= nil) then
-		
-		WorldBuilder.SetMod( m_ViewingTab.ModInstance.IsModCheckbox:IsChecked() );
+		local newIsSelected:boolean = not m_ViewingTab.ModInstance.IsModCheckbox:IsSelected();
 
+		m_ViewingTab.ModInstance.IsModCheckbox:SetSelected(newIsSelected);
+		WorldBuilder.SetMod( newIsSelected );
 	end	
 end
 
@@ -251,7 +251,7 @@ function ViewMapModPage()
 	m_ViewingTab.Name = "Mod";
 	m_ViewingTab.ModInstance = {};
 	ContextPtr:BuildInstanceForControl( "ModInstance", m_ViewingTab.ModInstance, instance.Top ) ;	
-	m_ViewingTab.ModInstance.IsModCheckbox:RegisterCheckHandler( OnIsModChecked );
+	m_ViewingTab.ModInstance.IsModCheckbox:RegisterCallback( Mouse.eLClick, OnModCheckboxButton );
 
 	UpdateModPage();
 
@@ -321,8 +321,25 @@ end
 
 -- ===========================================================================
 function OnClose()
-
 	ContextPtr:SetHide(true);
+end
+
+-- ===========================================================================
+function OnShowPlayerEditor(bShow)
+	ContextPtr:SetHide(true);
+end
+
+-- ===========================================================================
+function OnShowMapEditor(bShow)
+	if bShow == nil or bShow == true then
+		if ContextPtr:IsHidden() then
+			ContextPtr:SetHide(false);
+		end
+	else
+		if not ContextPtr:IsHidden() then
+			ContextPtr:SetHide(true);
+		end
+	end
 end
 
 -- ===========================================================================
@@ -352,6 +369,9 @@ function OnInit()
 	ContextPtr:SetShowHandler( OnShow );
 
 	Controls.ModalScreenClose:RegisterCallback( Mouse.eLClick, OnClose );
+
+	LuaEvents.WorldBuilder_ShowPlayerEditor.Add( OnShowPlayerEditor );
+	LuaEvents.WorldBuilder_ShowMapEditor.Add( OnShowMapEditor );
 
 end
 ContextPtr:SetInitHandler( OnInit );

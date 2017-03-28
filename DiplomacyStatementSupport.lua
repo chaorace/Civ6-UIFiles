@@ -160,14 +160,22 @@ function DiplomacySupport_RemoveInvalidSelections(kParsedStatement : table, loca
 				local selection = kParsedStatement.Selections[i];
 				local bValidAction = false;
 
+				local tResults = nil;
 				if (selection.DiplomaticActionType == nil) then
 					bValidAction = true;
 				else
-					bValidAction = pLocalPlayer:GetDiplomacy():IsDiplomaticActionValid(selection.DiplomaticActionType, otherPlayerID);
+					bValidAction, tResults = pLocalPlayer:GetDiplomacy():IsDiplomaticActionValid(selection.DiplomaticActionType, otherPlayerID, true);
 				end
 
 				if (not bValidAction) then
-					table.remove(kParsedStatement.Selections, i);
+					if (tResults == nil or tResults.FailureReasons == nil) then
+						table.remove(kParsedStatement.Selections, i);
+					else
+						-- We have 'reasons' for the action not being available that we want to tell the user about.
+						kParsedStatement.Selections[i].IsDisabled = true;
+						kParsedStatement.Selections[i].FailureReasons = tResults.FailureReasons;
+						i = i + 1;
+					end
 				else
 					i = i + 1;
 				end

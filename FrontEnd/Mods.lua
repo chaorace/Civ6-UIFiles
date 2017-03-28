@@ -2,11 +2,14 @@
 -- Mods Browser Screen
 -------------------------------------------------
 include( "InstanceManager" );
+include( "SupportFunctions" );
 
 LOC_MODS_SEARCH_NAME = Locale.Lookup("LOC_MODS_SEARCH_NAME");
 
 g_ModListingsManager = InstanceManager:new("ModInstance", "ModInstanceRoot", Controls.ModListingsStack);
 g_SubscriptionsListingsManager = InstanceManager:new("SubscriptionInstance", "SubscriptionInstanceRoot", Controls.SubscriptionListingsStack);
+g_DependencyListingsManager = InstanceManager:new("ReferenceItemInstance", "Item", Controls.ModDependencyItemsStack);
+
 
 g_SearchContext = "Mods";
 g_SearchQuery = nil;
@@ -91,10 +94,14 @@ function RefreshListings()
 				SelectMod(handle);
 			end);
 
+			local name = TruncateStringByLength(v.DisplayName, 96);
+			
 			if(v.Allowance == false) then
-				v.DisplayName = v.DisplayName .. " [COLOR_RED](" .. Locale.Lookup("LOC_MODS_DETAILS_OWNERSHIP_NO") .. ")[ENDCOLOR]";
+				name = name .. " [COLOR_RED](" .. Locale.Lookup("LOC_MODS_DETAILS_OWNERSHIP_NO") .. ")[ENDCOLOR]";
 			end
-			instance.ModTitle:LocalizeAndSetText(v.DisplayName);
+
+
+			instance.ModTitle:LocalizeAndSetText(name);
 
 			local tooltip;
 			if(#v.Teaser) then
@@ -253,7 +260,7 @@ function RefreshModDetails()
 				local err, xtra, sources = Modding.CanDisableMod(modHandle);
 				if(err == "OK") then
 					disableButton:SetDisabled(false);
-					disableButton:SetToolTipString(Locale.Lookup("LOC_MODS_DISABLE"));
+					disableButton:SetToolTipString(nil);
 
 					disableButton:RegisterCallback(Mouse.eLClick, function()
 						Modding.DisableMod(modHandle);
@@ -263,8 +270,15 @@ function RefreshModDetails()
 					disableButton:SetDisabled(true);
 							
 					-- Generate tip w/ list of mods to enable.
+					local error_suffix;
+
 					local tip = {};
 					local items = xtra or {};
+					
+					if(err == "OwnershipRequired") then
+						error_suffix = "(" .. Locale.Lookup("LOC_MODS_DETAILS_OWNERSHIP_NO") .. ")";
+					end
+
 					if(err == "MissingDependencies") then
 						tip[1] = Locale.Lookup("LOC_MODS_DISABLE_ERROR_DEPENDS");
 						items = sources or {}; -- show sources of errors rather than targets of error.
@@ -273,7 +287,12 @@ function RefreshModDetails()
 					end
 
 					for k,ref in ipairs(items) do
-						table.insert(tip, "[ICON_BULLET] " .. Locale.Lookup(ref.Name));
+						local item = "[ICON_BULLET] " .. Locale.Lookup(ref.Name);
+						if(error_suffix) then
+							item = item .. " " .. error_suffix;
+						end
+
+						table.insert(tip, item);
 					end
 
 					disableButton:SetToolTipString(table.concat(tip, "[NEWLINE]"));
@@ -299,7 +318,7 @@ function RefreshModDetails()
 
 						enableButton:SetToolTipString(table.concat(tip, "[NEWLINE]"));
 					else	
-						enableButton:SetToolTipString(Locale.Lookup("LOC_MODS_ENABLE"));
+						enableButton:SetToolTipString(nil);
 					end
 
 					enableButton:RegisterCallback(Mouse.eLClick, function()
@@ -310,9 +329,20 @@ function RefreshModDetails()
 					enableButton:SetDisabled(true);
 							
 					-- Generate tip w/ list of mods to enable.
+					local error_suffix;
+
+					if(err == "OwnershipRequired") then
+						error_suffix = "(" .. Locale.Lookup("LOC_MODS_DETAILS_OWNERSHIP_NO") .. ")";
+					end
+
 					local tip = {Locale.Lookup("LOC_MODS_ENABLE_ERROR")};
 					for k,ref in ipairs(xtra) do
-						table.insert(tip, "[ICON_BULLET] " .. Locale.Lookup(ref.Name));
+						local item = "[ICON_BULLET] " .. Locale.Lookup(ref.Name);
+						if(error_suffix) then
+							item = item .. " " .. error_suffix;
+						end
+
+						table.insert(tip, item);
 					end
 
 					enableButton:SetToolTipString(table.concat(tip, "[NEWLINE]"));
@@ -320,7 +350,7 @@ function RefreshModDetails()
 			end
 		end
 
-		Controls.ModTitle:LocalizeAndSetText(info.Name);
+		Controls.ModTitle:LocalizeAndSetText(info.Name, 64);
 		Controls.ModIdVersion:SetText(info.Id);
 
 		local desc = Modding.GetModProperty(g_SelectedModHandle, "Description") or info.Teaser;
@@ -336,6 +366,9 @@ function RefreshModDetails()
 		if(authors) then
 			authors = Modding.GetModText(g_SelectedModHandle, authors) or authors
 			Controls.ModAuthorsValue:LocalizeAndSetText(authors);
+
+			local width, height = Controls.ModAuthorsValue:GetSizeVal();
+			Controls.ModAuthorsCaption:SetSizeY(height);
 			Controls.ModAuthorsCaption:SetHide(false);
 			Controls.ModAuthorsValue:SetHide(false);
 		else
@@ -347,8 +380,12 @@ function RefreshModDetails()
 		if(specialThanks) then
 			specialThanks = Modding.GetModText(g_SelectedModHandle, specialThanks) or specialThanks
 			Controls.ModSpecialThanksValue:LocalizeAndSetText(specialThanks);
-			Controls.ModSpecialThanksCaption:SetHide(false);
+		
+			local width, height = Controls.ModSpecialThanksValue:GetSizeVal();
+			Controls.ModSpecialThanksCaption:SetSizeY(height);
 			Controls.ModSpecialThanksValue:SetHide(false);
+			Controls.ModSpecialThanksCaption:SetHide(false);
+		
 		else
 			Controls.ModSpecialThanksCaption:SetHide(true);
 			Controls.ModSpecialThanksValue:SetHide(true);
@@ -389,6 +426,30 @@ function RefreshModDetails()
 			Controls.ModSupportsMultiplayerValue:LocalizeAndSetText("LOC_MODS_YES");
 		end
 
+		local dependencies, references, blocks = Modding.GetModAssociations(g_SelectedModHandle);
+
+	
+
+		g_DependencyListingsManager:ResetInstances();
+		if(dependencies) then
+			local dependencyStrings = {}
+			for i,v in ipairs(dependencies) do
+				dependencyStrings[i] = Locale.Lookup(v.Name);
+			end
+			table.sort(dependencyStrings, function(a,b) return Locale.Compare(a,b) == -1 end);
+
+			for i,v in ipairs(dependencyStrings) do
+				local instance = g_DependencyListingsManager:GetInstance();
+				instance.Item:SetText( "[ICON_BULLET] " .. v);		
+			end
+		end
+		Controls.ModDependenciesStack:SetHide(dependencies == nil or #dependencies == 0);
+
+		
+		Controls.ModDependencyItemsStack:CalculateSize();
+		Controls.ModDependencyItemsStack:ReprocessAnchoring();
+		Controls.ModDependenciesStack:CalculateSize();
+		Controls.ModDependenciesStack:ReprocessAnchoring();	
 		Controls.ModPropertiesValuesStack:CalculateSize();
 		Controls.ModPropertiesValuesStack:ReprocessAnchoring();
 		Controls.ModPropertiesCaptionStack:CalculateSize();
@@ -747,8 +808,8 @@ function SortListingsByEnabled(mods)
 end
 ---------------------------------------------------------------------------
 local g_SortListingsOptions = {
-	{"{LOC_MODS_SORTBY} {LOC_MODS_SORTBY_NAME}", SortListingsByName},
-	{"{LOC_MODS_SORTBY} {LOC_MODS_SORTBY_ENABLED}", SortListingsByEnabled},
+	{"LOC_MODS_SORTBY_NAME", SortListingsByName},
+	{"LOC_MODS_SORTBY_ENABLED", SortListingsByEnabled},
 };
 ---------------------------------------------------------------------------
 function InitializeSortListingsPulldown()

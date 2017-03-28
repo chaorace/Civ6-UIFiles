@@ -62,11 +62,11 @@ function UpdatePlotInfo()
 		Controls.ImprovementPullDown:SetSelectedIndex( plot:GetImprovementType()+2, false );
 		Controls.RoutePullDown:SetSelectedIndex(       plot:GetRouteType()+2,       false );
 
-		Controls.ImprovementPillagedCheck:SetCheck( plot:IsImprovementPillaged() );
-		Controls.RoutePillagedCheck:SetCheck( plot:IsRoutePillaged() );
+		Controls.ImprovementPillagedButton:SetSelected( plot:IsImprovementPillaged() );
+		Controls.RoutePillagedButton:SetSelected( plot:IsRoutePillaged() );
 
 		Controls.RoutePullDown:SetDisabled(isWater);
-		Controls.RoutePillagedCheck:SetDisabled(isWater);
+		Controls.RoutePillagedButton:SetDisabled(isWater);
 
 		if plot:GetResourceType() ~= -1 then
 			Controls.ResourceAmount:SetText( tostring(plot:GetResourceCount()) );
@@ -135,21 +135,23 @@ function UpdateSelectedPlot(plotID)
 	Controls.ResourcePullDown:SetDisabled(not plotSelected);
 	Controls.ResourceAmount:SetDisabled(not plotSelected);
 	Controls.ImprovementPullDown:SetDisabled(not plotSelected);
-	Controls.ImprovementPillagedCheck:SetDisabled(not plotSelected);
+	Controls.ImprovementPillagedButton:SetDisabled(not plotSelected);
 	Controls.RoutePullDown:SetDisabled(not plotSelected);
-	Controls.RoutePillagedCheck:SetDisabled(not plotSelected);
+	Controls.RoutePillagedButton:SetDisabled(not plotSelected);
 	Controls.StartPosPulldown:SetDisabled(not plotSelected);
 	Controls.StartPosTabControl:SetDisabled(not plotSelected);
 	Controls.OwnerPulldown:SetDisabled(not plotSelected);
 	
 	if plotSelected then
 		local plot = Map.GetPlotByIndex( m_SelectedPlot );
-		Controls.SelectedPlotLabel:SetText(string.format("Selected Plot: (%i, %i)", plot:GetX(), plot:GetY()));
+		Controls.SelectedPlotLabel:SetText(string.format("(%i, %i)", plot:GetX(), plot:GetY()));
 		UpdatePlotInfo();
 		UI.HighlightPlots(PlotHighlightTypes.MOVEMENT, true, { plotID } );
 	else
-		Controls.SelectedPlotLabel:SetText("No plot selected");
+		Controls.SelectedPlotLabel:SetText(Locale.Lookup("LOC_WORLD_BUILDER_NO_PLOT_SELECTED_HELP"));
 	end
+
+	Controls.PlotEditorScrollPanel:CalculateSize();
 end
 
 -- ===========================================================================
@@ -168,6 +170,8 @@ function OnShow()
 	if UI.GetInterfaceMode() ~= InterfaceModeTypes.WB_SELECT_PLOT then
 		UI.SetInterfaceMode( InterfaceModeTypes.WB_SELECT_PLOT );
 	end
+
+	LuaEvents.WorldBuilderMapTools_SetTabHeader(Locale.Lookup("LOC_WORLDBUILDER_SELECT_TOOL"));
 end
 
 -- ===========================================================================
@@ -305,7 +309,7 @@ function OnImprovementTypeSelected(entry)
 	if m_SelectedPlot ~= nil then
 		if entry.Type~= nil then
 			WorldBuilder.MapManager():SetImprovementType( m_SelectedPlot, entry.Type.Index, Map.GetPlotByIndex( m_SelectedPlot ):GetOwner() );
-			if Controls.ImprovementPillagedCheck:IsChecked() then
+			if Controls.ImprovementPillagedButton:IsSelected() then
 				--WorldBuilder.MapManager():SetImprovementPillaged( plot, true );
 			end
 		else
@@ -315,12 +319,13 @@ function OnImprovementTypeSelected(entry)
 end
 
 -- ===========================================================================
-function OnImprovementPillagedCheck(bChecked)
+function OnImprovementPillagedButton()
+	Controls.ImprovementPillagedButton:SetSelected(not Controls.ImprovementPillagedButton:IsSelected());
 
 	if m_SelectedPlot ~= nil then
 		local plot = Map.GetPlotByIndex( m_SelectedPlot );
 		if plot:GetImprovementType() ~= -1 then
-			--WorldBuilder.MapManager():SetImprovementPillaged(plot, bChecked);
+			--WorldBuilder.MapManager():SetImprovementPillaged(plot, Controls.ImprovementPillagedButton:IsSelected());
 		end
 	end
 end
@@ -330,7 +335,7 @@ function OnRouteTypeSelected(entry)
 
 	if m_SelectedPlot ~= nil then
 		if entry.Type~= nil then
-			WorldBuilder.MapManager():SetRouteType( m_SelectedPlot, entry.Type.Index, Controls.RoutePillagedCheck:IsChecked() );
+			WorldBuilder.MapManager():SetRouteType( m_SelectedPlot, entry.Type.Index, Controls.RoutePillagedButton:IsSelected() );
 		else
 			WorldBuilder.MapManager():SetRouteType( m_SelectedPlot, RouteTypes.NONE );
 		end
@@ -338,12 +343,13 @@ function OnRouteTypeSelected(entry)
 end
 
 -- ===========================================================================
-function OnRoutePillagedCheck(bChecked)
+function OnRoutePillagedButton()
+	Controls.RoutePillagedButton:SetSelected(not Controls.RoutePillagedButton:IsSelected());
 
 	if m_SelectedPlot ~= nil then
 		local plot = Map.GetPlotByIndex( m_SelectedPlot );
 		if plot:GetRouteType() ~= RouteTypes.NONE then
-			WorldBuilder.MapManager():SetRouteType( m_SelectedPlot, plot:GetRouteType(), Controls.RoutePillagedCheck:IsChecked() );
+			WorldBuilder.MapManager():SetRouteType( m_SelectedPlot, plot:GetRouteType(), Controls.RoutePillagedButton:IsSelected() );
 		end
 	end
 end
@@ -461,8 +467,8 @@ function OnInit()
 	Controls.RoutePullDown:SetEntries( m_RouteTypeEntries, 1 );
 	Controls.RoutePullDown:SetEntrySelectedCallback( OnRouteTypeSelected );
 
-	-- RoutePillagedCheck
-	Controls.RoutePillagedCheck:RegisterCheckHandler( OnRoutePillagedCheck );
+	-- RoutePillagedButton
+	Controls.RoutePillagedButton:RegisterCallback( Mouse.eLClick, OnRoutePillagedButton );
 
 	-- OwnerPulldown
 	Controls.OwnerPulldown:SetEntrySelectedCallback( OnOwnerSelected );

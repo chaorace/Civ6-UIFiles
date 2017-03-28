@@ -472,7 +472,7 @@ function AddDestination(city:table)
 	local destinationInstance:table = m_RouteChoiceIM:GetInstance();
 
 	-- Update city name and banner color
-	destinationInstance.CityName:SetText(Locale.ToUpper(city:GetName()));
+	TruncateStringWithTooltip(destinationInstance.CityName, 185, Locale.ToUpper(city:GetName()));
 
 	local backColor:number, frontColor:number  = UI.GetPlayerColors( city:GetOwner() );
 	local darkerBackColor:number = DarkenLightenColor(backColor,(-85),238);

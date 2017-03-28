@@ -149,6 +149,7 @@ function ShowHotseatControls()
 		else
 			Controls.PasswordStack:SetHide(false);
 			Controls.OkButton:SetDisabled(true);
+			Controls.PasswordEntry:TakeFocus();
 		end
 	end
 end
@@ -218,6 +219,17 @@ function OnEndGameMenu_OneMoreTurn()
 end
 
 -- ===========================================================================
+function OnEndGameMenu_ViewingPlayerDefeat()
+	-- In hotseat, it is possible for a human player to get defeated by an AI civ during the turn processing.
+	-- If that happens, the PlayerChange screen needs to hide so the defeat screen can be seen.
+	-- The PlayerChange screen will be restored when the defeated player clicks "next player" and ends their turn.
+	print("OnEndGameMenu_ViewingPlayerDefeat");
+	if(not ContextPtr:IsHidden()) then
+		UIManager:DequeuePopup(ContextPtr);
+	end
+end
+
+-- ===========================================================================
 --	INITIALIZE
 -- ===========================================================================
 function Initialize()
@@ -239,6 +251,7 @@ function Initialize()
 	Events.TeamVictory.Add(OnTeamVictory);
 
 	LuaEvents.EndGameMenu_OneMoreTurn.Add(OnEndGameMenu_OneMoreTurn);
+	LuaEvents.EndGameMenu_ViewingPlayerDefeat.Add(OnEndGameMenu_ViewingPlayerDefeat);
 
 	ContextPtr:SetShowHandler( OnShow );
 	ContextPtr:SetInputHandler( OnInputHandler );

@@ -653,9 +653,11 @@ function PopulateList(data, listMode, listIM)
 				Close();
 			end);
 
-			districtListing.Button:RegisterCallback( Mouse.eRClick, function()
-				LuaEvents.OpenCivilopedia(item.Type);
-			end);
+			if(not IsTutorialRunning()) then
+				districtListing.Button:RegisterCallback( Mouse.eRClick, function()
+					LuaEvents.OpenCivilopedia(item.Type);
+				end);
+			end
 
 			districtListing.Root:SetTag(UITutorialManager:GetHash(item.Type));
 		end
@@ -744,9 +746,11 @@ function PopulateList(data, listMode, listIM)
 						Close();
 					end);
 
-					buildingListing.Button:RegisterCallback( Mouse.eRClick, function()
-						LuaEvents.OpenCivilopedia(buildingItem.Type);
-					end);
+					if(not IsTutorialRunning()) then
+						buildingListing.Button:RegisterCallback( Mouse.eRClick, function()
+							LuaEvents.OpenCivilopedia(buildingItem.Type);
+						end);
+					end
 
 					buildingListing.Button:SetTag(UITutorialManager:GetHash(buildingItem.Type));
 					
@@ -818,9 +822,11 @@ function PopulateList(data, listMode, listIM)
 					Close();
 				end);
 
-				wonderListing.Button:RegisterCallback( Mouse.eRClick, function()
-					LuaEvents.OpenCivilopedia(item.Type);
-				end);
+				if(not IsTutorialRunning()) then
+					wonderListing.Button:RegisterCallback( Mouse.eRClick, function()
+						LuaEvents.OpenCivilopedia(item.Type);
+					end);
+				end
 
 				wonderListing.Button:SetTag(UITutorialManager:GetHash(item.Type));
 			end
@@ -896,9 +902,11 @@ function PopulateList(data, listMode, listIM)
 				end
 				buildingListing.Button:SetDisabled(item.Disabled);
 
-				buildingListing.Button:RegisterCallback( Mouse.eRClick, function()
-					LuaEvents.OpenCivilopedia(item.Type);
-				end);
+				if(not IsTutorialRunning()) then
+					buildingListing.Button:RegisterCallback( Mouse.eRClick, function()
+						LuaEvents.OpenCivilopedia(item.Type);
+					end);
+				end
 
                 buildingListing.Button:RegisterCallback( Mouse.eMouseEnter,	function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
@@ -1074,9 +1082,11 @@ function PopulateList(data, listMode, listIM)
 					end);
 			end
 
-			unitListing.TrainUnit:RegisterCallback( Mouse.eRClick, function()
-				LuaEvents.OpenCivilopedia(item.Type);
-			end);	
+			if(not IsTutorialRunning()) then
+				unitListing.TrainUnit:RegisterCallback( Mouse.eRClick, function()
+					LuaEvents.OpenCivilopedia(item.Type);
+				end);	
+			end
 
 			unitListing.TrainUnit:SetTag(UITutorialManager:GetHash(item.Type));
 
@@ -1336,9 +1346,11 @@ function PopulateList(data, listMode, listIM)
 				Close();
 			end);
 
-			projectListing.Button:RegisterCallback( Mouse.eRClick, function()
-				LuaEvents.OpenCivilopedia(item.Type);
-			end);
+			if(not IsTutorialRunning()) then
+				projectListing.Button:RegisterCallback( Mouse.eRClick, function()
+					LuaEvents.OpenCivilopedia(item.Type);
+				end);
+			end
 
 			projectListing.Button:SetTag(UITutorialManager:GetHash(item.Type));
 		end

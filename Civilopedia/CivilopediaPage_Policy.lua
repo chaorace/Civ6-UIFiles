@@ -16,10 +16,10 @@ local sectionId = page.SectionId;
 
 	local policyType = policy.PolicyType;
 
-	local obsoletePolicy = nil;
+	local obsolete_policies = {};
 	for row in GameInfo.ObsoletePolicies() do
 		if(row.PolicyType == policyType) then
-			obsoletePolicy = GameInfo.Policies[row.ObsoletePolicy];
+			table.insert(obsolete_policies, GameInfo.Policies[row.ObsoletePolicy]);
 		end
 	end
 
@@ -29,11 +29,13 @@ local sectionId = page.SectionId;
 	AddRightColumnStatBox("LOC_UI_PEDIA_TRAITS", function(s)
 		s:AddSeparator();
 
-		if (obsoletePolicy ~= nil) then
+		if(#obsolete_policies > 0) then
 			s:AddHeader("LOC_UI_PEDIA_MADE_OBSOLETE_BY");
-			s:AddIconLabel({"ICON_" .. obsoletePolicy.PolicyType, obsoletePolicy.Name, obsoletePolicy.PolicyType}, obsoletePolicy.Name);
+			for i,v in ipairs(obsolete_policies) do
+				s:AddIconLabel({"ICON_" .. v.PolicyType, v.Name, v.PolicyType}, v.Name);
+			end
 		end
-
+			
 		s:AddSeparator();
 	end);
 

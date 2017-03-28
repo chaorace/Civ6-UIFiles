@@ -88,6 +88,9 @@ function ShowTechBoost(techIndex, iTechProgress, eSource)
 	elseif eSource == BoostSources.BOOST_SOURCE_TEAMMATE then
 		msgString = Locale.Lookup("LOC_TECH_BOOST_TEAMMATE");
 
+	elseif eSource == BoostSources.BOOST_SOURCE_CAPTURED_CITY then
+		msgString = Locale.Lookup("LOC_TECH_BOOST_CAPTURED_CITY");
+
 	elseif currentTech ~= nil then
 		for row in GameInfo.Boosts() do
 			if(row.TechnologyType == currentTech.TechnologyType) then
@@ -187,6 +190,9 @@ function ShowCivicBoost(civicIndex, iCivicProgress, eSource)
 		 
 	elseif eSource == BoostSources.BOOST_SOURCE_TEAMMATE then
 		msgString = Locale.Lookup("LOC_CIVIC_BOOST_TEAMMATE");
+		 
+	elseif eSource == BoostSources.BOOST_SOURCE_CAPTURED_CITY then
+		msgString = Locale.Lookup("LOC_CIVIC_BOOST_CAPTURED_CITY");
 		 
 	elseif currentCivic ~= nil then
 		

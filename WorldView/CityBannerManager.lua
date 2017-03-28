@@ -2391,8 +2391,13 @@ function OnUnitAddedOrUpgraded( playerID:number, unitID:number )
 	local localPlayer = Game.GetLocalPlayer();
 	if localPlayer == -1 or Players[localPlayer]:IsTurnActive() then -- Don't do this during end turn times
 		local pUnit = Players[ playerID ]:GetUnits():FindID(unitID);
-		if pUnit ~= nil and GameInfo.Units[pUnit:GetUnitType()].Combat > 0 then -- Only do this for melee units
-			RefreshPlayerBanners( playerID );
+		if pUnit ~= nil then
+			local pUnitDef = GameInfo.Units[pUnit:GetUnitType()];
+			if pUnitDef ~= nil then
+				if pUnitDef.Combat > 0 then -- Only do this for melee units
+					RefreshPlayerBanners( playerID );
+				end
+			end
 		end
 	end
 end

@@ -282,6 +282,10 @@ function DrawVictoryProgress()
 		end
 	end
 
+    if not bShownAType then
+        fullStr = fullStr .. Locale.Lookup("LOC_HUD_CITY_NOT_APPLICABLE"); 
+    end
+
     UI.SetARXTagContentByID("Content", fullStr);
 end
 
@@ -451,6 +455,13 @@ function OnLocalPlayerChanged()
 end
 
 -- ===========================================================================
+--	Update our scores when a city is captured
+-- ===========================================================================
+function OnCityOccupationChanged(player, cityID)
+    RefreshARX();
+end
+
+-- ===========================================================================
 function Initialize()
 
 	Events.LocalPlayerChanged.Add( OnLocalPlayerChanged );
@@ -458,6 +469,7 @@ function Initialize()
     Events.ARXTap.Add( OnARXTap );
     Events.ARXOrientationChanged.Add( RefreshARX );
     Events.ExitToMainMenu.Add( OnExitToMain );
+	Events.CityOccupationChanged.Add( OnCityOccupationChanged );	
 
     -- build era table
 	m_kEras = {};

@@ -233,6 +233,37 @@ function SetupParameters:Refresh(parameters)
 		print("Nothing to change.");
 	end	
 
+	print("Checking static configuration updates");
+	if(self.ConfigurationUpdates) then
+		local updates = {};
+		for i,v in ipairs(self.ConfigurationUpdates) do
+			if(v.Static) then
+				local value = self:Config_Read(v.SourceGroup, v.SourceId);
+				if(value == v.SourceValue or value == DB.MakeHash(v.SourceValue) or (type(value) == "boolean" and value == false and v.SourceValue == 0) or (type(value) == "boolean" and value == true and v.SourceValue == 1)) then
+					local update_value = v.Hash and DB.MakeHash(v.TargetValue) or v.TargetValue;
+					if(self:Config_Read(v.TargetGroup, v.TargetId) ~= update_value) then
+						table.insert(updates, {
+							v.TargetGroup,
+							v.TargetId,
+							v.TargetValue,
+							update_value
+						});
+					end
+				end
+			end
+		end
+
+		if(#updates) then
+			self:Config_BeginWrite();
+			for i,v in ipairs(updates) do
+				print("Writing additional config values - " .. tostring(v[2]) .. " = " .. tostring(v[3]));
+				self:Config_Write(v[1], v[2], v[4]);
+			end
+			self:Config_EndWrite(parameters_changed);
+		end
+
+	end
+
 	self.Refreshing = nil;
 
 	self:UI_AfterRefresh();
@@ -377,6 +408,16 @@ end
 -- Writes a single value to the configuration.
 -------------------------------------------------------------------------------
 function SetupParameters:Config_Write(group, id, value)
+	if(group == "Game" and self.PlayerId == nil) then
+		GameConfiguration.SetValue(id, value);
+	elseif(group == "Map" and self.PlayerId == nil) then
+		MapConfiguration.SetValue(id, value);
+	elseif(group == "Player" and self.PlayerId ~= nil) then
+		PlayerConfigurations[self.PlayerId]:SetValue(id, value);
+	else
+		return false;
+	end
+
 	if(self.ConfigurationUpdates) then
 		for i,v in ipairs(self.ConfigurationUpdates) do
 			if(v.SourceGroup == group and v.SourceId == id) then
@@ -389,18 +430,7 @@ function SetupParameters:Config_Write(group, id, value)
 		end
 	end
 
-	if(group == "Game" and self.PlayerId == nil) then
-		GameConfiguration.SetValue(id, value);
-		return true;
-	elseif(group == "Map" and self.PlayerId == nil) then
-		MapConfiguration.SetValue(id, value);
-		return true;
-	elseif(group == "Player" and self.PlayerId ~= nil) then
-		PlayerConfigurations[self.PlayerId]:SetValue(id, value);
-		return true;
-	else
-		return false;
-	end
+	return true;
 end
 -------------------------------------------------------------------------------
 
@@ -598,7 +628,8 @@ function SetupParameters:Data_DiscoverParameters()
 					TargetGroup = row[query.TargetGroupField],
 					TargetId = row[query.TargetIdField],
 					TargetValue = row[query.TargetValueField],
-					Hash = self.Utility_ToBool(row[query.HashField])
+					Hash = self.Utility_ToBool(row[query.HashField]),
+					Static = self.Utility_ToBool(row[query.StaticField])
 				};
 
 				table.insert(configuration_updates, config_update);
@@ -924,12 +955,17 @@ function SetupParameters:Parameter_FilterValues(parameter, values)
 		local new_values = {};
 		
 		local gameInProgress = GameConfiguration.GetGameState() ~= GameStateTypes.GAMESTATE_PREGAME;
-		local checkComputerSlots = Network.IsHost() and not gameInProgress;
 
-		local curPlayerConfig = PlayerConfigurations[self.PlayerId];
-		local curSlotStatus = curPlayerConfig:GetSlotStatus();
-		local localPlayerId = Network.GetLocalPlayerID();
-		local checkOwnership = self.PlayerId == localPlayerId or (checkComputerSlots and curSlotStatus == SlotStatus.SS_COMPUTER);
+
+		local checkOwnership = true;
+		if(GameConfiguration.IsAnyMultiplayer()) then
+			local checkComputerSlots = Network.IsHost() and not gameInProgress;
+
+			local curPlayerConfig = PlayerConfigurations[self.PlayerId];
+			local curSlotStatus = curPlayerConfig:GetSlotStatus();
+			local localPlayerId = Network.GetLocalPlayerID();
+			checkOwnership = self.PlayerId == localPlayerId or (checkComputerSlots and curSlotStatus == SlotStatus.SS_COMPUTER);
+		end
 
 		for i,v in ipairs(values) do
 			local reason;

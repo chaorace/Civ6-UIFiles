@@ -7,6 +7,7 @@ MPLobbyTypes = {
 	PITBOSS_INTERNET = "PITBOSS_INTERNET",
 	PITBOSS_LAN = "PITBOSS_LAN",
 	HOTSEAT = "HOTSEAT",
+	PLAYBYCLOUD = "PLAYBYCLOUD",
 };
 
 function ServerTypeForMPLobbyType(mpLobbyType : string)
@@ -19,6 +20,8 @@ function ServerTypeForMPLobbyType(mpLobbyType : string)
 		serverType = ServerType.SERVER_TYPE_STEAM;
 	elseif(mpLobbyType == MPLobbyTypes.HOTSEAT) then
 		serverType = ServerType.SERVER_TYPE_HOTSEAT;
+	elseif(mpLobbyType == MPLobbyTypes.PLAYBYCLOUD) then
+		serverType = ServerType.SERVER_TYPE_FIRAXIS_CLOUD;
 	end
 	return serverType;
 end
@@ -33,6 +36,8 @@ function GameModeTypeForMPLobbyType(mpLobbyType : string)
 		gameMode = GameModeTypes.SINGLEPLAYER;
 	elseif(mpLobbyType == MPLobbyTypes.HOTSEAT) then
 		gameMode = GameModeTypes.HOTSEAT;
+	elseif(mpLobbyType == MPLobbyTypes.PLAYBYCLOUD) then
+		gameMode = GameModeTypes.PLAYBYCLOUD;
 	end
 	return gameMode;
 end

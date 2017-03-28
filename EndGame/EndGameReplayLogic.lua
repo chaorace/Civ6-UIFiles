@@ -270,7 +270,7 @@ function ReplayGraphDrawGraph()
 				local color = g_PlayerGraphColors[i];
 
 				local pDataSet = Controls.ResultsGraph:CreateDataSet(v.Name);
-				pDataSet:SetColor(color.Red, color.Green, color.Blue, color.Alpha);
+				pDataSet:SetColor(UI.GetColorValue(color.Type));
 				pDataSet:SetWidth(2.0);
 				pDataSet:SetVisible(not isHidden);
 
@@ -315,9 +315,24 @@ function ReplayGraphRefresh()
 					
 			local distance = colorDistanceTable[color2.Type];
 			if(distance == nil) then
-				local r2 = pow((color1.Red - color2.Red)*255, 2);
-				local g2 = pow((color1.Green - color2.Green)*255, 2);
-				local b2 = pow((color1.Blue - color2.Blue)*255, 2);	
+
+				local c1:table, c2:table;
+
+				if color1.Color then
+					c1 = UIManager:ParseColorString(color1.Color);
+				else
+					c1 = { color1.Red * 255, color1.Green * 255, color1.Blue * 255 };
+				end
+
+				if color2.Color then
+					c2 = UIManager:ParseColorString(color2.Color);
+				else
+					c2 = { color2.Red * 255, color2.Green * 255, color2.Blue * 255 };
+				end
+
+				local r2 = pow(c1[1] - c2[1], 2);
+				local g2 = pow(c1[2] - c2[2], 2);
+				local b2 = pow(c1[3] - c2[3], 2);	
 						
 				distance = r2 + g2 + b2;
 				colorDistanceTable[color2.Type] = distance;
@@ -327,7 +342,7 @@ function ReplayGraphRefresh()
 		end
 				
 		local colorNotUnique = {};
-		local colorBlack = {Type = "COLOR_BLACK", Red = 0, Green = 0, Blue = 0, Alpha = 1,};
+		local colorBlack = { Type = "COLOR_BLACK", Red = 0, Green = 0, Blue = 0, Alpha = 1 };
 		local function IsUniqueColor(color)
 			if(colorNotUnique[color.Type]) then
 				return false;
@@ -380,10 +395,10 @@ function ReplayGraphRefresh()
 			local graphLegendInstance = g_GraphLegendInstanceManager:GetInstance();
 					
 			--IconHookup( civ.PortraitIndex, 32, civ.IconAtlas, graphLegendInstance.LegendIcon );
-			local color = DetermineGraphColor(GameInfo.PlayerColors[player.PlayerColor]);
+			local color = DetermineGraphColor(player.PlayerColor);
 			g_PlayerGraphColors[i] = color;
 		
-			graphLegendInstance.LegendIcon:SetColor(color.Red, color.Green, color.Blue);
+			graphLegendInstance.LegendIcon:SetColor(UI.GetColorValue(color.Type));
 							
 			if(player.Name ~= nil) then
 				graphLegendInstance.LegendName:LocalizeAndSetText(player.Name);
@@ -501,8 +516,9 @@ function ReplayInitialize()
 
 			local playerInfo = {
 				Id = player:GetID(),
-				PlayerColor = color.Type,
+				PlayerColor = color,
 				Name = playerConfig:GetPlayerName(),
+				Civilization = playerConfig:GetCivilizationTypeName(),
 				IsMinor = not player:IsMajor(),
 			};
 					

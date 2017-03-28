@@ -48,7 +48,7 @@ end
 
 function GetScenarioData(scenarioType:string)
 	if not m_ScenarioData[scenarioType] then
-		local query:string = "SELECT Description, LongDescription, IsScenario, ScenarioSetupPotrait, ScenarioSetupPotraitBackground from Rulesets where RulesetType = ? LIMIT 1";
+		local query:string = "SELECT Description, LongDescription, IsScenario, ScenarioSetupPortrait, ScenarioSetupPortraitBackground from Rulesets where RulesetType = ? LIMIT 1";
 		local result:table = DB.ConfigurationQuery(query, scenarioType);
 		if result and #result > 0 then
 			m_ScenarioData[scenarioType] = result[1];
@@ -71,12 +71,12 @@ function RefreshScenarioData(scenarioType:string)
 		description = Locale.Lookup(data.Description);
 	end
 
-	if data.ScenarioSetupPotrait then
-		portrait = data.ScenarioSetupPotrait;
+	if data.ScenarioSetupPortrait then
+		portrait = data.ScenarioSetupPortrait;
 	end
 	
-	if data.ScenarioSetupPotraitBackground then
-		background = data.ScenarioSetupPotraitBackground;
+	if data.ScenarioSetupPortraitBackground then
+		background = data.ScenarioSetupPortraitBackground;
 	end
 
 	if(background) then

@@ -196,7 +196,7 @@
   <Icon Name="Whisper"                                      Start="154,330" 	Size="22,22" Advance="22" Baseline="0,4"/>
   <Icon Name="Global"                                       Start="176,330" 	Size="22,22" Advance="22" Baseline="0,4"/>
   <Icon Name="AdditionalContent"                            Start="198,330" 	Size="22,22" Advance="22" Baseline="0,4"/>
-  <!--<Icon Name=""                                             Start="220,330" 	Size="22,22" Advance="22" Baseline="0,4"/>-->
+  <Icon Name="DownloadContent"                              Start="220,330" 	Size="22,22" Advance="22" Baseline="0,4"/>
   
   <Icon Name="DISTRICT_CITYCENTER"                          Start="0,352" 	  Size="22,22" Advance="22" Baseline="0,4"/>
   <Icon Name="DISTRICT_CAMPUS"                              Start="22,352" 	  Size="22,22" Advance="22" Baseline="0,4"/>

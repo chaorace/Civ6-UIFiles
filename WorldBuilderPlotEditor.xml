@@ -1,62 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <Context Name="WorldBuilderPlotEditor">
-
-  <Stack Size="parent,parent" StackGrowth="Bottom" Padding="10">
+  <ScrollPanel ID="PlotEditorScrollPanel" Size="360,490" Vertical="1" AutoScrollBar="1">
     
-    <Label ID="SelectedPlotLabel" FontSize="26" String="LOC_WORLD_BUILDER_NO_PLOT_SELECTED_HELP"/>
+    <Stack ID="PlotEditorStack" Anchor="C,T" StackGrowth="Bottom" Padding="10">
 
-    <Stack StackGrowth="Right" Padding="5"  Size="250,29">
-      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_TERRAIN"/>
-      <SimplePullDown ID="TerrainPullDown" Style="MainPullDown" ScrollThreshold="300" Size="250,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
-    </Stack>
-
-    <Stack StackGrowth="Right" Padding="5" Offset="0,-40">
-      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_FEATURE"/>
-      <SimplePullDown ID="FeaturePullDown" Style="MainPullDown" ScrollThreshold="300" Size="250,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
-    </Stack>
-
-    <Stack StackGrowth="Right" Padding="5" Offset="0,-40">
-      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_RESOURCE"/>
-      <SimplePullDown ID="ResourcePullDown" Style="MainPullDown" ScrollThreshold="280" Size="250,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
-    </Stack>
-
-    <Stack StackGrowth="Right" Padding="5" Offset="0,-40">
-      <Label FontSize="18" Size="200,29" String="LOC_WORLDBUILDER_ATTRIBUTE_RESOURCE_AMOUNT"/>
-      <EditBox ID="ResourceAmount" Offset="0,0" Size="148,23" EditMode="1" String="" NumberInput="1"/>
-    </Stack>
+      <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+        <Label Anchor="R,C" Style="ShellOptionText" String="Selected Plot:"/>
+        <Container Size="220,24">
+          <Label ID="SelectedPlotLabel" Anchor="C,C" Style="FontNormal16" String="LOC_WORLD_BUILDER_NO_PLOT_SELECTED_HELP"/>
+        </Container>
+      </Stack>
     
-    <Stack StackGrowth="Right" Padding="5" Offset="0,-10">
-      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_IMPROVEMENT"/>
-      <SimplePullDown ID="ImprovementPullDown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
-    </Stack>
+      <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+        <Label Anchor="L,C" Size="125,29" Style="ShellOptionText" String="LOC_WORLDBUILDER_ATTRIBUTE_TERRAIN"/>
+        <SimplePullDown ID="TerrainPullDown" Style="PullDownBlue" ScrollThreshold="300" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+      </Stack>
 
-    <CheckBox ID="ImprovementPillagedCheck" Style="MainMenuCheck" Offset="15,-40" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="LOC_WORLDBUILDER_ATTRIBUTE_IMPROVEMENT_PILLAGED"/>
+      <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+        <Label Anchor="L,C" Size="125,29" Style="ShellOptionText" String="LOC_WORLDBUILDER_ATTRIBUTE_FEATURE"/>
+        <SimplePullDown ID="FeaturePullDown" Style="PullDownBlue" ScrollThreshold="300" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+      </Stack>
 
-    <Stack StackGrowth="Right" Padding="5" Offset="0,-10">
-      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_ROUTE"/>
-      <SimplePullDown ID="RoutePullDown" Style="MainPullDown" ScrollThreshold="400" Size="250,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
-    </Stack>
+      <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+        <Label Anchor="L,C" Size="125,29" Style="ShellOptionText" String="LOC_WORLDBUILDER_ATTRIBUTE_RESOURCE"/>
+        <SimplePullDown ID="ResourcePullDown" Style="PullDownBlue" ScrollThreshold="280" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+      </Stack>
 
-    <CheckBox ID="RoutePillagedCheck" Style="MainMenuCheck" Offset="15,-40" TextOffset="-5,0" IsChecked="0" ConsumeMouse="1" String="LOC_WORLDBUILDER_ATTRIBUTE_ROUTE_PILLAGED"/>
+      <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+        <Label Anchor="L,C" Size="200,29" Style="ShellOptionText" String="LOC_WORLDBUILDER_ATTRIBUTE_RESOURCE_AMOUNT"/>
+        <Grid Style="EditTextArea" Size="220,30" InnerPadding="6,6">
+          <EditBox ID="ResourceAmount" Offset="0,0" Size="parent,23" EditMode="1" String="" NumberInput="1"/>
+        </Grid>
+      </Stack>
+    
+      <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+        <Label Anchor="L,C" Size="125,29" Style="ShellOptionText" String="LOC_WORLDBUILDER_ATTRIBUTE_IMPROVEMENT"/>
+        <SimplePullDown ID="ImprovementPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+      </Stack>
 
-    <Label FontSize="18" Size="125,29" String="Start Position:"/>
-    <Stack StackGrowth="Right" Padding="5">
-      <SimplePullDown ID="StartPosPulldown" Style="MainPullDown" ScrollThreshold="400" Size="100,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
-      <TabControl ID="StartPosTabControl" Size="200,30">
+      <GridButton Anchor="R,T" ID="ImprovementPillagedButton" Anchor="L,C" Offset="0,0" Size="220,24" Style="CheckBoxControl" String="LOC_WORLDBUILDER_ATTRIBUTE_IMPROVEMENT_PILLAGED" />
+
+      <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+        <Label Anchor="L,C" Size="125,29" Style="ShellOptionText" String="LOC_WORLDBUILDER_ATTRIBUTE_ROUTE"/>
+        <SimplePullDown ID="RoutePullDown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+      </Stack>
+
+      <GridButton Anchor="R,T" ID="RoutePillagedButton" Anchor="L,C" Offset="0,0" Size="220,24" Style="CheckBoxControl" String="LOC_WORLDBUILDER_ATTRIBUTE_ROUTE_PILLAGED" />
+    
+      <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+        <Label Size="125,29" Style="ShellOptionText" String="Start Position:"/>
+        <SimplePullDown ID="StartPosPulldown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+      </Stack>
+
+      <TabControl Anchor="R,T" ID="StartPosTabControl" Size="220,24">
         <Container ID="TabContainer" Size="parent,parent">
-          <SimplePullDown ID="StartPosPlayerPulldown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
-          <SimplePullDown ID="StartPosLeaderPulldown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
-          <SimplePullDown ID="StartPosCivPulldown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+          <SimplePullDown ID="StartPosPlayerPulldown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+          <SimplePullDown ID="StartPosLeaderPulldown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+          <SimplePullDown ID="StartPosCivPulldown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
         </Container>
       </TabControl>
-    </Stack>
 
-    <Stack StackGrowth="Right" Padding="5" Offset="0,-40">
-      <Label FontSize="18" Size="125,29" String="LOC_WORLDBUILDER_ATTRIBUTE_OWNER"/>
-      <SimplePullDown ID="OwnerPulldown" Style="MainPullDown" ScrollThreshold="400" Size="220,29" Offset="0,-35" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+      <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+        <Label Anchor="L,C" Size="125,29" Style="ShellOptionText" String="LOC_WORLDBUILDER_ATTRIBUTE_OWNER"/>
+        <SimplePullDown ID="OwnerPulldown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+      </Stack>
+  
     </Stack>
-  
-  </Stack>
-  
+    
+    <ScrollBar Anchor="R,C" Size="11,parent+4" Offset="2,0" AnchorSide="O,I" Style="ScrollVerticalBar"/>
+  </ScrollPanel>
 </Context>

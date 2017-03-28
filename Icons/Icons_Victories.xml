@@ -15,6 +15,7 @@
 		<Row Name="ICON_VICTORY_DEFAULT" Atlas="ICON_ATLAS_VICTORIES" Index="3"/>
 		<Row Name="ICON_VICTORY_RELIGIOUS" Atlas="ICON_ATLAS_VICTORIES" Index="4"/>
     <Row Name="ICON_DEFEAT_GENERIC" Atlas="ICON_ATLAS_VICTORIES" Index="6"/>
+    <Row Name="ICON_VICTORY_UNIVERSAL" Atlas="ICON_ATLAS_VICTORIES" Index="7"/>
 		
 		<!-- Temporary until world rankings can use the correct one. -->
 		<Row Name="ICON_VICTORY_DOMINATION" Atlas="ICON_ATLAS_VICTORIES" Index="3"/>

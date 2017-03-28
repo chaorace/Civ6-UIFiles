@@ -62,16 +62,12 @@ end
 
 -- ===========================================================================    
 function OnOpenPlayerEditor()
-
-	Controls.WorldBuilderPlayerEditor:SetHide( not Controls.WorldBuilderPlayerEditor:IsHidden() );
-
+	LuaEvents.WorldBuilder_ShowPlayerEditor( Controls.WorldBuilderPlayerEditor:IsHidden() );
 end
 
 -- ===========================================================================    
 function OnOpenMapEditor()
-
-	Controls.WorldBuilderMapEditor:SetHide( not Controls.WorldBuilderMapEditor:IsHidden() );
-
+	LuaEvents.WorldBuilder_ShowMapEditor( Controls.WorldBuilderMapEditor:IsHidden() );
 end
 
 -- ===========================================================================

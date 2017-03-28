@@ -581,6 +581,13 @@
     </AlphaAnim>
   </MainButton>
 
+  <MainButtonSmall Style="ButtonText16">
+    <GridData Style="Grid9ButtonMainSmall" />
+    <AlphaAnim ShowOnMouseOut="1" Anchor="L,T" Size="parent-6,parent-6" Pause="0" Cycle="Once" Speed="2" AlphaStart="1" AlphaEnd="0" Offset="3,2">
+      <Grid Size="parent,parent" Offset="0,0" Padding="0,0" Style="Grid9MainButtonHighlight" />
+    </AlphaAnim>
+  </MainButtonSmall>
+
   <ButtonLightWeight Style="ButtonText18">
     <GridData Style="ButtonLightWeightGrid"/>
     <AlphaAnim ShowOnMouseOut="1" Anchor="L,T" Size="parent,parent" Pause="0" Cycle="Once" Speed="2" AlphaStart="1" AlphaEnd="0" >
@@ -2305,7 +2312,7 @@
   </Civilopedia_PageTabScrollPanel>
 
   <Civilopedia_SearchPanel Texture="Controls_Search2" SliceCorner="30,13" SliceTextureSize="41,26" Size="250,26"/>
-  <Civilopedia_SearchEditBox Style="FontNormal16" Anchor="L,C" Offset="24,0" Size="parent-10,16" MaxLength="40" String="LOC_TREE_SEARCH_W_DOTS"/>
+  <Civilopedia_SearchEditBox Style="FontNormal16" Size="parent,16" MaxLength="40" String="LOC_TREE_SEARCH_W_DOTS"/>
 
   <Civilopedia_LeftColumnChapterHeader Texture="Civilopedia_TopicHeader" SliceCorner="64,21" SliceTextureSize="128,42" />
   <Civilopedia_LeftColumnChapterHeaderCaption Anchor="C,C" Style="FontBoldFlair18" SmallCaps="16" SmallCapsLeading="0" SmallCapsType="EveryWord" Color="58,56,56,255" FontStyle="glow" />

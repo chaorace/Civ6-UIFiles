@@ -227,6 +227,7 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 	local governmentData = GetGovernmentData();
 
 	-- Unlockables is an array of {type, name}
+	local numIcons:number = 0;
 	local unlockables = GetUnlockablesForCivic_Cached(civicType, playerID);
 	
 	if(unlockables and #unlockables > 0) then
@@ -252,14 +253,18 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 				unlock.GovernmentInstanceGrid:LocalizeAndSetToolTip(toolTip);
 
 				unlock.GovernmentInstanceGrid:RegisterCallback(Mouse.eLClick, callback);
-				unlock.GovernmentInstanceGrid:RegisterCallback(Mouse.eRClick, function() 
-					LuaEvents.OpenCivilopedia(civilopediaKey);
-				end);
+
+				if(not IsTutorialRunning()) then
+					unlock.GovernmentInstanceGrid:RegisterCallback(Mouse.eRClick, function() 
+						LuaEvents.OpenCivilopedia(civilopediaKey);
+					end);
+				end
 			else
-				
 				local unlockIcon = kItemIM:GetInstance();
 				local icon = GetUnlockIcon(typeName);	
 				unlockIcon.Icon:SetIcon("ICON_"..typeName);
+				unlockIcon.Icon:SetHide(false);
+
 				local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(icon,38);
 				if textureSheet ~= nil then
 					unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
@@ -275,14 +280,44 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 					unlockIcon.UnlockIcon:ClearCallback(Mouse.eLClick);
 				end
 
-				unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
-					LuaEvents.OpenCivilopedia(civilopediaKey);
-				end);
+				if(not IsTutorialRunning()) then
+					unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
+						LuaEvents.OpenCivilopedia(civilopediaKey);
+					end);
+				end
 			end
+
+			numIcons = numIcons + 1;
 		end
-		return #unlockables;
+		
 	end
+
+	if (GameInfo.Civics[civicID].Description) then
+		local unlockIcon:table	= kItemIM:GetInstance();
+		unlockIcon.Icon:SetHide(true); -- foreground icon unnecessary in this case
+		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas("ICON_TECHUNLOCK_13",38);
+		if textureSheet ~= nil then
+			unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+		end
+		unlockIcon.UnlockIcon:LocalizeAndSetToolTip(GameInfo.Civics[civicID].Description);
+		if callback ~= nil then		
+			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eLClick, callback);
+		else
+			unlockIcon.UnlockIcon:ClearCallback(Mouse.eLClick);
+		end
+
+		if(not IsTutorialRunning()) then
+			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
+				LuaEvents.OpenCivilopedia(GameInfo.Civics[civicID].CivicType);
+			end);
+		end
+
+		numIcons = numIcons + 1;
+	end
+
 	kItemIM.m_ParentControl:CalculateSize();
+
+	return numIcons;
 end
 
 
@@ -298,6 +333,7 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 	end
 
 	-- Unlockables is an array of {type, name}
+	local numIcons:number = 0;
 	local unlockables:table = GetUnlockablesForTech_Cached(techType, playerID);
 
 	-- Hard-coded goodness.
@@ -310,7 +346,8 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 			
 			local icon = GetUnlockIcon(typeName);		
 			unlockIcon.Icon:SetIcon("ICON_"..typeName);
-
+			unlockIcon.Icon:SetHide(false);
+			 
 			local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(icon,38);
 			if textureSheet ~= nil then
 				unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
@@ -324,12 +361,40 @@ function PopulateUnlockablesForTech(playerID:number, techID:number, instanceMana
 				unlockIcon.UnlockIcon:ClearCallback(Mouse.eLClick);
 			end
 
+			if(not IsTutorialRunning()) then
+				unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
+					LuaEvents.OpenCivilopedia(civilopediaKey);
+				end);
+			end
+		end
+
+		numIcons = numIcons + 1;
+	end
+
+	if (GameInfo.Technologies[techID].Description) then
+		local unlockIcon:table	= instanceManager:GetInstance();
+		unlockIcon.Icon:SetHide(true); -- foreground icon unnecessary in this case
+		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas("ICON_TECHUNLOCK_13",38);
+		if textureSheet ~= nil then
+			unlockIcon.UnlockIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+		end
+		unlockIcon.UnlockIcon:LocalizeAndSetToolTip(GameInfo.Technologies[techID].Description);
+		if callback ~= nil then		
+			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eLClick, callback);
+		else
+			unlockIcon.UnlockIcon:ClearCallback(Mouse.eLClick);
+		end
+
+		if(not IsTutorialRunning()) then
 			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
-				LuaEvents.OpenCivilopedia(civilopediaKey);
+				LuaEvents.OpenCivilopedia(GameInfo.Technologies[techID].TechnologyType);
 			end);
 		end
-		return #unlockables;
+
+		numIcons = numIcons + 1;
 	end
+
+	return numIcons;
 end
 
 
@@ -514,13 +579,16 @@ function RealizeCurrentResearch( playerID:number, kData:table, kControl:table )
 
 	local isNonActive:boolean = false;
 	local techUnlockIM:table = GetUnlockIM( kControl );	-- Use this context's "Controls" table for the currnet IM
-	techUnlockIM:ResetInstances();
 
 	if kData ~= nil then
 		local techType:string = kData.TechType;
 		local numUnlockables:number;
 		kControl.TitleButton:SetText(Locale.ToUpper(kData.Name));
-		kControl.TitleButton:RegisterCallback(Mouse.eRClick, function() LuaEvents.OpenCivilopedia(techType); end);
+
+		if(not IsTutorialRunning()) then
+			kControl.TitleButton:RegisterCallback(Mouse.eRClick, function() LuaEvents.OpenCivilopedia(techType); end);
+		end
+
 		kControl.MainPanel:RegisterMouseEnterCallback(		function() kControl.MainGearAnim:Play(); end);
 		kControl.MainPanel:RegisterMouseExitCallback(		function() kControl.MainGearAnim:Stop(); end);				
 		
@@ -550,6 +618,9 @@ function RealizeCurrentResearch( playerID:number, kData:table, kControl:table )
 		kControl.BoostLabel:SetHide( true );
 		kControl.IconCanBeBoosted:SetHide( true );
 		kControl.IconHasBeenBoosted:SetHide( true );
+		if kControl.RecommendedIcon then
+			kControl.RecommendedIcon:SetHide( true );
+		end
 		isNonActive = true;
 	end
 
@@ -632,7 +703,11 @@ function RealizeCurrentCivic( playerID:number, kData:table, kControl:table )
 		local techType:string = kData.CivicType;
 		local numUnlockables:number;
 		kControl.TitleButton:SetText( Locale.ToUpper(kData.Name) );
-		kControl.TitleButton:RegisterCallback(Mouse.eRClick,	function() LuaEvents.OpenCivilopedia(techType); end);
+
+		if(not IsTutorialRunning()) then
+			kControl.TitleButton:RegisterCallback(Mouse.eRClick,	function() LuaEvents.OpenCivilopedia(techType); end);
+		end
+
 		kControl.MainPanel:RegisterMouseEnterCallback(			function() kControl.MainGearAnim:Play(); end);
 		kControl.MainPanel:RegisterMouseExitCallback(			function() kControl.MainGearAnim:Stop(); end);
 		

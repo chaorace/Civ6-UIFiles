@@ -155,6 +155,7 @@ function SendChat( text )
 			UpdatePlayerTargetEditBox(Controls.ChatEntry, m_playerTarget);
 			UpdatePlayerTargetPulldown(Controls.ExpandedChatPull, m_playerTarget);
 			UpdatePlayerTargetEditBox(Controls.ExpandedChatEntry, m_playerTarget);
+			PlayerTargetChanged(m_playerTarget);
 		end
 
 		if(printHelp) then
@@ -273,9 +274,22 @@ end
 
 -------------------------------------------------
 -------------------------------------------------
+function PlayerTargetChanged(newPlayerTarget)
+	LuaEvents.ChatPanel_PlayerTargetChanged(newPlayerTarget);
+end
+
+-------------------------------------------------
+-------------------------------------------------
 function OnSendPinToChat(playerID, pinID)
 	local mapPinStr :string = "[pin:" .. playerID .. "," .. pinID .. "]";
 	SendChat(mapPinStr);
+end
+
+-------------------------------------------------
+-------------------------------------------------
+function OnMapPinPopup_RequestChatPlayerTarget()
+	-- MapPinPopup requested our chat player target data.  Send it now.
+	PlayerTargetChanged(m_playerTarget);
 end
 
 ------------------------------------------------- 
@@ -488,6 +502,7 @@ function ShowHideHandler( bIsHide, bIsInit )
 		PopulateTargetPull(Controls.ChatPull, Controls.ChatEntry, m_chatTargetEntries, m_playerTarget, false, OnCollapsedChatPulldownChanged);
 		PopulateTargetPull(Controls.ExpandedChatPull, Controls.ExpandedChatEntry, m_expandedChatTargetEntries, m_playerTarget, false, OnExpandedChatPulldownChanged);
 		LuaEvents.ChatPanel_OnShown();
+		PlayerTargetChanged(m_playerTarget); -- Communicate starting player target so map pin screen can filter its Send To Chat button.
 	end	
 end
 ContextPtr:SetShowHideHandler( ShowHideHandler );
@@ -502,6 +517,7 @@ function OnCollapsedChatPulldownChanged(newTargetType :number, newTargetID :numb
 	else
 		Controls.ChatPull:SetToolTipString(tooltipText);
 	end
+	PlayerTargetChanged(m_playerTarget);
 end
 function OnExpandedChatPulldownChanged(newTargetType :number, newTargetID :number, tooltipText:string)
 	ChangeChatIcon(Controls.ExpandedChatIcon, newTargetType);
@@ -513,6 +529,7 @@ function OnExpandedChatPulldownChanged(newTargetType :number, newTargetID :numbe
 	else
 		Controls.ExpandedChatPull:SetToolTipString(tooltipText);
 	end
+	PlayerTargetChanged(m_playerTarget);
 end
 
 function ChangeChatIcon(iconControl:table, targetType:number)
@@ -564,6 +581,7 @@ function Initialize()
 	Events.MultiplayerChat.Add( OnMultiplayerChat );
 
 	LuaEvents.MapPinPopup_SendPinToChat.Add(OnSendPinToChat);
+	LuaEvents.MapPinPopup_RequestChatPlayerTarget.Add(OnMapPinPopup_RequestChatPlayerTarget);
 
 	if ( m_isDebugging ) then
 		for i=1,20,1 do

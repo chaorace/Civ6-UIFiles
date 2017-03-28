@@ -26,6 +26,7 @@ include( "Civ6Common" );			-- Tutorial check support
 include( "TechAndCivicSupport");	-- (Already includes Civ6Common and InstanceManager) PopulateUnlockablesForTech
 include( "TechFilterFunctions" );
 include( "ModalScreen_PlayerYieldsHelper" );
+include( "GameCapabilities" );
 
 -- ===========================================================================
 --	DEBUG
@@ -1624,9 +1625,14 @@ function Initialize()
 
 
 	-- LUA Events
+	if(HasCapability("CAPABILITY_TECH_TREE")) then
+		LuaEvents.LaunchBar_RaiseTechTree.Add( OnOpen );
+		LuaEvents.ResearchChooser_RaiseTechTree.Add( OnOpen );
+
+		m_ToggleTechTreeId = Input.GetActionId("ToggleTechTree");
+	end
+
 	LuaEvents.LaunchBar_CloseTechTree.Add( OnClose );
-	LuaEvents.LaunchBar_RaiseTechTree.Add( OnOpen );
-	LuaEvents.ResearchChooser_RaiseTechTree.Add( OnOpen );
 	LuaEvents.Tutorial_TechTreeScrollToNode.Add( OnTutorialScrollToNode );
 
 	-- Game engine Event
@@ -1639,8 +1645,8 @@ function Initialize()
 	Events.SystemUpdateUI.Add( OnUpdateUI );
 
 	--	Hot Key Handling
-	m_ToggleTechTreeId = Input.GetActionId("ToggleTechTree");
-	if m_ToggleTechTreeId ~= nil then
+	
+	if (m_ToggleTechTreeId ~= nil) then
 		Events.InputActionTriggered.Add( OnInputActionTriggered );
 	end
 

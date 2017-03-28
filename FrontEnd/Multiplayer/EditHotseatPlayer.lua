@@ -140,6 +140,7 @@ function OnShow()
 	Controls.PopupAlphaIn:Play();
 	Controls.PopupSlideIn:SetToBeginning();
 	Controls.PopupSlideIn:Play();
+	Controls.HotseatPlayerNameEntry:TakeFocus();
 end
 
 function OnInputHandler( uiMsg, wParam, lParam )

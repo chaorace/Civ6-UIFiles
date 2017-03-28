@@ -3,6 +3,8 @@
 --	Controls raising full-screen and "choosers"
 -- ===========================================================================
 
+include( "GameCapabilities" );
+
 local m_numTreesOpen:number = 0;
 local isTechTreeOpen	:boolean = false;
 local isCivicsTreeOpen	:boolean = false;
@@ -198,7 +200,28 @@ end
 --	Refresh Data and View
 -- ===========================================================================
 function RealizeHookVisibility()
-	if (m_isGreatPeopleUnlocked) then
+
+	if (HasCapability("CAPABILITY_TECH_TREE")) then
+		Controls.ScienceButton:SetHide(false);
+		Controls.ScienceBolt:SetHide(false);
+	else
+		if (not isDebug) then
+			Controls.ScienceButton:SetHide(true);
+			Controls.ScienceBolt:SetHide(true);
+		end
+	end
+
+	if (HasCapability("CAPABILITY_CIVICS_TREE")) then
+		Controls.CultureButton:SetHide(false);
+		Controls.CultureBolt:SetHide(false);
+	else
+		if (not isDebug) then
+			Controls.CultureButton:SetHide(true);
+			Controls.CultureBolt:SetHide(true);
+		end
+	end
+
+	if (m_isGreatPeopleUnlocked and HasCapability("CAPABILITY_GREAT_PEOPLE_VIEW")) then
 		Controls.GreatPeopleButton:SetHide(false);
 		Controls.GreatPeopleBolt:SetHide(false);
 	else
@@ -208,7 +231,7 @@ function RealizeHookVisibility()
 		end
 	end
 
-	if (m_isReligionUnlocked) then
+	if (m_isReligionUnlocked and HasCapability("CAPABILITY_RELIGION_VIEW")) then
 		Controls.ReligionButton:SetHide(false);
 		Controls.ReligionBolt:SetHide(false);
 	else
@@ -218,7 +241,7 @@ function RealizeHookVisibility()
 		end
 	end
 	
-	if (m_isGreatWorksUnlocked) then
+	if (m_isGreatWorksUnlocked and HasCapability("CAPABILITY_GREAT_WORKS_VIEW")) then
 		Controls.GreatWorksButton:SetHide(false);
 		Controls.GreatWorksBolt:SetHide(false);
 	else
@@ -228,7 +251,7 @@ function RealizeHookVisibility()
 		end
 	end
 
-	if (m_isGovernmentUnlocked) then
+	if (m_isGovernmentUnlocked and HasCapability("CAPABILITY_GOVERNMENTS_VIEW")) then
 		Controls.GovernmentButton:SetHide(false);
 		Controls.GovernmentBolt:SetHide(true);
 	else
@@ -570,8 +593,13 @@ function Initialize()
 	LuaEvents.TechTree_CloseTechTree.Add(SetTechTreeClosed);
 	LuaEvents.TechTree_OpenTechTree.Add( SetTechTreeOpen );
 	LuaEvents.Tutorial_CloseAllLaunchBarScreens.Add( OnTutorialCloseAll );
-	LuaEvents.WorldTracker_ToggleResearchPanel.Add(OnToggleResearchPanel);
-	LuaEvents.WorldTracker_ToggleCivicPanel.Add(OnToggleCivicPanel);
+
+	if HasCapability("CAPABILITY_TECH_TREE") then
+		LuaEvents.WorldTracker_ToggleResearchPanel.Add(OnToggleResearchPanel);
+	end
+	if HasCapability("CAPABILITY_CIVICS_TREE") then
+		LuaEvents.WorldTracker_ToggleCivicPanel.Add(OnToggleCivicPanel);
+	end
 
 	OnTurnBegin();	
 end

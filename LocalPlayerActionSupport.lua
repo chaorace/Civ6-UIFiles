@@ -35,3 +35,10 @@ function CanLocalPlayerLoadGame()
 	return false;
 end
 
+-- ===========================================================================
+function CanLocalPlayerChangeOptions()
+	if UI.HasFeature("Options") then
+		return true;
+	end
+	return false;
+end

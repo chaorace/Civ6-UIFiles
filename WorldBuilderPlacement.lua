@@ -123,6 +123,8 @@ function OnShow()
 	if UI.GetInterfaceMode() ~= InterfaceModeTypes.WB_SELECT_PLOT then
 		UI.SetInterfaceMode( InterfaceModeTypes.WB_SELECT_PLOT );
 	end
+
+	LuaEvents.WorldBuilderMapTools_SetTabHeader("Place Plot");
 end
 
 -- ===========================================================================

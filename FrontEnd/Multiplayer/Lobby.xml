@@ -43,7 +43,7 @@
 						</GridButton>
 
 						<GridButton  Anchor="L,T" Size="100,28"  Style="ShellHeaderButton" ID="SortbyModsHosted" ToolTip="LOC_MULTIPLAYER_LOBBY_MODS">
-              <Image Texture="Controls_ModsHeader.dds" Anchor="C,C" />
+              <Image Texture="AdditionalContent_Header.dds" Anchor="C,C" />
 							<!--<Label Anchor="L,C" Offset="7,1" String="LOC_MULTIPLAYER_MODSHOSTED" Style="FontNormal14" FontStyle="Shadow" ColorSet="ServerColumnHeader" />-->
 						</GridButton>
 
@@ -70,7 +70,8 @@
 						<Line ID="GridLine_2" Start="455,0" End="455,parent" Width="2" Color="35,66,92,150" />
 						<Line ID="GridLine_3" Start="630,0" End="630,parent" Width="2" Color="35,66,92,150" />
 						<Line ID="GridLine_4" Start="805,0" End="805,parent" Width="2" Color="35,66,92,150" />
-						<Line ID="GridLine_5" Start="905,0" End="905,parent" Width="2" Color="35,66,92,150" />
+						<Line ID="GridLine_5" Start="855,0" End="855,parent" Width="2" Color="35,66,92,150" />
+						<Line ID="GridLine_6" Start="905,0" End="905,parent" Width="2" Color="35,66,92,150" />
 					</Container>
 				</ScrollPanel>
 			</Container>
@@ -130,7 +131,8 @@
 					<Label Anchor="L,C" Offset="0,0" Style="FontNormal14" ColorSet="ServerText" FontStyle="Shadow" ID="GameSpeedLabel" TruncateWidth="175"/>
 				</Box>
 				<Box Anchor="L,C" Anchorside="I.O" Size="100,24" Color="255,255,255,0">
-					<Label Anchor="L,C" Offset="0,0" Style="FontNormal14" ColorSet="ServerText" FontStyle="Shadow" ID="DLCHostedLabel" TruncateWidth="100"/>
+					<Image ID="ModsOfficial" Texture="OfficialContent_Owned.dds" Anchor="C,C" Offset="-32,0"/>
+					<Image ID="ModsCommunity" Texture="CommunityContent_Owned.dds" Anchor="C,C" Offset="18,0"/>
 				</Box>
 				<Box Anchor="L,C" Anchorside="I.O" Size="120,24" Color="255,255,255,0">
 					<Label Anchor="L,C" Offset="0,0" Style="FontNormal14" ColorSet="ServerText" FontStyle="Shadow" ID="MembersLabel" TruncateWidth="120"/>

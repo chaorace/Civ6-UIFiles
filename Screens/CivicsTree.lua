@@ -21,6 +21,7 @@ include( "Civ6Common" );			-- Tutorial check support
 include( "TechAndCivicSupport" );
 include( "TechFilterFunctions" );
 include( "ModalScreen_PlayerYieldsHelper" );
+include( "GameCapabilities" );
 
 -- ===========================================================================
 --	DEBUG
@@ -834,7 +835,12 @@ function View( playerTechData:table )
 			end
 
 			-- Different content in marker based on if there is just 1 player in the column, or more than 1
-			local tooltipString				:string = Locale.Lookup("LOC_TREE_ERA", Locale.Lookup(GameInfo.Eras[markerStat.HighestEra].Name) ).."[NEWLINE]";
+			local higestEraName = "";
+			if markerStat.HighestEra ~= nil and GameInfo.Eras[markerStat.HighestEra] ~= nil then
+				higestEraName = GameInfo.Eras[markerStat.HighestEra].Name;
+			end
+
+			local tooltipString				:string = Locale.Lookup("LOC_TREE_ERA", Locale.Lookup(higestEraName) ).."[NEWLINE]";
 			local numOfPlayersAtThisColumn	:number = table.count(markerStat.PlayerNums);
 			if numOfPlayersAtThisColumn < 2 then
 				instance.Num:SetHide( true );			
@@ -1087,8 +1093,10 @@ function GetLivePlayerData( ePlayer:number, eCompletedCivic:number )
 					if firstEra == nil or era.Index < firstEra.Index then
 						firstEra = era;
 					end
-				end							
-				markerData.HighestEra = firstEra.Index;
+				end						
+				if firstEra ~= nil then
+					markerData.HighestEra = firstEra.Index;
+				end
 			end
 
 			-- Traverse all the IDs and merge them with this one.
@@ -1934,8 +1942,10 @@ function Initialize()
 	pullDownButton:RegisterCallback(Mouse.eLClick, OnClickToggleFilter);
 
 	-- LUA Events
-	LuaEvents.CivicsChooser_RaiseCivicsTree.Add( OnOpen );
-	LuaEvents.LaunchBar_RaiseCivicsTree.Add( OnOpen );
+	if HasCapability("CAPABILITY_CIVICS_CHOOSER") then
+		LuaEvents.CivicsChooser_RaiseCivicsTree.Add( OnOpen );
+		LuaEvents.LaunchBar_RaiseCivicsTree.Add( OnOpen );
+	end
 	LuaEvents.LaunchBar_CloseCivicsTree.Add( OnClose );
 
 	-- Game engine Event

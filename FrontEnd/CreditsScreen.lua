@@ -20,7 +20,7 @@ local m_HeadingIM	:table = InstanceManager:new("HeadingInstance",		"Text", Contr
 local m_ImageIM		:table = InstanceManager:new("ImageInstance",		"Image",Controls.CreditsList);
 local m_MajorTitleIM:table = InstanceManager:new("MajorTitleInstance",	"Text", Controls.CreditsList);
 local m_MinorTitleIM:table = InstanceManager:new("MinorTitleInstance",	"Text", Controls.CreditsList);
-
+local m_TurboMode   :boolean = false;
 
 -- ===========================================================================
 function OnClose()
@@ -58,7 +58,13 @@ function OnInputHandler( pInputStruct:table )
 		end
 
 		if key == Keys.T then
-			Controls.SlideAnim:SetSpeed(0.004);
+            if m_TurboMode then
+                Controls.SlideAnim:SetSpeed(0.001);
+                m_TurboMode = false;
+            else
+                Controls.SlideAnim:SetSpeed(0.004);
+                m_TurboMode = true;
+            end
 		end
 
     end
@@ -83,6 +89,8 @@ function OnShow()
 	Controls.SlideAnim:SetRelativeEndVal(0, sizeY );
    	Controls.SlideAnim:SetToBeginning();
    	Controls.SlideAnim:Play();
+    Controls.SlideAnim:SetSpeed(0.001);
+    m_TurboMode = false;
 end
 
 

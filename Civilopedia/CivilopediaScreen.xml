@@ -51,8 +51,10 @@
 			<!-- Page Tab Area -->
 			<Box Size="250,parent-102" Color="0,0,0,0">
 				<Grid Style="Civilopedia_SearchPanel">
-					<EditBox ID="SearchEditBox" Style="Civilopedia_SearchEditBox" CallOnChar="1" />
-				</Grid>
+          <Container Anchor="L,C" Offset="24,0" Size="parent-30,16" >
+            <EditBox ID="SearchEditBox" Style="Civilopedia_SearchEditBox" CallOnChar="1" />
+          </Container>
+        </Grid>
 
 				<ScrollPanel ID="PageScrollPanel" Style="Civilopedia_PageTabScrollPanel" Offset="15,30" Size="parent-12,parent-30">
 					<Stack ID="CivilopediaPageTabStack" Offset="5,0" StackGrowth="Bottom" Padding="2" />

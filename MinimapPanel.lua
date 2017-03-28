@@ -747,6 +747,14 @@ function Initialize()
 	Controls.ToggleYieldsButton:RegisterCallback( Mouse.eLClick, ToggleYieldIcons );
 	Controls.WaterLensButton:RegisterCallback( Mouse.eLClick, ToggleWaterLens );
 	
+	-- Hide buttons not needed for the world builder
+	if GameConfiguration.IsWorldBuilderEditor() then
+		Controls.LensButton:SetHide(true);
+		Controls.MapPinListButton:SetHide(true);
+		Controls.StrategicSwitcherButton:SetHide(true);
+		Controls.OptionsStack:ReprocessAnchoring();
+	end
+
     -- Make sure the StrategicSwitcherButton has the correct image when the game starts in StrategicView
     if UI.GetWorldRenderView() == WorldRenderView.VIEW_2D then
 		Controls.SwitcherImage:SetTextureOffsetVal(0,24);

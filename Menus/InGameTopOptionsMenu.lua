@@ -215,7 +215,7 @@ function SetupButtons()
 	Controls.QuickSaveButton:SetHide(m_isSimpleMenu or bIsAutomation);
 	Controls.SaveGameButton:SetHide(m_isSimpleMenu or bIsAutomation);			
 	Controls.LoadGameButton:SetHide(m_isSimpleMenu or bIsAutomation or bIsMultiplayer);
-	Controls.OptionsButton:SetHide(bIsAutomation);	
+	Controls.OptionsButton:SetHide(bIsAutomation or not CanLocalPlayerChangeOptions());	
 
 	-- Eventually remove this check.  Retiring after winning is perfectly fine
 	-- so long as we update the tooltip to no longer state the player will be defeated.

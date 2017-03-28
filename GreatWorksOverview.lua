@@ -5,6 +5,7 @@
 -- ===========================================================================
 include("InstanceManager");
 include("PopupDialogSupport")
+include("GameCapabilities");
 
 -- ===========================================================================
 --	CONSTANTS
@@ -970,6 +971,11 @@ end
 --	INIT
 -- ===========================================================================
 function Initialize()
+
+	if (not HasCapability("CAPABILITY_GREAT_WORKS_VIEW")) then
+		-- Viewing Great Works is off, just exit
+		return;
+	end
 	
 	ContextPtr:SetInitHandler(OnInit);
 	ContextPtr:SetShutdown(OnShutdown);

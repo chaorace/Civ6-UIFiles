@@ -90,6 +90,7 @@ local g_steamFriendActionsNoInvite =
 
 local MAX_EVER_PLAYERS : number = 12; -- hardwired max possible players in multiplayer, determined by how many players 
 local MIN_EVER_PLAYERS : number = 2;  -- hardwired min possible players in multiplayer, the game does bad things if there aren't at least two players on different teams.
+local MAX_SUPPORTED_PLAYERS : number = 8; -- Max number of officially supported players in multiplayer.  You can play with more than this number, but QA hasn't vetted it.
 local g_currentMaxPlayers : number = MAX_EVER_PLAYERS;
 local g_currentMinPlayers : number = MIN_EVER_PLAYERS;
 	
@@ -937,8 +938,10 @@ function PopulateSlotTypePulldown( pullDown, playerID, slotTypeOptions )
 		-- This option is a valid slot type option.
 		local showSlotButton = pair.slotStatus ~= -1 
 			and Network.IsHost() -- Only the host can change slot types.
-			-- You can't switch to open/closed if the game is at the minimum player count.
-			and ((pair.slotStatus ~= SlotStatus.SS_CLOSED and pair.slotStatus ~= SlotStatus.SS_OPEN)  or GameConfiguration.GetParticipatingPlayerCount() > g_currentMinPlayers)
+			-- You can't switch a civilization to open/closed if the game is at the minimum player count.
+			and ((pair.slotStatus ~= SlotStatus.SS_CLOSED and pair.slotStatus ~= SlotStatus.SS_OPEN)		-- Target SlotType isn't open/close
+				or (playerSlotStatus ~= SlotStatus.SS_TAKEN and playerSlotStatus ~= SlotStatus.SS_COMPUTER) -- Current SlotType isn't a civ
+				or GameConfiguration.GetParticipatingPlayerCount() > g_currentMinPlayers)					-- Above player count
 			and (playerSlotStatus ~= SlotStatus.SS_TAKEN or GameConfiguration.IsHotseat()) -- You can only change the slot type of humans while in hotseat.
 			and not pPlayerConfig:IsLocked() -- Can't change the slot type of locked player slots.
 			-- Can normally only change slot types in the pregame unless this is a option that can be changed mid-game in hotseat.
@@ -1021,22 +1024,23 @@ function SetupTeamPulldown( playerID :number, pullDown :table )
 				table.insert(pulldownEntries, newPulldownEntry);
 			end
 		end
-	end
 
-	table.sort(pulldownEntries, function(a, b) return a.teamName > b.teamName; end);
-
-	for pullID, curPulldownEntry in ipairs(pulldownEntries) do
-		AddTeamPulldownEntry(playerID, pullDown, curPulldownEntry.teamID, curPulldownEntry.teamName);
-	end
-
-	if(not noTeams) then
 		-- Add an empty team slot so players can join/create a new team
 		local newTeamID :number = 0;
 		while(teamCounts[newTeamID] ~= nil) do
 			newTeamID = newTeamID + 1;
 		end
 		local newTeamName : string = tostring(newTeamID);
-		AddTeamPulldownEntry(playerID, pullDown, newTeamID, newTeamName);
+		newPulldownEntry = {};
+		newPulldownEntry.teamID = newTeamID;
+		newPulldownEntry.teamName = newTeamName;
+		table.insert(pulldownEntries, newPulldownEntry);
+	end
+
+	table.sort(pulldownEntries, function(a, b) return a.teamID < b.teamID; end);
+
+	for pullID, curPulldownEntry in ipairs(pulldownEntries) do
+		AddTeamPulldownEntry(playerID, pullDown, curPulldownEntry.teamID, curPulldownEntry.teamName);
 	end
 
 	pullDown:CalculateInternals();
@@ -1191,8 +1195,18 @@ function UpdatePlayerEntry(playerID)
 			elseif(g_PlayerReady[playerID] or slotStatus == SlotStatus.SS_COMPUTER) then
 				statusString = ReadyStatusStr;
 			end
-			-- This is weird sauce, it probably should be something better later
-			if playerID > 7 then
+
+			-- Check to see if we should warning that this player is above MAX_SUPPORTED_PLAYERS.
+			local playersBeforeUs = 0;
+			for iLoopPlayer = 0, playerID-1, 1 do	
+				local loopPlayerConfig = PlayerConfigurations[iLoopPlayer];
+				local loopSlotStatus = loopPlayerConfig:GetSlotStatus();
+				local loopIsFullCiv = loopPlayerConfig:GetCivilizationLevelTypeID() == CivilizationLevelTypes.CIVILIZATION_LEVEL_FULL_CIV;
+				if( (loopSlotStatus == SlotStatus.SS_COMPUTER or loopSlotStatus == SlotStatus.SS_TAKEN) and loopIsFullCiv ) then
+					playersBeforeUs = playersBeforeUs + 1;
+				end
+			end
+			if playersBeforeUs >= MAX_SUPPORTED_PLAYERS then
 				statusString = statusString .. "[NEWLINE][COLOR_Red]" .. UnsupportedText;
 				if statusTTString ~= "" then
 					statusTTString = statusTTString .. "[NEWLINE][COLOR_Red]" .. UnsupportedTextTT;
@@ -1233,7 +1247,10 @@ function UpdatePlayerEntry(playerID)
 				playerEntry.Root:SetHide(true);
 			elseif slotStatus == SlotStatus.SS_CLOSED then
 				
-				if (m_iFirstClosedSlot == -1 or m_iFirstClosedSlot == playerID) and Network.IsHost() and not gameInProgress then
+				if (m_iFirstClosedSlot == -1 or m_iFirstClosedSlot == playerID) 
+				and Network.IsHost() 
+				and not gameInProgress 
+				and g_fCountdownTimer == -1 then -- Don't show Add Player button while in the countdown.
 					m_iFirstClosedSlot = playerID;
 					playerEntry.AddPlayerButton:SetHide(false);
 					playerEntry.Root:SetHide(false);
@@ -1276,6 +1293,11 @@ function UpdatePlayerEntry(playerID)
 		local noTeams = GameConfiguration.GetValue("NO_TEAMS");
 		playerEntry.TeamPullDown:SetDisabled(not bCanChangePlayerValues or noTeams);
 		local teamID:number = pPlayerConfig:GetTeam();
+		-- If the game is in progress and this player is on a team by themselves, display it as if they are on no team.
+		-- We do this to be consistent with the ingame UI.
+		if(gameInProgress and GameConfiguration.GetTeamPlayerCount(teamID) <= 1) then
+			teamID = TeamTypes.NO_TEAM;
+		end
 		if teamID >= 0 then
 			-- Adjust the texture offset based on the selected team
 			local teamIconName:string = TEAM_ICON_PREFIX .. tostring(teamID);
@@ -1557,6 +1579,11 @@ function StartCountdown()
 	g_fCountdownReadyButtonTime = g_fCountdownTimer;
 	ContextPtr:SetUpdate( OnUpdate );
 
+	-- Update m_iFirstClosedSlot's player slot so it will hide the Add Player button.
+	if(m_iFirstClosedSlot ~= -1) then
+		UpdatePlayerEntry(m_iFirstClosedSlot);
+	end
+
 	if not GameConfiguration.IsHotseat() then
 		Controls.ReadyButtonContainer:SetHide(true);
 		Controls.StartButtonContainer:SetHide(false);
@@ -1572,6 +1599,11 @@ function StopCountdown()
 	g_fCountdownTimer = -1;
 	ContextPtr:ClearUpdate();
 	UpdateReadyButton();
+
+	-- Update m_iFirstClosedSlot's player slot so it will show the Add Player button.
+	if(m_iFirstClosedSlot ~= -1) then
+		UpdatePlayerEntry(m_iFirstClosedSlot);
+	end
 
 	if not GameConfiguration.IsHotseat() then
 		Controls.StartButtonContainer:SetHide(true);

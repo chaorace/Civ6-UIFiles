@@ -10,6 +10,7 @@ include("TechAndCivicSupport");
 include("AnimSidePanelSupport");
 include("SupportFunctions");
 include("Civ6Common");
+include("GameCapabilities");
 
 
 -- ===========================================================================
@@ -453,8 +454,14 @@ function Initialize()
 	Controls.TitleButton:RegisterCallback(Mouse.eLClick, OnClosePanel);
 	Controls.IconButton:RegisterCallback(Mouse.eLClick, OnClosePanel);
 	Controls.IconButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-	Controls.OpenTreeButton:RegisterCallback(Mouse.eLClick, function() LuaEvents.ResearchChooser_RaiseTechTree(); OnClosePanel(); end);
-	Controls.OpenTreeButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+
+	if(HasCapability("CAPABILITY_TECH_TREE")) then
+		Controls.OpenTreeButton:SetHide(false);
+		Controls.OpenTreeButton:RegisterCallback(Mouse.eLClick, function() LuaEvents.ResearchChooser_RaiseTechTree(); OnClosePanel(); end);
+		Controls.OpenTreeButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	else
+		Controls.OpenTreeButton:SetHide(true);
+	end
 
 	-- Populate static controls
 	Controls.Title:SetText(Locale.Lookup(Locale.ToUpper("LOC_RESEARCH_CHOOSER_CHOOSE_RESEARCH")));

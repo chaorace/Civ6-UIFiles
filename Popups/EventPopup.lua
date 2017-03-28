@@ -27,7 +27,14 @@ function OnOpen(popupData:table)
 	end
 
 	Controls.Title:SetText(Locale.ToUpper(Locale.Lookup(eventData.Title)));
-	Controls.Description:SetText(Locale.Lookup(eventData.Description));
+
+	if eventData.Description and eventData.Description ~= "" then
+		Controls.Description:SetHide(false);
+		Controls.Description:SetText(Locale.Lookup(eventData.Description));
+	else
+		Controls.Description:SetHide(true);
+	end
+
 	Controls.Effects:SetText(popupData.EventEffect or Locale.Lookup(eventData.Effects));
 
 	if eventData.ImageText then

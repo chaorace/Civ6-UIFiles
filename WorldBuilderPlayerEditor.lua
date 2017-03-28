@@ -29,9 +29,12 @@ local m_tabs				:table;
 
 local m_groupIM				:table = InstanceManager:new("GroupInstance",			"Top",		Controls.Stack);				-- Collapsable
 local m_simpleIM			:table = InstanceManager:new("SimpleInstance",			"Top",		Controls.Stack);				-- Non-Collapsable, simple
-local m_tabIM			   : table = InstanceManager:new("TabInstance",				"Button",	Controls.TabContainer);
+local m_tabIM				:table = InstanceManager:new("TabInstance",				"Button",	Controls.TabContainer);
+local m_playerInstanceIM	:table = InstanceManager:new("PlayerInstance",			"Button",	Controls.PlayerStack);
 
 local m_uiGroups			:table = nil;	-- Track the groups on-screen for collapse all action.
+
+local m_selectedPlayerEntry :table = nil;
 
 -- ===========================================================================
 --	FUNCTIONS
@@ -45,18 +48,42 @@ function AddTabSection( tabs:table, name:string, populateCallback:ifunction, par
 	kTab.Button[DATA_FIELD_SELECTION]	= kTab.Selection;
 
 	local callback	:ifunction	= function()
+		-- Previous selection
 		if tabs.prevSelectedControl ~= nil then
-			tabs.prevSelectedControl[DATA_FIELD_SELECTION]:SetHide(true);
+			-- Restore proper color
+			tabs.prevSelectedControl:GetTextControl():SetColorByName("ShellOptionText");
+
+			-- Hide selection control
+			if tabs.prevSelectedControl[DATA_FIELD_SELECTION] ~= nil then
+				tabs.prevSelectedControl[DATA_FIELD_SELECTION]:SetHide(true);
+			end
 		end
-		kTab.Selection:SetHide(false);
+
+		-- Current selection
+		if kTab.Selection then
+			kTab.Selection:SetHide(false);
+		end
 		populateCallback();
 	end
 
-	kTab.Button:GetTextControl():SetText( Locale.Lookup(name) );
-	kTab.Button:SetSizeToText( 40, 20 );
+	kTab.Button:GetTextControl():SetText( Locale.ToUpper(name) );
+	kTab.Button:SetSizeToText( 2, 20 );
     kTab.Button:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
 	tabs.AddTab( kTab.Button, callback );
+end
+
+-- ===========================================================================
+function SetTabsDisabled(tabs:table, areDisabled:boolean)
+	for i, tabControl in ipairs(tabs.tabControls) do
+		if areDisabled then
+			tabControl:SetDisabled(true);
+			tabControl:GetTextControl():SetColorByName("ShellOptionText");
+			tabControl.Selection:SetHide(true);
+		else
+			tabControl:SetDisabled(false);
+		end
+	end
 end
 
 -- ===========================================================================
@@ -242,57 +269,62 @@ end
 --	Handler for when a player is selected.
 -- ===========================================================================
 function OnPlayerSelected(entry)
+	-- Deselect the previous selected player
+	if m_SelectedPlayer then
+		if m_SelectedPlayer.playerInstance and m_SelectedPlayer.playerInstance.Button then
+			m_SelectedPlayer.playerInstance.Button:SetSelected(false);
+		end
+	end
+
+	-- Switch to general if we don't have another tab selected
+	if entry ~= nil and m_ViewingTab.Name == nil then
+		ViewPlayerGeneralPage();
+	end
 
 	m_SelectedPlayer = entry;
 	local playerSelected = entry ~= nil;
 
 	if playerSelected then
 
-		Controls.CivPullDown:SetSelectedIndex( GetCivEntryIndexByType( entry.Civ ), false );
-		Controls.LeaderPullDown:SetSelectedIndex( GetLeaderEntryIndexByType( entry.Leader ), false );
-		Controls.CivLevelPullDown:SetSelectedIndex( GetCivLevelEntryIndexByType( entry.CivLevel ), false );
-		Controls.EraPullDown:SetSelectedIndex( entry.Era+1, false );
-
-		local goldText = Controls.GoldEdit:GetText();
-		if goldText == nil or tonumber(goldText) ~= entry.Gold then
-			Controls.GoldEdit:SetText( entry.Gold );
-		end
-
-		local faithText = Controls.FaithEdit:GetText();
-		if faithText == nil or tonumber(faithText) ~= entry.Faith then
-			Controls.FaithEdit:SetText( entry.Faith );
+		-- Set button as selected
+		if m_SelectedPlayer.playerInstance and m_SelectedPlayer.playerInstance.Button then
+			m_SelectedPlayer.playerInstance.Button:SetSelected(true);
 		end
 
 		if (m_ViewingTab.Name ~= nil) then
-
+			UpdateGeneralTabValues();
 			UpdateTechTabValues();
 			UpdateCivicsTabValues();
 
 			if (m_ViewingTab.Name == "Cities") then
 				ViewPlayerCitiesPage();				
 			end
-
 		end
 
+		SetTabsDisabled(m_tabs, false);
+	else
+		-- Disable tabs and reset content
+		SetTabsDisabled(m_tabs, true);
+		ResetTabForNewPageContent();
 	end
 
-	Controls.CivPullDown:SetDisabled( not playerSelected );
-	Controls.EraPullDown:SetDisabled( not playerSelected );
-	Controls.GoldEdit:SetDisabled( not playerSelected );
-	Controls.FaithEdit:SetDisabled( not playerSelected );
 	if (m_ViewingTab.TechInstance ~= nil and m_ViewingTab.TechInstance.TechList ~= nil) then
 		m_ViewingTab.TechInstance.TechList:SetDisabled( not playerSelected );
 	end
 	if (m_ViewingTab.CivicsInstance ~= nil and m_ViewingTab.CivicsInstance.CivicsList ~= nil) then
 		m_ViewingTab.CivicsInstance.CivicsList:SetDisabled( not playerSelected );
 	end
-	Controls.LeaderPullDown:SetDisabled( entry == nil or not entry.IsFullCiv or entry.Civ == -1 );
 end
 
 -- ===========================================================================
 function UpdatePlayerEntry(playerEntry)
 
 	local playerConfig = WorldBuilder.PlayerManager():GetPlayerConfig(playerEntry.Index);
+
+	-- Create a player instance if we don't have one yet
+	if playerEntry.playerInstance == nil then
+		playerEntry.playerInstance = m_playerInstanceIM:GetInstance();
+	end
 
 	playerEntry.Config = playerConfig;
 	playerEntry.Leader = playerConfig.Leader ~= nil and playerConfig.Leader or "UNDEFINED";
@@ -304,13 +336,30 @@ function UpdatePlayerEntry(playerEntry)
 	playerEntry.Faith  = playerConfig.Faith;
 	playerEntry.IsFullCiv = playerConfig.IsFullCiv;
 	
-	if playerEntry.Button ~= nil then
-		playerEntry.Button:SetText(playerEntry.Text);
+	-- Update name
+	if playerEntry.playerInstance.PlayerName ~= nil then
+		playerEntry.playerInstance.PlayerName:SetText(playerEntry.Text);
+	end
+
+	-- Update button callback
+	playerEntry.playerInstance.Button:RegisterCallback( Mouse.eLClick, function() OnPlayerSelected(playerEntry); end);
+
+	-- Update icon if we're a specific civ
+	if playerEntry.Civ ~= "UNDEFINED" then
+		local pPlayerConfig = PlayerConfigurations[playerEntry.Index];
+		playerEntry.playerInstance.CivIcon:SetIcon("ICON_" .. pPlayerConfig:GetCivilizationTypeName());
+	
+		local backColor, frontColor = UI.GetPlayerColors(playerEntry.Index);
+		playerEntry.playerInstance.CivIcon:SetColor(frontColor);
+		playerEntry.playerInstance.CivIconBacking:SetColor(backColor);
 	end
 
 	if playerEntry == m_SelectedPlayer then
 		OnPlayerSelected(m_SelectedPlayer);
 	end
+
+	Controls.PlayerScrollPanel:CalculateSize();
+	Controls.PlayerStack:ReprocessAnchoring();
 end
 
 -- ===========================================================================
@@ -318,6 +367,9 @@ function UpdatePlayerList()
 
 	m_PlayerEntries = {};
 	m_PlayerIndexToEntry = {};
+
+	-- Clear out player instances
+	m_playerInstanceIM:ResetInstances();
 
 	local selected = 1;
 	local entryCount = 0;
@@ -343,8 +395,7 @@ function UpdatePlayerList()
 		selected = 0;
 	end
 
-	Controls.PlayerList:SetEntries( m_PlayerEntries, selected );
-	OnPlayerSelected( Controls.PlayerList:GetSelectedEntry() );
+	OnPlayerSelected( m_selectedPlayerEntry );
 end
 
 -- ===========================================================================
@@ -383,17 +434,84 @@ end
 function CalculatePrimaryTabScrollArea()
 
 	Controls.Stack:CalculateSize();
+	Controls.Stack:ReprocessAnchoring();
 	Controls.Scroll:CalculateSize();
 
-	local xOffset, yOffset = Controls.Scroll:GetParentRelativeOffset();
-	Controls.Scroll:SetSizeY( Controls.TabsContainer:GetSizeY() - yOffset );
+end
+
+-- ===========================================================================
+--	Tab Callback
+-- ===========================================================================
+function ViewPlayerGeneralPage()	
+	ResetTabForNewPageContent();
+
+	local instance:table = m_simpleIM:GetInstance();	
+	instance.Top:DestroyAllChildren();
+	
+	m_ViewingTab.Name = "General";
+	m_ViewingTab.GeneralInstance = {};
+	ContextPtr:BuildInstanceForControl( "PlayerGeneralInstance", m_ViewingTab.GeneralInstance, instance.Top ) ;	
+	
+	InitGeneralTab();
+
+	CalculatePrimaryTabScrollArea();
+end
+
+-- ===========================================================================
+function InitGeneralTab()
+	if m_ViewingTab.GeneralInstance then
+		m_ViewingTab.GeneralInstance.CivPullDown:SetEntries( m_CivEntries, 1 );
+		m_ViewingTab.GeneralInstance.CivPullDown:SetEntrySelectedCallback( OnCivSelected );
+
+		m_ViewingTab.GeneralInstance.LeaderPullDown:SetEntries( m_LeaderEntries, 1 );
+		m_ViewingTab.GeneralInstance.LeaderPullDown:SetEntrySelectedCallback( OnLeaderSelected );
+		m_LeaderEntries[1].Button:SetDisabled(true); -- We never want the user to manually select the random leader entry
+
+		m_ViewingTab.GeneralInstance.CivLevelPullDown:SetEntries( m_CivLevelEntries, 1 );
+		m_ViewingTab.GeneralInstance.CivLevelPullDown:SetEntrySelectedCallback( OnCivLevelSelected );
+
+		m_ViewingTab.GeneralInstance.EraPullDown:SetEntries( m_EraEntries, 1 );
+		m_ViewingTab.GeneralInstance.EraPullDown:SetEntrySelectedCallback( OnEraSelected );
+
+		-- Gold/Faith
+		m_ViewingTab.GeneralInstance.GoldEdit:RegisterStringChangedCallback( OnGoldEdited );
+		m_ViewingTab.GeneralInstance.FaithEdit:RegisterStringChangedCallback( OnFaithEdited );
+	end
+end
+
+-- ===========================================================================
+function UpdateGeneralTabValues(entry:table)
+	if m_ViewingTab.GeneralInstance then
+		local playerSelected = m_SelectedPlayer ~= nil;
+		m_ViewingTab.GeneralInstance.CivPullDown:SetDisabled( not playerSelected );
+		m_ViewingTab.GeneralInstance.EraPullDown:SetDisabled( not playerSelected );
+		m_ViewingTab.GeneralInstance.GoldEdit:SetDisabled( not playerSelected );
+		m_ViewingTab.GeneralInstance.FaithEdit:SetDisabled( not playerSelected );
+		m_ViewingTab.GeneralInstance.LeaderPullDown:SetDisabled( not playerSelected or not m_SelectedPlayer.IsFullCiv or m_SelectedPlayer.Civ == -1 );
+
+		if m_SelectedPlayer ~= nil then
+			m_ViewingTab.GeneralInstance.CivPullDown:SetSelectedIndex( GetCivEntryIndexByType( m_SelectedPlayer.Civ ), false );
+			m_ViewingTab.GeneralInstance.LeaderPullDown:SetSelectedIndex( GetLeaderEntryIndexByType( m_SelectedPlayer.Leader ), false );
+			m_ViewingTab.GeneralInstance.CivLevelPullDown:SetSelectedIndex( GetCivLevelEntryIndexByType( m_SelectedPlayer.CivLevel ), false );
+			m_ViewingTab.GeneralInstance.EraPullDown:SetSelectedIndex( m_SelectedPlayer.Era+1, false );
+
+			local goldText = m_ViewingTab.GeneralInstance.GoldEdit:GetText();
+			if goldText == nil or tonumber(goldText) ~= m_SelectedPlayer.Gold then
+				m_ViewingTab.GeneralInstance.GoldEdit:SetText( m_SelectedPlayer.Gold );
+			end
+
+			local faithText = m_ViewingTab.GeneralInstance.FaithEdit:GetText();
+			if faithText == nil or tonumber(faithText) ~= m_SelectedPlayer.Faith then
+				m_ViewingTab.GeneralInstance.FaithEdit:SetText( m_SelectedPlayer.Faith );
+			end
+		end
+	end
 end
 
 -- ===========================================================================
 --	Tab Callback
 -- ===========================================================================
 function ViewPlayerTechsPage()	
-
 	ResetTabForNewPageContent();
 
 	local instance:table = m_simpleIM:GetInstance();	
@@ -408,7 +526,6 @@ function ViewPlayerTechsPage()
 	UpdateTechTabValues();
 
 	CalculatePrimaryTabScrollArea();
-
 end
 
 -- ===========================================================================
@@ -470,6 +587,9 @@ function UpdatePlayerCityGeneralPage()
 			if (population ~= nil) then
 				m_ViewingTab.SubTab.CityGeneralInstance.PopulationEdit:SetText(population);
 			end
+
+			-- Update city name header
+			m_ViewingTab.SubTab.CityGeneralInstance.SelectedCityName:SetText(Locale.Lookup(pCity:GetName()));
 		else
 			m_ViewingTab.SubTab.CityGeneralInstance.PopulationEdit:SetDisabled(true);
 		end
@@ -512,12 +632,13 @@ function UpdateSelectedDistrictInfo()
 					local pCityDistricts = pCity:GetDistricts();
 					local pDistrict = pCityDistricts:GetDistrict(ms_SelectDistrictTypeHash);
 					if pDistrict ~= nil then
-						
-						m_ViewingTab.SubTab.CityDistrictsInstance.PillagedCheckbox:SetCheck(pDistrict:IsPillaged());
+						m_ViewingTab.SubTab.CityDistrictsInstance.PillagedCheckbox:SetSelected(pDistrict:IsPillaged());
 						m_ViewingTab.SubTab.CityDistrictsInstance.GarrisonDamageEdit:SetText( tostring( pDistrict:GetDamage(DefenseTypes.DISTRICT_GARRISON) ) );
 						m_ViewingTab.SubTab.CityDistrictsInstance.OuterDamageEdit:SetText( tostring( pDistrict:GetDamage(DefenseTypes.DISTRICT_OUTER) ) );
-					
+						m_ViewingTab.SubTab.CityDistrictsInstance.SelectedDistrictName:SetText(Locale.Lookup(GameInfo.Districts[ms_SelectDistrictType].Name));
 						bEnable = true;
+					else
+						m_ViewingTab.SubTab.CityDistrictsInstance.SelectedDistrictName:SetText("");
 					end
 				end
 			end
@@ -578,6 +699,10 @@ function UpdatePlayerCityDistrictsPage()
 	
 		local pCity = GetSelectedCity();
 		local pCityDistricts = nil;
+
+		-- Update city name header
+		local cityNameText = Locale.Lookup(pCity:GetName()) .. " " .. Locale.Lookup("LOC_WORLDBUILDER_TAB_DISTRICTS");
+		m_ViewingTab.SubTab.CityDistrictsInstance.SelectedCityName:SetText(cityNameText);
 
 		if (pCity ~= nil) then
 			pCityDistricts = pCity:GetDistricts();
@@ -640,9 +765,11 @@ function UpdateSelectedBuildingInfo()
 					if pCityBuildings ~= nil then
 						
 						if pCityBuildings:HasBuilding(ms_SelectBuildingTypeHash) == true then
-							m_ViewingTab.SubTab.CityBuildingsInstance.PillagedCheckbox:SetCheck(pCityBuildings:IsPillaged(ms_SelectBuildingTypeHash));
-					
+							m_ViewingTab.SubTab.CityBuildingsInstance.PillagedCheckbox:SetSelected(pCityBuildings:IsPillaged(ms_SelectBuildingTypeHash));
+							m_ViewingTab.SubTab.CityBuildingsInstance.SelectedBuildingName:SetText(Locale.Lookup(GameInfo.Buildings[ms_SelectBuildingType].Name));
 							bEnable = true;
+						else
+							m_ViewingTab.SubTab.CityBuildingsInstance.SelectedBuildingName:SetText("");
 						end
 					end
 				end
@@ -711,6 +838,10 @@ function UpdatePlayerCityBuildingsPage()
 		if (pCity ~= nil) then
 			pCityBuildings = pCity:GetBuildings();
 		end
+
+		-- Update city name header
+		local cityNameText = Locale.Lookup(pCity:GetName()) .. " " .. Locale.Lookup("LOC_WORLDBUILDER_TAB_BUILDINGS");
+		m_ViewingTab.SubTab.CityBuildingsInstance.SelectedCityName:SetText(cityNameText);
 
 		for i, entry in ipairs(m_BuildingEntries) do
 			local hasBuilding = pCityBuildings ~= nil and pCityBuildings:HasBuilding( entry.Type.Index );
@@ -857,7 +988,8 @@ function ViewPlayerCitiesPage()
 		AddTabSection( m_ViewingTab.m_subTabs, "LOC_WORLDBUILDER_TAB_GENERAL",		ViewPlayerCityGeneralPage, m_ViewingTab.CitiesInstance.TabContainer );
 		AddTabSection( m_ViewingTab.m_subTabs, "LOC_WORLDBUILDER_TAB_DISTRICTS",	ViewPlayerCityDistrictsPage, m_ViewingTab.CitiesInstance.TabContainer );
 		AddTabSection( m_ViewingTab.m_subTabs, "LOC_WORLDBUILDER_TAB_BUILDINGS",	ViewPlayerCityBuildingsPage, m_ViewingTab.CitiesInstance.TabContainer );
-	
+		SetTabsDisabled( m_ViewingTab.m_subTabs, true );
+
 		m_ViewingTab.m_subTabs.SameSizedTabs(50);
 		m_ViewingTab.m_subTabs.CenterAlignTabs(-10);		
 
@@ -957,7 +1089,7 @@ function OnAddPlayer()
 
 	local player = WorldBuilder.PlayerManager():AddPlayer(false);
 	if player ~= -1 then
-		Controls.PlayerList:SetSelectedIndex( player+1, true );
+		OnPlayerSelected(m_PlayerIndexToEntry[player]);
 	end
 end
 
@@ -966,7 +1098,7 @@ function OnAddAIPlayer()
 
 	local player = WorldBuilder.PlayerManager():AddPlayer(true);
 	if player ~= -1 then
-		Controls.PlayerList:SetSelectedIndex( player+1, true );
+		OnPlayerSelected(m_PlayerIndexToEntry[player]);
 	end
 end
 
@@ -1030,24 +1162,26 @@ end
 
 -- ===========================================================================
 function OnGoldEdited()
-
-	local text = Controls.GoldEdit:GetText();
-	if m_SelectedPlayer ~= nil and text ~= nil then
-		local gold = tonumber(text);
-		if gold ~= m_SelectedPlayer.Gold then
-			WorldBuilder.PlayerManager():SetPlayerGold(m_SelectedPlayer.Index, gold);
+	if m_ViewingTab.GeneralInstance and m_ViewingTab.GeneralInstance.GoldEdit then
+		local text = m_ViewingTab.GeneralInstance.GoldEdit:GetText();
+		if m_SelectedPlayer ~= nil and text ~= nil then
+			local gold = tonumber(text);
+			if gold ~= m_SelectedPlayer.Gold then
+				WorldBuilder.PlayerManager():SetPlayerGold(m_SelectedPlayer.Index, gold);
+			end
 		end
 	end
 end
 
 -- ===========================================================================
 function OnFaithEdited()
-
-	local text = Controls.FaithEdit:GetText();
-	if m_SelectedPlayer ~= nil and text ~= nil then
-		local faith = tonumber(text);
-		if faith ~= m_SelectedPlayer.Faith then
-			WorldBuilder.PlayerManager():SetPlayerFaith(m_SelectedPlayer.Index, faith);
+	if m_ViewingTab.GeneralInstance and m_ViewingTab.GeneralInstance.FaithEdit then
+		local text = m_ViewingTab.GeneralInstance.FaithEdit:GetText();
+		if m_SelectedPlayer ~= nil and text ~= nil then
+			local faith = tonumber(text);
+			if faith ~= m_SelectedPlayer.Faith then
+				WorldBuilder.PlayerManager():SetPlayerFaith(m_SelectedPlayer.Index, faith);
+			end
 		end
 	end
 end
@@ -1057,8 +1191,10 @@ function OnCitySelected(entry)
 
 	if m_SelectedPlayer ~= nil then
 		m_ViewingTab.SelectedCityID = entry.Type;
+		SetTabsDisabled( m_ViewingTab.m_subTabs, false );
 	else
 		m_ViewingTab.SelectedCityID = nil;
+		SetTabsDisabled( m_ViewingTab.m_subTabs, true );
 	end
 
 	OnSelectedCityChanged();
@@ -1075,7 +1211,11 @@ function OnShowPlayerEditor(bShow)
 			ContextPtr:SetHide(true);
 		end
 	end
-			
+end
+
+-- ===========================================================================
+function OnShowMapEditor(bShow)
+	ContextPtr:SetHide(true);
 end
 
 -- ===========================================================================
@@ -1102,23 +1242,16 @@ function OnInit()
 	-- Title
 	Controls.ModalScreenTitle:SetText( Locale.ToUpper(Locale.Lookup("LOC_WORLD_BUILDER_PLAYER_EDITOR_TT")) );
 
-	-- PlayerList
-	Controls.PlayerList:SetEntrySelectedCallback( OnPlayerSelected );
-
 	-- EraPullDown
 	for type in GameInfo.Eras() do
 		table.insert(m_EraEntries, { Text=type.Name, Type=type });
 	end
-	Controls.EraPullDown:SetEntries( m_EraEntries, 1 );
-	Controls.EraPullDown:SetEntrySelectedCallback( OnEraSelected );
 
 	-- CivLevelPullDown
 	for type in GameInfo.CivilizationLevels() do
 		local name = type.Name ~= nil and type.Name or type.CivilizationLevelType;
 		table.insert(m_CivLevelEntries, { Text=name, Type=type.CivilizationLevelType });
 	end
-	Controls.CivLevelPullDown:SetEntries( m_CivLevelEntries, 1 );
-	Controls.CivLevelPullDown:SetEntrySelectedCallback( OnCivLevelSelected );
 
 	-- CivPullDown
 
@@ -1130,8 +1263,7 @@ function OnInit()
 	for type in GameInfo.Civilizations() do
 		table.insert(m_CivEntries, { Text=type.Name, Type=type.CivilizationType, DefaultLeader=-1 });
 	end
-	Controls.CivPullDown:SetEntries( m_CivEntries, 1 );
-	Controls.CivPullDown:SetEntrySelectedCallback( OnCivSelected );
+
 
 	-- Set default leaders
 	for entry in GameInfo.CivilizationLeaders() do
@@ -1147,9 +1279,6 @@ function OnInit()
 	for type in GameInfo.Leaders() do
 		table.insert(m_LeaderEntries, { Text=type.Name, Type=type.LeaderType });
 	end
-	Controls.LeaderPullDown:SetEntries( m_LeaderEntries, 1 );
-	Controls.LeaderPullDown:SetEntrySelectedCallback( OnLeaderSelected );
-	m_LeaderEntries[1].Button:SetDisabled(true); -- We never want the user to manually select the random leader entry
 
 	-- TechList
 	for type in GameInfo.Technologies() do
@@ -1172,16 +1301,14 @@ function OnInit()
 	end
 
 	m_tabs = CreateTabs( Controls.TabContainer, 42, 34, 0xFF331D05 );
+	AddTabSection( m_tabs, "LOC_WORLDBUILDER_TAB_GENERAL",		ViewPlayerGeneralPage, Controls.TabContainer );
 	AddTabSection( m_tabs, "LOC_WORLDBUILDER_TAB_TECHS",		ViewPlayerTechsPage, Controls.TabContainer );
 	AddTabSection( m_tabs, "LOC_WORLDBUILDER_TAB_CIVICS",		ViewPlayerCivicsPage, Controls.TabContainer );
-	AddTabSection( m_tabs, "LOC_WORLDBUILDER_TAB_CITIES",		ViewPlayerCitiesPage, Controls.TabContainer );	
+	AddTabSection( m_tabs, "LOC_WORLDBUILDER_TAB_CITIES",		ViewPlayerCitiesPage, Controls.TabContainer );
+	SetTabsDisabled(m_tabs, true);
 
 	m_tabs.SameSizedTabs(50);
 	m_tabs.CenterAlignTabs(-10);		
-
-	-- Gold/Faith
-	Controls.GoldEdit:RegisterStringChangedCallback( OnGoldEdited );
-	Controls.FaithEdit:RegisterStringChangedCallback( OnFaithEdited );
 
 	-- Add/Remove Players
 	Controls.NewPlayerButton:RegisterCallback( Mouse.eLClick, OnAddPlayer );
@@ -1200,5 +1327,6 @@ function OnInit()
 	LuaEvents.WorldBuilder_PlayerTechEdited.Add( OnPlayerTechEdited );
 	LuaEvents.WorldBuilder_PlayerCivicEdited.Add( OnPlayerCivicEdited );
 	LuaEvents.WorldBuilder_ShowPlayerEditor.Add( OnShowPlayerEditor );
+	LuaEvents.WorldBuilder_ShowMapEditor.Add( OnShowMapEditor );
 end
 ContextPtr:SetInitHandler( OnInit );

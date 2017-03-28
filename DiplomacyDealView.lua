@@ -1665,7 +1665,9 @@ function PopulateAvailableCaptives(player : table, iconList : table)
 			local icon = ms_IconAndTextIM:GetInstance(iconList.ListStack);
 			SetIconToSize(icon, "ICON_UNIT_SPY");
 			icon.AmountText:SetHide(true);
-			icon.IconText:LocalizeAndSetText(entry.ForTypeName);
+			if (entry.ForTypeName ~= nil ) then
+				icon.IconText:LocalizeAndSetText(entry.ForTypeName);
+			end
 			icon.SelectButton:SetDisabled( not entry.IsValid and entry.ValidationResult ~= DealValidationResult.MISSING_DEPENDENCY );	-- Hide if invalid, unless it is just missing a dependency, the user will update that when it is added to the deal.
 			icon.ValueText:SetHide(true);
 

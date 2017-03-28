@@ -2,6 +2,7 @@
 include("InstanceManager")
 include("EndGameReplayLogic")
 include( "ChatLogic" );
+include( "TeamSupport" );
 
 ---------------------------------------------------------------
 -- Globals
@@ -56,14 +57,15 @@ local Styles = {
 		RibbonTile = "EndGame_RibbonTile_Defeat",
 		Background = "EndGame_BG_Defeat",
 		Movie = "Defeat.bk2",
-        SndStart = "Play_Cinematic_Endgame_Defeat",
-        SndStop = "Stop_Cinematic_Endgame_Defeat",
+		SndStart = "Play_Cinematic_Endgame_Defeat",
+		SndStop = "Stop_Cinematic_Endgame_Defeat",
 	},
 	["GENERIC_VICTORY"] = {
 		RibbonIcon = "ICON_VICTORY_SCORE",
 		Ribbon = "EndGame_Ribbon_Time",
 		RibbonTile = "EndGame_RibbonTile_Time",
 		Background = "EndGame_BG_Time",
+		Color = "COLOR_VICTORY_DEFAULT",
 	},
 	["VICTORY_SCORE"] = {
 		RibbonIcon = "ICON_VICTORY_SCORE",
@@ -71,8 +73,9 @@ local Styles = {
 		RibbonTile = "EndGame_RibbonTile_Time",
 		Background = "EndGame_BG_Time",
 		Movie = "Time.bk2",
-        SndStart = "Play_Cinematic_Endgame_Time",
-        SndStop = "Stop_Cinematic_Endgame_Time",
+		SndStart = "Play_Cinematic_Endgame_Time",
+		SndStop = "Stop_Cinematic_Endgame_Time",
+		Color = "COLOR_VICTORY_SCORE",
 	},
 	["VICTORY_DEFAULT"] = {
 		RibbonIcon = "ICON_VICTORY_DEFAULT",
@@ -80,8 +83,9 @@ local Styles = {
 		RibbonTile = "EndGame_RibbonTile_Domination",
 		Background = "EndGame_BG_Domination",
 		Movie = "Domination.bk2",
-        SndStart = "Play_Cinematic_Endgame_Domination",
-        SndStop = "Stop_Cinematic_Endgame_Domination",
+		SndStart = "Play_Cinematic_Endgame_Domination",
+		SndStop = "Stop_Cinematic_Endgame_Domination",
+		Color = "COLOR_VICTORY_DEFAULT",
 	},
 	["VICTORY_CONQUEST"] = {
 		RibbonIcon = "ICON_VICTORY_CONQUEST",
@@ -89,8 +93,9 @@ local Styles = {
 		RibbonTile = "EndGame_RibbonTile_Domination",
 		Background = "EndGame_BG_Domination",
 		Movie = "Domination.bk2",
-        SndStart = "Play_Cinematic_Endgame_Domination",
-        SndStop = "Stop_Cinematic_Endgame_Domination",
+		SndStart = "Play_Cinematic_Endgame_Domination",
+		SndStop = "Stop_Cinematic_Endgame_Domination",
+		Color = "COLOR_VICTORY_DOMINATION",
 	},
 	["VICTORY_CULTURE"] = {
 		RibbonIcon = "ICON_VICTORY_CULTURE",
@@ -98,8 +103,9 @@ local Styles = {
 		RibbonTile = "EndGame_RibbonTile_Culture",
 		Background = "EndGame_BG_Culture",
 		Movie = "Culture.bk2",
-        SndStart = "Play_Cinematic_Endgame_Culture",
-        SndStop = "Stop_Cinematic_Endgame_Culture",
+		SndStart = "Play_Cinematic_Endgame_Culture",
+		SndStop = "Stop_Cinematic_Endgame_Culture",
+		Color = "COLOR_VICTORY_CULTURE",
 	},
 	["VICTORY_RELIGIOUS"] = {
 		RibbonIcon = "ICON_VICTORY_RELIGIOUS",
@@ -107,8 +113,9 @@ local Styles = {
 		RibbonTile = "EndGame_RibbonTile_Religion",
 		Background = "EndGame_BG_Religion",
 		Movie = "Religion.bk2",
-        SndStart = "Play_Cinematic_Endgame_Religion",
-        SndStop = "Stop_Cinematic_Endgame_Religion",
+		SndStart = "Play_Cinematic_Endgame_Religion",
+		SndStop = "Stop_Cinematic_Endgame_Religion",
+		Color = "COLOR_VICTORY_RELIGION",
 	},
 	["VICTORY_TECHNOLOGY"] = {
 		RibbonIcon = "ICON_VICTORY_TECHNOLOGY",
@@ -116,8 +123,20 @@ local Styles = {
 		RibbonTile = "EndGame_RibbonTile_Science",
 		Background = "EndGame_BG_Science",
 		Movie = "Science.bk2",
-        SndStart = "Play_Cinematic_Endgame_Science",
-        SndStop = "Stop_Cinematic_Endgame_Science",
+		SndStart = "Play_Cinematic_Endgame_Science",
+		SndStop = "Stop_Cinematic_Endgame_Science",
+		Color = "COLOR_VICTORY_SCIENCE",
+	},
+	-- Kluuudge
+	["VICTORY_ALEXANDER"] = {
+		RibbonIcon = "ICON_VICTORY_DEFAULT",
+		Ribbon = "EndGame_Ribbon_Domination",
+		RibbonTile = "EndGame_RibbonTile_Domination",
+		Background = "EndGame_BG_Domination",
+		Movie = "Domination.bk2",
+		SndStart = "Play_Cinematic_Endgame_Domination",
+		SndStop = "Stop_Cinematic_Endgame_Domination",
+		Color = "COLOR_VICTORY_DEFAULT",
 	},
 };
 
@@ -499,25 +518,81 @@ function OnUpdateUI( type:number, tag:string, iData1:number, iData2:number, strD
 end
 
 ----------------------------------------------------------------
+function ViewWinnerPanel(data:table)
+	if data.WinnerName ~= "" then
+		Controls.VictoryPanel:SetHide(false);
+
+		-- Update pennant
+		SetIcon(Controls.VictoryIcon, data.VictoryTypeIcon);
+		SetIcon(Controls.VictoryCivIcon, data.WinnerIcon);
+		Controls.VictoryCivIconBacking:SetColor(data.WinnerBackColor);
+		Controls.VictoryCivIcon:SetColor(data.WinnerFrontColor);
+		Controls.VictoryPennant:SetColor(UI.GetColorValue(data.VictoryTypeColor));
+
+		-- Update victory type name and player/team name
+		Controls.VictoryTypeName:SetText(Locale.ToUpper(data.VictoryTypeHeader));
+		Controls.VictoryPlayerName:SetText(Locale.Lookup(data.WinnerName));
+
+		if data.VictoryBlurb ~= "" then
+			Controls.VictoryBlurb:SetHide(false);
+			Controls.VictoryBlurbDivider:SetHide(false);
+			Controls.VictoryBlurb:SetText(data.VictoryBlurb);
+		else
+			Controls.VictoryBlurb:SetHide(true);
+			Controls.VictoryBlurbDivider:SetHide(true);
+		end
+
+		-- Show local player indicator if local player
+		if data.IsWinnerLocalPlayer then
+			Controls.LocalPlayerRim:SetHide(false);
+			Controls.LocalPlayerArrow:SetHide(false);
+		else
+			Controls.LocalPlayerRim:SetHide(true);
+			Controls.LocalPlayerArrow:SetHide(true);
+		end
+
+		Controls.VictoryPanel:DoAutoSize();
+	else
+		Controls.VictoryPanel:SetHide(true);
+	end
+end
+
+----------------------------------------------------------------
+function ViewDefeatedPanel(data:table)
+	if data.DefeatedName ~= "" then
+		Controls.DefeatedPanel:SetHide(false);
+		Controls.DefeatedTypeName:SetText(Locale.ToUpper("LOC_DEFEAT_DEFAULT_NAME"));
+		Controls.DefeatedPlayerName:SetText(data.DefeatedName);
+		SetIcon(Controls.DefeatedCivIcon, data.DefeatedIcon);
+		Controls.DefeatedCivIconBacking:SetColor(data.DefeatedBackColor);
+		Controls.DefeatedCivIcon:SetColor(data.DefeatedFrontColor);
+		Controls.DefeatedCivIconBacking:ReprocessAnchoring();
+	else
+		Controls.DefeatedPanel:SetHide(true);
+	end
+end
+
+----------------------------------------------------------------
 -- The primary method for updating the UI.
 ----------------------------------------------------------------
-function View(icon, name, blurb, playerIcon, playerName, playerPortrait, style)
+function View(data:table)
 	
-	SetIcon(Controls.RibbonIcon, icon);
-	SetIcon(Controls.PlayerIcon, playerIcon);
+	ViewWinnerPanel(data);
+	ViewDefeatedPanel(data);
 
-	Controls.VictoryName:SetText(Locale.ToUpper(Locale.Lookup(name)));
-	Controls.Blurb:LocalizeAndSetText(blurb);
+	-- Update background
+	Controls.Background:SetTexture(data.RibbonStyle.Background);
 
-	print(style.Background);
-	Controls.Background:SetTexture(style.Background);
-	Controls.Ribbon:SetTexture(style.Ribbon);
-	Controls.RibbonTile:SetTexture(style.RibbonTile);
+	-- Update ribbon
+	SetIcon(Controls.RibbonIcon, data.RibbonIcon);
+	Controls.RibbonLabel:SetText(Locale.ToUpper(Locale.Lookup(data.RibbonText)));
+	Controls.Ribbon:SetTexture(data.RibbonStyle.Ribbon);
+	Controls.RibbonTile:SetTexture(data.RibbonStyle.RibbonTile);
 
-	Controls.PlayerName:LocalizeAndSetText(playerName);
-	if(playerPortrait) then
+	-- Update player portrait
+	if(data.PlayerPortrait) then
 		g_HasPlayerPortrait = true;
-		Controls.PlayerPortrait:SetTexture(playerPortrait);
+		Controls.PlayerPortrait:SetTexture(data.PlayerPortrait);
 		Controls.PlayerPortrait:SetHide(false);
 	else
 		g_HasPlayerPortrait = false;
@@ -532,10 +607,10 @@ function View(icon, name, blurb, playerIcon, playerName, playerPortrait, style)
 		Controls.PlayerPortrait:UnloadTexture();
 	end
 
-	-- Movie begins play-back when UI is shown.
-	g_Movie = style.Movie;
-    g_SoundtrackStart = style.SndStart;
-    g_SoundtrackStop = style.SndStop;
+	---- Movie begins play-back when UI is shown.
+	g_Movie = data.RibbonStyle.Movie;
+    g_SoundtrackStart = data.RibbonStyle.SndStart;
+    g_SoundtrackStop = data.RibbonStyle.SndStop;
 
     if g_Movie ~= nil then
         UI.LoadSoundBankGroup(5);   -- BANKS_FMV, must teach Lua these constants
@@ -553,75 +628,189 @@ function View(icon, name, blurb, playerIcon, playerName, playerPortrait, style)
 end
 
 ----------------------------------------------------------------
--- Collect additional data that will be provided to the view 
--- method.
-----------------------------------------------------------------
-function Data(playerId, victory_or_defeat_type)
-	
-	local p = Players[playerId];
-	local pc = PlayerConfigurations[playerId];
+function DefaultData()
+	local data:table = {};
+		
+	data.PlayerPortrait = "";
 
-	local civType = pc:GetCivilizationTypeName();
-	local leaderType = pc:GetLeaderTypeName();
+	data.RibbonText = "";
+	data.RibbonIcon = "";
+	data.RibbonStyle = nil;
 
-	local victory = GameInfo.Victories[victory_or_defeat_type];
-	local defeat = GameInfo.Defeats[victory_or_defeat_type];
+	data.IsWinnerLocalPlayer = false;
+	data.WinnerName = "";
+	data.WinnerIcon = "";
+	data.WinnerBackColor = nil;
+	data.WinnerFrontColor = nil;
 
-	local playerName = pc:GetPlayerName();
-	local playerIcon = "ICON_" .. civType;
-	local playerPortrait:string;
+	data.VictoryTypeHeader = "";
+	data.VictoryTypeIcon = "";
+	data.VictoryTypeColor = nil;
+	data.VictoryBlurb = "";
 
-	local teamID:number = p:GetTeam();
-	local team:table = Teams[teamID];
-	if #team > 1 then
-		-- Display team information if more than one player on this team
-		playerName = Locale.Lookup("LOC_WORLD_RANKINGS_TEAM", tostring(teamID));
-		playerIcon = "ICON_TEAM_ICON_" .. tostring(teamID);
-	end
+	data.DefeatedName = "";
+	data.DefeatedIcon = "";
+	data.DefeatedBackColor = nil;
+	data.DefeatedFrontColor = nil;
 
-	local loadingInfo:table = GameInfo.LoadingInfo[leaderType];
-	if loadingInfo and loadingInfo.ForegroundImage then
-		playerPortrait = loadingInfo.ForegroundImage;
-	else
-		playerPortrait = leaderType .. "_NEUTRAL";
-	end
-
-	local name, blurb, icon, style;
-	
-	if(defeat) then
-		name = defeat.Name;
-		blurb = defeat.Blurb;	
-		fallbackIcon = nil;
-		style = Styles[defeat.DefeatType];
-		if(style == nil) then
-			style = Styles["GENERIC_DEFEAT"];
-		end
-
-		icon = style.RibbonIcon;
-	
-	elseif(victory) then
-		name = victory.Name;
-		blurb = victory.Blurb;
-		style = Styles[victory.VictoryType];
-		if(style == nil) then
-			style = Styles["GENERIC_VICTORY"];
-		end
-
-		icon = {style.RibbonIcon, "ICON_" .. victory.VictoryType, "ICON_VICTORY_GENERIC"};
-	end
-
-	return icon, name, blurb, playerIcon, playerName, playerPortrait, style;
+	return data;
 end
 
+----------------------------------------------------------------
+function PlayerDefeatedData(playerID:number, defeatType:string)
+	local data:table = DefaultData();
+
+	-- Gather player portrait data
+	local pPlayerConfig = PlayerConfigurations[playerID];
+	local leaderType = pPlayerConfig:GetLeaderTypeName();
+	local loadingInfo:table = GameInfo.LoadingInfo[leaderType];
+	if loadingInfo and loadingInfo.ForegroundImage then
+		data.PlayerPortrait = loadingInfo.ForegroundImage;
+	else
+		data.PlayerPortrait = leaderType .. "_NEUTRAL";
+	end
+
+	-- Gather ribbon data
+	data.RibbonText = Locale.ToUpper("LOC_DEFEAT_DEFAULT_NAME");
+	data.RibbonIcon = "ICON_DEFEAT_GENERIC";
+	data.RibbonStyle = Styles["GENERIC_DEFEAT"];
+
+	-- No winner so clear out winner name
+	data.WinnerName = "";
+
+	-- Defeated player data
+	local pDefeatedConfig = PlayerConfigurations[playerID];
+	local pDefeatedPlayer = Players[playerID];
+	data.DefeatedName = Locale.Lookup(pDefeatedConfig:GetCivilizationDescription());
+	if GameConfiguration.IsAnyMultiplayer() and pDefeatedPlayer:IsHuman() then
+		local defeatedName = Locale.Lookup(pDefeatedConfig:GetPlayerName());
+		data.DefeatedName = data.DefeatedName .. " (" .. defeatedName .. ")"
+	end
+
+	local defeatedCivType = pDefeatedConfig:GetCivilizationTypeName();
+	data.DefeatedIcon = "ICON_" .. defeatedCivType;
+
+	local backColor, frontColor = UI.GetPlayerColors(playerID);
+	data.DefeatedFrontColor = frontColor;
+	data.DefeatedBackColor = backColor;
+
+	return data;
+end
+
+----------------------------------------------------------------
+function TeamVictoryData(winningTeamID:number, victoryType:string)
+	local data:table = DefaultData();
+	local localPlayerID:number = Game.GetLocalPlayer();
+	local pLocalPlayer:table = Players[localPlayerID];
+	local localPlayerTeamID:number = pLocalPlayer:GetTeam();
+	
+	-- Determine if the local player is a winner
+	data.IsWinnerLocalPlayer = winningTeamID == localPlayerTeamID;
+
+	local victoryStyle = Styles[victoryType];
+	if not victoryStyle then
+		if data.IsWinnerLocalPlayer then
+			victoryStyle = Styles["GENERIC_VICTORY"];
+		else
+			victoryStyle = Styles["GENERIC_DEFEAT"];
+		end
+	end
+
+	-- Gather player portrait data
+	local pPlayerConfig = PlayerConfigurations[localPlayerID];
+	local leaderType = pPlayerConfig:GetLeaderTypeName();
+	local loadingInfo:table = GameInfo.LoadingInfo[leaderType];
+	if loadingInfo and loadingInfo.ForegroundImage then
+		data.PlayerPortrait = loadingInfo.ForegroundImage;
+	else
+		data.PlayerPortrait = leaderType .. "_NEUTRAL";
+	end
+
+	-- Gather ribbon data
+	if data.IsWinnerLocalPlayer then
+		data.RibbonText = Locale.ToUpper("LOC_VICTORY_DEFAULT_NAME");
+		data.RibbonIcon = "ICON_VICTORY_UNIVERSAL";
+		data.RibbonStyle = victoryStyle;
+		if(data.RibbonStyle == nil) then
+			data.RibbonStyle = Styles["GENERIC_VICTORY"];
+		end
+	else
+		data.RibbonText = Locale.ToUpper("LOC_DEFEAT_DEFAULT_NAME");
+		data.RibbonIcon = "ICON_DEFEAT_GENERIC";
+		data.RibbonStyle = Styles["GENERIC_DEFEAT"];
+	end
+
+	-- Gather winner data
+	local victory = GameInfo.Victories[victoryType];
+	data.VictoryTypeHeader = victory.Name;
+	data.VictoryTypeIcon = victoryStyle.RibbonIcon;
+	if victoryStyle.Color then
+		data.VictoryTypeColor = victoryStyle.Color;
+	end
+
+	-- Display victory blurb if local player is the winner
+	if data.IsWinnerLocalPlayer then
+		data.VictoryBlurb = Locale.Lookup(victory.Blurb);
+	else
+		data.VictoryBlurb = "";
+	end
+
+	if #Teams[winningTeamID] > 1 then
+		-- Show team info if more than one player on a team
+		data.WinnerName = Locale.Lookup("LOC_WORLD_RANKINGS_TEAM", winningTeamID);
+		data.WinnerIcon = "ICON_TEAM_ICON_" .. winningTeamID;
+		data.WinnerBackColor = GetTeamColor(winningTeamID);
+		data.WinnerFrontColor = UI.GetColorValue("COLOR_WHITE");
+	else
+		-- Show player info if only one player on team
+		local winnerPlayerID:number = Teams[winningTeamID][1];
+		local pWinnerConfig = PlayerConfigurations[winnerPlayerID];
+		local pWinnerPlayer = Players[winnerPlayerID];
+		data.WinnerName = Locale.Lookup(pWinnerConfig:GetCivilizationDescription());
+		if GameConfiguration.IsAnyMultiplayer() and pWinnerPlayer:IsHuman() then
+			local winnerName = Locale.Lookup(pWinnerConfig:GetPlayerName());
+			data.WinnerName = data.WinnerName .. " (" .. winnerName .. ")"
+		end
+
+		local winnerCivType = pWinnerConfig:GetCivilizationTypeName();
+		data.WinnerIcon = "ICON_" .. winnerCivType;
+
+		local backColor, frontColor = UI.GetPlayerColors(winnerPlayerID);
+		data.WinnerFrontColor = frontColor;
+		data.WinnerBackColor = backColor;
+	end
+
+	-- Gather defeated data
+	if data.IsWinnerLocalPlayer then
+		-- No defeated name indicates we should hide the whole panel
+		-- We hide this panel unless the winning player is not the local player
+		data.DefeatedName = "";
+	else
+		local pDefeatedConfig = PlayerConfigurations[localPlayerTeamID];
+		local pDefeatedPlayer = Players[localPlayerTeamID];
+		data.DefeatedName = Locale.Lookup(pDefeatedConfig:GetCivilizationDescription());
+		if GameConfiguration.IsAnyMultiplayer() and pDefeatedPlayer:IsHuman() then
+			local defeatedName = Locale.Lookup(pDefeatedConfig:GetPlayerName());
+			data.DefeatedName = data.DefeatedName .. " (" .. defeatedName .. ")"
+		end
+
+		local defeatedCivType = pDefeatedConfig:GetCivilizationTypeName();
+		data.DefeatedIcon = "ICON_" .. defeatedCivType;
+
+		local backColor, frontColor = UI.GetPlayerColors(localPlayerTeamID);
+		data.DefeatedFrontColor = frontColor;
+		data.DefeatedBackColor = backColor;
+	end
+	
+	return data;
+end
 
 ----------------------------------------------------------------
 -- Called when a player has been defeated.
 -- The UI is only displayed if this player is you.
 ----------------------------------------------------------------
 function OnPlayerDefeat( player, defeat, eventID)
-	print("Player " .. tostring(player) .. " has been defeated! (" .. tostring(defeat) .. ")");
 	local localPlayer = Game.GetLocalPlayer();
-	
 	if (localPlayer and localPlayer >= 0) then		-- Check to see if there is any local player
 		-- Was it the local player?
 		if (localPlayer == player) then
@@ -629,7 +818,11 @@ function OnPlayerDefeat( player, defeat, eventID)
 			-- You have been defeated :(
 			local defeatInfo = GameInfo.Defeats[defeat];
 			defeat = defeatInfo and defeatInfo.DefeatType or "DEFEAT_DEFAULT";
-			View(Data(player, defeat));
+			View(PlayerDefeatedData(player, defeat));
+
+			-- In hotseat games, it is possible for a human player to get defeated by an AI civ during turn processing.
+			-- We trigger an event so the PlayerChange screen can hide itself.
+			LuaEvents.EndGameMenu_ViewingPlayerDefeat();
 		end
 	end
 end
@@ -644,29 +837,18 @@ end
 -- The UI is only displayed if this player is you.
 ----------------------------------------------------------------
 function OnTeamVictory(team, victory, eventID)
-	print("Team " .. tostring(team) .. " has achieved a victory! (" .. tostring(victory) .. ")");
-	local localPlayer = Game.GetLocalPlayer();
 
+	local localPlayer = Game.GetLocalPlayer();
 	if (localPlayer and localPlayer >= 0) then		-- Check to see if there is any local player
 		local p = Players[localPlayer]; 
 
-		if (p:GetTeam() == team) then
-			-- You were victorious!!
-			UI.SetPauseEventID( eventID );
+		-- Only show the defeat screen to other living players.  If a player
+		-- was defeated, they would receive another notification.
+		if(p:IsAlive()) then
+			UI.SetPauseEventID( eventID );	-- Set the pause event, the closing of the end game screen will release it.
 			local victoryInfo = GameInfo.Victories[victory];
 			victory = victoryInfo and victoryInfo.VictoryType or "VICTORY_DEFAULT";
-			View(Data(localPlayer, victory));
-		else
-			-- Another player was victorious...
-			-- In the future, we'll want to be more specific stating that another player has won.
-			-- However we're lacking strings and time.
-		
-			-- Only show the defeat screen to other living players.  If a player
-			-- was defeated, they would receive another notification.
-			if(p:IsAlive()) then
-				UI.SetPauseEventID( eventID );					-- Set the pause event, the closing of the end game screen will release it.
-				View(Data(localPlayer, "DEFEAT_DEFAULT"));
-			end
+			View(TeamVictoryData(team, victory));
 		end
 	end
 end
@@ -690,13 +872,13 @@ function OnShowEndGame(playerId)
 		if(victor == player:GetTeam()) then
 			local victory = GameInfo.Victories[victoryType];
 			if(victory) then
-				View(Data(player:GetID(), victory.VictoryType));
+				View(TeamVictoryData(victor, victory.VictoryType));
 				return;
-			end		
+			end
 		end
 	end
 
-	View(Data(playerId, "DEFEAT_DEFAULT"));
+	View(PlayerDefeatedData(playerId, "DEFEAT_DEFAULT"));
 end
 
 

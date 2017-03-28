@@ -1,6 +1,8 @@
 include("InstanceManager");
 include("TechAndCivicSupport");
 include("SupportFunctions");
+include("GameCapabilities");
+
 --	Hotloading note: The World Tracker button check now positions based on how many hooks are showing.  
 --	You'll need to save "LaunchBar" to see the tracker button appear.
 -- ===========================================================================
@@ -92,6 +94,9 @@ function ToggleAll(hideAll:boolean)
 	Controls.WorldTrackerAlpha:Reverse();
 	Controls.WorldTrackerSlide:Reverse();
 	CheckUnreadChatMessageCount();
+
+	LuaEvents.WorldTracker_ToggleCivicPanel(m_hideCivics or m_hideAll);
+	LuaEvents.WorldTracker_ToggleResearchPanel(m_hideResearch or m_hideAll);
 end
 
 function OnWorldTrackerAnimationFinished()
@@ -123,7 +128,12 @@ function RealizeStack()
 end
 
 -- ===========================================================================
-function UpdateResearchPanel( isHideResearch:boolean )	
+function UpdateResearchPanel( isHideResearch:boolean )
+
+	if not HasCapability("CAPABILITY_TECH_CHOOSER") then
+		isHideResearch = true;
+		Controls.ResearchCheck:SetHide(true);
+	end
 	
 	if isHideResearch ~= nil then
 		m_hideResearch = isHideResearch;		
@@ -131,7 +141,7 @@ function UpdateResearchPanel( isHideResearch:boolean )
 	
 	m_researchInstance.MainPanel:SetHide( m_hideResearch );
 	Controls.ResearchCheck:SetCheck( not m_hideResearch );
-	LuaEvents.WorldTracker_ToggleResearchPanel( m_hideResearch );
+	LuaEvents.WorldTracker_ToggleResearchPanel(m_hideResearch or m_hideAll);
 	RealizeEmptyMessage();
 	RealizeStack();
 
@@ -165,13 +175,18 @@ end
 -- ===========================================================================
 function UpdateCivicsPanel(hideCivics:boolean)
 
+	if not HasCapability("CAPABILITY_CIVICS_CHOOSER") then
+		hideCivics = true;
+		Controls.CivicsCheck:SetHide(true);
+	end
+
 	if hideCivics ~= nil then
 		m_hideCivics = hideCivics;		
 	end
 
 	m_civicsInstance.MainPanel:SetHide(m_hideCivics); 
 	Controls.CivicsCheck:SetCheck(not m_hideCivics);
-	LuaEvents.WorldTracker_ToggleCivicPanel(m_hideCivics);
+	LuaEvents.WorldTracker_ToggleCivicPanel(m_hideCivics or m_hideAll);
 	RealizeEmptyMessage();
 	RealizeStack();
 
@@ -243,8 +258,6 @@ function Refresh()
 	if localPlayer < 0 then
 		ToggleAll(true);
 		return;
-	else
-		ToggleAll(false);
 	end
 
 	local pPlayerTechs :table = Players[localPlayer]:GetTechs();
@@ -256,6 +269,13 @@ function Refresh()
 	m_currentCivicID = pPlayerCulture:GetProgressingCivic();
 	m_lastCivicCompletedID = -1;
 	UpdateCivicsPanel();
+
+	-- Hide world tracker by default if there are no tracker options enabled
+	if( Controls.ChatCheck:IsHidden() and 
+		Controls.CivicsCheck:IsHidden() and
+		Controls.ResearchCheck:IsHidden() ) then
+		ToggleAll(true);
+	end
 end
 
 -- ===========================================================================

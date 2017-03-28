@@ -6,6 +6,7 @@
 include("TabSupport");
 include("InstanceManager");
 include("ModalScreen_PlayerYieldsHelper");
+include("GameCapabilities");
 
 -- ===========================================================================
 --	CONSTANTS
@@ -1462,6 +1463,11 @@ end
 -- ===========================================================================
 function Initialize()
 	
+	if (not HasCapability("CAPABILITY_RELIGION_VIEW")) then
+		-- Religion is off, just exit
+		return;
+	end
+
 	--[[ DEBUG
 	WorkingTowardsPantheon();
 	WorkingTowardsReligion();

@@ -12,6 +12,7 @@ include("Civ6Common");
 local m_NonLocalPlayerSlotManager	:table = InstanceManager:new("NonLocalPlayerSlotInstance", "Root", Controls.NonLocalPlayersSlotStack);
 local m_singlePlayerID				:number = 0;			-- The player ID of the human player in singleplayer.
 local m_AdvancedMode				:boolean = false;
+local m_BasicTooltipData			:table = nil; -- Gets initialized in RefreshPlayerSlots, reused in UI_PostRefreshParameters
 
 -- ===========================================================================
 -- Input Handler
@@ -163,7 +164,7 @@ function RefreshPlayerSlots()
 	local basicPlacard	:table = {};
 	ContextPtr:BuildInstanceForControl( "LeaderPlacard", basicPlacard, Controls.BasicPlacardContainer );
 
-	local basicTooltipData : table = {
+	m_BasicTooltipData = {
 		InfoStack			= basicTooltip.InfoStack,
 		InfoScrollPanel		= basicTooltip.InfoScrollPanel;
 		CivToolTipSlide		= basicTooltip.CivToolTipSlide;
@@ -195,7 +196,7 @@ function RefreshPlayerSlots()
 
 	for i, player_id in ipairs(player_ids) do	
 		if(m_singlePlayerID == player_id) then
-			SetupLeaderPulldown(player_id, Controls, "Basic_LocalPlayerPulldown", "Basic_LocalPlayerCivIcon", "Basic_LocalPlayerLeaderIcon", basicTooltipData);
+			SetupLeaderPulldown(player_id, Controls, "Basic_LocalPlayerPulldown", "Basic_LocalPlayerCivIcon", "Basic_LocalPlayerLeaderIcon", m_BasicTooltipData);
 			SetupLeaderPulldown(player_id, Controls, "Advanced_LocalPlayerPulldown", "Advanced_LocalPlayerCivIcon", "Advanced_LocalPlayerLeaderIcon", advancedTooltipData);
 		else
 			local ui_instance = m_NonLocalPlayerSlotManager:GetInstance();
@@ -242,6 +243,18 @@ function UI_PostRefreshParameters()
 			Controls.StartButton:LocalizeAndSetToolTip("LOC_SETUP_PLAYER_PARAMETER_ERROR");
 		end
 	end
+
+	-- TTP[20948]: Display leader placard for the currently selected leader
+	local playerConfig = PlayerConfigurations[m_singlePlayerID];
+	if(playerConfig and m_BasicTooltipData) then
+		local selectedLeader = playerConfig:GetLeaderTypeID();
+		if(selectedLeader ~= -1) then
+			local leaderType = playerConfig:GetLeaderTypeName();
+			local info = GetPlayerInfo(playerConfig:GetValue("LEADER_DOMAIN"), leaderType);
+			DisplayCivLeaderToolTip(info, m_BasicTooltipData, false);
+		end
+	end
+
 end
 
 

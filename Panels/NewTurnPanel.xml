@@ -2,14 +2,11 @@
 <Context Style="FontNormal20">
 	<AlphaAnim AlphaBegin="0" AlphaEnd="1" Function="Root" Speed="4" Cycle="Once" Size="full,full" ID="AlphaIn">
 		<SlideAnim Begin="0,-50" End="0,0" Function="Root" Speed="4" Cycle="Once" Size="full,full" ID="SlideIn">
-			<AlphaAnim AlphaBegin="1" AlphaEnd="0" Function="Root" Pause="5" Speed="4" Cycle="Once" Size="full,full" ID="AlphaOut">
-				<SlideAnim Begin="0,0" End="0,-50" Function="Root" Pause="5" Speed="4" Cycle="Once" Size="full,full" ID="SlideOut">
+			<AlphaAnim AlphaBegin="1" AlphaEnd="0" Function="Root" Pause="4" Speed="4" Cycle="Once" Size="full,full" ID="AlphaOut">
+				<SlideAnim Begin="0,0" End="0,-50" Function="Root" Pause="4" Speed="4" Cycle="Once" Size="full,full" ID="SlideOut">
 					<!-- Window Containers -->
-					<Grid Style="DropShadow" Size="450,100" Offset="0,100" Anchor="C,T" ID="Root" Hidden="1">
-						<Stack ID="NewTurnStack" Anchor="C,T" Offset="0,10" StackGrowth="Bottom" Padding="10">
-							<Label String="UNKNOWN PHASE" Style="FontNormal26" Anchor="C,T" ID="NewTurnPhase"/>
-							<Label String="UNKNOWN TURN" Style="FontNormal22" Anchor="C,T" ID="NewTurnLabel"/>
-						</Stack>
+					<Grid ID="Root" Style="DropShadow" Size="450,150" Offset="0,100" Anchor="C,T" Hidden="1" Color="255,255,255,100">
+						<Label String="UNKNOWN TURN" Style="FlairShadow22" Anchor="C,C" ID="NewTurnLabel"/>
 					</Grid>
 				</SlideAnim>
 			</AlphaAnim>

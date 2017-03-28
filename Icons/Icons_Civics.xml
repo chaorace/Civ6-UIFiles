@@ -59,6 +59,7 @@
     <Row Name="ICON_CIVIC_SPACE_RACE"		        Index="47" Atlas="ICON_ATLAS_CIVICS"/>
     <Row Name="ICON_CIVIC_GLOBALIZATION"				Index="48" Atlas="ICON_ATLAS_CIVICS"/>
     <Row Name="ICON_CIVIC_SOCIAL_MEDIA"				  Index="49" Atlas="ICON_ATLAS_CIVICS"/>
+    <Row Name="ICON_CIVIC_FUTURE_CIVIC"				  Index="50" Atlas="ICON_ATLAS_CIVICS"/>
 
     <Row Name="ICON_CIVIC_CODE_OF_LAWS_FOW"				  Index="0" Atlas="ICON_ATLAS_CIVICS_FOW"/>
     <Row Name="ICON_CIVIC_CRAFTSMANSHIP_FOW"	      Index="1" Atlas="ICON_ATLAS_CIVICS_FOW"/>
@@ -110,6 +111,7 @@
     <Row Name="ICON_CIVIC_SPACE_RACE_FOW"		        Index="47" Atlas="ICON_ATLAS_CIVICS_FOW"/>
     <Row Name="ICON_CIVIC_GLOBALIZATION_FOW"				Index="48" Atlas="ICON_ATLAS_CIVICS_FOW"/>
     <Row Name="ICON_CIVIC_SOCIAL_MEDIA_FOW"				  Index="49" Atlas="ICON_ATLAS_CIVICS_FOW"/>
+    <Row Name="ICON_CIVIC_FUTURE_CIVIC_FOW"				  Index="50" Atlas="ICON_ATLAS_CIVICS_FOW"/>
 
 	</IconDefinitions>
 </GameInfo>

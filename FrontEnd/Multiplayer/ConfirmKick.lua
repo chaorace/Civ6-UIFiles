@@ -61,11 +61,33 @@ function UpdateKickLabel()
 	Controls.StackContents:ReprocessAnchoring();
 end
 
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
-LuaEvents.SetKickPlayer.Add(function(playerID, playerName)
+-------------------------------------------------
+-------------------------------------------------
+function OnSetKickPlayer(playerID, playerName)
 	g_kickIdx = playerID;
 	g_kickName = playerName;
 	UpdateKickLabel();
-end);
+end
+
+-------------------------------------------------
+-------------------------------------------------
+function OnMultiplayerPostPlayerDisconnected(iPlayerID)
+	-- Cancel out if the target player has disconnected from the game.
+	if(ContextPtr:IsHidden() == false) then
+		if(g_kickIdx == iPlayerID) then
+			OnCancel();
+		end
+	end
+end
+
+-- ===========================================================================
+--	Initialize screen
+-- ===========================================================================
+function Initialize()
+	Events.MultiplayerPostPlayerDisconnected.Add(OnMultiplayerPostPlayerDisconnected);
+
+	LuaEvents.SetKickPlayer.Add(OnSetKickPlayer);
+end
+Initialize();
+
 

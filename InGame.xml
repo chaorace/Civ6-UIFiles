@@ -94,7 +94,7 @@
 	</Container>
 
 	<Container		ID="EndGame">
-		<!-- This container will hold the context for the end game.  Which end game screen is used is determined in this context's lua code. -->
+		<LuaContext	ID="EndGameMenu" FileName="EndGameMenu" Hidden="1"	/>
 	</Container>
 	
 	<Container		ID="Diplomacy">

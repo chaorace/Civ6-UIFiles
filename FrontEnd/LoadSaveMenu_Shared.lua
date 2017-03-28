@@ -250,6 +250,9 @@ function PopulateInspectorData(fileInfo, fileName, mod_errors)
 		-- Set default file data for save game...
 		local defaultFileName: string = "";
 		local turnNumber = Game.GetCurrentGameTurn();
+		if GameCapabilities.HasCapability("CAPABILITY_DISPLAY_NORMALIZED_TURN") then
+			turnNumber = (turnNumber - GameConfiguration.GetStartTurn()) + 1; -- Keep turns starting at 1.
+		end
 		local localPlayer = Game.GetLocalPlayer();
 		if (localPlayer ~= -1) then
 			local player = Players[localPlayer];

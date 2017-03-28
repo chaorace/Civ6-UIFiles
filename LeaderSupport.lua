@@ -131,6 +131,7 @@ end
 function LeaderSupport_Initialize()
 	ms_bLeaderIsVisible = false;
 	ms_bInitialAnimtion = true;
+	ms_LeaderAnimationQueue = {};
 end
 
 ------------------------------------------------------------------------------
