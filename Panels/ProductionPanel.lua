@@ -212,6 +212,14 @@ function BuildBuilding(city, buildingEntry)
 		bNeedsPlacement = false;
 	end
 
+	-- If it's a Wonder and the city already has the building then it doesn't need to be replaced.
+	if (bNeedsPlacement) then
+		local cityBuildings = city:GetBuildings();
+		if (cityBuildings:HasBuilding(buildingEntry.Hash)) then
+			bNeedsPlacement = false;
+		end
+	end
+
 	-- Does the building need to be placed?
 	if ( bNeedsPlacement ) then			
 		-- If so, set the placement mode
@@ -273,11 +281,12 @@ function PurchaseUnit(city, unitEntry)
 	tParameters[CityCommandTypes.PARAM_MILITARY_FORMATION_TYPE] = MilitaryFormationTypes.STANDARD_MILITARY_FORMATION;
 	if (unitEntry.Yield == "YIELD_GOLD") then
 		tParameters[CityCommandTypes.PARAM_YIELD_TYPE] = GameInfo.Yields["YIELD_GOLD"].Index;
+		UI.PlaySound("Purchase_With_Gold");
 	else
 		tParameters[CityCommandTypes.PARAM_YIELD_TYPE] = GameInfo.Yields["YIELD_FAITH"].Index;	
+		UI.PlaySound("Purchase_With_Faith");
 	end
 	CityManager.RequestCommand(city, CityCommandTypes.PURCHASE, tParameters);
-    UI.PlaySound("Purchase_With_Gold");
 end
 
 -- ===========================================================================
@@ -287,11 +296,12 @@ function PurchaseUnitCorps(city, unitEntry)
 	tParameters[CityCommandTypes.PARAM_MILITARY_FORMATION_TYPE] = MilitaryFormationTypes.CORPS_MILITARY_FORMATION;
 	if (unitEntry.Yield == "YIELD_GOLD") then
 		tParameters[CityCommandTypes.PARAM_YIELD_TYPE] = GameInfo.Yields["YIELD_GOLD"].Index;
+		UI.PlaySound("Purchase_With_Gold");
 	else
 		tParameters[CityCommandTypes.PARAM_YIELD_TYPE] = GameInfo.Yields["YIELD_FAITH"].Index;	
+		UI.PlaySound("Purchase_With_Faith");
 	end
 	CityManager.RequestCommand(city, CityCommandTypes.PURCHASE, tParameters);
-    UI.PlaySound("Purchase_With_Gold");
 end
 
 -- ===========================================================================
@@ -301,11 +311,12 @@ function PurchaseUnitArmy(city, unitEntry)
 	tParameters[CityCommandTypes.PARAM_MILITARY_FORMATION_TYPE] = MilitaryFormationTypes.ARMY_MILITARY_FORMATION;
 	if (unitEntry.Yield == "YIELD_GOLD") then
 		tParameters[CityCommandTypes.PARAM_YIELD_TYPE] = GameInfo.Yields["YIELD_GOLD"].Index;
+		UI.PlaySound("Purchase_With_Gold");
 	else
 		tParameters[CityCommandTypes.PARAM_YIELD_TYPE] = GameInfo.Yields["YIELD_FAITH"].Index;	
+		UI.PlaySound("Purchase_With_Faith");
 	end
 	CityManager.RequestCommand(city, CityCommandTypes.PURCHASE, tParameters);
-    UI.PlaySound("Purchase_With_Gold");
 end
 
 -- ===========================================================================
@@ -314,11 +325,12 @@ function PurchaseBuilding(city, buildingEntry)
 	tParameters[CityCommandTypes.PARAM_BUILDING_TYPE] = buildingEntry.Hash;
 	if (buildingEntry.Yield == "YIELD_GOLD") then
 		tParameters[CityCommandTypes.PARAM_YIELD_TYPE] = GameInfo.Yields["YIELD_GOLD"].Index;
+		UI.PlaySound("Purchase_With_Gold");
 	else
 		tParameters[CityCommandTypes.PARAM_YIELD_TYPE] = GameInfo.Yields["YIELD_FAITH"].Index;	
+		UI.PlaySound("Purchase_With_Faith");
 	end
 	CityManager.RequestCommand(city, CityCommandTypes.PURCHASE, tParameters);
-    UI.PlaySound("Purchase_With_Gold");
 end
 
 -- ===========================================================================
@@ -1023,6 +1035,30 @@ function PopulateList(data, listMode, listIM)
 			unitListing.TrainUnit:SetToolTipString(item.ToolTip);
 			unitListing.Disabled:SetToolTipString(item.ToolTip);
 
+			-- Show/hide religion indicator icon
+			if unitListing.ReligionIcon then
+				local showReligionIcon:boolean = false;
+
+				if item.ReligiousStrength and item.ReligiousStrength > 0 then
+					if unitListing.ReligionIcon then
+						local religionType:number = Players[Game.GetLocalPlayer()]:GetReligion():GetReligionTypeCreated();
+						if religionType > 0 then
+							local religion:table = GameInfo.Religions[religionType];
+							local religionIcon:string = "ICON_" .. religion.ReligionType;
+							local religionColor:number = UI.GetColorValue(religion.Color);
+
+							unitListing.ReligionIcon:SetIcon(religionIcon);
+							unitListing.ReligionIcon:SetColor(religionColor);
+							unitListing.ReligionIcon:LocalizeAndSetToolTip(religion.Name);
+							unitListing.ReligionIcon:SetHide(false);
+							showReligionIcon = true;
+						end
+					end
+				end
+
+				unitListing.ReligionIcon:SetHide(not showReligionIcon);
+			end
+
 			-- Set Icon color and backing
 			local textureName = TEXTURE_BASE;
 			if item.Type ~= -1 then
@@ -1650,7 +1686,7 @@ function Refresh()
 				end
 				
 				local allReasons			:string = ComposeFailureReasonStrings( isDisabled, results );
-				local sToolTip				:string = ToolTipHelper.GetDistrictToolTip( row.Hash ) .. allReasons;
+				local sToolTip				:string = ToolTipHelper.GetToolTip(row.DistrictType, Game.GetLocalPlayer()) .. allReasons;
 				
 				local iProductionCost		:number = buildQueue:GetDistrictCost( row.Index );
 				local iProductionProgress	:number = buildQueue:GetDistrictProgress( row.Index );
@@ -1678,7 +1714,7 @@ function Refresh()
 				new_data.CurrentProduction = row.Name;
 			end
 			
-			if row.Hash ~= currentProductionHash and not row.MustPurchase and buildQueue:CanProduce( row.Hash, true ) then
+			if row.Hash ~= currentProductionHash and (not row.MustPurchase or cityBuildings:IsPillaged(row.Hash)) and buildQueue:CanProduce( row.Hash, true ) then
 				local isCanStart, results			 = buildQueue:CanProduce( row.Hash, false, true );
 				local isDisabled			:boolean = not isCanStart;
 				local allReasons			 :string = ComposeFailureReasonStrings( isDisabled, results );
@@ -1701,7 +1737,7 @@ function Refresh()
 					Kind			= row.Kind, 
 					TurnsLeft		= buildQueue:GetTurnsLeft( row.Hash ), 
 					Disabled		= isDisabled, 
-					Repair			= cityBuildings:IsPillaged( row.Index ), 
+					Repair			= cityBuildings:IsPillaged( row.Hash ), 
 					Cost			= iProductionCost, 
 					Progress		= iProductionProgress, 
 					IsWonder		= row.IsWonder,
@@ -1741,26 +1777,27 @@ function Refresh()
 				sToolTip = sToolTip .. ComposeProductionCostString( nProductionProgress, nProductionCost );
 				
 				local kUnit :table = {
-					Type			= row.UnitType, 
-					Name			= row.Name, 
-					ToolTip			= sToolTip, 
-					Hash			= row.Hash, 
-					Kind			= row.Kind, 
-					TurnsLeft		= buildQueue:GetTurnsLeft( row.Hash ), 
-					Disabled		= isDisabled, 
-					Civilian		= row.FormationClass == "FORMATION_CLASS_CIVILIAN",
-					Cost			= nProductionCost, 
-					Progress		= nProductionProgress, 
-					Corps			= false,
-					CorpsCost		= 0,
-					CorpsTurnsLeft	= 1,
-					CorpsTooltip	= "",
-					CorpsName		= "",
-					Army			= false,
-					ArmyCost		= 0,
-					ArmyTurnsLeft	= 1,
-					ArmyTooltip		= "",
-					ArmyName		= ""
+					Type				= row.UnitType, 
+					Name				= row.Name, 
+					ToolTip				= sToolTip, 
+					Hash				= row.Hash, 
+					Kind				= row.Kind, 
+					TurnsLeft			= buildQueue:GetTurnsLeft( row.Hash ), 
+					Disabled			= isDisabled, 
+					Civilian			= row.FormationClass == "FORMATION_CLASS_CIVILIAN",
+					Cost				= nProductionCost, 
+					Progress			= nProductionProgress, 
+					Corps				= false,
+					CorpsCost			= 0,
+					CorpsTurnsLeft		= 1,
+					CorpsTooltip		= "",
+					CorpsName			= "",
+					Army				= false,
+					ArmyCost			= 0,
+					ArmyTurnsLeft		= 1,
+					ArmyTooltip			= "",
+					ArmyName			= "",
+					ReligiousStrength	= row.ReligiousStrength
 				};
 				
 				-- Should we present options for building Corps or Army versions?

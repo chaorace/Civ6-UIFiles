@@ -19,7 +19,7 @@ function RealizeMoveRadius( kUnit:table )
 	UILens.ClearLayerHexes( LensLayers.MOVEMENT_RANGE );
 	UILens.ClearLayerHexes( LensLayers.MOVEMENT_ZONE_OF_CONTROL );
 
-	if kUnit ~= nil and ( not GameInfo.Units[kUnit:GetUnitType()].IgnoreMoves )then
+	if kUnit ~= nil and ( not GameInfo.Units[kUnit:GetUnitType()].IgnoreMoves ) and ( not UI.IsGameCoreBusy() ) then
 		
 		if not ( kUnit:GetMovesRemaining() > 0 )then
 			return;
@@ -40,7 +40,7 @@ function RealizeMoveRadius( kUnit:table )
 			
 			if not kUnit:HasMovedIntoZOC() then
 				kMovePlots	 = UnitManager.GetReachableMovement( kUnit );
-				kZOCPlots	 = UnitManager.GetReachableZonesOfControl( kUnit );
+				kZOCPlots	 = UnitManager.GetReachableZonesOfControl( kUnit, true );	-- Only plots visible to the unit.
 				if kZOCPlots == nil then kZOCPlots = {} end
 			else
 				kMovePlots = {};
@@ -98,7 +98,7 @@ function RealizeGreatPersonLens( kUnit:table )
 	if UILens.IsLayerOn( LensLayers.HEX_COLORING_GREAT_PEOPLE ) then
 		UILens.ToggleLayerOff(LensLayers.HEX_COLORING_GREAT_PEOPLE);
 	end
-	if kUnit ~= nil then
+	if kUnit ~= nil and ( not UI.IsGameCoreBusy() ) then
 		local playerID:number = kUnit:GetOwner();
 		if playerID == Game.GetLocalPlayer() then
 			local kUnitGreatPerson:table = kUnit:GetGreatPerson();

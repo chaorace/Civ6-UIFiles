@@ -1,4 +1,5 @@
 -- Requires InstanceManager
+include("SupportFunctions");
 
 -------------------------------------------------------------------
 -- Color Utilities
@@ -401,7 +402,7 @@ function ReplayGraphRefresh()
 			graphLegendInstance.LegendIcon:SetColor(UI.GetColorValue(color.Type));
 							
 			if(player.Name ~= nil) then
-				graphLegendInstance.LegendName:LocalizeAndSetText(player.Name);
+				TruncateStringWithTooltip(graphLegendInstance.LegendName, graphLegendInstance.GraphLegend:GetSizeX() - 52, Locale.Lookup(player.Name));
 			end	
 					
 			-- Default city states to be unchecked.

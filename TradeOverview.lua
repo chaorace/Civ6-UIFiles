@@ -256,6 +256,7 @@ end
 function SetMyRoutesTabSelected( isSelected:boolean )
 	Controls.MyRoutesButton:SetSelected(isSelected);
 	Controls.MyRoutesTabLabel:SetHide(isSelected);
+	Controls.MyRoutesSelected:SetHide(not isSelected);
 	Controls.MyRoutesSelectedArrow:SetHide(not isSelected);
 	Controls.MyRoutesTabSelectedLabel:SetHide(not isSelected);
 end
@@ -264,6 +265,7 @@ end
 function SetRoutesToCitiesTabSelected( isSelected:boolean )
 	Controls.RoutesToCitiesButton:SetSelected(isSelected);
 	Controls.RoutesToCitiesTabLabel:SetHide(isSelected);
+	Controls.RoutesToCitiesSelected:SetHide(not isSelected);
 	Controls.RoutesToCitiesSelectedArrow:SetHide(not isSelected);
 	Controls.RoutesToCitiesTabSelectedLabel:SetHide(not isSelected);
 end
@@ -272,6 +274,7 @@ end
 function SetAvailableRoutesTabSelected( isSelected:boolean )
 	Controls.AvailableRoutesButton:SetSelected(isSelected);
 	Controls.AvailableRoutesTabLabel:SetHide(isSelected);
+	Controls.AvailableRoutesSelected:SetHide(not isSelected);
 	Controls.AvailableRoutesSelectedArrow:SetHide(not isSelected);
 	Controls.AvailableRoutesTabSelectedLabel:SetHide(not isSelected);
 end

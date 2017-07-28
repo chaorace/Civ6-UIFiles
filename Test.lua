@@ -1,4 +1,4 @@
-include("PopupDialogSupport");
+include("PopupDialog");
 
 function Initialize()	
 	print("Test.LUA loaded!");

@@ -6,7 +6,7 @@ include( "Civ6Common" );
 include( "SupportFunctions" ); --DarkenLightenColor
 include( "InputSupport" );
 include( "InstanceManager" );
-include( "PopupDialogSupport" );
+include( "PopupDialog" );
 include( "LocalPlayerActionSupport" );
 
 
@@ -54,11 +54,26 @@ function OnRetireGame()
 				if (not m_kPopupDialog:IsOpen()) then
 					m_kPopupDialog:AddText(	  Locale.Lookup("LOC_GAME_MENU_RETIRE_WARNING"));
 					m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_NO_BUTTON_CAPTION"), nil );
-					m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnReallyRetire, nil, nil, "PopupButtonInstanceAlt" );
+					m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnReallyRetire, nil, nil, "PopupButtonInstanceRed" );
 					m_kPopupDialog:Open();
 				end
 			end
 		end
+	end
+end
+
+-- ===========================================================================
+function OnReallyRestart()
+	-- Start a fresh game using the existing game configuration.
+	Network.RestartGame();
+end
+
+function OnRestartGame()
+	if (not m_kPopupDialog:IsOpen()) then
+		m_kPopupDialog:AddText(	  Locale.Lookup("LOC_GAME_MENU_RESTART_WARNING"));
+		m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_NO_BUTTON_CAPTION"), nil );
+		m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnReallyRestart, nil, nil, "PopupButtonInstanceRed" );
+		m_kPopupDialog:Open();
 	end
 end
 
@@ -77,7 +92,7 @@ function OnExitGameAskAreYouSure()
 	if (not m_kPopupDialog:IsOpen()) then
 		m_kPopupDialog:AddText(	  Locale.Lookup("LOC_GAME_MENU_QUIT_WARNING"));
 		m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_NO_BUTTON_CAPTION"), nil );
-		m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnExitGame, nil, nil, "PopupButtonInstanceAlt" );
+		m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnExitGame, nil, nil, "PopupButtonInstanceRed" );
 		m_kPopupDialog:Open();
 	end
 end
@@ -88,7 +103,7 @@ function OnMainMenu()
 	if (not m_kPopupDialog:IsOpen()) then
 		m_kPopupDialog:AddText(	  Locale.Lookup("LOC_GAME_MENU_EXIT_WARNING"));
 		m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_NO_BUTTON_CAPTION"), OnNo );
-		m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnYes, nil, nil, "PopupButtonInstanceAlt" );
+		m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnYes, nil, nil, "PopupButtonInstanceRed" );
 		m_kPopupDialog:Open();
 	end
 end
@@ -202,12 +217,14 @@ function SetupButtons()
 	local bIsMultiplayer = GameConfiguration.IsAnyMultiplayer();
 	local bCanSave = CanLocalPlayerSaveGame();
 	local bCanLoad = CanLocalPlayerLoadGame();
+	local bCanRestart = not GameConfiguration.IsNetworkMultiplayer();
 	local bIsLocalPlayersTurn = IsLocalPlayerTurnActive();
 
 	Controls.QuickSaveButton:SetDisabled( not bCanSave );
 	Controls.SaveGameButton:SetDisabled( not bCanSave );
 	Controls.LoadGameButton:SetDisabled( not bCanLoad );
 	Controls.RetireButton:SetDisabled( not bIsLocalPlayersTurn );
+	Controls.RestartButton:SetDisabled( not bCanRestart );
 
 	-- Hide the restart button until functionality is implemented and stable.
 	Controls.RestartGameButton:SetHide(true); -- m_isSimpleMenu or bIsAutomation or bIsMultiplayer);
@@ -316,11 +333,10 @@ function OnNo( )
 	m_kPopupDialog:Close();
 end
 
-
 -- ===========================================================================
 function KeyHandler( key:number )
 	if key == Keys.VK_ESCAPE then		
-		if not Controls.PopupDialog:IsHidden() then
+		if m_kPopupDialog:IsOpen() then
 			m_kPopupDialog:Close();
 		else
 			if (not ContextPtr:IsHidden() ) then
@@ -458,6 +474,8 @@ function Initialize()
 	Controls.QuickSaveButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);                   
 	Controls.RetireButton:RegisterCallback( Mouse.eLClick, OnRetireGame );
 	Controls.RetireButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	Controls.RestartButton:RegisterCallback( Mouse.eLClick, OnRestartGame );
+	Controls.RestartButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.ReturnButton:RegisterCallback( Mouse.eLClick, OnReturn );
 	Controls.ReturnButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.SaveGameButton:RegisterCallback( Mouse.eLClick, OnSaveGame );
@@ -477,10 +495,7 @@ function Initialize()
 	Controls.VersionLabel:SetText( UI.GetAppVersion() );
 
 	-- Custom popup setup	
-	m_kPopupDialog = PopupDialogLogic:new( "InGameTopOptionsMenu", Controls.PopupDialog, Controls.PopupStack );
-	m_kPopupDialog:SetInstanceNames( "PopupButtonInstance", "Button", "PopupTextInstance", "Text", "RowInstance", "Row");
-	m_kPopupDialog:SetOpenAnimationControls( Controls.PopupAlphaIn, Controls.PopupSlideIn );	
-	m_kPopupDialog:SetSize(400,200);
+	m_kPopupDialog = PopupDialog:new( "InGameTopOptionsMenu" );
 
 	if UI.HasFeature("Demo") then
 		m_isSimpleMenu = true;

@@ -1,8 +1,10 @@
 -- ===========================================================================
 --	Leader container list on top of the HUD
 -- ===========================================================================
+include("DiplomacyRibbonSupport");
 include("InstanceManager");
 include("TeamSupport");
+include("LeaderIcon");
 
 -- ===========================================================================
 --	CONSTANTS
@@ -21,13 +23,6 @@ local BAR_PADDING			:number	= 50;
 
 local TEAM_RIBBON_SIZE		:number = 53;
 local TEAM_RIBBON_PREFIX	:string = "ICON_TEAM_RIBBON_";
-
-local VALID_RELATIONSHIPS	:table = {
-	"DIPLO_STATE_ALLIED",
-	"DIPLO_STATE_DECLARED_FRIEND",
-	"DIPLO_STATE_DENOUNCED",
-	"DIPLO_STATE_WAR"
-};
 
 -- ===========================================================================
 --	VARIABLES
@@ -62,103 +57,17 @@ function OnLeaderClicked(playerID : number )
 	end
 end
 
-function IsValidRelationship(relationshipType:string)
-	for _:number, tmpType:string in ipairs(VALID_RELATIONSHIPS) do
-		if relationshipType == tmpType then
-			return true;
-		end
-	end
-	return false;
-end
-
 -- ===========================================================================
 --	Add a leader (from right to left)
 -- ===========================================================================
 function AddLeader(iconName : string, playerID : number, isUniqueLeader: boolean)
 	m_leadersMet = m_leadersMet + 1;
 
-	local pPlayer:table = Players[playerID];
-	local pPlayerConfig:table = PlayerConfigurations[playerID];
-	local isHuman:boolean = pPlayerConfig:IsHuman();
-
 	-- Create a new leader instance
-	local instance:table = m_kLeaderIM:GetInstance();
+	local leaderIcon, instance = LeaderIcon:GetInstance(m_kLeaderIM);
 	m_uiLeadersByID[playerID] = instance;
-	
-	-- Display the civ colors/icon for duplicate civs
-	if(isUniqueLeader == false) then
-		local backColor, frontColor  = UI.GetPlayerColors( playerID );
-		instance.CivIndicator:SetHide(false);
-		instance.CivIndicator:SetColor(backColor);
-		instance.CivIcon:SetColor(frontColor);
-		instance.CivIcon:SetIcon("ICON_"..pPlayerConfig:GetCivilizationTypeName());
-	end
-
-	-- Set leader portrait
-	instance.Portrait:SetIcon(iconName);
-	-- Register the click handler
-	instance.Button:RegisterCallback( Mouse.eLClick, function() OnLeaderClicked(playerID); end );
-
-	local bShowRelationshipIcon:boolean = false;
-	local localPlayerID:number = Game.GetLocalPlayer();
-
-	if(playerID == localPlayerID) then
-		instance.YouIndicator:SetHide(false);
-	else
-		-- Set relationship status (for non-local players)
-		local diplomaticAI:table = pPlayer:GetDiplomaticAI();
-		local relationshipStateID:number = diplomaticAI:GetDiplomaticStateIndex(localPlayerID);
-		if relationshipStateID ~= -1 then
-			local relationshipState:table = GameInfo.DiplomaticStates[relationshipStateID];
-			-- Always show relationship icon for AIs, only show player triggered states for humans
-			if not isHuman or IsValidRelationship(relationshipState.StateType) then
-				-- KWG: This is bad, there is a piece of art that is tied to the order of a database entry.  Please fix!
-				instance.Relationship:SetVisState(relationshipStateID);
-				instance.Relationship:SetToolTipString(Locale.Lookup(relationshipState.Name));
-				bShowRelationshipIcon = true;
-			end
-		end
-	end
-
-	instance.Relationship:SetHide(not bShowRelationshipIcon);
-
-	-- Set the tooltip
-	if(pPlayerConfig ~= nil) then
-		local leaderTypeName:string = pPlayerConfig:GetLeaderTypeName();
-		if(leaderTypeName ~= nil) then
-			local leaderDesc:string = pPlayerConfig:GetLeaderName();
-			local civDesc:string = pPlayerConfig:GetCivilizationDescription();
-			
-			if GameConfiguration.IsAnyMultiplayer() and isHuman then
-				if(playerID ~= localPlayerID and not Players[localPlayerID]:GetDiplomacy():HasMet(playerID)) then
-					instance.Portrait:SetToolTipString(Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER") .. " (" .. pPlayerConfig:GetPlayerName() .. ")");
-				else
-					instance.Portrait:SetToolTipString(Locale.Lookup("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc) .. " (" .. pPlayerConfig:GetPlayerName() .. ")");
-				end
-			else
-				instance.Portrait:LocalizeAndSetToolTip("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc);
-			end
-		end
-	end
-
-	-- Team Ribbon
-	if(playerID == localPlayerID or Players[localPlayerID]:GetDiplomacy():HasMet(playerID)) then
-		-- Show team ribbon for ourselves and civs we've met
-		local teamID:number = pPlayerConfig:GetTeam();
-		if #Teams[teamID] > 1 then
-			local teamRibbonName:string = TEAM_RIBBON_PREFIX .. tostring(teamID);
-			instance.TeamRibbon:SetIcon(teamRibbonName, TEAM_RIBBON_SIZE);
-			instance.TeamRibbon:SetHide(false);
-			instance.TeamRibbon:SetColor(GetTeamColor(teamID));
-		else
-			-- Hide team ribbon if team only contains one player
-			instance.TeamRibbon:SetHide(true);
-		end
-	else
-		-- Hide team ribbon for civs we haven't met
-		instance.TeamRibbon:SetHide(true);
-	end
-
+	leaderIcon:UpdateIcon(iconName, playerID, isUniqueLeader);
+	leaderIcon:RegisterCallback(Mouse.eLClick, function() OnLeaderClicked(playerID); end);
 end
 
 -- ===========================================================================
@@ -230,7 +139,7 @@ local BG_TILE_PADDING: number	= 0;
 function RealizeSize( barWidth:number )
 	local launchBarWidth = MIN_LEFT_HOOKS;
 	local partialScreenBarWidth = RIGHT_HOOKS_INITIAL;
-
+	-- TODO this should somehow be done relative to the other controls
 	m_PartialScreenHookBar	= ContextPtr:LookUpControl( "/InGame/PartialScreenHooks/ButtonStack" );
 	m_LaunchBar				= ContextPtr:LookUpControl( "/InGame/LaunchBar/ButtonStack" );
 	
@@ -266,9 +175,10 @@ function RealizeSize( barWidth:number )
 	Controls.LeaderScroll:SetSizeX(size);
 	Controls.RibbonContainer:ReprocessAnchoring();
 	Controls.RibbonContainer:SetOffsetX(partialScreenBarWidth);
+	Controls.LeaderBGClip:CalculateSize();
+	Controls.LeaderBGClip:ReprocessAnchoring();
 	Controls.LeaderScroll:CalculateSize();
 	Controls.LeaderScroll:ReprocessAnchoring();
-	Controls.LeaderBG:ReprocessAnchoring();
 	RealizeScroll();
 end
 

@@ -114,13 +114,6 @@ function OnShow()
 	
 	m_isLoadComplete	= false;
 	m_isResyncLoad		= UI.IsResyncLoadInProgress(); -- Remember if this is a resync load for later.
-	
-	-- Adjust black bars	[
-	local screenSizeX, screenSizeY	= UIManager:GetScreenSizeVal();	
-	local backgroundSizeY	:number	= Controls.BackgroundImage:GetSizeY();	
-	local blackY			:number = math.max( MIN_BLACK_Y, (screenSizeY - backgroundSizeY) * 0.5 );
-	Controls.BarTop:SetSizeY( blackY );
-	Controls.BarBottom:SetSizeY( blackY );
 
 	UIManager:SetUICursor( 1 );
 	Controls.FadeAnim:SetToBeginning();	

@@ -83,7 +83,7 @@ PageLayouts["District" ] = function(page)
 		if(row.DistrictType == districtType) then
 			local feature = GameInfo.Features[row.FeatureType];
 			if(feature ~= nil) then
-				table.insert(placement_requirements, Locale.Lookup(feature.Name));
+				table.insert(placement_requirements, {Locale.Lookup(feature.Name), feature.FeatureType});
 			end
 		end
 	end
@@ -92,11 +92,11 @@ PageLayouts["District" ] = function(page)
 		if(row.DistrictType == districtType) then
 			local terrain = GameInfo.Terrains[row.TerrainType];
 			if(terrain ~= nil) then
-				table.insert(placement_requirements, Locale.Lookup(terrain.Name));
+				table.insert(placement_requirements, {Locale.Lookup(terrain.Name), terrain.TerrainType});
 			end
 		end
 	end
-	table.sort(placement_requirements, function(a,b) return Locale.Compare(a,b) == -1 end);
+	table.sort(placement_requirements, function(a,b) return Locale.Compare(a[1],b[1]) == -1 end);
 
 	local replacesDistrict;
 	local replacedByDistricts = {};
@@ -214,6 +214,16 @@ PageLayouts["District" ] = function(page)
 				object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE";
 			elseif(row.AdjacentSeaResource) then
 				object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_SEA_RESOURCE";
+			elseif(row.AdjacentResourceClass ~= "NO_RESOURCECLASS") then
+				if(row.AdjacentResourceClass == "RESOURCECLASS_BONUS") then
+					object = "LOC_TOOLTIP_BONUS_RESOURCE";
+				elseif(row.AdjacentResourceClass == "RESOURCECLASS_LUXURY") then
+					object = "LOC_TOOLTIP_LUXURY_RESOURCE";
+				elseif(row.AdjacentResourceClass == "RESOURCECLASS_STRATEGIC") then
+					object = "LOC_TOOLTIP_BONUS_STRATEGIC";
+				else
+					object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE_CLASS";
+				end
 			elseif(row.AdjacentRiver) then
 				object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RIVER";
 			elseif(row.AdjacentWonder) then
@@ -455,7 +465,15 @@ PageLayouts["District" ] = function(page)
 			end
 
 			for i, v in ipairs(placement_requirements) do
-				s:AddLabel("[ICON_Bullet] " .. v);
+				local t = type(v);
+				if(t == "table") then
+					local tName = v[1];
+					local tType = v[2];
+					s:AddIconLabel({"ICON_" .. tType, tName, tType}, tName);
+
+				elseif(t == "string") then
+					s:AddLabel("[ICON_Bullet] " .. v);
+				end
 			end
 
 			s:AddSeparator();

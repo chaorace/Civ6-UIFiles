@@ -34,8 +34,12 @@
 	<Container	Size="300,200"		ID="MiniMap" Anchor="L,B"	Offset="-3,0" ConsumeMouse="0">
 		<SlideAnim	Size="parent,parent"	ID="CollapseAnim" Begin="0,0" End="0,195" Function="OutQuint" FunctionPower="1" Speed="2"		Cycle="Once"	Stopped="1">
 			<SlideAnim	Size="parent,parent" ID="ExpandAnim" Begin="0,0" End="0,-195" Function="OutQuint" FunctionPower="3" Speed="2"		Cycle="Once"	Stopped="1">
-				<Image Texture="MiniMap_WoodBacking" Offset="-5,7" Size="282,201"/>
-				<Image ID="MinimapImage" Anchor ="L,B" Offset="18,21" Texture="MiniMap_BG.dds" ToolTip="LOC_HUD_MINIMAP_TOOLTIP" StretchMode="Fill" Sampler="Linear" Size="256,256">
+        <Grid   ID="MinimapBacking" Texture="MiniMap_WoodBacking" Anchor ="L,B" Offset="-5,2" Size="282,201" SliceCorner="18,94" SliceSize="246,4">
+          <Image Texture="MiniMap_WoodBackingTile" Anchor="C,C" Size="Parent-25,Parent-100" StretchMode="Tile"/>
+        </Grid>
+				<Image   ID="MinimapContainer" Anchor ="L,B" Texture="Parchment_Pattern" ToolTip="LOC_HUD_MINIMAP_TOOLTIP" Size="256,256" StretchMode="Tile" Offset="18,21">
+					<Image ID="MinimapImage"     Anchor ="C,C" Texture="MiniMap_BG.dds"    ToolTip="LOC_HUD_MINIMAP_TOOLTIP" Size="256,256" StretchMode="Fill" Sampler="Linear"/>
+          
 					<Button ID="CollapseButton" Anchor="R,T" AnchorSide="I,O" Offset="3,3"	Size="47,16"	Hidden="0" Texture="Controls_Collapse.dds" ToolTip="LOC_HUD_MINIMAP_COLLAPSE_TOOLTIP" />
 					<Button ID="ExpandButton" Anchor="R,T" AnchorSide="I,O" Offset="3,3"	Size="47,16"	Hidden="1" ConsumeAllMouse="1" Texture="Controls_ButtonExtend.dds" ToolTip="LOC_HUD_MINIMAP_EXPAND_TOOLTIP" />
 

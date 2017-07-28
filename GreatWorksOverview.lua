@@ -4,7 +4,7 @@
 --	Original Author: Sam Batista
 -- ===========================================================================
 include("InstanceManager");
-include("PopupDialogSupport")
+include("PopupDialog")
 include("GameCapabilities");
 
 -- ===========================================================================
@@ -689,10 +689,13 @@ function OnClickGreatWork(greatWorkIcon:table, pCityBldgs:table, buildingIndex:n
 	end
 end
 
-function CanMoveWorkAtAll(srcBldgs:table, srcBuilding:number, srcSlot:number)
+function CanMoveWorkAtAll(srcBldgs:table, srcBuilding:number, srcSlot:number, showCannotMovePopup:boolean)
 	local srcGreatWork:number = srcBldgs:GetGreatWorkInSlot(srcBuilding, srcSlot);
 	local srcGreatWorkType:number = srcBldgs:GetGreatWorkTypeFromIndex(srcGreatWork);
 	local srcGreatWorkObjectType:string = GameInfo.GreatWorks[srcGreatWorkType].GreatWorkObjectType;
+
+	-- Defaults to true
+	if showCannotMovePopup == nil then showCannotMovePopup = true; end
 
 	-- Don't allow moving artifacts if the museum is not full
 	if (srcGreatWorkObjectType == "GREATWORKOBJECT_ARTIFACT") then
@@ -700,7 +703,7 @@ function CanMoveWorkAtAll(srcBldgs:table, srcBuilding:number, srcSlot:number)
 		for index:number = 0, numSlots - 1 do
 			local greatWorkIndex:number = srcBldgs:GetGreatWorkInSlot(srcBuilding, index);
 			if (greatWorkIndex == -1) then
-				local cannotMoveWorkDialog = PopupDialog:new("CannotMoveWork");
+				local cannotMoveWorkDialog = PopupDialogInGame:new("CannotMoveWork");
 				cannotMoveWorkDialog:ShowOkDialog(Locale.Lookup("LOC_GREAT_WORKS_ARTIFACT_LOCKED_FROM_MOVE"));
 				return false;
 			end
@@ -717,9 +720,11 @@ function CanMoveWorkAtAll(srcBldgs:table, srcBuilding:number, srcSlot:number)
 		local iCurrentTurn:number = Game.GetCurrentGameTurn();
 		local iTurnsBeforeMove:number = GlobalParameters.GREATWORK_ART_LOCK_TIME or 10;
 		local iTurnsToWait = iTurnCreated + iTurnsBeforeMove - iCurrentTurn;
-		if (iTurnsToWait > 0) then
-		    local cannotMoveWorkDialog = PopupDialog:new("CannotMoveWork");
-            cannotMoveWorkDialog:ShowOkDialog(Locale.Lookup("LOC_GREAT_WORKS_LOCKED_FROM_MOVE", iTurnsToWait));
+		if iTurnsToWait > 0 then
+			if showCannotMovePopup then
+				local cannotMoveWorkDialog = PopupDialogInGame:new("CannotMoveWork");
+				cannotMoveWorkDialog:ShowOkDialog(Locale.Lookup("LOC_GREAT_WORKS_LOCKED_FROM_MOVE", iTurnsToWait));
+			end
 			return false;
 		end
 	end
@@ -772,7 +777,7 @@ function CanMoveGreatWork(srcBldgs:table, srcBuilding:number, srcSlot:number, ds
 				
 				for row in GameInfo.GreatWork_ValidSubTypes() do
 					if srcSlotTypeString == row.GreatWorkSlotType and dstGreatWorkObjectType == row.GreatWorkObjectType then
-						return CanMoveWorkAtAll(dstBldgs, dstBuilding, dstSlot);
+						return CanMoveWorkAtAll(dstBldgs, dstBuilding, dstSlot, false);
 					end
 				end
 			end
@@ -865,8 +870,11 @@ end
 
 -- ===========================================================================
 function OnHideScreen()
+	if not ContextPtr:IsHidden() then
+		UI.PlaySound("UI_Screen_Close");
+	end
+
 	Close();
-	UI.PlaySound("UI_Screen_Close");
 	LuaEvents.GreatWorks_CloseGreatWorks();
 end
 

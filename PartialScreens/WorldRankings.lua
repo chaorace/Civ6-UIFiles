@@ -6,7 +6,7 @@ include("InstanceManager");
 include("SupportFunctions");
 include("AnimSidePanelSupport");
 include("TeamSupport");
-
+include("CivilizationIcon");
 -- ===========================================================================
 --	DEBUG
 -- ===========================================================================
@@ -18,7 +18,6 @@ local m_isDebugForceShowAllScoreCategories :boolean = false;		-- (false) Show al
 local RELOAD_CACHE_ID:string = "WorldRankings"; -- Must be unique (usually the same as the file name)
 local REQUIREMENT_CONTEXT:string = "VictoryProgress";
 local DATA_FIELD_SELECTION:string = "Selection";
-local DATA_FIELD_LEADER_TOOLTIP:string = "LeaderTooltip";
 local DATA_FIELD_HEADER_HEIGHT:string = "HeaderHeight";
 local DATA_FIELD_HEADER_RESIZED:string = "HeaderResized";
 local DATA_FIELD_HEADER_EXPANDED:string = "HeaderExpanded";
@@ -52,7 +51,6 @@ local SIZE_OVERALL_INSTANCE:number = 40;
 local SIZE_VICTORY_ICON_SMALL:number = 64;
 local SIZE_RELIGION_BG_HEIGHT:number = 55;
 local SIZE_RELIGION_ICON_SMALL:number = 22;
-local SIZE_RELIGION_CIV_ICON:number = 30;
 local SIZE_GENERIC_ITEM_MIN_Y:number = 54;
 local SIZE_SCORE_ITEM_DEFAULT:number = 54;
 local SIZE_SCORE_ITEM_DETAILS:number = 180;
@@ -384,31 +382,6 @@ function GetCivNameAndIcon(playerID:number, bColorUnmetPlayer:boolean)
 		icon = ICON_UNKNOWN_CIV;
 	end
 	return name, icon;
-end
-
-function ColorCivIcon(instance:table, playerID:number)
-	if(playerID == m_LocalPlayerID or m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
-		local backColor, frontColor = UI.GetPlayerColors(playerID);
-		local darkerBackColor = DarkenLightenColor(backColor,(-55),230);
-		local brighterBackColor = DarkenLightenColor(backColor,80,255);
-		instance.CivIcon:SetColor(frontColor);
-		if(instance.CivIconBacking ~= nil) then
-			instance.CivIconBacking:SetColor(backColor);
-		else
-			instance.CivBacking_Base:SetColor(backColor);
-			instance.CivBacking_Lighter:SetColor(brighterBackColor);
-			instance.CivBacking_Darker:SetColor(darkerBackColor);
-		end
-	else
-		instance.CivIcon:SetColor(UNKNOWN_COLOR);
-		if(instance.CivIconBacking ~= nil) then
-			instance.CivIconBacking:SetColor(UNKNOWN_COLOR);
-		else
-			instance.CivBacking_Base:SetColor(backColor);
-			instance.CivBacking_Lighter:SetColor(brighterBackColor);
-			instance.CivBacking_Darker:SetColor(darkerBackColor);
-		end
-	end
 end
 
 -- ===========================================================================
@@ -845,30 +818,18 @@ function PopulateOverallPlayerIconInstance(instance:table, teamData:table, iconS
 	local playerID:number = Teams[teamData.TeamID][1];
 	local playerData:table = teamData.PlayerData[playerID];
 	if(playerData ~= nil) then
-		ColorCivIcon(instance, playerID);
-
-		local civName:string, civIcon:string = GetCivNameAndIcon(playerID);
-
-		local details:string;
-		if playerData.FirstTiebreakSummary == playerData.SecondTiebreakSummary then
-			details = playerData.FirstTiebreakSummary;
-		else
-			details = playerData.FirstTiebreakSummary .. "[NEWLINE]" .. playerData.SecondTiebreakSummary;
+		local civIconManager = CivilizationIcon:AttachInstance(instance);
+		local details:string = playerData.FirstTiebreakSummary;
+		if playerData.FirstTiebreakSummary ~= playerData.SecondTiebreakSummary then
+			details = details .. "[NEWLINE]" .. playerData.SecondTiebreakSummary;
 		end
+		civIconManager:SetLeaderTooltip(playerID, details);
+		civIconManager:UpdateIconFromPlayerID(playerID);
 
-		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, iconSize);
-		if(textureSheet == nil or textureSheet == "") then
-			UI.DataError("Could not find icon in PopulateOverallPlayerIconInstance: icon=\""..civIcon.."\", iconSize="..tostring(iconSize));
-		else
-			instance.CivIcon:SetSizeVal(iconSize, iconSize);
-			instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-			instance.CivIconFaded:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-			instance.CivIcon:SetPercent(teamData.TeamScore);
-			instance.CivIconBacking:SetPercent(teamData.TeamScore);
-			SetLeaderTooltip(instance, playerID, details);
-		end
-
-		instance.LocalPlayer:SetHide(playerID ~= m_LocalPlayerID);
+		local _, civIcon:string = GetCivNameAndIcon(playerID);
+		instance.CivIconFaded:SetIcon(civIcon);
+		instance.CivIcon:SetPercent(teamData.TeamScore);
+		instance.CivIconBacking:SetPercent(teamData.TeamScore);
 		instance.TeamRibbon:SetHide(true);
 	end
 end
@@ -975,58 +936,6 @@ function UpdateTeamTooltip(control, teamData)
 	end
 end
 
-function SetLeaderTooltip(instance:table, playerID:number, details:string)
-	local pPlayer:table = Players[playerID];
-	local playerConfig:table = PlayerConfigurations[playerID];
-	if(playerID ~= m_LocalPlayerID and m_LocalPlayer ~= nil and not m_LocalPlayer:GetDiplomacy():HasMet(playerID)) then
-		instance.CivIcon:SetToolTipType();
-		instance.CivIcon:ClearToolTipCallback();
-		if GameConfiguration.IsAnyMultiplayer() and pPlayer:IsHuman() then
-			instance.CivIcon:SetToolTipString(Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER") .. " (" .. playerConfig:GetPlayerName() .. ")");
-		else
-			instance.CivIcon:SetToolTipString(Locale.Lookup("LOC_DIPLOPANEL_UNMET_PLAYER"));
-		end
-	else
-		instance.CivIcon:SetToolTipType("CivTooltip");
-		instance.CivIcon:SetToolTipCallback(function() UpdateLeaderTooltip(instance, playerID, details); end);
-	end
-end
-
-function UpdateLeaderTooltip(instance:table, playerID:number, details:string)
-	local pPlayer:table = Players[playerID];
-	local playerConfig:table = PlayerConfigurations[playerID];
-	if(pPlayer ~= nil and playerConfig ~= nil) then
-
-		m_CivTooltip.YouIndicator:SetHide(playerID ~= m_LocalPlayerID);
-
-		local leaderTypeName:string = playerConfig:GetLeaderTypeName();
-		if(leaderTypeName ~= nil) then
-			local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas("ICON_"..leaderTypeName, SIZE_LEADER_ICON);
-			if(textureSheet == nil or textureSheet == "") then
-				UI.DataError("Could not find icon in UpdateLeaderTooltip: icon=\"".."ICON_"..leaderTypeName.."\", iconSize="..tostring(SIZE_LEADER_ICON));
-			else
-				m_CivTooltip.LeaderIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-			end
-
-			local desc:string;
-			local leaderDesc:string = playerConfig:GetLeaderName();
-			local civDesc:string = playerConfig:GetCivilizationDescription();
-			if GameConfiguration.IsAnyMultiplayer() and pPlayer:IsHuman() then
-				local name = Locale.Lookup(playerConfig:GetPlayerName());
-				desc = Locale.Lookup("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc) .. " (" .. name .. ")";
-			else
-				desc = Locale.Lookup("LOC_DIPLOMACY_DEAL_PLAYER_PANEL_TITLE", leaderDesc, civDesc);
-			end
-			
-			if (details ~= nil and details ~= "") then
-				desc = desc .. "[NEWLINE]" .. details;
-			end
-			m_CivTooltip.LeaderName:SetText(desc);
-			m_CivTooltip.BG:DoAutoSize();
-		end
-	end
-end
-
 -- ===========================================================================
 --	Called when Score tab is selected (or when screen re-opens if selected)
 -- ===========================================================================
@@ -1125,7 +1034,6 @@ function PopulateScoreInstance(instance:table, playerData:table)
 	PopulatePlayerInstanceShared(instance, playerData.PlayerID);
 
 	instance.Score:SetText(playerData.PlayerScore);
-	
 
 	if(m_ShowScoreDetails) then
 		instance.ButtonBG:SetSizeY(SIZE_SCORE_ITEM_DETAILS);
@@ -1334,30 +1242,15 @@ function PopulateTeamInstanceShared(instance, teamID)
 	SetTeamTooltip(instance.TeamIcon, teamData);
 end
 
-function PopulatePlayerInstanceShared(instance, playerID)
-	local civName, civIcon:string = GetCivNameAndIcon(playerID, true);
-
-	-- Update civ icon and leader tooltip
-	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(civIcon, SIZE_CIV_ICON);
-	if(textureSheet == nil or textureSheet == "") then
-		UI.DataError("Could not find icon in PopulatePlayerInstanceShared: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_CIV_ICON));
-	else
-		instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		SetLeaderTooltip(instance, playerID);
-	end
-	ColorCivIcon(instance, playerID);
+function PopulatePlayerInstanceShared(instance:table, playerID:number, civNameOffsetY:number)
+	UpdateCivilizationIcon(instance, playerID);
 
 	-- Update player name
-	if m_LocalPlayer == nil or m_LocalPlayer:GetDiplomacy():HasMet(playerID) or m_LocalPlayerID == playerID then
-		instance.CivName:SetText(civName);
-		TruncateStringWithTooltip(instance.CivName, 180, civName);
-	else
-		instance.CivName:SetText(LOC_UNKNOWN_CIV);
-	end
-
-	-- Update local player indicator
-	if instance.LocalPlayer then
-		instance.LocalPlayer:SetHide(playerID ~= m_LocalPlayerID);
+	if instance.CivilizationIcon.CivName then
+		instance.CivilizationIcon.CivName:SetText(GetCivNameAndIcon(playerID, true));
+		if civNameOffsetY then
+			instance.CivilizationIcon.CivName:SetOffsetY(civNameOffsetY);
+		end
 	end
 end
 
@@ -1718,7 +1611,7 @@ end
 function PopulateCultureInstance(instance:table, playerData:table)
 	local pPlayer:table = Players[playerData.PlayerID];
 	
-	PopulatePlayerInstanceShared(instance, playerData.PlayerID);
+	PopulatePlayerInstanceShared(instance, playerData.PlayerID, 7);
 
 	instance.VisitingTourists:SetText(playerData.NumVisitingUs .. "/" .. playerData.NumRequiredTourists);
 	instance.TouristsFill:SetPercent(playerData.NumVisitingUs / playerData.NumRequiredTourists);
@@ -1853,27 +1746,17 @@ function PopulateDominationTeamInstance(instance:table, teamData:table)
 	
 	PopulateTeamInstanceShared(instance, teamData.TeamID);
 
-	-- Update captured captials icon stack
+	-- Update captured capitals icon stack
 	local dominatedCitiesIM:table = instance[DATA_FIELD_DOMINATED_CITIES_IM];
 	if(dominatedCitiesIM == nil) then
-		dominatedCitiesIM = InstanceManager:new("DominatedCapitalInstance", "CivIconBacking", instance.CapitalsCapturedStack);
+		dominatedCitiesIM = InstanceManager:new("DominatedCapitalInstance", "Root", instance.CapitalsCapturedStack);
 		instance[DATA_FIELD_DOMINATED_CITIES_IM] = dominatedCitiesIM;
 	end
 	dominatedCitiesIM:ResetInstances();
 
 	for i, playerData in ipairs(teamData.PlayerData) do
 		for _, dominatedPlayerID in pairs(playerData.CapturedCapitals) do
-			local dominatedInstance = dominatedCitiesIM:GetInstance();
-			ColorCivIcon(dominatedInstance, dominatedPlayerID);
-			
-			local civName:string, civIcon:string = GetCivNameAndIcon(dominatedPlayerID, true);
-			textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, SIZE_RELIGION_CIV_ICON);
-			if(textureSheet == nil or textureSheet == "") then
-				UI.DataError("Could not find icon for dominated civ in PopulateDominationInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_RELIGION_CIV_ICON));
-			else
-				dominatedInstance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-				SetLeaderTooltip(dominatedInstance, dominatedPlayerID);
-			end
+			UpdateCivilizationIcon(dominatedCitiesIM:GetInstance(), dominatedPlayerID);
 		end
 	end
 
@@ -1902,23 +1785,13 @@ function PopulateDominationInstance(instance:table, playerData:table)
 
 	local dominatedCitiesIM:table = instance[DATA_FIELD_DOMINATED_CITIES_IM];
 	if(dominatedCitiesIM == nil) then
-		dominatedCitiesIM = InstanceManager:new("DominatedCapitalInstance", "CivIconBacking", instance.CapitalsCapturedStack);
+		dominatedCitiesIM = InstanceManager:new("DominatedCapitalInstance", "Root", instance.CapitalsCapturedStack);
 		instance[DATA_FIELD_DOMINATED_CITIES_IM] = dominatedCitiesIM;
 	end
 	dominatedCitiesIM:ResetInstances();
 
 	for _, dominatedPlayerID in pairs(playerData.CapturedCapitals) do
-		local dominatedInstance = dominatedCitiesIM:GetInstance();
-		ColorCivIcon(dominatedInstance, dominatedPlayerID);
-			
-		local civName:string, civIcon:string = GetCivNameAndIcon(dominatedPlayerID, true);
-		textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, SIZE_RELIGION_CIV_ICON);
-		if(textureSheet == nil or textureSheet == "") then
-			UI.DataError("Could not find icon for dominated civ in PopulateDominationInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_RELIGION_CIV_ICON));
-		else
-			dominatedInstance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-			SetLeaderTooltip(dominatedInstance, dominatedPlayerID);
-		end
+		UpdateCivilizationIcon(dominatedCitiesIM:GetInstance(), dominatedPlayerID);
 	end
 
 	instance.CapitalsCaptured:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_DOMINATION_SUMMARY", #playerData.CapturedCapitals));
@@ -2058,25 +1931,14 @@ function PopulateReligionTeamInstance(instance:table, teamData:table, totalCivs:
 
 	local convertedCivsIM:table = instance[DATA_FIELD_RELIGION_CONVERTED_CIVS_IM];
 	if(convertedCivsIM == nil) then
-		convertedCivsIM = InstanceManager:new("ConvertedReligionInstance", "CivIconBacking", instance.CivsConvertedStack);
+		convertedCivsIM = InstanceManager:new("ConvertedReligionInstance", "Root", instance.CivsConvertedStack);
 		instance[DATA_FIELD_RELIGION_CONVERTED_CIVS_IM] = convertedCivsIM;
 	end
 
 	convertedCivsIM:ResetInstances();
 
 	for i, convertedCivID in ipairs(teamData.ConvertedCivs) do
-		local convertedInstance:table = convertedCivsIM:GetInstance();
-
-		ColorCivIcon(convertedInstance, convertedCivID);
-
-		local civName:string, civIcon:string = GetCivNameAndIcon(convertedCivID, true);
-		textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, SIZE_RELIGION_CIV_ICON);
-		if(textureSheet == nil or textureSheet == "") then
-			UI.DataError("Could not find icon for converted religion in PopulateReligionInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_RELIGION_CIV_ICON));
-		else
-			convertedInstance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-			SetLeaderTooltip(convertedInstance, convertedCivID);
-		end
+		UpdateCivilizationIcon(convertedCivsIM:GetInstance(), convertedCivID);
 	end
 
 	instance.CivsConverted:SetText(Locale.Lookup("LOC_WORLD_RANKINGS_RELIGION_CONVERT_SUMMARY", #teamData.ConvertedCivs .. "/" .. totalCivs, "LOC_WORLD_RANKINGS_RELIGION_TEAMS_RELIGIONS"));
@@ -2084,7 +1946,7 @@ end
 
 function PopulateReligionInstance(instance:table, playerData:table, totalCivs:number)
 
-	PopulatePlayerInstanceShared(instance, playerData.PlayerID);
+	PopulatePlayerInstanceShared(instance, playerData.PlayerID, 7);
 
 	local religionData = GameInfo.Religions[playerData.ReligionType];
 	local religionColor:number = UI.GetColorValue(religionData.Color);
@@ -2104,25 +1966,14 @@ function PopulateReligionInstance(instance:table, playerData:table, totalCivs:nu
 	
 	local convertedCivsIM:table = instance[DATA_FIELD_RELIGION_CONVERTED_CIVS_IM];
 	if(convertedCivsIM == nil) then
-		convertedCivsIM = InstanceManager:new("ConvertedReligionInstance", "CivIconBacking", instance.CivsConvertedStack);
+		convertedCivsIM = InstanceManager:new("ConvertedReligionInstance", "Root", instance.CivsConvertedStack);
 		instance[DATA_FIELD_RELIGION_CONVERTED_CIVS_IM] = convertedCivsIM;
 	end
 
 	convertedCivsIM:ResetInstances();
 
 	for i, convertedCivID in ipairs(playerData.ConvertedCivs) do
-		local convertedInstance:table = convertedCivsIM:GetInstance();
-
-		ColorCivIcon(convertedInstance, convertedCivID);
-
-		local civName:string, civIcon:string = GetCivNameAndIcon(convertedCivID, true);
-		textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(civIcon, SIZE_RELIGION_CIV_ICON);
-		if(textureSheet == nil or textureSheet == "") then
-			UI.DataError("Could not find icon for converted religion in PopulateReligionInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_RELIGION_CIV_ICON));
-		else
-			convertedInstance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-			SetLeaderTooltip(convertedInstance, convertedCivID);
-		end
+		UpdateCivilizationIcon(convertedCivsIM:GetInstance(), convertedCivID)
 	end
 
 	if #playerData.ConvertedCivs == 0 then
@@ -2260,19 +2111,7 @@ function PopulateGenericTeamInstance(instance:table, teamData:table, victoryType
 end
 
 function PopulateGenericInstance(instance:table, playerData:table, victoryType:string, showTeamDetails:boolean )
-	local civName, civIcon:string = GetCivNameAndIcon(playerData.PlayerID, true);
-
-	local textureOffsetX:number, textureOffsetY:number, textureSheet:string = IconManager:FindIconAtlas(civIcon, SIZE_CIV_ICON);
-	if(textureSheet == nil or textureSheet == "") then
-		UI.DataError("Could not find icon in PopulateViewAncientRivalsInstance: icon=\""..civIcon.."\", iconSize="..tostring(SIZE_CIV_ICON));
-	else
-		instance.CivIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
-		SetLeaderTooltip(instance, playerData.PlayerID);
-	end
-
-	ColorCivIcon(instance, playerData.PlayerID);
-	instance.CivName:SetText(civName);
-	instance.LocalPlayer:SetHide(playerData.PlayerID ~= m_LocalPlayerID);
+	PopulatePlayerInstanceShared(instance, playerData.PlayerID);
 	
 	if showTeamDetails then
 		local requirementSetID:number = Game.GetVictoryRequirements(Players[playerData.PlayerID]:GetTeam(), victoryType);
@@ -2363,11 +2202,21 @@ function UpdatePlayerData()
 		m_LocalPlayerID = -1;
 	end
 end
+
 function UpdateData()
 	UpdatePlayerData();
 	if(m_LocalPlayer ~= nil and m_ActiveViewUpdate ~= nil) then
 		m_ActiveViewUpdate();
 	end
+end
+
+-- ===========================================================================
+--	Update CivilizationIcon instance (CivilizationIcon.lua)
+-- ===========================================================================
+function UpdateCivilizationIcon(instance:table, playerID:number)
+	local civIconClass = CivilizationIcon:AttachInstance(instance.CivilizationIcon or instance);
+	civIconClass:UpdateIconFromPlayerID(playerID);
+	civIconClass:SetLeaderTooltip(playerID);
 end
 
 -- ===========================================================================

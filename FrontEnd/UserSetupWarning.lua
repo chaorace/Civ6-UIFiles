@@ -1,4 +1,4 @@
-include("PopupDialogSupport");
+include("PopupDialog");
 
 local ms_kPopupDialog = nil;
 

@@ -2,7 +2,8 @@
 <Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
 
 	<Container Style="FullScreenVignetteConsumer" />
-
+	<AlphaAnim ID="SearchResultsTimer" Begin="0" End="1" Speed="2" Cycle="Once" Stopped="1"/>
+	
   <Grid               ID="DropShadow"                 Anchor="C,C"  Style="DropShadow2" Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25" ConsumeMouse="1">
     <Container Anchor="C,C" Size="Full,768">
       <Box              Color="7,30,50,255" Anchor="L,B" Size="Full,5"/>
@@ -171,7 +172,7 @@
     </Grid>
 
     <Container ID="SearchResultsPanelContainer" Anchor="L,T"	Offset="0,75"		Size="193,110" AutoSize="V" Hidden="1">
-      <ScrollPanel ID="SearchResultsPanel"  Size="parent,693"  Vertical="1" AutoScrollBar="1">
+      <ScrollPanel ID="SearchResultsPanel"  Size="parent,600"  Vertical="1" AutoScrollBar="1">
         <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"/>
         <Grid Texture="Controls_OptionPanel" 	SliceCorner="3,3"		SliceSize="10,52" SliceTextureSize="16,64" Size="193,110" AutoSize="V" AutoSizePadding="0,5">
           <Stack ID="SearchResultsStack" StackGrowth="Bottom" Padding="2" Offset="0,5"/>

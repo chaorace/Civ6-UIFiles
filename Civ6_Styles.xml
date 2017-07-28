@@ -581,10 +581,10 @@
     </AlphaAnim>
   </MainButton>
 
-  <MainButtonSmall Style="ButtonText16">
+  <MainButtonSmall Style="ButtonText14">
     <GridData Style="Grid9ButtonMainSmall" />
-    <AlphaAnim ShowOnMouseOut="1" Anchor="L,T" Size="parent-6,parent-6" Pause="0" Cycle="Once" Speed="2" AlphaStart="1" AlphaEnd="0" Offset="3,2">
-      <Grid Size="parent,parent" Offset="0,0" Padding="0,0" Style="Grid9MainButtonHighlight" />
+    <AlphaAnim ShowOnMouseOut="1" Anchor="L,T" Size="parent,parent" Pause="0" Cycle="Once" Speed="2" AlphaStart="1" AlphaEnd="0">
+      <Grid Size="parent,parent" Offset="0,0" Padding="0,0" Style="Grid9ButtonMainSmallHL" />
     </AlphaAnim>
   </MainButtonSmall>
 
@@ -1682,34 +1682,30 @@
               StateOffsetIncrement="0,0"
               SliceCorner="11,1"
               SliceTextureSize="23,16"/>
-  <!-- ****************************************************************** -->
-  <!--  Launch Bar Buttons-->
-  <!-- ****************************************************************** -->
-
-
-  <!-- ****************************************************************** -->
-  <!--  Common Popup Dialog                                               -->
-  <!--  Works great with PopupDialogSupport.lua                           -->
-  <!-- ****************************************************************** -->
-  <PopupDialogGrid      ID="PopupDialog"    Anchor="C,C" AutoSize="V" InnerPadding="0,60" Size="500,200" Style="WindowFrame"   Hidden="1">
-    <Stack							ID="PopupStack"			Anchor="C,C" AutoSize="V" StackGrowth="Bottom" StackPadding="30" InnerPadding="0,10" />
-  </PopupDialogGrid>
-
-  <PopupDialogBox     ID="PopupDialog"  Size="Full,Full" ConsumeMouse="1" Color="0,0,0,150" Hidden="1">
-    <AlphaAnim        ID="PopupAlphaIn"      Size="parent,parent"  AlphaBegin="0"  AlphaEnd="1"  Speed="3" Function="Root" Cycle="Once">
-      <SlideAnim      ID="PopupSlideIn"      Size="parent,parent"  Start="0,-20"   End="0,0"     Speed="3" Function="Root" Cycle="Once">
-        <Grid                           Size="500,250"              Anchor="C,C" Offset="0,0" Style="DropShadow2"     Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25" ConsumeMouse="1">
-          <Grid                         Size="500,250"              Anchor="C,C" Offset="0,0" Style="WindowFrameTitle" AutoSize="V" AutoSizePadding="0,10">
-            <Container                  Size="parent,38"                         Offset="0,4">
-              <Label  ID="PopupTitle"   Style="WindowHeader"        Anchor="C,C" String="{LOC_CONFIRM_CHOICE:upper}" />
-            </Container>
-            <Stack		ID="PopupStack"  	Size="parent,100"				    Anchor="C,T" Offset="0,50" StackGrowth="Bottom" StackPadding="30"/>
-          </Grid>
-        </Grid>
-      </SlideAnim>
-    </AlphaAnim>
-  </PopupDialogBox>
-
+ 
+	<!-- *****************************************​************************* -->
+	<!--  Common Popup Dialog                                               -->
+	<!--  Works great with PopupDialog.lua                           -->
+	<!-- *****************************************​************************* -->
+	<PopupDialogGrid      ID="PopupDialog"    Anchor="C,C" AutoSize="V" InnerPadding="0,60" Size="500,200" Style="WindowFrame"   Hidden="1">
+	  <Stack              ID="PopupStack"     Anchor="C,C" AutoSize="V" StackGrowth="Bottom" StackPadding="30" InnerPadding="0,10" />
+	</PopupDialogGrid>
+	
+	<PopupDialogBox     ID="PopupDialog"  Size="Full,Full" ConsumeMouse="1" Color="0,0,0,150" Hidden="1">
+	  <AlphaAnim        ID="PopupAlphaIn" Size="parent,parent"  AlphaBegin="0"  AlphaEnd="1"  Speed="3" Function="Root" Cycle="Once">
+	    <SlideAnim      ID="PopupSlideIn" Size="parent,parent"  Start="0,-20"   End="0,0"     Speed="3" Function="Root" Cycle="Once">
+	      <Grid                           Size="500,250"              Anchor="C,C" Offset="0,0" Style="DropShadow2"     Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25" ConsumeMouse="1">
+	        <Grid                         Size="500,250"              Anchor="C,C" Offset="0,0" Style="WindowFrameTitle" AutoSize="V" AutoSizePadding="0,10">
+	          <Container                  Size="parent,38"                         Offset="0,4">
+	            <Label  ID="PopupTitle"   Style="WindowHeader"        Anchor="C,C" String="{LOC_CONFIRM_CHOICE:upper}" />
+	          </Container>
+	          <Stack      ID="PopupStack" Size="parent,100" Anchor="C,T" Offset="0,50" StackGrowth="Bottom" StackPadding="30"/>
+	        </Grid>
+	      </Grid>
+	    </SlideAnim>
+	  </AlphaAnim>
+	</PopupDialogBox>
+	
   <!-- ****************************************************************** -->
   <!--  Notification Popup Dialog                                         -->
   <!--  For things like "research completed! etc                          -->
@@ -1951,7 +1947,7 @@
                   SliceTextureSize="42,34"
                   />
 
-  <DiplomacyDialogText				Style="FontFlair22"			FontStyle="glow"		Color0="208,212,217,255"	Color1="0,0,0,200" />
+  <DiplomacyDialogText				Style="FontNormal22"			FontStyle="glow"		Color0="208,212,217,255"	Color1="0,0,0,200" />
 
   <DiplomacyButtonGrid Texture="DiplomacyButton"
                   StateOffsetIncrement="0,0"
@@ -2329,5 +2325,14 @@
   <Civilopedia_ChapterHeaderCaption Anchor="C,C" Style="FontBoldFlair18" SmallCaps="16" SmallCapsLeading="0" SmallCapsType="EveryWord" Color="58,56,56,255" FontStyle="glow"/>
   <Civilopedia_ChapterParagraph Style="FontNormalMedium16" Size="16" Color="58,56,56,255" />
 
+  <!-- EXPERIMENTAL STYLE CLASS MODULES -->
+
+  <CivTooltip Size="220,75">
+    <Grid ID="BG" Size="parent,parent" SliceCorner="10,10" SliceTextureSize="33,32" Texture="Controls_Tooltip" AutoSize="1" InnerPadding="25,25" InnerOffset="10,10" >
+      <Image ID="LeaderIcon" Offset="0,0" Size="55,55" Texture="Leaders55"/>
+      <Image ID="YouIndicator" Offset="0,0" Hidden="1" Size="55,55" Texture="Diplomacy_YouIndicatorSmall"/>
+      <Label ID="LeaderName" Anchor="L,C" Offset="65,0" Style="FontNormal16" Color="0,0,0,255"/>
+    </Grid>
+  </CivTooltip>
 
 </StyleSheet>

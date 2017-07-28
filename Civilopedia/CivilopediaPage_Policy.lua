@@ -50,6 +50,14 @@ local sectionId = page.SectionId;
 			end
 		end
 
+		if(policy.PrereqTech ~= nil) then
+			local tech = GameInfo.Technologies[policy.PrereqTech];
+			if(tech) then
+				s:AddHeader("LOC_CIVIC_NAME");
+				s:AddIconLabel({"ICON_" .. tech.TechnologyType, tech.Name, tech.TechnologyType}, tech.Name);
+			end
+		end
+
 		s:AddSeparator();
 	end);
 

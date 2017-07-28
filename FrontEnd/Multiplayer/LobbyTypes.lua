@@ -41,3 +41,19 @@ function GameModeTypeForMPLobbyType(mpLobbyType : string)
 	end
 	return gameMode;
 end
+
+function LobbyTypeForMPLobbyType(mpLobbyType : string)
+	local lobbyType = LobbyTypes.LOBBY_NONE;
+	if(mpLobbyType == MPLobbyTypes.STANDARD_INTERNET) then
+		lobbyType = LobbyTypes.LOBBY_INTERNET;
+	elseif(mpLobbyType == MPLobbyTypes.STANDARD_LAN) then
+		lobbyType = LobbyTypes.LOBBY_LAN;
+	elseif(mpLobbyType == MPLobbyTypes.PITBOSS_INTERNET or mpLobbyType == MPLobbyTypes.PITBOSS_LAN) then
+		lobbyType = LobbyTypes.LOBBY_SERVER;
+	elseif(mpLobbyType == MPLobbyTypes.HOTSEAT) then
+		lobbyType = LobbyTypes.LOBBY_NONE;
+	elseif(mpLobbyType == MPLobbyTypes.PLAYBYCLOUD) then
+		lobbyType = LobbyTypes.LOBBY_FIRAXIS_CLOUD;
+	end
+	return lobbyType;
+end

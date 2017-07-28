@@ -2,7 +2,7 @@ include( "InstanceManager" );
 include( "SupportFunctions" );
 include( "Civ6Common" );
 include( "LoadSaveMenu_Shared" );	-- Shared code between the LoadGameMenu and the SaveGameMenu
-include("PopupDialogSupport");
+include( "PopupDialog" );
 include( "LocalPlayerActionSupport" );
 
 
@@ -43,27 +43,34 @@ end
 ----------------------------------------------------------------        
 ----------------------------------------------------------------        
 function OnActionButton()
-	UIManager:SetUICursor( 1 );
-	m_thisLoadFile = g_FileList[ g_iSelectedFileEntry ];
+	if(not Controls.ActionButton:IsHidden() and not Controls.ActionButton:IsDisabled()) then
+		UIManager:SetUICursor( 1 );
+		m_thisLoadFile = g_FileList[ g_iSelectedFileEntry ];
 
-	if (m_thisLoadFile) then
-    	local isInGame = false;
-    	if(GameConfiguration ~= nil) then
-    		isInGame = GameConfiguration.GetGameState() ~= GameStateTypes.GAMESTATE_PREGAME;
-    	end
+		if (m_thisLoadFile) then
+			if m_thisLoadFile.IsDirectory then
+				-- Open the directory
+				ChangeDirectoryTo(m_thisLoadFile.Path);
+			else
+    			local isInGame = false;
+    			if(GameConfiguration ~= nil) then
+    				isInGame = GameConfiguration.GetGameState() ~= GameStateTypes.GAMESTATE_PREGAME;
+    			end
 
-        if isInGame then
-		   	if ( not m_kPopupDialog:IsOpen()) then
-				m_kPopupDialog:AddText(Locale.Lookup("LOC_CONFIRM_LOAD_TXT"));
-				m_kPopupDialog:AddTitle(Locale.ToUpper(Locale.Lookup("LOC_CONFIRM_TITLE_LOAD_TXT")));
-				m_kPopupDialog:AddButton(Locale.Lookup("LOC_NO_BUTTON"), OnLoadNo);
-				m_kPopupDialog:AddButton(Locale.Lookup("LOC_YES_BUTTON"), OnLoadYes, nil, nil, "PopupButtonAltInstancePositive"); 
-				m_kPopupDialog:Open();
+				if isInGame then
+		   			if ( not m_kPopupDialog:IsOpen()) then
+						m_kPopupDialog:AddText(Locale.Lookup("LOC_CONFIRM_LOAD_TXT"));
+						m_kPopupDialog:AddTitle(Locale.ToUpper(Locale.Lookup("LOC_CONFIRM_TITLE_LOAD_TXT")));
+						m_kPopupDialog:AddButton(Locale.Lookup("LOC_NO_BUTTON"), OnLoadNo);
+						m_kPopupDialog:AddButton(Locale.Lookup("LOC_YES_BUTTON"), OnLoadYes, nil, nil, "PopupButtonInstanceGreen"); 
+						m_kPopupDialog:Open();
+					end
+				else
+					OnLoadYes();
+    			end
 			end
-        else
-            OnLoadYes();
-    	end
-    end
+		end
+	end	
 end
 
 ----------------------------------------------------------------        
@@ -95,15 +102,38 @@ function OnShow()
 	Controls.AutoCheck:SetSelected(false);
 	Controls.CloudCheck:SetSelected(false);
 
-	local isFullyLoggedIn = FiraxisLive.IsFullyLoggedIn();
-	if isFullyLoggedIn and not GameConfiguration.IsAnyMultiplayer() then
-		Controls.CloudCheck:SetHide(false);
-		Controls.DecoContainer:SetSizeY(537);
-	else
-		Controls.CloudCheck:SetHide(true);
-		Controls.DecoContainer:SetSizeY(562);
-	end
+	local cloudEnabled = UI.AreCloudSavesEnabled() and not GameConfiguration.IsAnyMultiplayer();
+	Controls.CloudCheck:SetHide(not cloudEnabled);
+	
+	local autoSavesDisabled = (g_GameType == SaveTypes.WORLDBUILDER_MAP or g_FileType == SaveFileTypes.GAME_CONFIGURATION);
+	Controls.AutoCheck:SetHide(autoSavesDisabled);	
 
+	RefreshSortPulldown();
+	InitializeDirectoryBrowsing();
+	SetupDirectoryBrowsePulldown();
+
+	local autoSavesVisible = Controls.AutoCheck:IsVisible();
+	local cloudSavesVisible = Controls.CloudCheck:IsVisible();
+	local sortByVisible = Controls.SortByPullDown:IsVisible();
+	local directoryVisible = Controls.DirectoryPullDown:IsVisible();
+
+	local count = 0;
+	if(autoSavesVisible) then
+		count = count + 1;
+	end
+	if(cloudSavesVisible) then
+		count = count + 1;
+	end
+	if(sortByVisible) then
+		count = count + 1;
+	end
+	if(directoryVisible) then
+		count = count + 1;
+	end
+		
+	local decoSize = 611;
+	Controls.DecoContainer:SetSizeY(decoSize - (count * 23));
+	
 	SetupFileList();
 end
 
@@ -120,7 +150,7 @@ function OnDelete()
 		m_kPopupDialog:AddText(Locale.Lookup("LOC_CONFIRM_TXT"));
 		m_kPopupDialog:AddTitle(Locale.ToUpper(Locale.Lookup("LOC_CONFIRM_DELETE_TITLE_TXT")));
 		m_kPopupDialog:AddButton(Locale.Lookup("LOC_NO_BUTTON"), OnDeleteNo);
-		m_kPopupDialog:AddButton(Locale.Lookup("LOC_YES_BUTTON"), OnDeleteYes, nil, nil, "PopupButtonAltInstance"); 
+		m_kPopupDialog:AddButton(Locale.Lookup("LOC_YES_BUTTON"), OnDeleteYes, nil, nil, "PopupButtonInstanceRed"); 
 		m_kPopupDialog:Open();
 	end
 end
@@ -302,20 +332,38 @@ function Resize()
 	Controls.MainGrid:ReprocessAnchoring();
 end
 
+-- ===========================================================================
 function OnUpdateUI( type:number, tag:string, iData1:number, iData2:number, strData1:string )   
-  if type == SystemUpdateUI.ScreenResize then
-    Resize();
-  end
+	if type == SystemUpdateUI.ScreenResize then
+		Resize();
+	end
+end
+
+-- ===========================================================================
+function OnRefresh()
+	SetupDirectoryBrowsePulldown();
+	SetupFileList();
+end
+
+-- ===========================================================================
+function OnLoadComplete(eResult, eType, eOptions, eFileType )
+
+	-- Did a configuration load?
+	if eFileType == SaveFileTypes.GAME_CONFIGURATION then
+		if ContextPtr:IsVisible() then
+			-- Yes, then just dequeue the popup
+			UIManager:DequeuePopup( ContextPtr );
+		end
+	end
+
 end
 -- ===========================================================================
 function Initialize()
-	m_kPopupDialog = PopupDialogLogic:new( "LoadGameMenu", Controls.PopupDialog, Controls.StackContents, Controls.PopupTitle );
-	m_kPopupDialog:SetInstanceNames( "PopupButtonInstance", "Button", "PopupTextInstance", "Text", "RowInstance", "Row");	
-    m_kPopupDialog:SetOpenAnimationControls( Controls.PopupAlphaIn, Controls.PopupSlideIn );	
-	m_kPopupDialog:SetSize(400,200);
+	m_kPopupDialog = PopupDialog:new( "LoadGameMenu" );
 
 	AutoSizeGridButton(Controls.BackButton,133,36);
 	SetupSortPulldown();
+	InitializeDirectoryBrowsing();
 	Resize();
 
 	-- UI Events
@@ -323,6 +371,7 @@ function Initialize()
 	ContextPtr:SetShowHandler(OnShow);
 	ContextPtr:SetHideHandler(OnHide);
 	ContextPtr:SetInitHandler(OnInit);
+	ContextPtr:SetRefreshHandler( OnRefresh );
 	ContextPtr:SetShutdown(OnShutdown);
 	LuaEvents.GameDebug_Return.Add(OnGameDebugReturn);
 	LuaEvents.JoiningRoom_Showing.Add(OnJoiningRoom_Showing);
@@ -350,6 +399,7 @@ function Initialize()
 
     m_QuickloadId = Input.GetActionId("QuickLoad");
     Events.InputActionTriggered.Add( OnInputActionTriggered );
+    Events.LoadComplete.Add( OnLoadComplete );
 end
 Initialize();
 

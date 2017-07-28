@@ -5,8 +5,9 @@
 --
 -- ===========================================================================
 
+g_TutorialLoaders = {};
 include("TutorialScenarioBase");	-- The base tutorial scenario.
-
+include("TutorialLoader_", true);	-- Additional tutorial event handlers.
 
 -- ===========================================================================
 --	DEBUGGING
@@ -17,7 +18,7 @@ local isDebugVerbose			:boolean = false;						-- (false) when true, lots of logg
 
 
 -- ===========================================================================
---	CONSTANTS
+--	CONSTANTS-
 -- ===========================================================================
 
 local COLOR_DEBUG_SEEN_ID		:number = 0xff909090;
@@ -3209,6 +3210,11 @@ function LoadItems()
 		loadBank();
 	end
 
+	-- Create scenario related tutorial items
+	for _, loader in ipairs(g_TutorialLoaders) do
+		loader:CreateTutorialItems(AddToListener);
+	end
+
 	-- Populate debug panel if supported.
 	if isDebugInfoShowing then	
 		
@@ -3331,5 +3337,9 @@ function Initialize()
 	LuaEvents.TradeRouteChooser_RouteConsidered.Add(	OnTradeRouteConsidered );
 	LuaEvents.TurnBlockerChooseProduction.Add(			OnTurnBlockerChooseProduction );	
 	LuaEvents.WorldRankings_Close.Add(					OnWorldRankingsClosed );
+
+	for _, loader in ipairs(g_TutorialLoaders) do
+		loader:Initialize(TutorialCheck);
+	end
 end
 Initialize();

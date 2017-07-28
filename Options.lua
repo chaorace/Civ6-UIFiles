@@ -3,7 +3,7 @@
 -- ===========================================================================
 include("Civ6Common");
 include("InstanceManager");
-include("PopupDialogSupport");
+include("PopupDialog");
 
 -- ===========================================================================
 --	DEBUG 
@@ -118,7 +118,7 @@ function OnReset()
 
     _kPopupDialog:AddText(Locale.Lookup("LOC_OPTIONS_RESET_OPTIONS_POPUP_TEXT"));
 	_kPopupDialog:AddButton(Locale.Lookup("LOC_OPTIONS_RESET_OPTIONS_POPUP_NO"), function() CancelReset(); end); 
-    _kPopupDialog:AddButton(Locale.Lookup("LOC_OPTIONS_RESET_OPTIONS_POPUP_YES"), function() ResetOptions(); end, nil, nil,"PopupButtonAltInstance");  
+    _kPopupDialog:AddButton(Locale.Lookup("LOC_OPTIONS_RESET_OPTIONS_POPUP_YES"), function() ResetOptions(); end, nil, nil,"PopupButtonInstanceRed");  
     _kPopupDialog:Open();
     Controls.ResetButton:SetDisabled(true);
     Controls.ConfirmButton:SetDisabled(true);
@@ -176,6 +176,7 @@ function OnConfirm()
 		UserConfiguration.SetValue("QuickCombat", Options.GetUserOption("Gameplay", "QuickCombat"));
 		UserConfiguration.SetValue("QuickMovement", Options.GetUserOption("Gameplay", "QuickMovement"));
 		UserConfiguration.SetValue("AutoEndTurn", Options.GetUserOption("Gameplay", "AutoEndTurn"));
+		UserConfiguration.SetValue("CityRangeAttackTurnBlocking", Options.GetUserOption("Gameplay", "CityRangeAttackTurnBlocking"));
 		UserConfiguration.SetValue("TutorialLevel", Options.GetUserOption("Gameplay", "TutorialLevel"));
 		UserConfiguration.SetValue("EdgePan", Options.GetUserOption("Gameplay", "EdgePan"));
         
@@ -1152,6 +1153,11 @@ function TemporaryHardCodedGoodness()
 	end,
 	UserConfiguration.IsValueLocked("AutoEndTurn"));
 
+	PopulateComboBox(Controls.CityRangeAttackTurnBlockingPullDown, boolean_options, Options.GetUserOption("Gameplay", "CityRangeAttackTurnBlocking"), function(option)
+		Options.SetUserOption("Gameplay", "CityRangeAttackTurnBlocking", option);
+	end,
+	UserConfiguration.IsValueLocked("CityRangeAttackTurnBlocking"));
+
 	PopulateComboBox(Controls.TunerPullDown, boolean_options, Options.GetAppOption("Debug", "EnableTuner"), function(option)
 		Options.SetAppOption("Debug", "EnableTuner", option);
 		_PromptRestartApp = true;
@@ -1310,6 +1316,13 @@ function TemporaryHardCodedGoodness()
 		Options.SetUserOption("Gameplay", "AutoUnitCycle", option);
 	end,
 	UserConfiguration.IsValueLocked("AutoUnitCycle"));
+	
+	local minimapSize = Options.GetGraphicsOption("General", "MinimapSize") or 0.0;
+	Controls.MinimapSizeSlider:SetValue(minimapSize);
+	Controls.MinimapSizeSlider:RegisterSliderCallback(function(value)
+		Options.SetGraphicsOption("General", "MinimapSize", value);
+		UI.SetMinimapSize(value);
+	end);
 
 	local plotTooltipDelay = Options.GetUserOption("Interface", "PlotTooltipDelay") or 0.2;
 	Controls.PlotToolTipDelaySlider:SetValue(plotTooltipDelay / 2);
@@ -1527,9 +1540,7 @@ function Initialize()
 	_PromptRestartApp = false;
 	_PromptRestartGame = false;
 
-	_kPopupDialog = PopupDialogLogic:new( "Options", Controls.PopupDialog, Controls.PopupStack, Controls.PopupAlphaIn, Controls.PopupSlideIn );
-	_kPopupDialog:SetInstanceNames( "PopupButtonInstance", "Button", "PopupTextInstance", "Text", "RowInstance", "Row");	
-	_kPopupDialog:SetSize(400,200);
+	_kPopupDialog = PopupDialog:new( "Options" );
 
 	Controls.AdvancedGraphicsOptions:RegisterCallback(Mouse.eLClick, OnToggleAdvancedOptions);
 	Controls.AdvancedGraphicsOptions:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);

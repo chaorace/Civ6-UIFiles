@@ -102,6 +102,12 @@ Tests["PlayGame"].Run = function()
 	-- Start a game
 	GameConfiguration.SetToDefaults();
 
+	-- Did they specify a ruleset?
+	local ruleSet = Automation.GetSetParameter("CurrentTest", "RuleSet");
+	if (ruleSet ~= nil) then
+		GameConfiguration.SetRuleSet(ruleSet);
+	end
+
 	-- Did they have a map script?
 	local mapScript = Automation.GetSetParameter("CurrentTest", "MapScript");
 	if (mapScript ~= nil) then		

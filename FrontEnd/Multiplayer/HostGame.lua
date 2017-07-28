@@ -5,7 +5,7 @@ include("LobbyTypes");		--MPLobbyTypes
 include("ButtonUtilities");
 include("InstanceManager");
 include("PlayerSetupLogic");
-include("PopupDialogSupport");
+include("PopupDialog");
 include("Civ6Common");
 
 
@@ -83,7 +83,11 @@ function OnDefaultButton()
 	local gameName = GameConfiguration.GetValue("GAME_NAME");
 	g_GameParameters:ResetDefaults();
 	GameConfiguration.RegenerateSeeds();
-	GameConfiguration.SetValue("GAME_NAME", gameName);
+	
+	-- Only assign GAME_NAME if the value is valid.
+	if(gameName and #gameName > 0) then
+		GameConfiguration.SetValue("GAME_NAME", gameName);
+	end
 	return GameSetup_RefreshParameters();
 end
 
@@ -114,6 +118,13 @@ function OnConfirmClick()
 
 	local serverType = ServerTypeForMPLobbyType(m_lobbyModeName);
 	print("OnConfirmClick() m_lobbyModeName: " .. tostring(m_lobbyModeName) .. " serverType: " .. tostring(serverType));
+	
+	-- GAME_NAME must not be empty.
+	local gameName = GameConfiguration.GetValue("GAME_NAME");	
+	if(gameName == nil or #gameName == 0) then
+		GameConfiguration.SetToDefaultGameName();
+	end
+
 	Network.HostGame(serverType);	
 end
 
@@ -256,7 +267,7 @@ function OnExitGameAskAreYouSure()
 		if (not m_kPopupDialog:IsOpen()) then
 			m_kPopupDialog:AddText(	  Locale.Lookup("LOC_GAME_MENU_QUIT_WARNING"));
 			m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_NO_BUTTON_CAPTION"), nil );
-			m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnExitGame, nil, nil, "PopupButtonInstanceAlt" );
+			m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnExitGame, nil, nil, "PopupButtonInstanceRed" );
 			m_kPopupDialog:Open();
 		end
 	else
@@ -298,9 +309,6 @@ function Initialize()
 	Resize();
 
 	-- Custom popup setup	
-	m_kPopupDialog = PopupDialogLogic:new( "InGameTopOptionsMenu", Controls.PopupDialog, Controls.PopupStack );
-	m_kPopupDialog:SetInstanceNames( "PopupButtonInstance", "Button", "PopupTextInstance", "Text", "RowInstance", "Row");
-	m_kPopupDialog:SetOpenAnimationControls( Controls.PopupAlphaIn, Controls.PopupSlideIn );	
-	m_kPopupDialog:SetSize(400,200);
+	m_kPopupDialog = PopupDialog:new( "InGameTopOptionsMenu" );
 end
 Initialize();

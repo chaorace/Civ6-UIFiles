@@ -345,19 +345,22 @@ function UpdatePlayerEntry(playerEntry)
 	playerEntry.playerInstance.Button:RegisterCallback( Mouse.eLClick, function() OnPlayerSelected(playerEntry); end);
 
 	-- Update icon if we're a specific civ
-	if playerEntry.Civ ~= "UNDEFINED" then
-		local pPlayerConfig = PlayerConfigurations[playerEntry.Index];
-		playerEntry.playerInstance.CivIcon:SetIcon("ICON_" .. pPlayerConfig:GetCivilizationTypeName());
+	if playerEntry.Civ ~= "UNDEFINED" and playerEntry.Civ ~= "RANDOM" then
+		playerEntry.playerInstance.CivIcon:SetIcon("ICON_" .. playerConfig.Name);
 	
 		local backColor, frontColor = UI.GetPlayerColors(playerEntry.Index);
 		playerEntry.playerInstance.CivIcon:SetColor(frontColor);
 		playerEntry.playerInstance.CivIconBacking:SetColor(backColor);
+	else
+		playerEntry.playerInstance.CivIcon:SetColorByName("White");
+		playerEntry.playerInstance.CivIconBacking:SetColorByName("White");
 	end
 
 	if playerEntry == m_SelectedPlayer then
 		OnPlayerSelected(m_SelectedPlayer);
 	end
 
+	Controls.PlayerStack:CalculateSize();
 	Controls.PlayerScrollPanel:CalculateSize();
 	Controls.PlayerStack:ReprocessAnchoring();
 end
@@ -374,7 +377,8 @@ function UpdatePlayerList()
 	local selected = 1;
 	local entryCount = 0;
 
-	for i = 0, GameDefines.MAX_PLAYERS-2 do -- Use MAX_PLAYERS-2 to ignore the barbarian player
+	local iMaxPlayers = WorldBuilder.PlayerManager():GetMaxPlayers() - 1;	-- -1, for a Lua loop
+	for i = 0, iMaxPlayers do
 
 		local eStatus = WorldBuilder.PlayerManager():GetSlotStatus(i); 
 		if eStatus ~= SlotStatus.SS_CLOSED then
@@ -453,6 +457,7 @@ function ViewPlayerGeneralPage()
 	ContextPtr:BuildInstanceForControl( "PlayerGeneralInstance", m_ViewingTab.GeneralInstance, instance.Top ) ;	
 	
 	InitGeneralTab();
+	UpdateGeneralTabValues();
 
 	CalculatePrimaryTabScrollArea();
 end

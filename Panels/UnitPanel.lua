@@ -5,7 +5,7 @@ include( "InstanceManager" );
 include( "SupportFunctions" );
 include( "Colors" );
 include( "CombatInfo" );
-include( "PopupDialogSupport" );
+include( "PopupDialog" );
 include( "Civ6Common" );
 include( "EspionageSupport" );
 
@@ -58,6 +58,7 @@ local m_kSoundCV1               :table = {};
 local m_kTutorialDisabled		:table = {};	-- key = Unit Type, value = lockedHashes
 local m_kTutorialAllDisabled	:table = {};	-- hashes of actions disabled for all units
 
+local m_DeleteInProgress        :boolean = false;
 
 local m_attackerUnit = nil;
 local m_locX = nil;
@@ -856,7 +857,9 @@ function View(data)
 
 	-- Portrait Icons
 	if(data.IconName ~= nil) then
-		Controls.UnitIcon:SetIcon(data.IconName);
+		if not Controls.UnitIcon:SetIcon(data.IconName) then
+			Controls.UnitIcon:SetIcon(data.FallbackIconName)
+		end
 	end
 	if(data.CivIconName ~= nil) then
 		local darkerBackColor = DarkenLightenColor(m_primaryColor,(-85),238);
@@ -999,7 +1002,9 @@ function ViewTarget(data)
 
 	-- Portrait Icons
 	if(data.IconName ~= nil) then
-		Controls.TargetUnitIcon:SetIcon(data.IconName);
+		if not Controls.TargetUnitIcon:SetIcon(data.IconName) then
+			Controls.TargetUnitIcon:SetIcon(data.FallbackIconName)
+		end
 	end
 	if(data.CivIconName ~= nil) then
 		local darkerBackColor = DarkenLightenColor(m_primaryColor,(-85),238);
@@ -1292,6 +1297,7 @@ function AddUnitStat(statType:number, statData:table, unitData:table, relativeSi
 	-- Update icon
 	local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(statData.IconName,22);
 	statInstance.StatCheckBox:SetCheckTexture(textureSheet);
+	statInstance.StatCheckBox:SetUnCheckTexture(textureSheet)
 	statInstance.StatCheckBox:SetCheckTextureOffsetVal(textureOffsetX,textureOffsetY);
 	statInstance.StatCheckBox:SetUnCheckTextureOffsetVal(textureOffsetX,textureOffsetY);
 
@@ -1463,14 +1469,6 @@ function OnShowCombat( showCombat )
 		pAttacker = UI.GetHeadSelectedUnit();
 		if (pAttacker ~= nil) then
 			bAttackerIsUnit = true;
-
-			-- Never show combat for civilian units unless it's between two religious untis.
-			if showCombat then
-				if (GameInfo.Units[pAttacker:GetUnitType()].FormationClass == "FORMATION_CLASS_CIVILIAN") 
-				and (IsAttackerReligiousCombat(pAttacker)==false) then
-					showCombat = false;		-- All this showCombat logic, should be done before VIEW! :(
-				end
-			end
 		else
 			return;
 		end
@@ -1910,6 +1908,7 @@ function ReadUnitData( unit:table )
 	m_subjectData.Name						= unit:GetName();
 	m_subjectData.UnitTypeName				= GameInfo.Units[unit:GetUnitType()].Name;
 	m_subjectData.IconName					= GetUnitPortraitPrefix(unit:GetOwner())..GameInfo.Units[unit:GetUnitType()].UnitType.."_PORTRAIT";
+	m_subjectData.FallbackIconName			= "ICON_"..GameInfo.Units[unit:GetUnitType()].UnitType.."_PORTRAIT";
 	m_subjectData.Moves						= unit:GetMovesRemaining();
 	m_subjectData.MovementMoves				= unit:GetMovementMovesRemaining();
 	m_subjectData.InFormation				= unit:GetFormationUnitCount() > 1;
@@ -2420,14 +2419,28 @@ end
 -- ===========================================================================
 --	Prompt if the player really wants to force remove a unit.
 -- ===========================================================================
+function OnNoDelete()
+    m_DeleteInProgress = false;
+end
+
 function OnPromptToDeleteUnit()
 	local pUnit		:table	= UI.GetHeadSelectedUnit();
-	if(pUnit) then
-		local unitName	:string = GameInfo.Units[pUnit:GetUnitType()].Name;
-		local msg		:string = Locale.Lookup("LOC_HUD_UNIT_PANEL_ARE_YOU_SURE_DELETE", unitName);
-		-- Pass the unit ID through, the user can take their time in the dialog and it is possible that the selected unit will change
-		local unitID = pUnit:GetComponentID();
-		m_kPopupDialog:ShowOkCancelDialog( msg, function() OnDeleteUnit(unitID) end, nil);
+
+    if m_DeleteInProgress then
+        return;
+    end
+
+    if(pUnit) then
+		-- Only show the prompt if it's possible to delete this unit
+		local bCanStart = UnitManager.CanStartCommand( pUnit, UnitCommandTypes.DELETE, true);
+		if bCanStart then
+			local unitName	:string = GameInfo.Units[pUnit:GetUnitType()].Name;
+			local msg		:string = Locale.Lookup("LOC_HUD_UNIT_PANEL_ARE_YOU_SURE_DELETE", unitName);
+			-- Pass the unit ID through, the user can take their time in the dialog and it is possible that the selected unit will change
+			local unitID = pUnit:GetComponentID();
+			m_kPopupDialog:ShowOkCancelDialog( msg, function() OnDeleteUnit(unitID) end, function() OnNoDelete() end);
+            m_DeleteInProgress = true;
+		end
 	end
 end
 
@@ -2436,6 +2449,7 @@ end
 --	Resets lens to turn off any that are for the unit (e.g., settler)
 -- ===========================================================================
 function OnDeleteUnit(unitID : table)
+    m_DeleteInProgress = false;
 
 	local pUnit		:table	= UnitManager.GetUnit(unitID.player, unitID.id);
 	if (pUnit ~= nil) then
@@ -2718,7 +2732,7 @@ function ShowCombatAssessment( )
 	--visualize the combat differences
 	if (m_combatResults ~= nil) then
 		local attacker = m_combatResults[CombatResultParameters.ATTACKER];
-		local defender = m_combatResults[CombatResultParameters.DEFENDER];
+		local defender = m_combatResults[CombatResultParameters.DEFENDER];		
 
 		local iAttackerCombatStrength	= attacker[CombatResultParameters.COMBAT_STRENGTH];
 		local iDefenderCombatStrength	= defender[CombatResultParameters.COMBAT_STRENGTH];
@@ -2735,7 +2749,9 @@ function ShowCombatAssessment( )
 			end
 		end
 		if (attacker[CombatResultParameters.FINAL_DAMAGE_TO] + (extraDamage/2) < attacker[CombatResultParameters.MAX_HIT_POINTS]) then
-			isSafe = true; 
+			if (iDefenderStrength > 0) then
+				isSafe = true; 
+			end
 		end
 
 		local combatAssessmentStr :string = "";
@@ -2783,7 +2799,7 @@ function ShowCombatAssessment( )
 						end
 					end
 				else
-					if (defender[CombatResultParameters.FINAL_DAMAGE_TO] >= defenderHitpoints) then
+					if (damageToDefender >= defenderHitpoints) then
 						combatAssessmentStr = Locale.Lookup("LOC_HUD_UNIT_PANEL_OUTCOME_DECISIVE_VICTORY");
 						ShowCombatVictoryBanner();
 					else
@@ -2797,7 +2813,7 @@ function ShowCombatAssessment( )
 					end
 				end
 			else	--non ranged attacks
-				if (defender[CombatResultParameters.FINAL_DAMAGE_TO] >= defenderHitpoints and isSafe) then
+				if (damageToDefender >= defenderHitpoints) then
 					combatAssessmentStr = Locale.Lookup("LOC_HUD_UNIT_PANEL_OUTCOME_DECISIVE_VICTORY");
 					ShowCombatVictoryBanner();
 				else
@@ -2865,16 +2881,28 @@ function ShowCombatAssessment( )
 				end
 			end
 		else
-			combatAssessmentStr = Locale.Lookup("LOC_HUD_UNIT_PANEL_OUTCOME_INEFFECTIVE");
-			ShowCombatStalemateBanner();
+			if (iDefenderStrength > 0) then
+				combatAssessmentStr = Locale.Lookup("LOC_HUD_UNIT_PANEL_OUTCOME_INEFFECTIVE");
+				ShowCombatStalemateBanner();
+			else
+				combatAssessmentStr = Locale.Lookup("LOC_HUD_UNIT_PANEL_OUTCOME_DECISIVE_VICTORY");
+				ShowCombatVictoryBanner();
+			end
 		end
 
 		Controls.CombatAssessmentText:SetText(Locale.ToUpper(combatAssessmentStr));
 
 		-- Show interceptor information
-		if m_targetData.InterceptorName ~= "" then
+		local interceptorData = m_combatResults[CombatResultParameters.INTERCEPTOR];
+		local interceptorID = interceptorData[CombatResultParameters.ID];
+		local defenderID = defender[CombatResultParameters.ID];
+		local pkInterceptor = UnitManager.GetUnit(interceptorID.player, interceptorID.id);
+		if (pkInterceptor ~= nil and interceptorID.id ~= defenderID.id) then
+			local interceptorStrength = interceptorData[CombatResultParameters.COMBAT_STRENGTH];
+			local interceptorStrengthModifier = interceptorData[CombatResultParameters.STRENGTH_MODIFIER];
+			local modifiedStrength = interceptorStrength + interceptorStrengthModifier;
 			Controls.InterceptorName:SetText(m_targetData.InterceptorName);
-			Controls.InterceptorStrength:SetText(m_targetData.InterceptorCombat);
+			Controls.InterceptorStrength:SetText(modifiedStrength);
 
 			UpdateInterceptorModifiers(0);
 
@@ -2888,10 +2916,16 @@ function ShowCombatAssessment( )
 			Controls.InterceptorGrid:SetHide(true);
 		end
 
-		-- Show anit-air information
-		if m_targetData.AntiAirName ~= "" then
+		-- Show anti-air information if the anti-air unit is not the same as the defender
+		local antiAirData = m_combatResults[CombatResultParameters.ANTI_AIR];
+		local antiAirID = antiAirData[CombatResultParameters.ID];
+		local pkAntiAir = UnitManager.GetUnit(antiAirID.player, antiAirID.id);
+		if (pkAntiAir ~= nil and antiAirID.id ~= defenderID.id) then
+			local antiAirStrength = m_combatResults[CombatResultParameters.ANTI_AIR][CombatResultParameters.COMBAT_STRENGTH];
+			local antiAirStrengthModifier = m_combatResults[CombatResultParameters.ANTI_AIR][CombatResultParameters.STRENGTH_MODIFIER];
 			Controls.AAName:SetText(m_targetData.AntiAirName);
-			Controls.AAStrength:SetText(m_targetData.AntiAirCombat);
+			local modifiedStrength = antiAirStrength + antiAirStrengthModifier;
+			Controls.AAStrength:SetText(modifiedStrength);
 
 			UpdateAntiAirModifiers(0);
 
@@ -3007,7 +3041,7 @@ function OnUnitFlagPointerEntered( playerID:number, unitID:number )
 					local pDefender = UnitManager.GetUnit(playerID, unitID);	
 					if (pDefender ~= nil) then
 						m_combatResults	= CombatManager.SimulateAttackVersus( pDistrict:GetComponentID(), pDefender:GetComponentID() );
-						isValidToShow = ReadTargetData();		
+						isValidToShow = ReadTargetData(attackingCity);		
 					end
 				end
 			end
@@ -3017,7 +3051,7 @@ function OnUnitFlagPointerEntered( playerID:number, unitID:number )
 				local pDefender = UnitManager.GetUnit(playerID, unitID);	
 				if (pDefender ~= nil) then
 					m_combatResults	= CombatManager.SimulateAttackVersus( pDistrict:GetComponentID(), pDefender:GetComponentID() );
-					isValidToShow = ReadTargetData();		
+					isValidToShow = ReadTargetData(pDistrict);		
 				end
 			end
 		else
@@ -3079,7 +3113,7 @@ function InspectPlot( plot:table )
 			return false;
 		end
 		GetCombatResults( pDistrict:GetComponentID(), plot:GetX(), plot:GetY() )
-		isValidToShow = ReadTargetData();
+		isValidToShow = ReadTargetData(pDistrict);
 
 	elseif (UI.GetInterfaceMode() == InterfaceModeTypes.DISTRICT_RANGE_ATTACK) then
 		local pDistrict = UI.GetHeadSelectedDistrict();
@@ -3087,7 +3121,7 @@ function InspectPlot( plot:table )
 			return false;
 		end
 		GetCombatResults( pDistrict:GetComponentID(), plot:GetX(), plot:GetY() )
-		 isValidToShow = ReadTargetData();
+		isValidToShow = ReadTargetData(pDistrict);
 
 	else
 		local pUnit = UI.GetHeadSelectedUnit();
@@ -3122,18 +3156,6 @@ function IsTargetReligiousCombat(targetData)
 	return false;
 end
 
-function IsAttackerCombat(attacker)
-	if
-	(
-		(attacker:GetCombat() > 0)
-	or	(attacker:GetRangedCombat() > 0)
-	or	(attacker:GetBombardCombat() > 0)
-	) then
-		return true;
-	end
-	return false;
-end
-
 function IsAttackerReligiousCombat(attacker)
 	if ( attacker:GetReligiousStrength() > 0 ) then
 		return true;
@@ -3161,6 +3183,7 @@ function ReadTargetData(attacker)
 				local unitGreatPerson = pkDefender:GetGreatPerson();
 				m_targetData.Name						= Locale.Lookup( pkDefender:GetName() );
 				m_targetData.IconName					= GetUnitPortraitPrefix( pkDefender:GetOwner() )..GameInfo.Units[pkDefender:GetUnitType()].UnitType.."_PORTRAIT";
+				m_targetData.FallbackIconName			= "ICON_"..GameInfo.Units[pkDefender:GetUnitType()].UnitType.."_PORTRAIT";
 				m_targetData.Combat						= pkDefender:GetCombat();
 				m_targetData.RangedCombat				= pkDefender:GetRangedCombat();
 				m_targetData.BombardCombat				= pkDefender:GetBombardCombat();
@@ -3181,17 +3204,10 @@ function ReadTargetData(attacker)
 				
 				-- Only display target data if the combat type of the attacker and target match
 				if (attacker ~= nil) then
-					if
-					(
-						(IsAttackerCombat(attacker) and IsTargetCombat(m_targetData))
-					or	(IsAttackerReligiousCombat(attacker) and IsTargetReligiousCombat(m_targetData))
-					) then
-						bShowTarget = true;
-					else
-						bShowTarget = false;
+					local eCombatType = m_combatResults[CombatResultParameters.COMBAT_TYPE];
+					if (eCombatType ~= nil) then
+						bShowTarget = CombatManager.CanAttackTarget(attacker:GetComponentID(), pkDefender:GetComponentID(), eCombatType);
 					end
-				else
-					bShowTarget = true;
 				end
 			end
 		elseif (defenderID.type == ComponentType.DISTRICT) then
@@ -3253,11 +3269,14 @@ function ReadTargetData(attacker)
 			m_targetData.InterceptorPotentialDamage	= m_combatResults[CombatResultParameters.INTERCEPTOR][CombatResultParameters.DAMAGE_TO];
 		end
 
-		local antiAirID = m_combatResults[CombatResultParameters.ANTI_AIR][CombatResultParameters.ID];
-		local pkAntiAir = UnitManager.GetUnit(antiAirID.player, antiAirID.id);
-		if (pkAntiAir ~= nil) then
-			m_targetData.AntiAirName			= Locale.Lookup(pkAntiAir:GetName());
-			m_targetData.AntiAirCombat			= pkAntiAir:GetAntiAirCombat();
+		local antiAirCombatResults = m_combatResults[CombatResultParameters.ANTI_AIR];
+		if (antiAirCombatResults ~= nil) then
+			local antiAirID = antiAirCombatResults [CombatResultParameters.ID];
+			local pkAntiAir = UnitManager.GetUnit(antiAirID.player, antiAirID.id);
+			if (pkAntiAir ~= nil) then
+				m_targetData.AntiAirName			= Locale.Lookup(pkAntiAir:GetName());
+				m_targetData.AntiAirCombat			= pkAntiAir:GetAntiAirCombat();
+			end
 		end
 
 		if (bShowTarget) then
@@ -3403,6 +3422,7 @@ end
 
 -- ===========================================================================
 function GetCombatResults ( attacker, locX, locY )
+
 	-- We have to ask Game Core to do an evaluation, is it busy?
 	if (UI.IsGameCoreBusy() == true) then
 		return;
@@ -3419,7 +3439,6 @@ function GetCombatResults ( attacker, locX, locY )
 	if (locX ~= nil and locY ~= nil) then
 		m_combatResults	= CombatManager.SimulateAttackInto( attacker, locX, locY );
 	end
-
 end
 
 -- ===========================================================================
@@ -3516,7 +3535,7 @@ function AddUnitToUnitList(pUnit:table)
 	unitEntry.Button:SetVoids(i, pUnit:GetID());
 
 	-- Update unit icon
-	local iconInfo:table, iconShadowInfo:table = GetUnitIconAndIconShadow(pUnit, 22, true);
+	local iconInfo:table, iconShadowInfo:table = GetUnitIcon(pUnit, 22, true);
 	if iconInfo.textureSheet then
 		unitEntry.UnitTypeIcon:SetTexture( iconInfo.textureOffsetX, iconInfo.textureOffsetY, iconInfo.textureSheet );
 	end
@@ -3713,7 +3732,7 @@ function Initialize()
 	LuaEvents.PlayerChange_Close.Add(					OnPlayerChangeClose );
 
 	-- Popup setup
-	m_kPopupDialog = PopupDialog:new( "UnitPanelPopup" );
+	m_kPopupDialog = PopupDialogInGame:new( "UnitPanelPopup" );
 
 	-- Setup settlement water guide colors
 	local FreshWaterColor:number = UI.GetColorValue("COLOR_BREATHTAKING_APPEAL");

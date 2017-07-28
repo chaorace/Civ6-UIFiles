@@ -362,6 +362,14 @@ function UI_PostRefreshParameters()
 	Controls.CreateGameOptions:ReprocessAnchoring();
 end
 
+-------------------------------------------------------------------------------
+-- Event Listeners
+-------------------------------------------------------------------------------
+function OnFinishedGameplayContentConfigure(result)
+	if(ContextPtr and not ContextPtr:IsHidden() and result.Success) then
+		GameSetup_RefreshParameters();
+	end
+end
 
 -- ===========================================================================
 function GameSetup_PlayerCountChanged()
@@ -372,7 +380,7 @@ end
 -- ===========================================================================
 function OnShow()
 	RefreshPlayerSlots();	-- Will trigger a game parameter refresh.
-	AutoSizeGridButton(Controls.DefaultButton,50,22,10,"H");
+	AutoSizeGridButton(Controls.DefaultButton,133,36,15,"H");
 	AutoSizeGridButton(Controls.CloseButton,133,36,10,"H");
 end
 
@@ -508,6 +516,7 @@ function Initialize()
 	Controls.CloseButton:RegisterCallback( Mouse.eLClick, OnBackButton );
 	Controls.CloseButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	
+	Events.FinishedGameplayContentConfigure.Add(OnFinishedGameplayContentConfigure);
 	Events.SystemUpdateUI.Add( OnUpdateUI );
 	Events.BeforeMultiplayerInviteProcessing.Add( OnBeforeMultiplayerInviteProcessing );
 	Resize();

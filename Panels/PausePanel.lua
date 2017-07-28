@@ -18,8 +18,9 @@ end
 
 -- Play panel opening animations if it is not already open or opening.
 function StartPanelOpen()
-	if(Controls.SlideIn:IsStopped()							-- Not currently running
-		and Controls.SlideIn:GetProgress() > 0) then		-- Not fully open
+	if((Controls.SlideIn:IsStopped() and Controls.SlideIn:GetProgress() < 1)	-- SlideIn not fully deployed and not running
+		or not Controls.SlideOut:IsStopped()									-- SlideOut is playing
+		or Controls.SlideOut:GetProgress() > 0) then							-- SlideOut is partially deployed.
 		Controls.AlphaIn:SetToBeginning(); 
 		Controls.SlideIn:SetToBeginning();
 		Controls.AlphaOut:SetToBeginning();
@@ -65,6 +66,7 @@ function Initialize()
 		CheckPausedState();
 		Events.GameConfigChanged.Add(CheckPausedState);
 		Events.PlayerInfoChanged.Add(CheckPausedState);
+		Events.LoadScreenClose.Add(CheckPausedState);
 	end
 end
 Initialize();

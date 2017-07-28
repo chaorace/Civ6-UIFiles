@@ -101,6 +101,15 @@ PageLayouts["Unit" ] = function(page)
 		end
 	end
 
+	local obsolete_with;
+	if(unit.ObsoleteCivic) then
+		local item = GameInfo.Civics[unit.ObsoleteCivic];
+		obsolete_with = item and {unit.ObsoleteCivic, item.Name};
+	elseif(unit.ObsoleteTech) then
+		local item = GameInfo.Technologies[unit.ObsoleteTech];
+		obsolete_with = item and {unit.ObsoleteTech, item.Name};
+	end
+
 	local requires_buildings = {};
 	for row in GameInfo.Unit_BuildingPrereqs() do
 		if(row.Unit == unitType) then
@@ -168,6 +177,15 @@ PageLayouts["Unit" ] = function(page)
 				end
 			end
 
+			s:AddSeparator();
+		end
+
+		if(obsolete_with) then
+			local tType = obsolete_with[1];
+			local tName = obsolete_with[2];
+		
+			s:AddHeader("LOC_UI_PEDIA_MADE_OBSOLETE_BY");		
+			s:AddIconLabel({"ICON_" .. tType, tName, tType}, tName);
 			s:AddSeparator();
 		end
 
@@ -301,30 +319,13 @@ PageLayouts["Unit" ] = function(page)
 		if(#improvements > 0 or #routes > 0) then
 			s:AddHeader("LOC_UI_PEDIA_USAGE_CAN_CONSTRUCT");
 
-			if(#improvements <= 3) then
-				for i,v in ipairs(improvements) do
-					s:AddIconLabel({"ICON_" .. v.ImprovementType, v.Name, v.ImprovementType}, v.Name);
-				end
-			else
-				local icons = {};
-				for _, v in ipairs(improvements) do
-					table.insert(icons, {"ICON_" .. v.ImprovementType, v.Name, v.ImprovementType});	
-				
-					if(#icons == 4) then
-						s:AddIconList(icons[1], icons[2], icons[3], icons[4]);
-						icons = {};
-					end
-				end
+			for i,v in ipairs(improvements) do
+				s:AddIconLabel({"ICON_" .. v.ImprovementType, v.Name, v.ImprovementType}, v.Name);
+			end
 
-				if(#icons > 0) then
-					s:AddIconList(icons[1], icons[2], icons[3], icons[4]);
-				end
+			for i,v in ipairs(routes) do
+				s:AddIconLabel({"ICON_UNITOPERATION_BUILD_ROUTE", v.Name, v.RouteType}, v.Name);
 			end
-			
-			for _ ,v in ipairs(routes) do
-				s:AddLabel("[ICON_BULLET] " .. Locale.Lookup(v.Name));
-			end
-			
 		end
 
 		s:AddSeparator();

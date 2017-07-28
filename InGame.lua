@@ -173,8 +173,8 @@ function OnInputActionTriggered( actionId )
 end
 
 -- ===========================================================================
-function OnBeginWonderReveal()			BulkHide( true, "Wonder" );																end		--	Game Engine Event
-function OnEndWonderReveal()			BulkHide(false, "Wonder" );																end		--	Game Engine Event
+function OnWonderRevealPopupShown()		BulkHide( true, "Wonder" );																end		--	Game Engine Event
+function OnWonderRevealPopupClosed()	BulkHide(false, "Wonder" );																end		--	Game Engine Event
 function OnNaturalWonderPopupShown()	BulkHide( true, "NaturalWonder" );														end		--	LUA Event
 function OnNaturalWonderPopupClosed()	BulkHide(false, "NaturalWonder" );														end		--	LUA Event
 function OnEndGameMenuShown()			BulkHide( true, "EndGame" ); 		Input.PushActiveContext(InputContext.EndGame);		end		--	LUA Event
@@ -183,10 +183,9 @@ function OnDiplomacyHideIngameUI()		BulkHide( true, "Diplomacy" );		Input.PushAc
 function OnDiplomacyShowIngameUI()		BulkHide(false, "Diplomacy" );		Input.PopContext();									end		--	LUA Event
 function OnTutorialEndHide()			BulkHide( true, "TutorialEnd" );														end		--	LUA Event
 
-
-
 -- ===========================================================================
 function Initialize()
+	 
 
 	-- Support for Modded Add-in UI's
 	for i, addin in ipairs(Modding.GetUserInterfaces("InGame")) do
@@ -197,8 +196,6 @@ function Initialize()
 	ContextPtr:SetInputHandler( OnInputHandler, true );
 	ContextPtr:SetShowHandler( OnShow );
 
-	Events.BeginWonderReveal.Add(		OnBeginWonderReveal );
-	Events.EndWonderReveal.Add(			OnEndWonderReveal );
 	Events.LoadGameViewStateDone.Add(	OnLoadGameViewStateDone );
 		
     m_PauseId = Input.GetActionId("PauseMenu");
@@ -212,10 +209,11 @@ function Initialize()
 	LuaEvents.EndGameMenu_Closed.Add( OnEndGameMenuClosed );
 	LuaEvents.DiplomacyActionView_HideIngameUI.Add( OnDiplomacyHideIngameUI );
 	LuaEvents.DiplomacyActionView_ShowIngameUI.Add( OnDiplomacyShowIngameUI );
+	LuaEvents.WonderRevealPopup_Shown.Add( OnWonderRevealPopupShown );
+	LuaEvents.WonderRevealPopup_Closed.Add(	OnWonderRevealPopupClosed );
 	LuaEvents.NaturalWonderPopup_Shown.Add( OnNaturalWonderPopupShown );
 	LuaEvents.NaturalWonderPopup_Closed.Add( OnNaturalWonderPopupClosed );
 	LuaEvents.Tutorial_ToggleInGameOptionsMenu.Add( OnTutorialToggleInGameOptionsMenu );
 	LuaEvents.Tutorial_TutorialEndHideBulkUI.Add( OnTutorialEndHide );
-
 end
 Initialize();

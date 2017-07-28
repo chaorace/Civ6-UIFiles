@@ -39,14 +39,14 @@
         <SimplePullDown ID="ImprovementPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
       </Stack>
 
-      <GridButton Anchor="R,T" ID="ImprovementPillagedButton" Anchor="L,C" Offset="0,0" Size="220,24" Style="CheckBoxControl" String="LOC_WORLDBUILDER_ATTRIBUTE_IMPROVEMENT_PILLAGED" />
+      <GridButton Anchor="R,T" ID="ImprovementPillagedButton" Offset="0,0" Size="220,24" Style="CheckBoxControl" String="LOC_WORLDBUILDER_ATTRIBUTE_IMPROVEMENT_PILLAGED" />
 
       <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
         <Label Anchor="L,C" Size="125,29" Style="ShellOptionText" String="LOC_WORLDBUILDER_ATTRIBUTE_ROUTE"/>
         <SimplePullDown ID="RoutePullDown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
       </Stack>
 
-      <GridButton Anchor="R,T" ID="RoutePillagedButton" Anchor="L,C" Offset="0,0" Size="220,24" Style="CheckBoxControl" String="LOC_WORLDBUILDER_ATTRIBUTE_ROUTE_PILLAGED" />
+      <GridButton Anchor="R,T" ID="RoutePillagedButton" Offset="0,0" Size="220,24" Style="CheckBoxControl" String="LOC_WORLDBUILDER_ATTRIBUTE_ROUTE_PILLAGED" />
     
       <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
         <Label Size="125,29" Style="ShellOptionText" String="Start Position:"/>
@@ -65,7 +65,12 @@
         <Label Anchor="L,C" Size="125,29" Style="ShellOptionText" String="LOC_WORLDBUILDER_ATTRIBUTE_OWNER"/>
         <SimplePullDown ID="OwnerPulldown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
       </Stack>
-  
+
+      <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+        <Label Anchor="L,C" Size="125,29" Style="ShellOptionText" String="LOC_WORLDBUILDER_ATTRIBUTE_FEATURE_DIRECTION"/>
+        <SimplePullDown ID="FeatureDirectionPulldown" Style="PullDownBlue" ScrollThreshold="400" Size="220,24" SpaceForScroll="0" EntryInstance="InstanceOne" AutoFlip="1"/>
+      </Stack>
+		
     </Stack>
     
     <ScrollBar Anchor="R,C" Size="11,parent+4" Offset="2,0" AnchorSide="O,I" Style="ScrollVerticalBar"/>

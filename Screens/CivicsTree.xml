@@ -2,7 +2,8 @@
 <Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
 
 	<Container Style="FullScreenVignetteConsumer" />
-
+	<AlphaAnim ID="SearchResultsTimer" Begin="0" End="1" Speed="2" Cycle="Once" Stopped="1"/>
+	
   <Grid                 ID="DropShadow"                 Anchor="C,C"  Style="DropShadow2" Color="255,255,255,200" AutoSize="1" AutoSizePadding="25,25" ConsumeMouse="1">
     <Container Anchor="C,C" Size="full,768">
       <Box              Color="7,30,50,255" Anchor="L,B" Size="Full,5"/>
@@ -48,14 +49,15 @@
       <!-- We must place the modal screen controls in a separate container because we use a custom BG inside the scroll panel -->
       <Container ID="CivicsTreeModal" Style="ModalScreenWide" >
 
-        <Tutorial ID="CloseCivicsPointer" Anchor="R,T" Offset="-550, 15" Style="TutorialContainer" TriggerBy="TutorialCloseCivicsPointer">
-          <Grid Style="TutorialCalloutGrid" >
+        <Tutorial ID="CloseCivicsPointer" Anchor="R,T" Offset="90,15" Size="200,100" Style="TutorialContainer" TriggerBy="TutorialCloseCivicsPointer">
+          <Grid Style="TutorialCalloutGrid" Anchor="R,T">
             <Label Style="TutorialHeaderText" String="LOC_META_100c_HEAD" />
             <Label Style="TutorialBodyText" String="LOC_META_100c_BODY" />
+            <SlideAnim Anchor="C,T" Start="110,-40" EndOffset="30,0" Cycle="Bounce" Function="OutQuad" >
+              <Image Texture="Tutorial_ArrowH" Size="58,44" />
+            </SlideAnim>
           </Grid>
-          <SlideAnim Anchor="C,T" Start="10,0" EndOffset="30,0" Cycle="Bounce" Function="OutQuad" >
-            <Image Texture="Tutorial_ArrowH" Offset="100,-20" Size="58,44" />
-          </SlideAnim>
+
         </Tutorial>
 
       </Container>
@@ -178,7 +180,7 @@
       </Grid>
 
       <Container ID="SearchResultsPanelContainer" Anchor="L,T"	Offset="0,75"		Size="193,110" AutoSize="V" Hidden="1">
-        <ScrollPanel ID="SearchResultsPanel"  Size="parent,693"  Vertical="1" AutoScrollBar="1">
+        <ScrollPanel ID="SearchResultsPanel"  Size="parent,600"  Vertical="1" AutoScrollBar="1">
           <ScrollBar Style="Slider_Blue" Anchor="R,C" AnchorSide="O,I"/>
           <Grid Texture="Controls_OptionPanel" 	SliceCorner="3,3"		SliceSize="10,52" SliceTextureSize="16,64" Size="193,110" AutoSize="V" AutoSizePadding="0,5">
             <Stack ID="SearchResultsStack" StackGrowth="Bottom" Padding="2" Offset="0,5"/>
@@ -197,12 +199,12 @@
 		
 	<!-- Most important part of the tree, the actual nodes of content. -->
 	<Instance						Name="NodeInstance">
-		<Container				ID="Top"																					Size="460,1">
-			<GridButton			ID="NodeButton"			Offset="0,-72"								Size="460,84"					Texture="CivicsTree_GearButton"	SliceCorner="77,45" SliceSize="2,1" SliceTextureSize="133,84" StateOffsetIncrement="0,84">
-        <GridButton		ID="OtherStates"		Offset="0,0"									Size="parent,parent"	Texture="CivicsTree_GearButton"	SliceCorner="77,45" SliceSize="2,1" SliceTextureSize="133,84" NoStateChange="1"/>
-				<Image				ID="FillTexture"		Offset="76,1"									Size="351,78"					Texture="CivicsTree_GearButtonTile_Disabled"	StretchMode="Tile" />
-				<Stack				ID="UnlockStack"		Offset="72,22" StackGrowth="Right" WrapWidth="330" WrapGrowth="Down" />									
-				<Grid					ID="BoostedBack"		Offset="7,6"		Anchor="L,B"	Size="446,39"					Texture="Controls_BoostSlotCivic"	SliceCorner="28,26"	SliceSize="1,1" SliceTextureSize="39,39" />
+		<Container				ID="Top"																					Size="420,1">
+			<GridButton			ID="NodeButton"			Offset="0,-72"								Size="420,84"					Texture="CivicsTree_GearButton"	SliceCorner="79,1" SliceSize="1,1" SliceTextureSize="133,84" StateOffsetIncrement="0,84" >
+        <GridButton		ID="OtherStates"		Offset="0,0"									Size="parent,parent"	Texture="CivicsTree_GearButton"	SliceCorner="79,1" SliceSize="1,1" SliceTextureSize="133,84" NoStateChange="1"/>
+				<Image				ID="FillTexture"		Offset="76,1"									Size="311,78"					Texture="CivicsTree_GearButtonTile_Disabled"	StretchMode="Tile" />
+				<Stack				ID="UnlockStack"		Offset="72,22" StackGrowth="Right" WrapWidth="320" WrapGrowth="Down"/>
+				<Grid					ID="BoostedBack"		Offset="7,6"		Anchor="L,B"	Size="406,39"					Texture="Controls_BoostSlotCivic"	SliceCorner="28,26"	SliceSize="1,1" SliceTextureSize="39,39" />
 				<Image				ID="BoostIcon"			Offset="9,7"		Anchor="L,B"												Texture="BoostTech" /> 
 				<Label				ID="BoostText"			Offset="47,7"		Anchor="L,B"												Style="TreeBoostText"				String="?BoostText" />
         <Stack        Offset="68,8"       StackGrowth="Right" StackPadding="4">
@@ -216,7 +218,7 @@
 				<Image				ID="IconBacking"		Offset="2,-2"																				Texture="Tree_Meter_GearBack" />
 				<Meter				ID="BoostMeter"			Offset="2,-2"									Size="68,68"					Texture="CivicsTree_Meter_Boost" Follow="1" />
 				<Meter				ID="ProgressMeter"	Offset="2,-2"									Size="68,68"					Texture="CivicsTree_Meter_Fill" />											 
-				<Grid					ID="FilteredOut"		Offset="0,0"									Size="460,84"					Texture="Tree_FilterMask"	SliceCorner="35,41" SliceSize="1,1" SliceTextureSize="50,81" NoStateChange="1" ConsumeMouseButton="1" ConsumeMouseOver="1" Color="35,33,31,150" Hidden="1" />
+				<Grid					ID="FilteredOut"		Offset="0,0"									Size="420,84"					Texture="Tree_FilterMask"	SliceCorner="35,41" SliceSize="1,1" SliceTextureSize="50,81" NoStateChange="1" ConsumeMouseButton="1" ConsumeMouseOver="1" Color="35,33,31,150" Hidden="1" />
 				<Image 				ID="Icon"						Offset="14,10"	Size="42,42"												Texture="Civics42"/>												
 				<Image				ID="Bolt"						Offset="0,27"																				Texture="Controls_BoltOn" />				
 			</GridButton>			
@@ -225,12 +227,12 @@
   
   
   <Instance						Name="LargeNodeInstance">
-		<Container				ID="Top"																					Size="460,1">
-			<GridButton			ID="NodeButton"			Offset="0,-72"								Size="460,140"					Texture="CivicsTree_GearButton2"	SliceCorner="79,79" SliceSize="1,1" SliceTextureSize="133,140" StateOffsetIncrement="0,140">
+		<Container				ID="Top"																					Size="420,1">
+			<GridButton			ID="NodeButton"			Offset="0,-72"								Size="420,140"					Texture="CivicsTree_GearButton2"	SliceCorner="79,79" SliceSize="1,1" SliceTextureSize="133,140" StateOffsetIncrement="0,140">
 				<GridButton		ID="OtherStates"		Offset="0,0"									Size="parent,parent"	Texture="CivicsTree_GearButton2"	SliceCorner="79,79" SliceSize="1,1" SliceTextureSize="133,140" NoStateChange="1"/>
-				<Image				ID="FillTexture"		Offset="76,1"									Size="351,135"					Texture="CivicsTree_GearButton2Tile_Disabled"	StretchMode="Tile" />
-				<Stack				ID="UnlockStack"		Offset="72,25"	 StackGrowth="Right" WrapWidth="370" WrapGrowth="Down" />																
-				<Grid					ID="BoostedBack"		Offset="7,6"		Anchor="L,B"	Size="446,39"					Texture="Controls_BoostSlotCivic"	SliceCorner="28,26"	SliceSize="1,1" SliceTextureSize="39,39" />
+				<Image				ID="FillTexture"		Offset="76,1"									Size="311,135"					Texture="CivicsTree_GearButton2Tile_Disabled"	StretchMode="Tile" />
+				<Stack				ID="UnlockStack"		Offset="72,25"	 StackGrowth="Right" WrapWidth="350" WrapGrowth="Down"/>
+				<Grid					ID="BoostedBack"		Offset="7,6"		Anchor="L,B"	Size="406,39"					Texture="Controls_BoostSlotCivic"	SliceCorner="28,26"	SliceSize="1,1" SliceTextureSize="39,39" />
 				<Image				ID="BoostIcon"			Offset="10,7"		Anchor="L,B"												Texture="BoostTech" /> 
 				<Label				ID="BoostText"			Offset="42,7"		Anchor="L,B"												Style="TreeBoostText"				String="?BoostText" />
         <Stack        Offset="68,8"       StackGrowth="Right" StackPadding="4">
@@ -244,7 +246,7 @@
 				<Image				ID="IconBacking"		Offset="2,-1"																				Texture="Tree_Meter_GearBack" />
 				<Meter				ID="BoostMeter"			Offset="2,-2"									Size="68,68"					Texture="CivicsTree_Meter_Boost" Follow="1" />
 				<Meter				ID="ProgressMeter"	Offset="2,-2"									Size="68,68"					Texture="CivicsTree_Meter_Fill" />											 
-				<Grid					ID="FilteredOut"		Offset="0,0"									Size="460,140"					Texture="Tree_FilterMask"	SliceCorner="35,41" SliceSize="1,1" SliceTextureSize="50,81" NoStateChange="1" ConsumeMouseButton="1" ConsumeMouseOver="1" Color="35,33,31,150" Hidden="1" />
+				<Grid					ID="FilteredOut"		Offset="0,0"									Size="420,140"					Texture="Tree_FilterMask"	SliceCorner="35,41" SliceSize="1,1" SliceTextureSize="50,81" NoStateChange="1" ConsumeMouseButton="1" ConsumeMouseOver="1" Color="35,33,31,150" Hidden="1" />
 				<Image 				ID="Icon"						Offset="14,10"	Size="42,42"												Texture="Civics42" />											
 				<Image				ID="Bolt"						Offset="0,27"																				Texture="Controls_BoltOn" />				
 			</GridButton>			

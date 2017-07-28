@@ -12,27 +12,33 @@
         <Image Texture="LaunchBar_Hook_TechTree" Size="35,35" Anchor="C,T" Offset="0,5"/>
       </Button>
       <Image	ID="ScienceBolt"				Anchor="L,C" Offset="0,-2"	Size="7,7"			Texture="LaunchBar_TrackPip"		Color="255,255,255,200" />
+		
       <Button ID="CultureButton"				Anchor="L,C" Offset="0,2"		Size="51,51"  	Texture="LaunchBar_Hook_CultureButton" Style="ButtonNormalText"     TextureOffset="4,9"   StateOffsetIncrement="0,60" ToolTip="LOC_HUD_CIVICSTREE_TOOLTIP">
         <Image Texture="LaunchBar_Hook_CivicsTree" Size="35,35" Anchor="C,T" Offset="0,5"/>
       </Button>
       <Image	ID="CultureBolt"			Anchor="L,C" Offset="0,-2"	Size="7,7"			Texture="LaunchBar_TrackPip"		Color="255,255,255,200" />
+		
       <Button ID="GovernmentButton"			Anchor="L,C"								Size="49,49" 	  Texture="LaunchBar_Hook_GovernmentButton" Style="ButtonNormalText"  TextureOffset="0,2"   StateOffsetIncrement="0,49" ToolTip="Governments">
         <Image ID="GovernmentIcon" Texture="LaunchBar_Hook_Government" Size="35,35" Anchor="C,T" Offset="0,3"/>
         <Label ID="PoliciesAvailableIndicator" String="[ICON_New]"      Anchor="R,T" AnchorSide="O,O" Offset="-18,-18" Hidden="1"/>
       </Button>
       <Image  ID="GovernmentBolt"                         Anchor="L,C" Offset="0,-2"	Size="7,7"			Texture="LaunchBar_TrackPip"		Color="255,255,255,200" />
+		
       <Button ID="ReligionButton"				Anchor="L,C"								Size="49,49" 	  Texture="LaunchBar_Hook_ReligionButton" Style="ButtonNormalText"  TextureOffset="0,2"   StateOffsetIncrement="0,49" ToolTip="LOC_HUD_RELIGION_TOOLTIP">
         <Image Texture="LaunchBar_Hook_Religion" Size="35,35" Anchor="C,T" Offset="0,6"/>
       </Button>
       <Image	ID="ReligionBolt"			Anchor="L,C" Offset="0,-2"	Size="7,7"			Texture="LaunchBar_TrackPip"		Color="255,255,255,200" />
+		
       <Button ID="GreatPeopleButton"		Anchor="L,C"								Size="49,49" 	  Texture="LaunchBar_Hook_GreatPeopleButton" Style="ButtonNormalText"  TextureOffset="0,2"   StateOffsetIncrement="0,49" ToolTip="LOC_HUD_GREATPEOPLE_TOOLTIP">
         <Image Texture="LaunchBar_Hook_GreatPeople" Size="35,35" Anchor="C,T" Offset="-1,6"/>
       </Button>
       <Image	ID="GreatPeopleBolt"			Anchor="L,C" Offset="0,-2"	Size="7,7"			Texture="LaunchBar_TrackPip"		Color="255,255,255,200" />
+		
       <Button ID="GreatWorksButton"			Anchor="L,C"								Size="49,49" 	  Texture="LaunchBar_Hook_GreatWorksButton" Style="ButtonNormalText"  TextureOffset="0,2"   StateOffsetIncrement="0,49" ToolTip="LOC_HUD_GREATWORKS_TOOLTIP">
       <Image Texture="LaunchBar_Hook_GreatWorks" Size="35,35" Anchor="C,T" Offset="0,4"/>
       </Button>
       <Image	ID="GreatWorksBolt"			Anchor="L,C" Offset="0,-2"	Size="7,7"			Texture="LaunchBar_TrackPip"		 Color="255,255,255,200" />
+		
     </Stack>
 	  
 	  <Tutorial ID="TutOpenGovernment" Style="TutorialContainer" Anchor="L,B" AnchorSide="O,O" Offset="-220, 120" TriggerBy="TutorialOpenGovernment" >
@@ -105,5 +111,17 @@
     </Button>
   </Container>
 
+	<!-- INSTANCES -->
+	
+	<Instance Name="LaunchBarItem">
+		<Container ID="Content" Size="49,49">
+			<Button ID="LaunchItemButton"	Anchor="L,C"  Size="49,49"  Texture="LaunchBar_Hook_GovernmentButton" Style="ButtonNormalText"  StateOffsetIncrement="0,49" >
+				<Image ID="LaunchItemIcon" Size="35,35" Anchor="C,C" Offset="0,0"/>
+			</Button>
+		</Container>
+	</Instance>
 
+  <Instance Name="LaunchBarPinInstance">
+    <Image Anchor="L,C" Offset="0,-2"	Size="7,7" Texture="LaunchBar_TrackPip"	Color="255,255,255,200" />
+  </Instance>
 </Context>

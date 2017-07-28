@@ -201,7 +201,7 @@ function UpdateCityEntries()
 		local cities = player:GetCities();
 		if cities ~= nil then
 			for iCity, city in cities:Members() do
-				table.insert(m_CityEntries, { Text=city:GetName(), Player=iPlayer, ID=city:GetID() });
+				table.insert(m_CityEntries, { Text=city:GetName(), PlayerIndex=iPlayer, ID=city:GetID() });
 			end
 		end
 	end
@@ -304,7 +304,7 @@ function PlaceDistrict(plot, edge, bAdd)
 	if bAdd then
 		local cityEntry = Controls.DistrictCityPullDown:GetSelectedEntry();
 		if cityEntry ~= nil then
-			local city = CityManager.GetCity(cityEntry.Player, cityEntry.ID);
+			local city = CityManager.GetCity(cityEntry.PlayerIndex, cityEntry.ID);
 			if city ~= nil then
 				local districtEntry = Controls.DistrictPullDown:GetSelectedEntry();
 				WorldBuilder.CityManager():CreateDistrict(city, districtEntry.Type.DistrictType, 100, plot);
@@ -326,7 +326,7 @@ function PlaceBuilding(plot, edge, bAdd)
 	if bAdd then
 		local cityEntry = Controls.BuildingCityPullDown:GetSelectedEntry();
 		if cityEntry ~= nil then
-			local city = CityManager.GetCity(cityEntry.Player, cityEntry.ID);
+			local city = CityManager.GetCity(cityEntry.PlayerIndex, cityEntry.ID);
 			if city ~= nil then
 				local buildingEntry = Controls.BuildingPullDown:GetSelectedEntry();
 				if buildingEntry ~= nil then
@@ -556,7 +556,7 @@ end
 function SelectDistrictOwner(player, city)
 
 	for i,entry in ipairs(m_CityEntries) do
-		if entry.Player == player and entry.ID == city then
+		if entry.PlayerIndex == player and entry.ID == city then
 			Controls.DistrictCityPullDown:SetSelectedIndex(i, true);
 			break;
 		end
@@ -580,7 +580,7 @@ end
 function SelectBuildingOwner(player, city)
 
 	for i,entry in ipairs(m_CityEntries) do
-		if entry.Player == player and entry.ID == city then
+		if entry.PlayerIndex == player and entry.ID == city then
 			Controls.BuildingCityPullDown:SetSelectedIndex(i, true);
 			break;
 		end

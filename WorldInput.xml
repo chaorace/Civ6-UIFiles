@@ -27,10 +27,4 @@
     <Container  ID="BottomScreenEdge"  Anchor="L,B" Size="Full,30" Offset="0,0"  />
   </Container>
 	
-  <!-- Generic use popup for world view. Defined as last element in XML so it appears on top. -->
-  <Grid Style="PopupDialogGrid"  />	
-  <Instance Name="PopupButtonInstance">
-    <GridButton   ID="Button" Size="160,42" Style="MainButton" />
-  </Instance>
-
 </Context>

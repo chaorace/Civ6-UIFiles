@@ -6,20 +6,28 @@
 		<Label ID="Text"  WrapWidth="770" Style="FontNormal14" ColorSet="Beige_Black_Alpha" FontSize="14" />
 	</Instance>
 
+	<Instance Name="DataErrorText" >
+		<Label ID="Text"  WrapWidth="770" Style="FontNormal14" Color="COLOR_RED" FontSize="14" />
+	</Instance>
+  
 	<LuaContext ID="DebugHotloadCache"		FileName="UI/DebugContext/DebugHotloadCache"	Hidden="0" />
 
 	<Stack ID="DebugStack" >
 
-		<Grid Style="UnitFrame" Anchor="L,T" Offset="60,0" Size="740,30" ID="Console" >
+		<Grid Style="UnitFrame" Anchor="L,T" Offset="90,0" Size="740,30" ID="Console" >
+				
 			<ColorBox Color="0,0,0,90" Anchor="C,C" AutoSize="1" SizePadding="1,1" >
 				<EditBox Anchor="C,C" Size="730,20" MaxLength="255" ID="ConsoleEdit" FocusStop="1" />
 			</ColorBox>
 
 			<Grid Style="UnitFrame" Anchor="L,C" AnchorSide="o,i" Size="30,30" >
-				<Button Anchor="C,C" Style="Select_Up" ToolTip="Toggle Log" ID="LogButton" />
+				<Button Anchor="C,C" Style="Select_Down" ToolTip="Toggle Log" ID="LogButton" />
 			</Grid>
 			<Grid Style="UnitFrame" Anchor="L,C" AnchorSide="o,i" Offset="30,0" Size="30,30" >
 				<Button Anchor="C,C" Style="Select_Down" ToolTip="Toggle Panel" ID="DebugPanelButton" />
+			</Grid>
+			<Grid Style="UnitFrame" Anchor="L,C" AnchorSide="o,i" Offset="60,0" Size="30,30" >
+				<Button Anchor="C,C" Style="Select_Down" ToolTip="Toggle Data Errors" ID="DataErrorButton" Color="COLOR_GREEN"/>
 			</Grid>
 		</Grid>
 
@@ -33,6 +41,21 @@
 			</ScrollPanel>
 		</Grid>
 
+		<Grid Style="UnitFrame" Anchor="L,T" Size="800,400" ID="DataErrorPanel" Hidden="1" >
+			<ScrollPanel Size="790,350" Anchor="L,T" Offset="5,10" ID="DataErrorScroll" Vertical="1" >
+				<Stack StackGrowth="Bottom" Anchor="L,T" Offset="0,10" ID="DataErrorStack" StackPadding="3"  />
+
+				<ScrollBar  Style="ScrollVerticalBar" Length="364" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+				<UpButton		Offset="0,0"  Style="ScrollUpButton"		Anchor="R,T" />
+				<DownButton Offset="0,0"	Style="ScrollDownButton"  Anchor="R,B"  />
+			</ScrollPanel>
+			<Stack StackGrowth="Right" Anchor="L,B" Offset="5,10" ID="OpenLogButtonStack" StackPadding="3">
+				<GridButton Anchor="L,B" Size="160,32" Style="RowButton" ID="OpenLogsFolderButton">
+					<Label String="Open Logs Folder" Anchor="C,C" Style="FontNormal14"/>
+				</GridButton>
+			</Stack>
+		</Grid>
+    
 		<Grid Style="UnitFrame" Anchor="L,T" AutoSize="1" ID="DebugPanel" Hidden="1" >
 			<Stack StackGrowth="Right" StackPadding="3">
 
@@ -45,6 +68,7 @@
 						<CheckBox Style="MainMenuCheck" BoxOnLeft="1" ID="ShowCamera" String="Show Camera"/>
 						<CheckBox Style="MainMenuCheck" BoxOnLeft="1" ID="ShowLuaStats" String="Show Lua Statistics"/>
 						<CheckBox Style="MainMenuCheck" BoxOnLeft="1" ID="ShowMemory" String="Show Memory"/>
+						<CheckBox Style="MainMenuCheck" BoxOnLeft="1" ID="ShowGameCoreStats" String="Show Game Core Statistics"/>
 					</Stack>
 				</Grid>
 
@@ -61,6 +85,7 @@
 							<Label ID="ResolutionText" String="Blank" />
 							<Label ID="DeviceText" String="Blank" />
 							<Label ID="VSync" String="Blank" />
+							<Label ID="GPUMemoryUsage" String="Blank" />
 							<Label ID="TickInterval" String="Blank" />
 							<Label ID="MSAASamples" String="Blank" />
 							<Label ID="MSAAQuality" String="Blank" />
@@ -69,12 +94,11 @@
 							<Label ID="ListCount" String="Blank" />
 							<Label ID="PSOCount" String="Blank" />
 							<Label ID="DynamicSize" String="Blank" />
-							<Label ID="GPUMemoryUsage" String="Blank" />
 							<Label ID="BarrierCount" String="Blank" />
 							<Label ID="RenderTargetSets" String="Blank" />
-              <Label ID="DescriptorTableSets" String="Blank" />
-              <Label ID="RootSigSets" String="Blank" />
-              <Label ID="DescriptorsCopied" String="Blank" />
+							<Label ID="DescriptorTableSets" String="Blank" />
+							<Label ID="RootSigSets" String="Blank" />
+							<Label ID="DescriptorsCopied" String="Blank" />
 							<Label ID="FenceCount" String="Blank" />
 							<Label ID="AvgTurnTime" String="Blank" />
 							<Label ID="TotalTurnTime" String="Blank" />
@@ -163,6 +187,63 @@
 						</Stack>
 
 					</ScrollPanel>
+				</Grid>
+
+				<!-- Game Core Information -->
+				<Grid ID="GameCoreStatsPanel" Style="UnitFrame" Anchor="R,T" Size="700,400" Hidden="1" InnerPadding="4,4">
+					<ScrollPanel Size="290,400" Anchor="L,T" Vertical="1" >
+						<ScrollBar Style="ScrollVerticalBar" Length="364" Offset="4,16" Anchor="R,T" AnchorSide="I,I" />
+						<UpButton Style="ScrollUpButton" Anchor="R,T" />
+						<DownButton Style="ScrollDownButton" Anchor="R,B" />
+						<Stack ID="GameCoreStatsStack" StackPadding="8" Offset="2,10" Anchor="L,T" >
+							<Label String="Game Core Statistics" Style="FontNormal14"/>
+							<Label ID="LongestTurnText" Style="FontNormal14"/>
+							<Label ID="AvgTurnText" Style="FontNormal14"/>
+
+							<Container Size="parent,24">
+								<Stack StackGrowth="Right" StackPadding="1" Offset="20, 0">
+									<Container Size="48,parent">
+										<Label String="Player" Anchor="L,C" Style="FontNormal14"/>
+									</Container>
+									<Container Size="80,parent">
+										<Label String="Longest" Anchor="L,C" Style="FontNormal14"/>
+									</Container>
+									<Container Size="80,parent">
+										<Label String="Last 10" Anchor="L,C" Style="FontNormal14"/>
+									</Container>
+								</Stack>
+							</Container>
+							
+							<ListBox ID="PlayerTimesList" Size="250,parent-115" ListContainer="PlayerTimesListContainer">
+
+								<Grid Anchor="L,T" Size="parent,parent" Texture="Controls_Slot" SliceCorner="17,17" SliceTextureSize="34,34">
+									<ScrollPanel Size="parent,parent-4" Anchor="C,T" Vertical="1" Offset="0,2" AutoScrollBar="0">
+										<Stack ID="PlayerTimesListContainer" StackGrowth="Bottom" Anchor="C,T" StackPadding="1"  />
+										<ScrollBar  Style="ScrollVerticalBar" Size="11,parent" Offset="3,0" Anchor="R,T" AnchorSide="O,I" />
+									</ScrollPanel>
+								</Grid>
+
+								<InstanceData Name="EntryInstance" >
+									<GridButton	ID="Button"	Offset="0,0" Size="parent,30" Style="RowButton">
+										<Stack StackGrowth="Right" Anchor="C,T" StackPadding="1">
+											<Container Size="48,parent">
+												<Label ID="PlayerText" Anchor="L,C" Style="FontNormal14"/>
+											</Container>
+											<Container Size="80,parent">
+												<Label ID="PlayerLongestText" Anchor="L,C" Style="FontNormal14"/>
+											</Container>
+											<Container Size="80,parent">
+												<Label ID="PlayerLongestLast10Text" Anchor="L,C" Style="FontNormal14"/>
+											</Container>
+										</Stack>
+									</GridButton>
+								</InstanceData>
+
+							</ListBox>
+
+						</Stack>
+					</ScrollPanel>
+					<Graph ID="TurnTimeGraph" Size="390,380" Anchor="R,C" Offset="10,0" Domain="0,100" Range="0,240" TickInterval="0,5" NumberInterval="0,5" ShowTicks="0,1" ShowGridLines="1,1" ShowNumbers="0,1" ShowAxes="0,1" GridColor="Civ6Green" />
 				</Grid>
 
 

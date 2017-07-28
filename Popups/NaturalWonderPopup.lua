@@ -8,6 +8,7 @@
 local m_isWaitingToShowPopup:boolean = false;
 local m_kQueuedPopups		:table	 = {};
 local m_eCurrentFeature		:number  = -1;
+local m_kCurrentPopup		:table	 = nil;
 
 
 -- ===========================================================================
@@ -24,6 +25,11 @@ function Close()
 	UIManager:DequeuePopup( ContextPtr );
 	UI.PlaySound("Stop_Speech_NaturalWonders");
 	local isNewOneSet = false;
+	
+	-- Stop the camera animation if it hasn't finished already
+	if (m_kCurrentPopup ~= nil) then
+		Events.StopAllCameraAnimations();
+	end
 
 	-- Find first entry in table, display that, then remove it from the internal queue
 	for i, entry in ipairs(m_kQueuedPopups) do
@@ -36,6 +42,7 @@ function Close()
 	if not isNewOneSet then
 		m_isWaitingToShowPopup = false;	
 		m_eCurrentFeature = -1;
+		m_kCurrentPopup = nil;
 		LuaEvents.NaturalWonderPopup_Closed();	-- Signal other systems (e.g., bulk show UI)
 	end
 		
@@ -65,10 +72,9 @@ function ShowPopup( kData:table )
 	ShowNaturalWonderLens(true);
 	m_isWaitingToShowPopup = true;
 	m_eCurrentFeature = kData.Feature;
-
-	if kData.plotx ~= nil and kData.ploty ~= nil then
-		UI.LookAtPlot(kData.plotx, kData.ploty);
-	end
+	m_kCurrentPopup = kData;
+	
+	UI.OnNaturalWonderRevealed(kData.plotx, kData.ploty);
 
 	if(kData.QuoteAudio) then
 		UI.PlaySound(kData.QuoteAudio);
@@ -110,7 +116,7 @@ function OnNaturalWonderRevealed( plotx:number, ploty:number, eFeature:number, i
 			if info.Description ~= nil then
 				description = Locale.Lookup(info.Description);
 			end
-
+			
 			local kData:table = { 
 				Feature		= eFeature,
 				Name		= Locale.ToUpper(Locale.Lookup(info.Name)),
@@ -126,7 +132,6 @@ function OnNaturalWonderRevealed( plotx:number, ploty:number, eFeature:number, i
 			if not m_isWaitingToShowPopup then				
 				ShowPopup( kData );
 				LuaEvents.NaturalWonderPopup_Shown();	-- Signal other systems (e.g., bulk hide UI)
-				UI.OnNaturalWonderRevealed(plotx, ploty);
 			else		
 			
 				-- Prevent DUPES when bulk showing; only happen during force reveal?
@@ -148,6 +153,21 @@ end
 function OnLocalPlayerTurnEnd()
 	if (not ContextPtr:IsHidden()) and GameConfiguration.IsHotseat() then
 		OnClose();
+	end
+end
+
+-- ===========================================================================
+function OnCameraAnimationStopped(name : string)
+	if (m_kCurrentPopup ~= nil) then
+		UI.LookAtPlot(m_kCurrentPopup.plotx, m_kCurrentPopup.ploty, 0.0, 0.0, true);
+	end
+end
+
+-- ===========================================================================
+function OnCameraAnimationNotFound()
+	if (m_kCurrentPopup ~= nil) then
+		-- this will play if the animation doesnt exist
+		UI.LookAtPlot(m_kCurrentPopup.plotx, m_kCurrentPopup.ploty);
 	end
 end
 
@@ -179,5 +199,8 @@ function Initialize()
 	
 	Events.NaturalWonderRevealed.Add(OnNaturalWonderRevealed);
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );	
+
+	Events.CameraAnimationStopped.Add( OnCameraAnimationStopped );
+	Events.CameraAnimationNotFound.Add( OnCameraAnimationNotFound );
 end
 Initialize();

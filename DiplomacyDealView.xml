@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Context Style="FontNormal16" ColorSet="BodyTextCool" FontStyle="Shadow" Size="Full,Full" ConsumeMouse="1">
 
-	<!-- Containers for caching instances -->
+  <Include File="PopupDialog"/>
+
+  <!-- Containers for caching instances -->
 	<Container ID="IconOnlyContainer" Hidden="1"/>
 	<Container ID="IconAndTextContainer" Hidden="1"/>
 	<Container ID="LeftRightListContainer" Hidden="1"/>
@@ -15,7 +17,8 @@
 		<GridButton ID="SelectButton" Style="ButtonDraggableGrid" Size="56,56" Offset="0,0" Anchor="L,T">
 		  <Image ID="Icon" StretchMode="None" Size="64,64" Anchor="C,C"/>
 		  <Label ID="AmountText" Style="FontNormalBold16" Anchor="R,B" Offset="-5,-9" FontStyle="Stroke" />
-		</GridButton>
+      <Image ID="UnacceptableIcon" Anchor="R,T" Offset="-8,-8" Texture="Alert18" Size="18,18" ToolTip="LOC_DIPLO_DEAL_UNACCEPTABLE_ITEM_TOOLTIP" Hidden="1"/>
+    </GridButton>
 	</Instance>
 
 	<!-- An instance of an Icon, with optional Amount Text that overlaps the icon and description text on the right side of the icon. -->
@@ -33,8 +36,19 @@
 					</Stack>
 				</Container>
 			</Stack>
+      <Image ID="UnacceptableIcon" Anchor="R,T" Offset="-8,-8" Texture="Alert18" Size="18,18" ToolTip="LOC_DIPLO_DEAL_UNACCEPTABLE_ITEM_TOOLTIP" Hidden="1"/>
 		</GridButton>
 	</Instance>
+
+  <!-- An instance of an icon with text used to give options for agreements -->
+  <Instance	Name="AgreementOptionInstance">
+    <GridButton ID="AgreementOptionButton" Style="ButtonDraggableGrid" Size="280,56" Anchor="C,T">
+      <Stack Anchor="L,C" StackGrowth="Right">
+        <Image ID="AgreementOptionIcon" Anchor="L,C" Size="38,38" Texture="Tech38"/>
+        <Label ID="AgreementOptionLabel" Anchor="L,C" Offset="4,0" Style="FontNormal16" WrapWidth="220"/>
+      </Stack>
+    </GridButton>
+  </Instance>
 
 	<!-- Instance container for a list of icons that grows from left to right. -->
 	<Instance	Name="LeftRightList">
@@ -75,7 +89,10 @@
               <Label ID="OtherPlayerBubbleName"    Style="HeaderSmallCaps" String="TEDDY ROOSEVELT SAYS:" Anchor="L,T" AnchorSide="I,O" Offset="-15,-40" Color0="GoldMetalDark"/>
               <AlphaAnim ID="LeaderDialogFade" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Size="parent,parent" Pause=".7" Speed="2">
                 <SlideAnim ID="LeaderDialogSlide" Start="0,20" End="0,0" Cycle="Once" Size="parent,parent" Pause=".7" Speed="2">
-                  <Label ID="LeaderDialog"  Style="BodyText18" String="LOC_DIPLO_DEAL_INTRO" WrapWidth="420" Anchor="C,C"/>
+                  <Stack ID="LeaderDialogStack" Anchor="C,C" StackPadding="4">
+                    <Label ID="LeaderDialog"  Style="BodyText18" String="LOC_DIPLO_DEAL_INTRO" WrapWidth="420" Anchor="C,C"/>
+                    <Label ID="LeaderEffect"  Style="BodyText18" Color="Grey" String="LOC_DIPLO_DEAL_INTRO" WrapWidth="420" Anchor="C,C"/>
+                  </Stack>
                 </SlideAnim>
               </AlphaAnim>
             </Grid>
@@ -91,13 +108,13 @@
 
             <Stack ID="DealContentStack" StackGrowth="Down" Offset="0,10" Anchor="C,T">
               <!-- Dynamic: Button Area - where we accept the deal-->
-              <Grid Style="ConfirmFrame" Size="parent-11,60" Anchor="C,T" Color="GrayMedium">
-                <Stack ID="DealOptionsStack" StackGrowth="Right" Anchor="C,C" Padding="5">
-                  <GridButton ID="ResumeGame" Anchor="L,C" Style="ButtonLightWeight" Size="200,32" String="LOC_DIPLOMACY_DEAL_RESUME_GAME"/>
-                  <GridButton ID="RefuseDeal" Anchor="L,C" Style="ButtonLightWeight" Size="200,32"/>
-                  <GridButton ID="EqualizeDeal" Anchor="L,C" Style="ButtonLightWeight" Size="200,32" String="LOC_DIPLOMACY_MAKE_DEAL_EQUITABLE" ToolTip="LOC_DIPLOMACY_MAKE_DEAL_EQUITABLE_TOOLTIP"/>
-                  <GridButton ID="AcceptDeal" Anchor="L,C" Style="ButtonConfirm" Size="200,41" String="LOC_DIPLOMACY_DEAL_ACCEPT_DEAL"/>
-                  <GridButton ID="DemandDeal" Anchor="L,C" Style="ButtonRed" Size="200,41" String="LOC_DIPLOMACY_DEAL_DEMAND_DEAL"/>
+              <Grid Style="SubContainer4" Size="parent-14,95" Anchor="C,T" Offset="0,-3" Color="Dark_Gray">
+                <Stack ID="DealOptionsStack" StackGrowth="Right" Anchor="C,C" Padding="4" WrapWidth="500">
+                  <GridButton ID="ResumeGame" Style="ButtonLightWeight" Size="200,32" String="LOC_DIPLOMACY_DEAL_RESUME_GAME"/>
+                  <GridButton ID="RefuseDeal" Style="ButtonLightWeight" Size="200,32"/>
+                  <GridButton ID="AcceptDeal" Style="ButtonConfirm" Size="200,41" String="LOC_DIPLOMACY_DEAL_ACCEPT_DEAL"/>
+                  <GridButton ID="EqualizeDeal" Style="ButtonLightWeight" Size="200,32" String="LOC_DIPLOMACY_DEAL_WHAT_WOULD_IT_TAKE" ToolTip="LOC_DIPLOMACY_MAKE_DEAL_EQUITABLE_TOOLTIP"/>
+                  <GridButton ID="DemandDeal" Style="ButtonRed" Size="200,41" String="LOC_DIPLOMACY_DEAL_DEMAND_DEAL"/>
                 </Stack>
               </Grid>
 
@@ -144,7 +161,6 @@
                   </ScrollPanel>
                   <Image Texture="Controls_GradientSmall" Size="parent-9, 22"  Offset="6,0" Anchor="R,B" Color="0,0,0,255" FlipY="1"/>
                   <Image Texture="Controls_GradientSmall" Size="parent-9, 22"  Offset="6,0" Anchor="R,T" Color="0,0,0,255"/>
-                  <GridButton ID="WhatWouldYouGiveMe" Offset="0,3" Style="ButtonLightweightSmall" Anchor="C,B" String="LOC_DIPLOMACY_DEAL_WHAT_WOULD_YOU_GIVE_ME" WrapWFidth="170" Size="190,25" Hidden="1"/>
                 </Container>
               </Container>
 
@@ -183,9 +199,64 @@
             <!--End of Content Stack-->
             <Image Texture="Controls_Deco2" Size="41,26" Anchor="C,B"/>
           </Grid>
+
+          <!-- Value Edit Popup -->
+          <Box ID="ValueEditPopupBackground" Size="parent,parent" Color="0,0,0,200" ConsumeMouse="1" Hidden="1">
+            <Grid ID="ValueEditPopup" Style="DiplomacyInfoWindowGrid" Anchor="C,T" Size="300,10" AutoSize="V" AutoSizePadding="0,13" Offset="0,200">
+              
+              <Stack StackPadding="4">
+                <!-- Header -->
+                <Grid Size="parent, 38" Style="DiplomacyTitleBarGrid">
+                  <Label ID="ValueEditHeaderLabel" Anchor="C,C" Style="DiplomacyIntelHeader" Offset="0,2"/>
+                </Grid>
+            
+                <!-- Value Stack -->
+                <ScrollPanel ID="ValueEditScrollPanel" Size="parent,200" Vertical="1" AutoScollbar="1">
+                  <ScrollBar Size="15,parent" SliceTextureSize="11,11" SliceCorner="5,5" Anchor="R,B" Color="111,101,94,250" Offset="0,0" AnchorSide="I,I"  Texture="Controls_ScrollBarBacking" StateOffsetIncrement="0,0" Vertical="1" >
+                    <Thumb																										Size="13,13"					Texture="Controls_ScrollBarHandleV_Brown" StateOffsetIncrement="0,0" SliceCorner="6,6" SliceTextureSize="13,13"/>
+                  </ScrollBar>
+
+                  <Stack ID="ValueEditStack" Anchor="C,T" StackPadding="4"> 
+                      <!-- Icon and/or Text -->
+                      <GridButton ID="ValueEditIconGrid" Style="ButtonDraggableGrid" Size="210,56" AutoSize="H" AutoSizePadding="2,0" Anchor="C,T" States="1">
+                        <Stack Anchor="C,T" StackGrowth="Right">
+                          <Container Size="44, parent">
+                            <Image ID="ValueEditIcon" StretchMode="None" Size="44,44" Anchor="C,C"/>
+                            <Label ID="ValueEditAmountText" Anchor="R,B" Style="FontNormalBold12" Offset="24,-9" FontStyle="Stroke"/>
+                          </Container>
+                          <Stack StackGrowth="Bottom" Anchor="L,C">
+                            <Label ID="ValueEditValueText" Size="parent,0" Offset="0,0" Style="FontNormalBold12" FontStyle="Stroke"/>
+                          </Stack>
+                        </Stack>
+                      </GridButton>
+                      
+                      <!-- Integer Modifying Box -->
+                      <Container ID="ValueAmountEditBoxContainer" Size="104,34" Anchor="C,T">
+                        <Grid Style="DropShadow3" Size="parent,50"/>
+                        <Grid Anchor="C,C" Texture="Controls_WindowLight" SliceTextureSize="34,34" SliceCorner="17,17" Size="parent-30,34">
+                          <Grid Anchor="C,C" Texture="Controls_TextArea" SliceTextureSize="22,22" SliceCorner="11,20" Size="parent-20,24">
+                            <EditBox ID="ValueAmountEditBox" Style="FontNormalBold16" FontStyle="Stroke" NumberInput="1" EditMode="1" Size="parent-5,parent" Anchor="C,C" MaxLength="5" ConsumeMouse="1" HighlightColor="25,120,154,200"/>
+                            <Button ID="ValueAmountEditLeftButton" Style="ArrowButtonLeft" Anchor="L,C" AnchorSide="O,I"/>
+                            <Button ID="ValueAmountEditRightButton" Style="ArrowButtonRight" Anchor="R,C" AnchorSide="O,I"/>
+                          </Grid>
+                        </Grid>
+                      </Container>
+                    </Stack>
+                </ScrollPanel>
+
+                <!-- Value Edit Confirm/Back Button -->
+                <GridButton ID="ValueEditButton" Anchor="C,B" Size="200,41" Style="MainButton" String="LOC_BACK"/>
+                
+                <!-- Footer -->
+                <Grid Style="Divider4Grid" Size="parent-2,10" Anchor="C,B" Hidden="1"/>
+              </Stack>
+            </Grid>
+          </Box>
+          
           <!--End of Window Grid-->
           <Grid Style="DiplomacyBannerFooter" Size="parent,32" Anchor="L,B"/>
         </Image>
+        
         <!-- End of Banner Image -->
       </SlideAnim>
     </AlphaAnim>
@@ -230,63 +301,9 @@
       </SlideAnim>
     </AlphaAnim>
     
-    <!-- Signature area -->
-    <AlphaAnim		ID="Signature_Alpha"					AlphaBegin="0"	AlphaEnd="1"	Speed="2" Function="Root" Cycle="Once" Size="full,full"  >
-      <SlideAnim	ID="Signature_Slide"					Begin="-10,0"		End="0,0"			Speed="2" Function="Root" Cycle="Once" Size="full,full"  >
-        <Stack		ID="SignatureStack" StackGrowth="Left" Offset="10,20" Anchor="R,T">
-          <Container Size="62,62">
-            <Image ID="CivBacking_Base" Texture="Circle44_Base" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-            <Image ID="CivBacking_Darker" Texture="Circle44_Darker" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-            <Image ID="CivBacking_Lighter" Texture="Circle44_Lighter" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-            <Image ID="CivBacking_None" Texture="Circle44_None" Size="44,44" Anchor="C,C"/>
-            <Image ID="CivIcon" Texture="CivSymbols36" Size="36,36" Anchor="C,C"/>
-            <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="-1,-1" Color="255,255,255,50"/>
-          </Container>
-          <Stack		StackGrowth="Down" Padding="5" Offset="10,10" Anchor="R,T">
-            <Label	ID="LeaderName"	String="CLEOPATRA"  WrapWidth="400" Align="R" Anchor="R,T" Style="FontBoldFlair18"	SmallCaps="22" FontStyle="glow" Color0="130,130,130,255"	Color1="0,0,0,200"/>
-            <Label	ID="CivName"	  String="EGYPT"      WrapWidth="400" Align="R" Anchor="R,T" Style="FontBoldFlair18"	SmallCaps="22" FontStyle="glow" Color0="130,130,130,255"	Color1="0,0,0,200"/>
-          </Stack>
-        </Stack>
-      </SlideAnim>
-    </AlphaAnim>
-    
   </Container>
 
-  <!-- The value amount editing overlay, only one will exist and it will be moved to overlay the selected item. -->
-  <Container ID="ValueAmountEditOverlayContainer" Hidden="1">
-    <BoxButton ID="ConfirmValueEdit" Color="0,0,0,0" Size="full,full"/>
-    <Container ID="ValueAmountEditOverlay" Hidden="1">
-      <Container Size="104,34" Offset="0,-30" Anchor="C,B">
-        <Grid Style="DropShadow3" Size="parent,50"/>
-        <Grid Anchor="C,C" Texture="Controls_WindowLight" SliceTextureSize="34,34" SliceCorner="17,17" Size="parent-30,34">
-          <Grid Anchor="C,C" Texture="Controls_TextArea" SliceTextureSize="22,22" SliceCorner="11,20" Size="parent-20,24">
-            <EditBox ID="ValueAmountEdit" Style="FontNormalBold16" FontStyle="Stroke" NumberInput="1" EditMode="1" Size="parent-5,parent" Anchor="C,C" MaxLength="5" ConsumeMouse="1" HighlightColor="25,120,154,200"/>
-            <Button ID="ValueAmountEditLeft" Style="ArrowButtonLeft" Anchor="L,C" AnchorSide="O,I"/>
-            <Button ID="ValueAmountEditRight" Style="ArrowButtonRight" Anchor="R,C" AnchorSide="O,I"/>
-          </Grid>
-        </Grid>
-      </Container>
-    </Container>
-  </Container>
-  
-  <!-- The value type editing overlay, only one will exist and it will be moved to overlay the selected item. -->
-  <Container ID="ValueTypeEditOverlay" Hidden="1">
-    <Container Size="280,30" Offset="0,0" Anchor="C,B">
-      <PullDown ID="ValueTypeEditPulldown" Anchor="C,C" Style="MainPullDown"/>
-    </Container>
-  </Container>
-
-	<!-- Customized popup dialog pieces-->
-	<Instance						Name="PopupTextInstance">
-    <Label        ID="Text"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="parent-20"/>
-	</Instance>
-	<Instance						Name="RowInstance">
-		<Stack					  ID="Row"			Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
-	</Instance>
-
-	<!-- Custom popup dialog -->
-  <Box Style="PopupDialogBox"/>
-  <Instance Name="PopupButtonInstance">
-    <GridButton ID="Button" Style="MainButton" Size="200,41" />
-  </Instance>
+	<!-- Dialog Support-->
+  <MakeInstance Name="PopupDialog" />
+	
 </Context>

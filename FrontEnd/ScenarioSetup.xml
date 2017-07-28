@@ -6,8 +6,11 @@
 
     <Container ID="MainWindow" Style="ShellWindowContainer">
 
-      <Container Style="ShellHeaderContainer">
-        <Grid Style="ShellHeaderButtonGrid">
+      <Container Style="ShellHeaderContainer">  
+		<Grid Style="ShellHeaderButtonGrid">
+			<GridButton ID="DefaultButton" Style="ShellButtonOrnateFlat" Anchor="L,C" Size="300,parent" Offset="1,0" String="{LOC_SETUP_RESTORE_DEFAULT:upper}" ToolTip="LOC_SETUP_RESTORE_DEFAULT_TT" />
+		</Grid>
+		 <Grid Style="ShellHeaderButtonGrid">
           <GridButton ID="CloseButton" Style="ShellButtonOrnateFlat" Anchor="R,C" Offset="1,0" String="LOC_MULTIPLAYER_BACK"/>
         </Grid>
         <Label ID="WindowTitle" Style="ShellHeader" Anchor="C,C" String="{LOC_SETUP_CHOOSE_SCENARIO:upper}"/>
@@ -56,7 +59,7 @@
               <Image Texture="Controls_Gradient_HalfRadial" Size="parent, 120" Anchor="C,T" Color="44,90,134,255" Offset="0,-4" FlipY="1"/>
               <Image Texture="Controls_Gradient_HalfRadial" Size="parent, 120" Anchor="C,B" Color="44,90,134,255" Offset="0,-4"/>
               <Stack ID="CreateGameOptions" StackGrowth="Down" Offset="0,30" Anchor="C,T">
-                <Container Size="parent+10,50">
+                <Container ID="CreateGame_RulesetContainer" Size="parent+10,50">
                   <Box Color="62,152,203,20" Anchor="C,T" Size="parent,30">
                     <Label Anchor="C,T" Style="ShellSubHeaderText" String="{LOC_SETUP_SCENARIO:upper}" AnchorSide="I,O"/>
                     <PullDown ID="CreateGame_GameRuleset" Anchor="C,C" Style="PullDownBlue" Size="325,24"/>
@@ -250,7 +253,6 @@
             <!-- Game options -->
           </Stack>
           <Container ID="AdvancedTooltipContainer" Size="340,670" Anchor="L,C" Offset="445,0"/>
-          <GridButton ID="DefaultButton" Size="150,22" Style="ShellButton" AnchorSide="I,O" Anchor="R,B" Offset="0,10" String="LOC_SETUP_RESTORE_DEFAULT" ToolTip="LOC_SETUP_RESTORE_DEFAULT_TT"/>
         </Grid>
         <!-- Decorative border -->
       </Container>

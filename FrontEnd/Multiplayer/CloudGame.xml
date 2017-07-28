@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
 				 ColorSet="Beige_Black_Alpha" Style="FontNormal22" FontStyle="Shadow">
-	
+
+  <Include File="PopupDialog" />
+  
 	<!-- Listing Button Instance -->
 	<Instance Name="ListingButtonInstance">
 
@@ -124,4 +126,8 @@
 
 	<!-- Child Screens -->
 	<LuaContext FileName="UI/FrontEnd/Multiplayer/CloudLobby" ID="CloudLobbyScreen" Hidden="1" />
+
+  <!-- Dialog Support -->
+  <MakeInstance Name="PopupDialog" />
+  
 </Context>

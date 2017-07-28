@@ -35,6 +35,16 @@ ToolTipHelper.GetAdjacencyBonuses = function(t, field, key)
 				object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE";
 			elseif(row.AdjacentSeaResource) then
 				object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_SEA_RESOURCE";
+			elseif(row.AdjacentResourceClass ~= "NO_RESOURCECLASS") then
+				if(row.AdjacentResourceClass == "RESOURCECLASS_BONUS") then
+					object = "LOC_TOOLTIP_BONUS_RESOURCE";
+				elseif(row.AdjacentResourceClass == "RESOURCECLASS_LUXURY") then
+					object = "LOC_TOOLTIP_LUXURY_RESOURCE";
+				elseif(row.AdjacentResourceClass == "RESOURCECLASS_STRATEGIC") then
+					object = "LOC_TOOLTIP_BONUS_STRATEGIC";
+				else
+					object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE_CLASS";
+				end
 			elseif(row.AdjacentRiver) then
 				object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RIVER";
 			elseif(row.AdjacentWonder) then

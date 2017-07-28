@@ -120,17 +120,55 @@ local sectionId = page.SectionId;
 		end
 	end
 
+	-- If the only units that can build the improvement are unique units, then treat this as a unique improvement.
+	local built_by_unique = true;
 	local built_by = {};
 	for row in GameInfo.Improvement_ValidBuildUnits() do
 		if(row.ImprovementType == improvementType) then
 			local unit = GameInfo.Units[row.UnitType];
 			if(unit) then
+				if(unit.TraitType == nil) then
+					built_by_unique = false;
+				end
+
 				table.insert(built_by, unit);
 			end
 		end
 	end
 	table.sort(built_by, function(a,b) return Locale.Compare(Locale.Lookup(a.Name), Locale.Lookup(b.Name)) == -1; end);
 	
+	if(built_by_unique) then
+		for i, unit in ipairs(built_by) do
+			local traitType = unit.TraitType;
+			for row in GameInfo.LeaderTraits() do
+				if(row.TraitType == traitType) then
+					local leader = GameInfo.Leaders[row.LeaderType];
+					if(leader) then
+						-- If this is a city state, use the civilization type.
+						local city_state_civilization = city_state_leaders[row.LeaderType];
+						if(city_state_civilization) then
+							local civ = GameInfo.Civilizations[city_state_civilization];
+							if(civ) then
+								table.insert(unique_to, {"ICON_" .. civ.CivilizationType, civ.Name, civ.CivilizationType});
+							end
+						else
+							table.insert(unique_to, {"ICON_" .. row.LeaderType, leader.Name, row.LeaderType});
+						end
+					end
+				end
+			end
+
+			for row in GameInfo.CivilizationTraits() do
+				if(row.TraitType == traitType) then
+					local civ = GameInfo.Civilizations[row.CivilizationType];
+					if(civ) then
+						table.insert(unique_to, {"ICON_" .. row.CivilizationType, civ.Name, row.CivilizationType});
+					end
+				end
+			end
+		end		
+	end
+
 	-- Generate list of adjacency bonuses.
 	local adjacency_yields = {};
 	local has_bonus = {};
@@ -150,6 +188,16 @@ local sectionId = page.SectionId;
 				object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE";
 			elseif(row.AdjacentSeaResource) then
 				object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_SEA_RESOURCE";
+			elseif(row.AdjacentResourceClass ~= "NO_RESOURCECLASS") then
+				if(row.AdjacentResourceClass == "RESOURCECLASS_BONUS") then
+					object = "LOC_TOOLTIP_BONUS_RESOURCE";
+				elseif(row.AdjacentResourceClass == "RESOURCECLASS_LUXURY") then
+					object = "LOC_TOOLTIP_LUXURY_RESOURCE";
+				elseif(row.AdjacentResourceClass == "RESOURCECLASS_STRATEGIC") then
+					object = "LOC_TOOLTIP_BONUS_STRATEGIC";
+				else
+					object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RESOURCE_CLASS";
+				end
 			elseif(row.AdjacentRiver) then
 				object = "LOC_TYPE_TRAIT_ADJACENT_OBJECT_RIVER";
 			elseif(row.AdjacentWonder) then
@@ -225,7 +273,7 @@ local sectionId = page.SectionId;
 		if(row.ImprovementType == improvementType) then
 			local feature = GameInfo.Features[row.FeatureType];
 			if(feature ~= nil) then
-				table.insert(placement_requirements, Locale.Lookup(feature.Name));
+				table.insert(placement_requirements, {Locale.Lookup(feature.Name), feature.FeatureType});
 			end
 		end
 	end
@@ -234,7 +282,7 @@ local sectionId = page.SectionId;
 		if(row.ImprovementType == improvementType) then
 			local resource = GameInfo.Resources[row.ResourceType];
 			if(resource ~= nil) then
-				table.insert(placement_requirements, Locale.Lookup(resource.Name));
+				table.insert(placement_requirements, {Locale.Lookup(resource.Name), resource.ResourceType});
 			end
 		end
 	end
@@ -243,11 +291,11 @@ local sectionId = page.SectionId;
 		if(row.ImprovementType == improvementType) then
 			local terrain = GameInfo.Terrains[row.TerrainType];
 			if(terrain ~= nil) then
-				table.insert(placement_requirements, Locale.Lookup(terrain.Name));
+				table.insert(placement_requirements, {Locale.Lookup(terrain.Name), terrain.TerrainType});
 			end
 		end
 	end
-	table.sort(placement_requirements, function(a,b) return Locale.Compare(a,b) == -1 end);
+	table.sort(placement_requirements, function(a,b) return Locale.Compare(a[1],b[1]) == -1 end);
 
 
 	-- Right Column
@@ -308,7 +356,15 @@ local sectionId = page.SectionId;
 			s:AddHeader("LOC_UI_PEDIA_PLACEMENT");
 
 			for i, v in ipairs(placement_requirements) do
-				s:AddLabel("[ICON_Bullet] " .. v);
+				local t = type(v);
+				if(t == "table") then
+					local tName = v[1];
+					local tType = v[2];
+					s:AddIconLabel({"ICON_" .. tType, tName, tType}, tName);
+
+				elseif(t == "string") then
+					s:AddLabel("[ICON_Bullet] " .. v);
+				end
 			end
 
 			s:AddSeparator();

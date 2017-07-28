@@ -54,6 +54,8 @@ function GetAdjacentIconArtdefName( targetDistrictType:string, plot:table, pkCit
 		return "Wonders_Natural_Wonder";
 	elseif eType == AdjacencyBonusTypes.ADJACENCY_RESOURCE then
 		return "Terrain_Generic_Resource";
+	elseif eType == AdjacencyBonusTypes.ADJACENCY_RESOURCE_CLASS then
+		return "Terrain_Generic_Resource_Class";
 	elseif eType == AdjacencyBonusTypes.ADJACENCY_RIVER then
 		return "Terrain_River";
 	elseif eType == AdjacencyBonusTypes.ADJACENCY_SEA_RESOURCE then

@@ -200,16 +200,14 @@ function ViewCurrent( data:table )
 		-- then grab a generic representation based on the class.
 		if (kPerson.ClassID ~= nil) and (kPerson.IndividualID ~= nil) then
 			local portrait:string = "ICON_" .. individualData.GreatPersonIndividualType;
-			textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(portrait, 160);
+			textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(portrait, 160, true);
 			if textureSheet == nil then		-- Use a default if none found
 				print("WARNING: Could not find icon atlas entry for the individual Great Person '"..portrait.."', using default instead.");
 				portrait = "ICON_GENERIC_" .. classData.GreatPersonClassType .. "_" .. individualData.Gender;
 				portrait = portrait:gsub("_CLASS","_INDIVIDUAL");
 			end
 			local isValid = instance.Portrait:SetIcon(portrait);
-			if (not isValid) then
-				UI.DataError("Could not find icon for "..portrait);
-			else
+			if (isValid) then
 				instance.BiographyPortrait:SetIcon(portrait);
 			end
 		end
@@ -652,82 +650,84 @@ function PopulateData( data:table, isPast:boolean )
 	
 	
 	for i,entry in ipairs(pTimeline) do
-		local claimantName :string = nil;
-		if (entry.Claimant ~= nil) then
-			claimantName = Locale.Lookup(PlayerConfigurations[entry.Claimant]:GetCivilizationShortDescription());
-		end
+		-- don't add unclaimed great people to the previously recruited tab
+		if not isPast or entry.Claimant then
+			local claimantName :string = nil;
+			if (entry.Claimant ~= nil) then
+				claimantName = Locale.Lookup(PlayerConfigurations[entry.Claimant]:GetCivilizationShortDescription());
+			end
 
-		local canRecruit			:boolean = false;
-		local canReject				:boolean = false;
-		local canPatronizeWithFaith :boolean = false;
-		local canPatronizeWithGold	:boolean = false;
-		local actionCharges			:number = 0;
-		local patronizeWithGoldCost	:number = nil;		
-		local patronizeWithFaithCost:number = nil;
-		local recruitCost			:number = entry.Cost;
-		local rejectCost			:number = nil;
-		local earnConditions		:string = nil;
-		if (entry.Individual ~= nil) then
-			if (Players[displayPlayerID] ~= nil) then
-				canRecruit = pGreatPeople:CanRecruitPerson(displayPlayerID, entry.Individual);
-				if (not isPast) then
-					canReject = pGreatPeople:CanRejectPerson(displayPlayerID, entry.Individual);
-					if (canReject) then
-						rejectCost = pGreatPeople:GetRejectCost(displayPlayerID, entry.Individual);
+			local canRecruit			:boolean = false;
+			local canReject				:boolean = false;
+			local canPatronizeWithFaith :boolean = false;
+			local canPatronizeWithGold	:boolean = false;
+			local actionCharges			:number = 0;
+			local patronizeWithGoldCost	:number = nil;		
+			local patronizeWithFaithCost:number = nil;
+			local recruitCost			:number = entry.Cost;
+			local rejectCost			:number = nil;
+			local earnConditions		:string = nil;
+			if (entry.Individual ~= nil) then
+				if (Players[displayPlayerID] ~= nil) then
+					canRecruit = pGreatPeople:CanRecruitPerson(displayPlayerID, entry.Individual);
+					if (not isPast) then
+						canReject = pGreatPeople:CanRejectPerson(displayPlayerID, entry.Individual);
+						if (canReject) then
+							rejectCost = pGreatPeople:GetRejectCost(displayPlayerID, entry.Individual);
+						end
 					end
+					canPatronizeWithGold = pGreatPeople:CanPatronizePerson(displayPlayerID, entry.Individual, YieldTypes.GOLD);
+					patronizeWithGoldCost = pGreatPeople:GetPatronizeCost(displayPlayerID, entry.Individual, YieldTypes.GOLD);
+					canPatronizeWithFaith = pGreatPeople:CanPatronizePerson(displayPlayerID, entry.Individual, YieldTypes.FAITH);
+					patronizeWithFaithCost = pGreatPeople:GetPatronizeCost(displayPlayerID, entry.Individual, YieldTypes.FAITH);
+					earnConditions = pGreatPeople:GetEarnConditionsText(displayPlayerID, entry.Individual);
 				end
-				canPatronizeWithGold = pGreatPeople:CanPatronizePerson(displayPlayerID, entry.Individual, YieldTypes.GOLD);
-				patronizeWithGoldCost = pGreatPeople:GetPatronizeCost(displayPlayerID, entry.Individual, YieldTypes.GOLD);
-				canPatronizeWithFaith = pGreatPeople:CanPatronizePerson(displayPlayerID, entry.Individual, YieldTypes.FAITH);
-				patronizeWithFaithCost = pGreatPeople:GetPatronizeCost(displayPlayerID, entry.Individual, YieldTypes.FAITH);
-				earnConditions = pGreatPeople:GetEarnConditionsText(displayPlayerID, entry.Individual);
+				local individualInfo = GameInfo.GreatPersonIndividuals[entry.Individual];
+				actionCharges = individualInfo.ActionCharges;
 			end
-			local individualInfo = GameInfo.GreatPersonIndividuals[entry.Individual];
-			actionCharges = individualInfo.ActionCharges;
-		end
 
-		local color = COLOR_UNAVAILABLE;
-		if (entry.Class ~= nil) then
-			if (canRecruit or canReject) then
-				color = COLOR_CLAIMED;
-			else
-				color = COLOR_AVAILABLE;
+			local color = COLOR_UNAVAILABLE;
+			if (entry.Class ~= nil) then
+				if (canRecruit or canReject) then
+					color = COLOR_CLAIMED;
+				else
+					color = COLOR_AVAILABLE;
+				end
 			end
+			
+			local personName:string = "";
+			if  GameInfo.GreatPersonIndividuals[entry.Individual] ~= nil then
+				personName = Locale.Lookup(GameInfo.GreatPersonIndividuals[entry.Individual].Name);
+			end  
+
+			local kPerson:table = {
+				IndividualID			= entry.Individual,
+				ClassID					= entry.Class,
+				EraID					= entry.Era,
+				ClaimantID				= entry.Claimant,
+				ActionCharges			= actionCharges,
+				ActionNameText			= entry.ActionNameText,
+				ActionUsageText			= entry.ActionUsageText,
+				ActionEffectText		= entry.ActionEffectText,
+				BiographyTextTable		= GetBiographyTextTable( entry.Individual ),
+				CanPatronizeWithFaith	= canPatronizeWithFaith,
+				CanPatronizeWithGold	= canPatronizeWithGold,
+				CanReject				= canReject,
+				ClaimantName			= claimantName,
+				Color					= color,
+				CanRecruit				= canRecruit,
+				EarnConditions			= earnConditions,
+				Name					= personName,
+				PassiveNameText			= entry.PassiveNameText,
+				PassiveEffectText		= entry.PassiveEffectText,
+				PatronizeWithFaithCost	= patronizeWithFaithCost,
+				PatronizeWithGoldCost	= patronizeWithGoldCost,
+				RecruitCost				= recruitCost,
+				RejectCost				= rejectCost,
+				TurnGranted				= entry.TurnGranted
+			};
+			table.insert(data.Timeline, kPerson);		
 		end
-		
-		local personName:string = "";
-		if  GameInfo.GreatPersonIndividuals[entry.Individual] ~= nil then
-			personName = Locale.Lookup(GameInfo.GreatPersonIndividuals[entry.Individual].Name);
-		end  
-
-		local kPerson:table = {
-			IndividualID			= entry.Individual,
-			ClassID					= entry.Class,
-			EraID					= entry.Era,
-			ClaimantID				= entry.Claimant,
-			ActionCharges			= actionCharges,
-			ActionNameText			= entry.ActionNameText,
-			ActionUsageText			= entry.ActionUsageText,
-			ActionEffectText		= entry.ActionEffectText,
-			BiographyTextTable		= GetBiographyTextTable( entry.Individual ),
-			CanPatronizeWithFaith	= canPatronizeWithFaith,
-			CanPatronizeWithGold	= canPatronizeWithGold,
-			CanReject				= canReject,
-			ClaimantName			= claimantName,
-			Color					= color,
-			CanRecruit				= canRecruit,
-			EarnConditions			= earnConditions,
-			Name					= personName,
-			PassiveNameText			= entry.PassiveNameText,
-			PassiveEffectText		= entry.PassiveEffectText,
-			PatronizeWithFaithCost	= patronizeWithFaithCost,
-			PatronizeWithGoldCost	= patronizeWithGoldCost,
-			RecruitCost				= recruitCost,
-			RejectCost				= rejectCost,
-			TurnGranted				= entry.TurnGranted
-		};
-		table.insert(data.Timeline, kPerson);		
-
 	end
 
 
@@ -794,8 +794,11 @@ end
 
 -- =======================================================================================
 function Close()
+	if not ContextPtr:IsHidden() then
+		UI.PlaySound("UI_Screen_Close");
+	end
+
 	ContextPtr:SetHide(true);
-	UI.PlaySound("UI_Screen_Close");
 	LuaEvents.GreatPeople_CloseGreatPeople();
 end
 
@@ -851,6 +854,7 @@ function OnGoldButtonClick( individualID:number  )
 		kParameters[PlayerOperations.PARAM_GREAT_PERSON_INDIVIDUAL_TYPE] = individualID;
 		kParameters[PlayerOperations.PARAM_YIELD_TYPE] = YieldTypes.GOLD;
 		UI.RequestPlayerOperation(Game.GetLocalPlayer(), PlayerOperations.PATRONIZE_GREAT_PERSON, kParameters);
+		UI.PlaySound("Purchase_With_Gold");
 		Close();
 	end
 end
@@ -863,6 +867,7 @@ function OnFaithButtonClick( individualID:number  )
 		kParameters[PlayerOperations.PARAM_GREAT_PERSON_INDIVIDUAL_TYPE] = individualID;
 		kParameters[PlayerOperations.PARAM_YIELD_TYPE] = YieldTypes.FAITH;
 		UI.RequestPlayerOperation(Game.GetLocalPlayer(), PlayerOperations.PATRONIZE_GREAT_PERSON, kParameters);
+		UI.PlaySound("Purchase_With_Faith");
 		Close();
 	end
 end
@@ -946,7 +951,9 @@ end
 --	Tab callback
 -- ===========================================================================
 function OnGreatPeopleClick()
+	Controls.SelectGreatPeople:SetHide( false );
 	Controls.ButtonGreatPeople:SetSelected( true );
+	Controls.SelectPreviouslyRecruited:SetHide( true );
 	Controls.ButtonPreviouslyRecruited:SetSelected( false );
 	Refresh();
 end
@@ -955,7 +962,9 @@ end
 --	Tab callback
 -- ===========================================================================
 function OnPreviousRecruitedClick()
+	Controls.SelectGreatPeople:SetHide( true );
 	Controls.ButtonGreatPeople:SetSelected( false );
+	Controls.SelectPreviouslyRecruited:SetHide( false );
 	Controls.ButtonPreviouslyRecruited:SetSelected( true );
 	Refresh();
 end

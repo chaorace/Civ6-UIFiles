@@ -4,10 +4,10 @@
   <SlideAnim ID="RouteChooserSlideAnim" Anchor="L,T" Begin="-350,0" End="0,0" Cycle="Once" Speed="1" Function="OutQuint">
     <Container ID="RouteChooser" Offset="-3,54">
       <!-- Body container-->
-      <Container AutoSize="1" ConsumeAllMouse="1">
+      <Container Size="310,0" AutoSize="V" ConsumeAllMouse="1">
         <!-- Top Panel -->
-        <Grid Size="310,200" Texture="DestinationChooser_CurrentSlot" SliceStart="0,0" SliceCorner="30,30" SliceSize="250,90" SliceTextureSize="308,207" >
-          <Container ID="CurrentSelectionContainer" Size="parent, parent" Offset="0,0">
+        <Grid ID="TopGrid" Size="parent,173" Texture="DestinationChooser_CurrentSlot" SliceStart="0,0" SliceCorner="30,30" SliceSize="250,90" SliceTextureSize="308,173" >
+          <Container ID="CurrentSelectionContainer" Size="parent,parent" Offset="0,0">
             <!-- Selected City -->
             <Grid								ID="BannerBase"						Anchor="C,T" Offset="0,12"		Size="270,33"								Texture="CityPanel_BannerBase"				SliceCorner="20,10" SliceSize="160,1" SliceTextureSize="199,33" Color="150,170,100,255">
               <Grid							ID="BannerDarker"					Anchor="L,T" Offset="4,2"			Size="parent-8,parent-10"		Texture="CityPanel_BannerDarker"			SliceCorner="95,10" SliceSize="1,1" SliceTextureSize="191,23" Color="0,0,0,100" />
@@ -42,11 +42,6 @@
               <Stack ID="OriginResourceList" Anchor="L,C" Offset="10,-1" StackGrowth="Right" WrapWidth="280" WrapGrowth="Bottom"/>
               <Label ID="OriginReceivesNoBenefitsLabel" Anchor="C,C" Style="FontNormal16" FontStyle="Shadow" EffectColor="Black" String="LOC_ROUTECHOOSER_NO_BENEFITS_FROM_ROUTE" Hidden="1"/>
             </Grid>
-          
-            <!-- Confirm Button -->
-            <GridButton ID="BeginRouteButton" Size="285,26" Offset="0,10" Anchor="C,B" String="LOC_ROUTECHOOSER_BEGIN_ROUTE_BUTTON" Style="FontFlair14" FontStyle="Shadows" TextOffset="0,2" EffectColor="0,0,0,255" SmallCaps="20" SmallCapsType="EveryWord">
-              <GridData Texture="Controls_ConfirmSmall" StateOffsetIncrement="0,26" SliceCorner="26,13" SliceSize="2,2" SliceTextureSize="51,26"/>/>
-            </GridButton>
           </Container>
 
           <Container Size="parent, parent">
@@ -55,7 +50,7 @@
         </Grid>
 
         <!-- Bottom Panel -->
-        <Grid Size="310,parent-255" Offset="-2,198" Texture="Controls_ContainerBlue" SliceStart="0,0" SliceCorner="3,3" SliceSize="9,9" SliceTextureSize="16,16">
+        <Grid ID="BottomGrid" Size="parent,parent-228" Offset="-2,172" Texture="Controls_ContainerBlue" SliceStart="0,0" SliceCorner="3,3" SliceSize="9,9" SliceTextureSize="16,16">
           <!-- Filter Pulldown -->
           <PullDown ID="DestinationFilterPulldown" ConsumeMouse="0" Offset="7,27" Anchor="L,T" Size="300,26" AutoSizePopUp="1" AutoFlip="1" ScrollThreshold="400">
             <ButtonData>
@@ -84,7 +79,7 @@
 
           <!-- Destination List -->
           <ScrollPanel ID="RouteChoiceScrollPanel" Offset="14,30" Size="parent,parent-38" Vertical="1" AutoScrollBar="1">
-            <ScrollBar Style="ScrollVerticalBacking" Anchor="L,T" AnchorSide="O,I" Color="28,60,90,255" Offset="-7,2">
+            <ScrollBar Style="ScrollVerticalBacking" Anchor="L,T" AnchorSide="O,I" Color="28,60,90,255" Offset="-7,1">
               <Thumb Style="ScrollThumbAlt" Color="28,60,90,255" />
             </ScrollBar>
 
@@ -94,6 +89,23 @@
 
           <!-- Bottom Divider -->
           <Grid Size="parent+5,10" Anchor="C,B" Offset="0,-8" Style="Divider3Grid" />
+        </Grid>
+
+        <!-- Confirmation Panel -->
+        <Grid ID="ConfirmGrid" Size="parent,70" Anchor="C,B" Texture="Controls_DrawerUp" SliceCorner="5,4" SliceSize="3,2" SliceTextureSize="14,8">
+          <Stack Anchor="C,C">
+            <!-- Confirm Button -->
+            <GridButton ID="BeginRouteButton" Size="285,26" Offset="0,4" Anchor="C,B">
+              <GridData Texture="Controls_ConfirmSmall" StateOffsetIncrement="0,26" SliceCorner="26,13" SliceSize="2,2" SliceTextureSize="51,26"/>
+              
+              <AlphaAnim ID="BeginRouteAnim" Anchor="C,C" AlphaBegin="1" AlphaEnd="0" Speed="1" Pause="2" Cycle="Bounce">
+                <Label ID="BeginRouteLabel" Anchor="C,C" Offset="0,2" String="LOC_ROUTECHOOSER_BEGIN_ROUTE_BUTTON" Style="FontFlair14" FontStyle="Shadows" TextOffset="0,2" SmallCaps="20" SmallCapsType="EveryWord"/>
+              </AlphaAnim>
+            </GridButton>
+
+            <!-- Cancel Button -->
+            <GridButton ID="CancelButton" Style="ButtonLightWeightGrid" Size="240,24" Offset="0,4" Anchor="C,B" String="{LOC_CANCEL:upper}" Style="FontFlair14" FontStyle="Shadows" EffectColor="0,0,0,255" TextOffset="0,2" EffectColor="0,0,0,255" SmallCaps="20" SmallCapsType="EveryWord"/>
+          </Stack>
         </Grid>
       </Container>
 

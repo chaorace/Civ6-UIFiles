@@ -28,6 +28,17 @@ local m_StartPosTypeEntries : table =
 	{ Type = "RandomMinor",  Text = "Random City State", Control = nil }
 };
 
+local m_DirectionTypeEntries : table = 
+{
+	{ Text="LOC_WORLDBUILDER_NO_DIRECTION", Type=DirectionTypes.NO_DIRECTION },
+	{ Text="LOC_WORLDBUILDER_DIRECTION_NORTHEAST", Type=DirectionTypes.DIRECTION_NORTHEAST },
+	{ Text="LOC_WORLDBUILDER_DIRECTION_EAST", Type=DirectionTypes.DIRECTION_EAST },
+	{ Text="LOC_WORLDBUILDER_DIRECTION_SOUTHEAST", Type=DirectionTypes.DIRECTION_SOUTHEAST },
+	{ Text="LOC_WORLDBUILDER_DIRECTION_SOUTHWEST", Type=DirectionTypes.DIRECTION_SOUTHWEST },
+	{ Text="LOC_WORLDBUILDER_DIRECTION_WEST", Type=DirectionTypes.DIRECTION_WEST },
+	{ Text="LOC_WORLDBUILDER_DIRECTION_NORTHWEST", Type=DirectionTypes.DIRECTION_NORTHWEST }
+};
+
 -- Also allow the entries to be looked up by type
 for i, entry in ipairs(m_StartPosTypeEntries) do
 	entry.EntryIndex = i;
@@ -56,8 +67,10 @@ function UpdatePlotInfo()
 		local terrainType = plot:GetTerrainType();
 		local owner = hasOwner and WorldBuilder.CityManager():GetPlotOwner( m_SelectedPlot ) or nil;
 		
+		local plotFeature = plot:GetFeature();
 		Controls.TerrainPullDown:SetSelectedIndex(     terrainType+1,               false );
-		Controls.FeaturePullDown:SetSelectedIndex(     plot:GetFeatureType()+2,     false );
+		Controls.FeaturePullDown:SetSelectedIndex(     plotFeature:GetType()+2,     false );
+		Controls.FeatureDirectionPulldown:SetSelectedIndex( plotFeature:GetDirection()+2,     false );
 		Controls.ResourcePullDown:SetSelectedIndex(    plot:GetResourceType()+2,    false );
 		Controls.ImprovementPullDown:SetSelectedIndex( plot:GetImprovementType()+2, false );
 		Controls.RoutePullDown:SetSelectedIndex(       plot:GetRouteType()+2,       false );
@@ -132,6 +145,7 @@ function UpdateSelectedPlot(plotID)
 	
 	Controls.TerrainPullDown:SetDisabled(not plotSelected);
 	Controls.FeaturePullDown:SetDisabled(not plotSelected);
+	Controls.FeatureDirectionPulldown:SetDisabled(not plotSelected);
 	Controls.ResourcePullDown:SetDisabled(not plotSelected);
 	Controls.ResourceAmount:SetDisabled(not plotSelected);
 	Controls.ImprovementPullDown:SetDisabled(not plotSelected);
@@ -141,6 +155,7 @@ function UpdateSelectedPlot(plotID)
 	Controls.StartPosPulldown:SetDisabled(not plotSelected);
 	Controls.StartPosTabControl:SetDisabled(not plotSelected);
 	Controls.OwnerPulldown:SetDisabled(not plotSelected);
+	Controls.FeatureDirectionPulldown:SetDisabled(not plotSelected);
 	
 	if plotSelected then
 		local plot = Map.GetPlotByIndex( m_SelectedPlot );
@@ -259,6 +274,18 @@ function OnFeatureTypeSelected(entry)
 			WorldBuilder.MapManager():SetFeatureType( m_SelectedPlot, entry.Type.Index );
 		else
 			WorldBuilder.MapManager():SetFeatureType( m_SelectedPlot, -1 );
+		end
+	end
+end
+
+-- ===========================================================================
+function OnFeatureDirectionSelected(entry)
+
+	if m_SelectedPlot ~= nil then
+		if entry.Type~= nil then
+			WorldBuilder.MapManager():SetPlotValue( m_SelectedPlot, "Feature", "Direction", entry.Type );
+		else
+			WorldBuilder.MapManager():SetPlotValue( m_SelectedPlot, "Feature", "Direction", DirectionTypes.NO_DIRECTION );
 		end
 	end
 end
@@ -435,15 +462,19 @@ function OnInit()
 	Controls.TerrainPullDown:SetEntrySelectedCallback( OnTerrainTypeSelected );
 
 	-- FeaturePullDown
-	table.insert(m_FeatureTypeEntries, { Text="No Feature" });
+	table.insert(m_FeatureTypeEntries, { Text="LOC_WORLDBUILDER_NO_FEATURE" });
 	for type in GameInfo.Features() do
 		table.insert(m_FeatureTypeEntries, { Text=type.Name, Type=type });
 	end
 	Controls.FeaturePullDown:SetEntries( m_FeatureTypeEntries, 1 );
 	Controls.FeaturePullDown:SetEntrySelectedCallback( OnFeatureTypeSelected );
 
+	-- FeatureDirectionPulldown
+	Controls.FeatureDirectionPulldown:SetEntries( m_DirectionTypeEntries, 1 );
+	Controls.FeatureDirectionPulldown:SetEntrySelectedCallback( OnFeatureDirectionSelected );
+
 	-- ResourcePullDown
-	table.insert(m_ResourceTypeEntries, { Text="No Resource" });
+	table.insert(m_ResourceTypeEntries, { Text="LOC_WORLDBUILDER_NO_RESOURCE" });
 	for type in GameInfo.Resources() do
 		table.insert(m_ResourceTypeEntries, { Text=type.Name, Type=type });
 	end
@@ -452,7 +483,7 @@ function OnInit()
 	Controls.ResourceAmount:RegisterStringChangedCallback( OnResourceAmountChanged );
 
 	-- ImprovementPullDown
-	table.insert(m_ImprovementTypeEntries, { Text="No Improvement" });
+	table.insert(m_ImprovementTypeEntries, { Text="LOC_WORLDBUILDER_NO_IMPROVEMENT" });
 	for type in GameInfo.Improvements() do
 		table.insert(m_ImprovementTypeEntries, { Text=type.Name, Type=type });
 	end
@@ -460,7 +491,7 @@ function OnInit()
 	Controls.ImprovementPullDown:SetEntrySelectedCallback( OnImprovementTypeSelected );
 
 	-- RoutePullDown
-	table.insert(m_RouteTypeEntries, { Text="No Route" });
+	table.insert(m_RouteTypeEntries, { Text="LOC_WORLDBUILDER_NO_ROUTE" });
 	for type in GameInfo.Routes() do
 		table.insert(m_RouteTypeEntries, { Text=type.Name, Type=type });
 	end

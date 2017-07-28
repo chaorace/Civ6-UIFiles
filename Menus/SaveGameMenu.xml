@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Context ColorSet="BodyTextCool" Style="FontNormal22" FontEffect="Stroke" >
+
+  <Include File="CivilizationIcon" />
+  
     <Box ID="MainGrid" Size="1024,full" Anchor="C,T" Color="9,44,72,200" TutorialActive="1">
       <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="R,T" Color="0,0,0,200" Rotate="270" Offset="0,0"/>
       <Image Texture="Controls_GradientSmall" Size="22,parent" AnchorSide="O,I" Anchor="L,T" Color="0,0,0,200" Rotate="90" Offset="0,0"/>
@@ -92,11 +96,7 @@
                           <Grid Style="ShellGameDetailsContainerR" Size="72,55" Anchor="R,C"/>
                           <Stack StackGrowth="Right" Anchor="C,C" Offset="0,1" Padding="-3">
                             <Container Size="62,62">
-                              <Image ID="CivBacking_Base" Texture="Circle44_Base" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-                              <Image ID="CivBacking_Darker" Texture="Circle44_Darker" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-                              <Image ID="CivBacking_Lighter" Texture="Circle44_Lighter" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-                              <Image ID="CivBacking_None" Texture="Circle44_None" Size="44,44" Anchor="C,C"/>
-                              <Image ID="CivIcon" Texture="CivSymbols36" Size="36,36" Anchor="C,C"/>
+                              <MakeInstance Name="CivilizationIconShaded44"/>
                               <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="-1,-1" Color="2,119,186"/>
                             </Container>
                             <Container Size="62,62">
@@ -122,7 +122,6 @@
                 <!-- /INSPECTOR decorative border-->
                 <Stack StackGrowth="Down" AnchorSide="I,O" Anchor="C,B" Offset="0,5">
                   <GridButton ID="ActionButton" Size="parent,41" Style="ButtonConfirm" String="LOC_SAVE_GAME" />
-                  <GridButton ID="SaveMapButton" Size="parent,41" Style="MainButton" String="LOC_SAVE_MAP_BUTTON" Hidden="1"/>
                 </Stack>
               </Grid>
               <!-- ************************************* SELECTOR AREA ************************************* -->
@@ -133,6 +132,7 @@
                   <GridButton ID="AutoCheck" String="LOC_AUTOSAVES" Style="CheckBoxControl"  Size="340,24" Hidden="1"/>-->
                   <GridButton ID="CloudCheck" String="LOC_STEAMCLOUD" Style="CheckBoxControl" Size="340,24" Hidden="1"/>
                   <PullDown			ID="SortByPullDown" Anchor="C,T" Style="PullDownBlue" Size="340,24" ScrollThreshold="110" AutoSizePopUp="1" SpaceForScroll="0" Offset="0,0"/>
+                  <PullDown ID="DirectoryPullDown" Anchor="C,T" Style="PullDownBlue" Size="340,24" ScrollThreshold="400" AutoSizePopUp="1" SpaceForScroll="0" Offset="0,0"/>
 									<!-- USE THIS WITH CLOUD CHECK ENABLED:
 									<Grid Style="SubContainer3" Size="parent-5,parent-55" Anchor="C,T" Color="6,54,93,255" Offset="0,2">
 									-->

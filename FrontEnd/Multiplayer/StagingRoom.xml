@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ContextDefaults ColorSet="BodyTextCool" Style="FontNormal22" FontStyle="Glow" Name="StagingRoom" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\ForgeUI_Assets\Controls.xsd">
-	
+
+  <Include File="PopupDialog" />
+  
 	<Box ID="MainGrid" Style="ShellBGBox">
 
 		<Container ID="MainWindow" Style="ShellWindowContainer">
@@ -8,6 +10,7 @@
 			<Container Style="ShellHeaderContainer">
 				<Grid Style="ShellHeaderButtonGrid">
 					<GridButton ID="BackButton" Style="ShellButtonOrnateFlat" Anchor="R,C" Offset="1,0" String="LOC_MULTIPLAYER_BACK"/>
+					<GridButton ID="EndGameButton" Style="ShellButtonOrnateFlat" Anchor="L,C" Offset="1,0" String="LOC_MULTIPLAYER_END_GAME" Hidden="1"/>
 				</Grid>
 				<Label ID="TitleLabel" Style="ShellHeader" Anchor="C,C" String="{LOC_MULTIPLAYER_STAGING_ROOM:upper}"/>
 			</Container>
@@ -112,6 +115,22 @@
 					
 					
 					<Stack ID="GameSummaryStack" Anchor="C,T" Offset="0,0" Padding="10" StackGrowth="Bottom" >
+						<!-- Game Mode Indicator-->
+						<Label ID="GameStateText" Anchor="C,C" Style="ShellHeader" WrapWidth="320"/>
+						
+						<!-- Join Code, an edit box that the user can copy/paste from.-->
+						<Container Size="auto,auto" ID="JoinCodeRoot" Hidden="1">
+							<Container Size="auto,auto">
+								<Box Size="140,30" Color="0,0,0,0"/>
+								<Label ID="JoinCodeLabel" Anchor="R,C" Offset="0,0" Style="ShellHeader" String="LOC_STAGING_ROOM_JOIN_CODE"/>
+							</Container>
+							<Container Size="auto,auto" Offset="145,0">
+								<Grid Style="EditTextArea" Size="248,33">
+									<EditBox ID="JoinCodeText" Anchor="L,C" Offset="6,0" Size="248,23" EditMode="1" HighlightOnFocus="1" Style="ShellHeader" MaxLength="10"/>
+								</Grid>
+							</Container>
+						</Container>
+						
 						<!-- Game Parameter Header -->
 						<Grid Size="parent,21" Texture="Shell_SectionHeader" SliceCorner="154,10" SliceTextureSize="308,21" Color="20,144,140,100" Offset="0,8">
 							<Image Texture="Controls_Gradient_HalfRadial" Color="20,144,140,100" FlipY="1" Anchor="C,T" Size="225,94"/>
@@ -150,7 +169,7 @@
             <Label		ID="StartLabel"					Anchor="C,C" Offset="0,6" Align="Center" String="{LOC_START:upper}" Style="BannerHeaderText" />
           </Image>
 
-          <Container  ID="StartButtonContainer" Size="300,130" Hidden="1">
+          <Container  ID="ReadyButtonContainer" Size="300,130" Hidden="1">
             <Image	 ID="TurnTimerHotseatBG"		Anchor="C,C" Offset="0,-17"		Size="91,92"	Texture="Shell_BeginButtonBacking"/>
             <Image	 ID="TurnTimerBG"						Anchor="C,C" Offset="0,-17"		Size="109,110"	Texture="Shell_CountdownTimerBacking"/>
             <Meter ID="TurnTimerMeter" Anchor="C,C" Offset="0,-19"	Size="93,94" Texture="Shell_CountdownTimerFill" Speed="0"/>
@@ -158,7 +177,7 @@
             <GridButton		ID="ReadyButton"				SliceCorner="40,40" SliceTextureSize="80,80" Anchor="C,C" Offset="0,-16"	Size="80,80"	Texture="Shell_BeginButton" StateOffsetIncrement="0,80" FontSize="40"/>
           </Container>
 
-          <Container  ID="ReadyButtonContainer" Size="300,130" Hidden="0">
+          <Container  ID="ReadyCheckContainer" Size="300,130" Hidden="0">
             <Button		ID="ReadyCheck"		Anchor="C,C" Offset="-1,-13"	Size="80,80"	Texture="Shell_ReadyCheckboxLarge" StateOffsetIncrement="0,80"/>
           </Container>
 
@@ -212,12 +231,12 @@
 
   <!-- Instance for a string parameters -->
   <Instance Name="StringParameterInstance">
-    <Container AutoSize="1" ID="StringRoot">
-      <Container AutoSize="1">
+    <Container Size="auto,auto" ID="StringRoot">
+      <Container Size="auto,auto">
         <Box Size="140,30" Color="0,0,0,0"/>
         <Label ID="StringName" Anchor="R,C" Offset="0,0" Style="FontNormal14" ColorSet="ShellOptionText" FontStyle="stroke" WrapWidth="180" String="UNKNOWN_EDIT_BOX"/>
       </Container>
-      <Container AutoSize="1" Offset="145,0">
+      <Container Size="auto,auto" Offset="145,0">
         <Grid Style="EditTextArea" Size="160,30">
           <EditBox ID="StringEdit" Anchor="L,C" Offset="6,0" Size="248,23" EditMode="1" Style="FontNormal18" ColorSet="BodyTextCool" FontStyle="stroke" MaxLength="10"/>
         </Grid>
@@ -273,7 +292,7 @@
 			</Box>
       
       <!-- Team -->
-			<PullDown ID="TeamPullDown" Offset="210,0" Anchor="L,T" ScrollThreshold="210" Size="65,46" AutoSizePopUp="1" SpaceForScroll="1">
+			<PullDown ID="TeamPullDown" Offset="210,0" Anchor="L,T" ScrollThreshold="210" Size="65,46" AutoSizePopUp="1" SpaceForScroll="1" AutoFlip="1">
         <ButtonData>
           <GridButton  Size="194,28" Style="TabFont">
             <GridData Texture="Controls_DropDownControlLarge" StateOffsetIncrement="0,45"	SliceCorner="10,15" SliceTextureSize="45,45" />
@@ -373,22 +392,8 @@
 		<Line ID="Control" Start="5,-1" End="1000,-1" Width="2" Color="20,55,70,255" />
 	</Instance>
 
-	<!-- Custom popup dialog -->
-	<Box Style="PopupDialogBox"/>
-
-	<!-- Customized popup dialog pieces-->
-	<Instance				Name="PopupButtonInstance">
-		<GridButton   ID="Button"     Size="200,41"   Style="MainButton"/>
-	</Instance>
-	<Instance				Name="PopupButtonInstanceAlt">
-		<GridButton   ID="Button"     Size="200,41"   Style="ButtonRed"/>
-	</Instance>
-	<Instance				Name="PopupTextInstance">
-		<Label        ID="Text"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="parent-20"/>
-	</Instance>
-	<Instance				Name="RowInstance">
-		<Stack        ID="Row"			Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
-	</Instance>
+  <!-- Dialog Support -->
+  <MakeInstance Name="PopupDialog" />
 
   <Instance			Name="IconInfoInstance">
     <Container	ID="Top"					Size="340,40" AutoSize="V">

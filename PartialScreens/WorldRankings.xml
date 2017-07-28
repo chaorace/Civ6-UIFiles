@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd">
 
+	<Include File="CivilizationIcon" />
+	
 	<SlideAnim Style="RundownAnimBG">
 
 		<!-- ==================================================================	-->
@@ -90,19 +92,19 @@
 
 			<Container ID="CultureViewHeader" Offset="12,60"/>
 			<Container ID="CultureViewContents" Offset="0,130">
-        <Stack StackGrowth="Right" Offset="20,10" Padding="2">
-          <Grid Size="205,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_DOMESTIC_TOURISTS_TOOLTIP">
-            <Label Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_DOMESTIC_TOURISTS" Anchor="C,C" WrapWidth="parent-5" />
-          </Grid>
+				<Stack StackGrowth="Right" Offset="20,10" Padding="2">
+					<Grid Size="205,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_DOMESTIC_TOURISTS_TOOLTIP">
+						<Label Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_DOMESTIC_TOURISTS" Anchor="C,C" WrapWidth="parent-5" />
+					</Grid>
 
-          <Grid Size="125,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_OUR_VISITORS_FROM_TOOLTIP">
-            <Label Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_OUR_VISITORS_FROM" Anchor="C,C" WrapWidth="Parent-5"/>
-          </Grid>
+					<Grid Size="125,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_OUR_VISITORS_FROM_TOOLTIP">
+						<Label Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_OUR_VISITORS_FROM" Anchor="C,C" WrapWidth="Parent-5"/>
+					</Grid>
 
-          <Grid Size="140,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_VISITING_TOURISTS_TOOLTIP">
-            <Label Anchor="C,C" WrapWidth="Parent-8" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_VISITING_TOURISTS"/>
-          </Grid>
-        </Stack>
+					<Grid Size="140,30" Style="WorldRankingsColumnHeader" ToolTip="LOC_WORLD_RANKINGS_CULTURE_VISITING_TOURISTS_TOOLTIP">
+						<Label Anchor="C,C" WrapWidth="Parent-8" Style="FontNormalMedium14" Color="255,255,225,100" String="LOC_WORLD_RANKINGS_CULTURE_VISITING_TOURISTS"/>
+					</Grid>
+				</Stack>
 				<ScrollPanel ID="CultureViewScrollbar" Offset="15,45" Size="parent-37,545" Style="WorldRankingsScrollPanel">
 					<Stack ID="CultureViewStack" Offset="0,5" Padding="5"/>
 				</ScrollPanel>
@@ -174,9 +176,7 @@
 	<Instance Name="TabInstance">
 		
 		<GridButton	ID="Button" Size="50,34" Style="TabButton" FontSize="14" TextOffset="0,2">
-			<AlphaAnim ID="Selection" Offset="-2,0" Size="parent,parent" Speed="4" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
-				<GridButton Size="parent,parent" Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
-			</AlphaAnim>
+				<GridButton ID="Selection" Size="parent,parent" Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" Hidden="1"/>
 		</GridButton>
 
 	</Instance>
@@ -246,6 +246,18 @@
 
 	</Instance>
 
+	<Instance Name="CivilizationIconInstance">
+		
+		<Container>
+			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
+			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<Container Offset="10,8">
+				<MakeInstance Name="CivilizationIcon36"/>
+			</Container>
+		</Container>
+		
+	</Instance>
+
 	<Instance Name="OverallInstance">
 		
 		<GridButton	ID="ButtonBG" Offset="0,10" Size="490,130" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
@@ -259,13 +271,12 @@
 			<Container ID="TopPlayer" Size="56,56" Offset="2,58">
 				<Image ID="CivIconBackingFaded" Anchor="C,C" Offset="0,0" Size="48,48" Texture="CircleBacking48" Color="100,100,100,255"/>
 				<Image ID="CivIconFaded" Anchor="C,C" Offset="0,0" Size="48,48" Texture="CivSymbols48" Color="100,100,100,255"/>
-				<TextureBar	ID="CivIconBacking" Anchor="C,C" Offset="0,0" Direction="Up" Speed="0" Size="48,48" Texture="CircleBacking48"/>
-				<TextureBar	ID="CivIcon" Anchor="C,C" Offset="0,0" Direction="Up" Speed="0" Size="48,48" Texture="CivSymbols48"/>
 				<Image Offset="0,0" Size="56,56" Texture="Controls_CircleRim"/>
-				<Container ID="LocalPlayer">
-					<Image Offset="10,0" Size="35,10" Texture="Controls_YouArrowSmall"/>
+				<Image ID="LocalPlayer" Offset="10,0" Size="35,10" Texture="Controls_YouArrowSmall"/>
+				<Container Offset="28,28">
+					<MakeInstance Name="CivilizationIconBar48"/>
 				</Container>
-        <Image ID="TeamRibbon" Size="53,53" Anchor="C,B" Offset="0,-8" Texture="TeamRibbon53"/>
+				<Image ID="TeamRibbon" Size="53,53" Anchor="C,B" Offset="0,-8" Texture="TeamRibbon53"/>
 			</Container>
 			<Stack ID="PlayerStack" Offset="70,91" Size="parent,parent" Padding="5" StackGrowth="Right" WrapWidth="440" WrapGrowth="bottom"/>
 		</GridButton>
@@ -280,91 +291,85 @@
 				<Image Offset="-4,-5" Size="44,45" Texture="Controls_CircleRimSmall"/>
 				<Image Offset="0,-3" Size="35,10" Texture="Controls_YouArrowSmall"/>
 			</Container>
-			<TextureBar	ID="CivIconBacking" Anchor="C,C" Direction="Up" Speed="0" Size="36,36" Texture="CircleBacking36"/>
-			<TextureBar	ID="CivIcon" Anchor="C,C" Direction="Up" Speed="0" Size="36,36" Texture="CivSymbols36"/>
-      <Image ID="TeamRibbon" Size="44,44" Anchor="C,B" Offset="0,-9" Texture="TeamRibbon44"/>
-    </Image>
+			<MakeInstance Name="CivilizationIconBar36"/>
+			<Image ID="TeamRibbon" Size="44,44" Anchor="C,B" Offset="0,-9" Texture="TeamRibbon44"/>
+		</Image>
+		
 	</Instance>
-  
-  <Instance Name="ScoreTeamInstance">
-    
-    <Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-      <!-- Team Info -->
-      <Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
-        <Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
-          <Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
-          <Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
-        </Image>
-        <Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
-        <Label ID="TeamScore" Offset="13,15" Align="right" Anchor="R,T" String="Score" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
-      </Grid>
-      
-      <!-- Player Stack -->
-      <Stack ID="ScorePlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
-    </Grid>
-    
-  </Instance>
-  
+	
+	<Instance Name="ScoreTeamInstance">
+		
+		<Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+				<Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
+					<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+					<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+				</Image>
+				<Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+				<Label ID="TeamScore" Offset="13,15" Align="right" Anchor="R,T" String="Score" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			</Grid>
+			
+			<!-- Player Stack -->
+			<Stack ID="ScorePlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
+		</Grid>
+		
+	</Instance>
+	
 	<Instance Name="ScoreInstance">
 		
 		<GridButton	ID="ButtonBG" Size="470,180" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
-			<Image ID="CivIconBacking" Offset="10,10" Size="36,36" Texture="CircleBacking36"/>
-			<Image ID="CivIcon" Offset="10,10" Size="36,36" Texture="CivSymbols36"/>
-			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
 			<Label ID="Details" Offset="15,40" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>
 			<Label ID="Score" Offset="13,15" Align="right" Anchor="R,T" String="Score" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
 		</GridButton>
 		
 	</Instance>
 
-  <Instance Name="ScienceTeamInstance">
-    <Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-      <!-- Team Info -->
-      <Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
-        <Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
-          <Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
-          <Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
-        </Image>
-        <Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
-        <Stack Offset="238,7" StackGrowth="Right" StackPadding="1">
-          <Grid ID="ObjBG_1" Size="75,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37">
-            <Grid ID="ObjFill_1" Offset="0,0" Size="75,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37" Hidden="1"/>
-            <Image Offset="3,10" Size="56,16" Texture="Controls_MeterLinear"/>
-            <Image ID="ObjHidden_1" Offset="3,10" Size="56,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
-            <TextureBar	ID="ObjBar_1" Offset="5,10" Direction="Right" Speed="0" Size="56,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
-            <Image ID="ObjToggle_OFF_1" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
-            <Image ID="ObjToggle_ON_1" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,35" Hidden="1"/>
-          </Grid>
-          <Grid ID="ObjBG_2" Size="75,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37">
-            <Grid ID="ObjFill_2" Offset="0,0" Size="75,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37" Hidden="1"/>
-            <Image Offset="3,10" Size="56,16" Texture="Controls_MeterLinear"/>
-            <Image ID="ObjHidden_2" Offset="3,10" Size="56,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
-            <TextureBar	ID="ObjBar_2" Offset="5,10" Direction="Right" Speed="0" Size="56,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
-            <Image ID="ObjToggle_OFF_2" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
-            <Image ID="ObjToggle_ON_2" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,35" Hidden="1"/>
-          </Grid>
-          <Grid ID="ObjBG_3" Size="75,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37">
-            <Grid ID="ObjFill_3" Offset="0,0" Size="75,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37" Hidden="1"/>
-            <Image Offset="3,10" Size="56,16" Texture="Controls_MeterLinear"/>
-            <Image ID="ObjHidden_3" Offset="3,10" Size="56,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
-            <TextureBar	ID="ObjBar_3" Offset="5,10" Direction="Right" Speed="0" Size="56,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
-            <Image ID="ObjToggle_OFF_3" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
-            <Image ID="ObjToggle_ON_3" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,35" Hidden="1"/>
-          </Grid>
-        </Stack>
-      </Grid>
-      <Stack ID="SciencePlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
-    </Grid>
-  </Instance>
+	<Instance Name="ScienceTeamInstance">
+		<Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+				<Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
+					<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+					<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+				</Image>
+				<Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+				<Stack Offset="238,7" StackGrowth="Right" StackPadding="1">
+					<Grid ID="ObjBG_1" Size="75,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37">
+						<Grid ID="ObjFill_1" Offset="0,0" Size="75,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37" Hidden="1"/>
+						<Image Offset="3,10" Size="56,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjHidden_1" Offset="3,10" Size="56,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+						<TextureBar	ID="ObjBar_1" Offset="5,10" Direction="Right" Speed="0" Size="56,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjToggle_OFF_1" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+						<Image ID="ObjToggle_ON_1" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,35" Hidden="1"/>
+					</Grid>
+					<Grid ID="ObjBG_2" Size="75,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37">
+						<Grid ID="ObjFill_2" Offset="0,0" Size="75,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37" Hidden="1"/>
+						<Image Offset="3,10" Size="56,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjHidden_2" Offset="3,10" Size="56,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+						<TextureBar	ID="ObjBar_2" Offset="5,10" Direction="Right" Speed="0" Size="56,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjToggle_OFF_2" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+						<Image ID="ObjToggle_ON_2" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,35" Hidden="1"/>
+					</Grid>
+					<Grid ID="ObjBG_3" Size="75,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37">
+						<Grid ID="ObjFill_3" Offset="0,0" Size="75,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37" Hidden="1"/>
+						<Image Offset="3,10" Size="56,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjHidden_3" Offset="3,10" Size="56,16" TextureOffset="0,32" Texture="Controls_MeterLinear"/>
+						<TextureBar	ID="ObjBar_3" Offset="5,10" Direction="Right" Speed="0" Size="56,16" TextureOffset="0,16" Texture="Controls_MeterLinear"/>
+						<Image ID="ObjToggle_OFF_3" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,0"/>
+						<Image ID="ObjToggle_ON_3" Offset="45,2" Size="35,35" Texture="Controls_RadioButtonLarge" TextureOffset="0,35" Hidden="1"/>
+					</Grid>
+				</Stack>
+			</Grid>
+			<Stack ID="SciencePlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
+		</Grid>
+	</Instance>
 
-  <Instance Name="ScienceInstance">
+	<Instance Name="ScienceInstance">
 
 		<GridButton	ID="ButtonBG" Size="470,54" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
-			<Image ID="CivIconBacking" Offset="10,10" Size="36,36" Texture="CircleBacking36"/>
-			<Image ID="CivIcon" Offset="10,10" Size="36,36" Texture="CivSymbols36"/>
-			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
 			<Grid ID="ObjBG_1" Offset="230,10" Size="75,37" Texture="Controls_Segment" SliceStart="0,0" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37">
 				<Grid ID="ObjFill_1" Offset="0,0" Size="75,37" Texture="Controls_Segment" SliceStart="0,37" SliceCorner="2,2" SliceSize="73,34" SliceTextureSize="75,37" Hidden="1"/>
 				<Image Offset="3,10" Size="56,16" Texture="Controls_MeterLinear"/>
@@ -393,54 +398,43 @@
 
 	</Instance>
 
-  <Instance Name="CultureTeamInstance">
+	<Instance Name="CultureTeamInstance">
 
-    <Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-      <!-- Team Info -->
-      <Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
-        <Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
-          <Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
-          <Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
-        </Image>
-        <Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+		<Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+				<Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
+					<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+					<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+				</Image>
+				<Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
 
-        <!-- Team Culture Info -->
-        <Label ID="VisitingTourists" Offset="60,4" Align="right" Anchor="R,T" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" String="VisitingTourists"/>
-        <Label Offset="60,32" Align="right" Anchor="R,T" String="LOC_VICTORYSTATUS_CULTURE_TOURISTS_LABEL" Style="FontNormalMedium14" Color="206,218,225,255"/>
-        <Image Offset="5,0" Anchor="R,C" Size="52,52" Texture="Tourism_Meter">
-          <TextureBar	ID="TouristsFill" Offset="0,0" Anchor="C,C" Direction="Up" Speed="0" Size="52,52" TextureOffset="0,52" Texture="Tourism_Meter"/>
-        </Image>
-      </Grid>
+				<!-- Team Culture Info -->
+				<Label ID="VisitingTourists" Offset="60,4" Align="right" Anchor="R,T" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" String="VisitingTourists"/>
+				<Label Offset="60,32" Align="right" Anchor="R,T" String="LOC_VICTORYSTATUS_CULTURE_TOURISTS_LABEL" Style="FontNormalMedium14" Color="206,218,225,255"/>
+				<Image Offset="5,0" Anchor="R,C" Size="52,52" Texture="Tourism_Meter">
+					<TextureBar	ID="TouristsFill" Offset="0,0" Anchor="C,C" Direction="Up" Speed="0" Size="52,52" TextureOffset="0,52" Texture="Tourism_Meter"/>
+				</Image>
+			</Grid>
 
-      <!-- Player Stack -->
-      <Stack ID="CulturePlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
-    </Grid>
+			<!-- Player Stack -->
+			<Stack ID="CulturePlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
+		</Grid>
 
-  </Instance>
+	</Instance>
 
 	<Instance Name="CultureInstance">
 
 		<GridButton	ID="ButtonBG" Size="470,54" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
-		<!--	<Image ID="CivIconBacking" Offset="10,10" Size="36,36" Texture="CircleBacking36"/>
-			<Image ID="CivIcon" Offset="10,10" Size="36,36" Texture="CivSymbols36"/>-->
-      <Container Size="50,50" Offset="5,2">
-        <Image ID="CivBacking_Base" Texture="Circle44_Base" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-        <Image ID="CivBacking_Darker" Texture="Circle44_Darker" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-        <Image ID="CivBacking_Lighter" Texture="Circle44_Lighter" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-        <Image ID="CivBacking_None" Texture="Circle44_None" Size="44,44" Anchor="C,C" Color="255,255,255,230"/>
-        <Image ID="CivIcon" Texture="CivSymbols36" Size="36,36" Anchor="C,C"/>
-        <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="-1,-1" Color="59,62,63"/>
-      </Container>
-			<Label ID="CivName" Offset="55,7" String="CivName" Style="FontNormal16" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
 			<Image ID="DomesticTouristsIcon" Offset="55,27" Size="22,21" Texture="Tourism_DomesticSmall"/>
 			<Label ID="DomesticTourists" Offset="80,28" String="DomesticTourists" Style="FontNormal18" Color="206,218,225,255"/>
-      <Container  ID="VisitingUsContainer" Offset="205,0" Size="125, parent">
-        <Image    Texture="Controls_Div6" StretchMode="Fill" Rotate="90" Size="2,parent-10" Anchor="L,C" Color="33,43,49"/>
-        <Image    Texture="Controls_Div6" StretchMode="Fill" Rotate="90" Size="2,parent-10" Anchor="R,C" Color="33,43,49"/>
-        <Image    ID="VisitingUsIcon"      Offset="-15,0" Size="24,24" Texture="Tourism_VisitingSmall" Anchor="C,C"/>
-        <Label    ID="VisitingUsTourists"  Offset="10,0" String="23" Style="FontNormal18" Color="206,218,225,255" Anchor="C,C"/>
-      </Container>
+			<Container  ID="VisitingUsContainer" Offset="205,0" Size="125, parent">
+				<Image    Texture="Controls_Div6" StretchMode="Fill" Rotate="90" Size="2,parent-10" Anchor="L,C" Color="33,43,49"/>
+				<Image    Texture="Controls_Div6" StretchMode="Fill" Rotate="90" Size="2,parent-10" Anchor="R,C" Color="33,43,49"/>
+				<Image    ID="VisitingUsIcon"      Offset="-15,0" Size="24,24" Texture="Tourism_VisitingSmall" Anchor="C,C"/>
+				<Label    ID="VisitingUsTourists"  Offset="10,0" String="23" Style="FontNormal18" Color="206,218,225,255" Anchor="C,C"/>
+			</Container>
 			<Label ID="VisitingTourists" Offset="60,5" Align="right" Anchor="R,T" Style="FontFlair26" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191" String="VisitingTourists"/>
 			<Label Offset="60,35" Align="right" Anchor="R,T" String="LOC_VICTORYSTATUS_CULTURE_TOURISTS_LABEL" Style="FontNormalMedium14" Color="206,218,225,255"/>
 			<Image Offset="5,2" Anchor="R,T" Size="52,52" Texture="Tourism_Meter"/>
@@ -449,35 +443,32 @@
 
 	</Instance>
 
-  <Instance Name="DominationTeamInstance">
+	<Instance Name="DominationTeamInstance">
 
-    <Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-      <!-- Team Info -->
-      <Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
-        <Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
-          <Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
-          <Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
-        </Image>
-        <Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+		<Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+				<Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
+					<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+					<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+				</Image>
+				<Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
 
-        <!-- Domination Info -->
-        <Label ID="CapitalsCaptured" Offset="19,5" Align="right" Anchor="R,T" Style="FontNormalMedium14" Color="206,218,225,255" String="CapitalsCaptured"/>
-        <Stack ID="CapitalsCapturedStack" Anchor="R,T" Offset="16,20" Padding="5" StackGrowth="Left" WrapWidth="240" WrapGrowth="bottom"/>
-      </Grid>
+				<!-- Domination Info -->
+				<Label ID="CapitalsCaptured" Offset="19,5" Align="right" Anchor="R,T" Style="FontNormalMedium14" Color="206,218,225,255" String="CapitalsCaptured"/>
+				<Stack ID="CapitalsCapturedStack" Anchor="R,T" Offset="16,20" Padding="5" StackGrowth="Left" WrapWidth="240" WrapGrowth="bottom"/>
+			</Grid>
 
-      <!-- Player Stack -->
-      <Stack ID="PlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
-    </Grid>
+			<!-- Player Stack -->
+			<Stack ID="PlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
+		</Grid>
 
-  </Instance>
+	</Instance>
 
 	<Instance Name="DominationInstance">
 
 		<GridButton	ID="ButtonBG" Size="470,54" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
-			<Image ID="CivIconBacking" Offset="10,10" Size="36,36" Texture="CircleBacking36"/>
-			<Image ID="CivIcon" Offset="10,10" Size="36,36" Texture="CivSymbols36"/>
-			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
 			<Label ID="HasCapital" Offset="35,35" Style="FontNormalMedium14" Color="206,218,225,255" String="[ICON_Capital]"/>	
 			<Label ID="CapitalsCaptured" Offset="15,5" Align="right" Anchor="R,T" Style="FontNormalMedium14" Color="206,218,225,255" String="CapitalsCaptured"/>
 			<Stack ID="CapitalsCapturedStack" Anchor="R,T" Offset="10,20" Padding="5" StackGrowth="Left" WrapWidth="240" WrapGrowth="bottom"/>
@@ -486,34 +477,32 @@
 	</Instance>
 	
 	<Instance Name="DominatedCapitalInstance">
-
-		<Image ID="CivIconBacking" Size="30,30" Texture="CircleBacking30" Color="100,100,100,255">
-			<Image ID="CivIcon" Size="30,30" Texture="CivSymbols30" Color="100,100,100,255"/>
-		</Image>
-		
+		<Container ID="Root" Size="auto,auto">
+			<MakeInstance Name="CivilizationIcon30" ID="CivilizationIcon"/>
+		</Container>
 	</Instance>
 
-  <Instance Name="ReligionTeamInstance">
+	<Instance Name="ReligionTeamInstance">
 
-    <Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-      <!-- Team Info -->
-      <Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
-        <Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
-          <Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
-          <Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
-        </Image>
-        <Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+		<Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Grid ID="TeamButton" Size="parent,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+				<Image ID="TeamIconBacking" Offset="10,4" Size="36,36" Texture="CircleBacking36">
+					<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+					<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+				</Image>
+				<Label ID="TeamName" Offset="55,18" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
 
-        <!-- Religion Info -->
-        <Label ID="CivsConverted" Offset="10,5" Align="right" Anchor="R,T" Style="FontNormalMedium14" Color="206,218,225,255" String="CivsConverted"/>
-        <Stack ID="CivsConvertedStack" Anchor="R,T" Offset="16,18" Padding="5" StackGrowth="Left" WrapWidth="240" WrapGrowth="bottom"/>
-      </Grid>
+				<!-- Religion Info -->
+				<Label ID="CivsConverted" Offset="10,5" Align="right" Anchor="R,T" Style="FontNormalMedium14" Color="206,218,225,255" String="CivsConverted"/>
+				<Stack ID="CivsConvertedStack" Anchor="R,T" Offset="16,18" Padding="5" StackGrowth="Left" WrapWidth="240" WrapGrowth="bottom"/>
+			</Grid>
 
-      <!-- Player Stack -->
-      <Stack ID="PlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
-    </Grid>
+			<!-- Player Stack -->
+			<Stack ID="PlayerInstanceStack" Anchor="C,T" Offset="0,55" StackGrowth="Down" StackPadding="3"/>
+		</Grid>
 
-  </Instance>
+	</Instance>
 
 	<Instance Name="ReligionInstance">
 
@@ -521,57 +510,49 @@
 			<Grid ID="ReligionBG" Offset="48,23" Size="30,30" Texture="Religion_FollowersSlot" SliceCorner="14,14" SliceSize="1,1" SliceTextureSize="30,30"/>
 			<Image ID="ReligionIcon" Offset="55,27" Size="22,22" Texture="Religions22"/>
 			<Label ID="ReligionName" Offset="80,32" Style="FontNormalMedium14" Color="206,218,225,255" String="ReligionName"/>
-			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
-			<Image ID="CivIconBacking" Offset="10,10" Size="36,36" Texture="CircleBacking36"/>
-			<Image ID="CivIcon" Offset="10,10" Size="36,36" Texture="CivSymbols36"/>
-			<Label ID="CivName" Offset="55,7" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
 			<Label ID="CivsConverted" Offset="10,5" Align="right" Anchor="R,T" Style="FontNormalMedium14" Color="206,218,225,255" String="CivsConverted"/>
 			<Stack ID="CivsConvertedStack" Anchor="R,T" Offset="10,20" Padding="5" StackGrowth="Left" WrapWidth="240" WrapGrowth="bottom"/>
 		</GridButton>
 
 	</Instance>
 
-  <Instance Name="GenericTeamInstance">
+	<Instance Name="GenericTeamInstance">
 
-    <Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-      <!-- Team Info -->
-      <Stack StackGrowth="Down" StackPadding="4">
-        <Grid ID="TeamButton" Size="parent,51" AutoSize="V" AutoSizePadding="0,4" MinSize="0,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
-          <Image ID="TeamIconBacking" Anchor="L,C" Offset="10,-4" Size="36,36" Texture="CircleBacking36">
-            <Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
-            <Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
-          </Image>
-          <Label ID="TeamName" Anchor="L,C" Offset="55,0" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+		<Grid ID="ButtonFrame" Size="482,80" AutoSize="V" AutoSizePadding="0,3" Offset="-6,0" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
+			<!-- Team Info -->
+			<Stack StackGrowth="Down" StackPadding="4">
+				<Grid ID="TeamButton" Size="parent,51" AutoSize="V" AutoSizePadding="0,4" MinSize="0,51" Texture="Controls_TeamButton" SliceCorner="209,29" SliceTextureSize="417,51">
+					<Image ID="TeamIconBacking" Anchor="L,C" Offset="10,-4" Size="36,36" Texture="CircleBacking36">
+						<Image ID="TeamIcon" Anchor="C,C" Size="28,28" Texture="Team28"/>
+						<Image ID="TeamRibbon" Anchor="C,C" Size="44,44" Offset="0,3" Texture="TeamRibbon44"/>
+					</Image>
+					<Label ID="TeamName" Anchor="L,C" Offset="55,0" String="Team Name" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
 
-          <!-- Generic Info -->
-          <Label ID="Details" Offset="15,15" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>
-        </Grid>
+					<!-- Generic Info -->
+					<Label ID="Details" Offset="15,15" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>
+				</Grid>
 
-        <!-- Player Stack -->
-        <Stack ID="PlayerInstanceStack" Anchor="C,T" Offset="0,0" StackGrowth="Down" StackPadding="3"/>
-      </Stack>
-    </Grid>
+				<!-- Player Stack -->
+				<Stack ID="PlayerInstanceStack" Anchor="C,T" Offset="0,0" StackGrowth="Down" StackPadding="3"/>
+			</Stack>
+		</Grid>
 
-  </Instance>
+	</Instance>
 
 	<Instance Name="GenericInstance">
 
 		<GridButton	ID="ButtonBG" Size="470,180" Texture="Controls_ListButton" SliceCorner="209,29" SliceTextureSize="417,51">
-			<Grid ID="LocalPlayer" Offset="-7,-5" Size="parent+14,parent+9" Texture="Controls_YouIndicatorLine" SliceCorner="28,42" SliceSize="2,1" SliceTextureSize="60,60"/>
-			<Image ID="CivIconBacking" Offset="10,10" Size="36,36" Texture="CircleBacking36"/>
-			<Image ID="CivIcon" Offset="10,10" Size="36,36" Texture="CivSymbols36"/>
-			<Label ID="CivName" Offset="55,20" String="CivName" Style="FontNormal18" FontStyle="shadow" Color="206,218,225,255" EffectColor="0,0,0,191"/>
+			<MakeInstance Name="CivilizationIconInstance" ID="CivilizationIcon"/>
 			<Label ID="Details" Offset="15,15" Align="right" Anchor="R,T" String="Details" Style="FontNormalMedium14" Color="206,218,225,255"/>
 		</GridButton>
 
 	</Instance>
 
 	<Instance Name="ConvertedReligionInstance">
-
-		<Image ID="CivIconBacking" Size="30,30" Texture="CircleBacking30" Color="100,100,100,255">
-			<Image ID="CivIcon" Size="30,30" Texture="CivSymbols30" Color="100,100,100,255"/>
-		</Image>
-		
+		<Container ID="Root" Size="auto,auto">
+			<MakeInstance Name="CivilizationIcon30" ID="CivilizationIcon"/>
+		</Container>
 	</Instance>
 
 	<Instance Name="ExtraTab">
@@ -580,14 +561,14 @@
 
 	</Instance>
 
-  <Instance Name="TeamTooltipInstance" >
-    <Grid ID="BG" Size="220,75" SliceCorner="10,10" SliceTextureSize="33,32" Texture="Controls_Tooltip" AutoSize="0" InnerPadding="25,25" InnerOffset="10,10" >
-      <Image ID="LeaderIcon" Offset="0,0" Size="55,55" Texture="Leaders55"/>
-      <Image ID="YouIndicator" Offset="0,0" Hidden="1" Size="55,55" Texture="Diplomacy_YouIndicatorSmall"/>
-      <Label ID="LeaderName" Anchor="L,C" Offset="65,0" Style="FontNormal16" Color="0,0,0,255"/>
-      <Label ID="UnmetLabel" Anchor="C,C" Style="FontNormal16" Color="0,0,0,255" Hidden="1"/>
-    </Grid>
-  </Instance>
+	<Instance Name="TeamTooltipInstance" >
+		<Grid ID="BG" Size="220,75" SliceCorner="10,10" SliceTextureSize="33,32" Texture="Controls_Tooltip" AutoSize="0" InnerPadding="25,25" InnerOffset="10,10" >
+			<Image ID="LeaderIcon" Offset="0,0" Size="55,55" Texture="Leaders55"/>
+			<Image ID="YouIndicator" Offset="0,0" Hidden="1" Size="55,55" Texture="Diplomacy_YouIndicatorSmall"/>
+			<Label ID="LeaderName" Anchor="L,C" Offset="65,0" Style="FontNormal16" Color="0,0,0,255"/>
+			<Label ID="UnmetLabel" Anchor="C,C" Style="FontNormal16" Color="0,0,0,255" Hidden="1"/>
+		</Grid>
+	</Instance>
 
 	<!-- ==================================================================	-->
 	<!--	Custom Tooltips																										-->
@@ -600,10 +581,10 @@
 		</Grid>
 	</ToolTipType>
 
-  <ToolTipType Name="TeamTooltip" >
-    <Grid ID="BG" Size="220,75" SliceCorner="10,10" SliceTextureSize="33,32" Texture="Controls_Tooltip" AutoSize="1" InnerPadding="25,25" InnerOffset="10,10" >
-      <Stack ID="CivStack" StackGrowth="Down"/>
-    </Grid>
-  </ToolTipType>
+	<ToolTipType Name="TeamTooltip" >
+		<Grid ID="BG" Size="220,75" SliceCorner="10,10" SliceTextureSize="33,32" Texture="Controls_Tooltip" AutoSize="1" InnerPadding="25,25" InnerOffset="10,10" >
+			<Stack ID="CivStack" StackGrowth="Down"/>
+		</Grid>
+	</ToolTipType>
 
 </Context>

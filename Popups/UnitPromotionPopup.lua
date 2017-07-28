@@ -306,10 +306,31 @@ end
 
 
 -- ===========================================================================
-function Initialize()	
+
+function OnInputHandler( pInputStruct:table )
+	local uiMsg = pInputStruct:GetMessageType();
+	if uiMsg == KeyEvents.KeyUp then
+		if pInputStruct:GetKey() == Keys.VK_ESCAPE then
+			OnClose();
+			return true;
+		end
+	end
+	return false;
+end
+
+-- ===========================================================================
+function OnCitySelectionChanged( ownerPlayerID:number, cityID:number, i:number, j:number, k:number, isSelected:boolean, isEditable:boolean)
+	OnClose();
+end
+
+-- ===========================================================================
+function Initialize()
+	ContextPtr:SetInputHandler( OnInputHandler, true );
 	-- Controls Events
 	Controls.CloseButton:RegisterCallback( eLClick, OnClose );
 	ContextPtr:SetInitHandler( OnInit );
+
+	Events.CitySelectionChanged.Add( OnCitySelectionChanged );
 
 	LuaEvents.UnitPanel_PromoteUnit.Add(OnPromoteUnitPopup);
 	LuaEvents.UnitPanel_HideUnitPromotion.Add(OnClose);

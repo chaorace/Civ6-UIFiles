@@ -148,7 +148,7 @@ function UpdateTabs()
 	local playerReligionName:string;
 	if (m_PlayerReligionType >= 0) then
 		religionData = GameInfo.Religions[m_PlayerReligionType];
-		playerReligionName = Locale.Lookup("LOC_UI_RELIGION_MY_RELIGION");
+		playerReligionName = TXT_MY_RELIGION;
 	elseif (m_NumBeliefsEarned > 0) then
 		playerReligionName = TXT_MY_RELIGION;
 	else
@@ -428,18 +428,17 @@ function PopulateAvailableBeliefs(beliefType:string)
 
 		if (not bBeliefTypeAlreadySelected and 
 			not m_pGameReligion:IsInSomePantheon(row.Index) and
-			not m_pGameReligion:IsInSomeReligion(row.Index) and 
-			m_pGameReligion:IsNewTypeForReligion(row.Index, m_PlayerReligionType)) then
-			if ((beliefType ~= "" and row.BeliefClassType == beliefType) or
-				(beliefType == "" and row.BeliefClassType ~= "BELIEF_CLASS_PANTHEON" and row.BeliefClassType ~= "BELIEF_CLASS_FOLLOWER")) then
-				local beliefInst:table = m_Beliefs.IM:GetInstance();
-				beliefInst.BeliefLabel:LocalizeAndSetText(Locale.ToUpper(row.Name));
-				beliefInst.BeliefDescription:LocalizeAndSetText(row.Description);
-                beliefInst.BeliefButton:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-				beliefInst.BeliefButton:RegisterCallback(Mouse.eLClick, function() OnBeliefSelected(row.Index, beliefInst) end);
-				SetBeliefIcon(beliefInst.BeliefIcon, row.BeliefType, SIZE_BELIEF_ICON_LARGE);
-				SetBeliefSlotDisabled(beliefInst, false);
-			end
+			not m_pGameReligion:IsInSomeReligion(row.Index) and
+			not m_pGameReligion:IsTooManyForReligion(row.Index, m_PlayerReligionType) and
+			((beliefType ~= nil and row.BeliefClassType == beliefType) or
+			 (beliefType == nil and row.BeliefClassType ~= "BELIEF_CLASS_PANTHEON"))) then
+			local beliefInst:table = m_Beliefs.IM:GetInstance();
+			beliefInst.BeliefLabel:LocalizeAndSetText(Locale.ToUpper(row.Name));
+			beliefInst.BeliefDescription:LocalizeAndSetText(row.Description);
+            beliefInst.BeliefButton:RegisterCallback(Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+			beliefInst.BeliefButton:RegisterCallback(Mouse.eLClick, function() OnBeliefSelected(row.Index, beliefInst) end);
+			SetBeliefIcon(beliefInst.BeliefIcon, row.BeliefType, SIZE_BELIEF_ICON_LARGE);
+			SetBeliefSlotDisabled(beliefInst, false);
 		end
 	end
 
@@ -457,7 +456,7 @@ function OnBeliefSelected(beliefID:number, availableBeliefInst:table)
 	elseif(table.count(m_SelectedBeliefs) + m_NumBeliefsEquipped >= m_NumBeliefsEarned) then
 		ConfirmReligionBeliefs();
 	else
-		PopulateAvailableBeliefs("");
+		PopulateAvailableBeliefs();
 	end
 end
 
@@ -500,7 +499,7 @@ function OnBeliefUnSelected(beliefID:number, selectedBeliefInst:table, available
 		end
 	elseif(m_PantheonBelief >= 0) then 
 		if(table.count(m_SelectedBeliefs) + m_NumBeliefsEquipped >= 1) then
-			PopulateAvailableBeliefs("");
+			PopulateAvailableBeliefs();
 		else
 			PopulateAvailableBeliefs("BELIEF_CLASS_FOLLOWER");
 		end
@@ -699,7 +698,14 @@ function SelectReligionBeliefs()
 		Controls.SelectBeliefsPantheonDescription:LocalizeAndSetText(pantheonBelief.Description);
 		SetBeliefIcon(Controls.SelectBeliefsPantheonIcon, pantheonBelief.BeliefType, SIZE_BELIEF_ICON_LARGE);
 
-		Controls.ReligionOrPatheonTitle:LocalizeAndSetText(Controls.PendingReligionTitle:GetText());
+		local szPendingTitle = Controls.PendingReligionTitle:GetText();
+		if szPendingTitle then
+			Controls.ReligionOrPatheonTitle:LocalizeAndSetText(szPendingTitle);
+		elseif m_PlayerReligionType >= 0 then
+			Controls.ReligionOrPatheonTitle:LocalizeAndSetText(GameInfo.Religions[m_PlayerReligionType].Name);
+		else
+			UI.DataError("Failed to set text on ReligionOrPatheonTitle");
+		end
 
 		Controls.ChooseBeliefTitle:LocalizeAndSetText(Locale.ToUpper("LOC_UI_RELIGION_CHOOSE_RELIGION_BELIEF"));
 		SetReligionIcon(Controls.ReligionOrPatheonImage, religionData.ReligionType, SIZE_RELIGION_ICON_HUGE, religionData.Color);
@@ -782,7 +788,7 @@ function SelectReligionBeliefs()
 	end
 
 	if(table.count(m_SelectedBeliefs) + m_NumBeliefsEquipped >= 1) then
-		PopulateAvailableBeliefs("");
+		PopulateAvailableBeliefs();
 	else
 		PopulateAvailableBeliefs("BELIEF_CLASS_FOLLOWER");
 	end
@@ -1341,8 +1347,11 @@ end
 
 -- ===========================================================================
 function Close()
+	if not ContextPtr:IsHidden() then
+		UI.PlaySound("UI_Screen_Close");
+	end
+
 	ContextPtr:SetHide(true);
-	UI.PlaySound("UI_Screen_Close");
 	
 	LuaEvents.Religion_CloseReligion();
 end

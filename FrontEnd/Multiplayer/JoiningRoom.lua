@@ -4,7 +4,8 @@
 local PADDING:number = 60;
 local MIN_SIZE_X:number = 250;
 local MIN_SIZE_Y:number = 200;
-local g_waitingForContentConfigure : boolean = false;
+local g_waitingForJoinGameComplete : boolean = true;
+local g_waitingForContentConfigure : boolean = true;
 
 local downloadPendingStr = Locale.Lookup("LOC_MODS_SUBSCRIPTION_DOWNLOAD_PENDING");
 
@@ -32,7 +33,7 @@ end
 -------------------------------------------------
 -- Trigger transition to the staging room.
 -------------------------------------------------
-function TransitionToStagingRoom()
+function DoTransitionToStagingRoom()
 	-- Staging room must be notified before this is dequeued
 	-- or the screen below will be shown (for a frame) and
 	-- that lobby screen will attempt to disconnect.
@@ -59,6 +60,8 @@ function OnJoinRoomFailed( iExtendedError)
 	if (not ContextPtr:IsHidden()) then
 		if iExtendedError == JoinGameErrorType.JOINGAME_ROOM_FULL then
 			LuaEvents.MultiplayerPopup( "LOC_MP_ROOM_FULL" );
+		elseif iExtendedError == JoinGameErrorType.JOINGAME_GAME_STARTED then
+			LuaEvents.MultiplayerPopup( "LOC_MP_ROOM_GAME_STARTED" );
 		else
 			LuaEvents.MultiplayerPopup( "LOC_MP_JOIN_FAILED" );
 		end
@@ -76,16 +79,31 @@ function OnJoinGameComplete()
 	-- NOTE:  If you are the game host, you'll get this event before MultiplayerJoinRoomComplete because
 	--				the game host creates and joins the game before advertising with the lobby system.
 	if (not ContextPtr:IsHidden()) then
-		-- Next stage is to wait for content configuration.
-		-- The game host doesn't do a content configuration and heads to the staging room now.
-		if(Network.IsHost()) then
-			-- Game host 
-			TransitionToStagingRoom();
-		else	
-			g_waitingForContentConfigure = true;
-			Controls.JoiningLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_MULTIPLAYER_CONFIGURING_CONTENT")));
-		end
+		g_waitingForJoinGameComplete = false;
+		CheckTransitionToStagingRoom();
+
+		-- Remote clients might still be waiting for FinishedGameplayContentConfigure.  
+		-- It is possible that FinishedGameplayContentConfigure happened before JoinGameComplete.
+		-- Updating the joining phase for that case.
+		Controls.JoiningLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_MULTIPLAYER_CONFIGURING_CONTENT")));
 	end
+end
+
+-- Transition to staging room if the conditions are right.
+function CheckTransitionToStagingRoom()
+	print("CheckTransitionToStagingRoom()");
+
+	-- Waiting for JoinGameComplete
+	if(g_waitingForJoinGameComplete) then
+		return;
+	end
+
+	-- Remote clients need to wait for FinishedGameplayContentConfigure
+	if(not Network.IsHost() and g_waitingForContentConfigure) then
+		return;
+	end
+
+	DoTransitionToStagingRoom();
 end
 
 -------------------------------------------------
@@ -94,15 +112,14 @@ end
 function OnFinishedGameplayContentConfigure( kEvent )
 	print("OnFinishedGameplayContentConfigure() g_waitingForContentConfigure=" .. tostring(g_waitingForContentConfigure));
 	-- This event triggers when the game has finished content configuration.
-	-- For remote clients, this is the last step before transitioning to the staging room.
-	-- Game hosts don't perform a content configuration so they will transition in OnJoinGameComplete.
+	-- For remote clients, this might be the last prereq before transitioning to the staging room.
+	-- Game hosts don't perform a content configuration so they will definitely transition in OnJoinGameComplete.
 
 	-- If FinishedGameplayContentConfigure failed, we do nothing and the NetworkManager will abandon the game for us.
 	if (not ContextPtr:IsHidden() 
-		and g_waitingForContentConfigure == true
 		and kEvent.Success == true) then
 		g_waitingForContentConfigure = false;
-		TransitionToStagingRoom();
+		CheckTransitionToStagingRoom();
 	end 
 end
 
@@ -230,6 +247,10 @@ function OnShow()
 	UITutorialManager:EnableOverlay( false );
 	UITutorialManager:HideAll();
 	UITutorialManager:ClearPersistantInputControls();	
+
+	-- Reset wait flags
+	g_waitingForJoinGameComplete = true;
+	g_waitingForContentConfigure = true;
 	
 
 	Controls.JoiningLabel:SetText(Locale.ToUpper(Locale.Lookup("LOC_MULTIPLAYER_JOINING_ROOM")));

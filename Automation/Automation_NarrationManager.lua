@@ -117,20 +117,26 @@ function OnTeamVictory(team, victoryType)
 				textKey = "LOC_AUTONARRATE_PLAYER_VICTORY";
 			end
 
+			local bPauseOnVictory = Automation.GetSetParameter("CurrentTest", "NarrationPauseOnVictory", false);
 			local tMessage = {};
 			tMessage.Message = Locale.Lookup(textKey, GameConfiguration.GetTeamName(team));
-			-- Show a "done" button
-			tMessage.Button1Text = Locale.Lookup("LOC_AUTONARRATE_BUTTON_DONE");
-			-- Stop the test 
-			tMessage.Button1Func = function() 
-				Automation.Pause(false);
-				AutoplayManager.SetActive(false);	-- Stop the autoplay
-			end 
+			if (bPauseOnVictory) then
+				-- Show a "done" button
+				tMessage.Button1Text = Locale.Lookup("LOC_AUTONARRATE_BUTTON_DONE");
+				-- Stop the test 
+				tMessage.Button1Func = function() 
+					Automation.Pause(false);
+					AutoplayManager.SetActive(false);	-- Stop the autoplay
+				end 
+			end
+
 			tMessage.ShowPortrait = true;
 
 			LuaEvents.Automation_AddToNarrationQueue( tMessage );
 
-			Automation.Pause(true);
+			if (bPauseOnVictory) then
+				Automation.Pause(true);
+			end
 			
 		end
 	end

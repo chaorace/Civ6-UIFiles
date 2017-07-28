@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Context Style="FontNormal18" ColorSet="Beige_Black_Alpha" FontStyle="Shadow">
 
+  <Include File="PopupDialog" />
+
 	<Box ID="MainGrid" Style="ShellBGBox">
 
 		<Container ID="MainWindow" Style="ShellWindowContainer">
@@ -118,20 +120,7 @@
     </Container>
   </Instance>
 
-	<!-- Custom popup dialog -->
-	<Box Style="PopupDialogBox"/>
-
-	<!-- Customized popup dialog pieces-->
-	<Instance				Name="PopupButtonInstance">
-		<GridButton   ID="Button"     Size="200,41"   Style="MainButton"/>
-	</Instance>
-	<Instance				Name="PopupButtonInstanceAlt">
-		<GridButton   ID="Button"     Size="200,41"   Style="ButtonRed"/>
-	</Instance>
-	<Instance				Name="PopupTextInstance">
-		<Label        ID="Text"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="parent-20"/>
-	</Instance>
-	<Instance				Name="RowInstance">
-		<Stack        ID="Row"			Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
-	</Instance>
+  <!-- Dialog Support -->
+  <MakeInstance Name="PopupDialog" />
+  
 </Context>

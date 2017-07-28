@@ -30,23 +30,36 @@ function OnActionButton()
 	
 	if(g_iSelectedFileEntry ~= -1) then
 		g_IsDeletingFile = false;
-		Controls.DeleteHeader:SetText(Locale.ToUpper( "LOC_CONFIRM_TITLE_TXT" ));
-		Controls.Message:LocalizeAndSetText( "LOC_OVERWRITE_TXT" );
-		Controls.DeleteConfirm:SetHide(false);
-		return;
+
+		-- A file is selected, if it is a directory, go into it, else confirm overwrite.
+		local selectedFile = g_FileList[ g_iSelectedFileEntry ];
+		if selectedFile ~= nil then
+			if selectedFile.IsDirectory then
+				-- Open the directory
+				ChangeDirectoryTo(selectedFile.Path);
+				return;
+			else
+				Controls.DeleteHeader:SetText(Locale.ToUpper( "LOC_CONFIRM_TITLE_TXT" ));
+				Controls.Message:LocalizeAndSetText( "LOC_OVERWRITE_TXT" );
+				Controls.DeleteConfirm:SetHide(false);
+				return;
+			end
+		end
+
 	else
 		local gameFile = {};
 		gameFile.Name = Controls.FileName:GetText();
 		if(g_ShowCloudSaves) then
-			gameFile.Location = SaveLocations.FIRAXIS_CLOUD;
+			gameFile.Location = UI.GetDefaultCloudSaveLocation();
 		else
 			gameFile.Location = SaveLocations.LOCAL_STORAGE;
+			-- If it is a WorldBuilder map, allow for a specific path.
+			if g_GameType == SaveTypes.WORLDBUILDER_MAP then
+				gameFile.Path = g_CurrentDirectoryPath .. "/" .. gameFile.Name ;
+			end
 		end
 		gameFile.Type = g_GameType;
--- KWG: Fix  The configuration (or somewhere else) needs to store whether the game is started or not.
---		if (GameConfiguration.IsNetworkMultiplayer() and GameConfiguration.GameStarted()) then
---			gameFile.UseLastAutosave = true;
---		end
+		gameFile.FileType = g_FileType;
 		UIManager:SetUICursor( 1 );
 		Network.SaveGame(gameFile);
 		UIManager:SetUICursor( 0 );
@@ -57,7 +70,7 @@ function OnActionButton()
 	SetupFileList();
 	OnBack();
 end
-
+ 
 
 ----------------------------------------------------------------        
 function OnFileNameChange( fileNameEntry )
@@ -113,28 +126,42 @@ function OnShow()
 
 	g_MenuType = SAVE_GAME;
 	UpdateGameType();
-	Controls.SaveMapButton:SetHide( true );
 	Controls.Delete:SetHide( true );
 	Controls.ActionButton:SetDisabled( true );
 	Controls.ActionButton:SetToolTipString( nil );
 
+	InitializeDirectoryBrowsing();
+	RefreshSortPulldown();
+	SetupDirectoryBrowsePulldown();
 	SetupFileList();
 		
 	Controls.CloudCheck:SetSelected(false);
 
-	g_FilenameIsValid = Controls.FileName:GetText() ~= "";
+	g_FilenameIsValid = ValidateFileName( Controls.FileName:GetText() );
 
 	UpdateActionButtonState();
 
-	local isFullyLoggedIn = FiraxisLive.IsFullyLoggedIn();
+	local cloudEnabled = UI.AreCloudSavesEnabled() and not GameConfiguration.IsAnyMultiplayer();
+	Controls.CloudCheck:SetHide(not cloudEnabled);
 
-	if isFullyLoggedIn and not GameConfiguration.IsAnyMultiplayer() then
-		Controls.CloudCheck:SetHide(false);
-		Controls.DecoContainer:SetSizeY(562);
-	else
-		Controls.CloudCheck:SetHide(true);
-		Controls.DecoContainer:SetSizeY(588);
+	local cloudSavesVisible = Controls.CloudCheck:IsVisible();
+	local sortByVisible = Controls.SortByPullDown:IsVisible();
+	local directoryVisible = Controls.DirectoryPullDown:IsVisible();
+
+	local count = 0;
+	if(cloudSavesVisible) then
+		count = count + 1;
 	end
+	if(sortByVisible) then
+		count = count + 1;
+	end
+	if(directoryVisible) then
+		count = count + 1;
+	end
+		
+	local decoSize = 611;
+	Controls.DecoContainer:SetSizeY(decoSize - (count * 23));
+
 end
 ----------------------------------------------------------------        
 function OnHide()
@@ -165,9 +192,10 @@ function OnYes()
 			if(g_ShowCloudSaves) then
 				local gameFile = {};
 				gameFile.Name = Controls.FileName:GetText();
-				gameFile.Location = SaveLocations.FIRAXIS_CLOUD;
+				gameFile.Location = UI.GetDefaultCloudSaveLocation();
 				gameFile.LocationIndex = g_iSelectedFileEntry;
 				gameFile.Type = g_GameType;
+				gameFile.FileType = g_FileType;
 				UIManager:SetUICursor( 1 );
 				Network.SaveGame(gameFile);
 				UIManager:SetUICursor( 0 );
@@ -266,11 +294,18 @@ function OnFileListQueryComplete()
 end
 
 -- ===========================================================================
+function OnRefresh()
+	SetupDirectoryBrowsePulldown();
+	SetupFileList();
+end
+
+-- ===========================================================================
 function Initialize()
 	ContextPtr:SetInitHandler(OnInit);
 	ContextPtr:SetShutdown(OnShutdown);
 	LuaEvents.GameDebug_Return.Add(OnGameDebugReturn);
 	SetupSortPulldown();
+	InitializeDirectoryBrowsing();
 
 	LuaEvents.FileListQueryComplete.Add( OnFileListQueryComplete );
 
@@ -291,6 +326,7 @@ function Initialize()
 	ContextPtr:SetShowHandler( OnShow );
 	ContextPtr:SetHideHandler( OnHide );
 	ContextPtr:SetInputHandler( OnInputHandler, true );
+	ContextPtr:SetRefreshHandler( OnRefresh );
 
 end
 Initialize();

@@ -7,8 +7,9 @@ include( "InstanceManager" );
 -- ===========================================================================
 --	CONSTANTS
 -- ===========================================================================
-local MINIMAP_COLLAPSED_OFFSETY :number	= -180;
-
+local MINIMAP_COLLAPSED_OFFSETY		:number	= -180;
+local LENS_PANEL_OFFSET				:number	= 50;
+local MINIMAP_BACKING_PADDING_SIZEY :number = 54;
 
 -- ===========================================================================
 --	MEMBERS
@@ -39,6 +40,7 @@ local m_ToggleSettlerLensId		= Input.GetActionId("LensSettler");
 local m_ToggleGovernmentLensId	= Input.GetActionId("LensGovernment");
 local m_TogglePoliticalLensId	= Input.GetActionId("LensPolitical");
 local m_ToggleTourismLensId	    = Input.GetActionId("LensTourism");
+local m_Toggle2DViewId	        = Input.GetActionId("Toggle2DView");
 
 
 local m_isMouseDragEnabled		:boolean = true; -- Can the camera be moved by dragging on the minimap?
@@ -150,6 +152,14 @@ function OnToggleLensList()
 		if UI.GetInterfaceMode() == InterfaceModeTypes.VIEW_MODAL_LENS then
 			UI.SetInterfaceMode(InterfaceModeTypes.SELECTION);
 		end
+	else
+		Controls.ReligionLensButton:SetHide(not GameCapabilities.HasCapability("CAPABILITY_LENS_RELIGION"));
+		Controls.AppealLensButton:SetHide(not GameCapabilities.HasCapability("CAPABILITY_LENS_APPEAL"));
+		Controls.GovernmentLensButton:SetHide(not GameCapabilities.HasCapability("CAPABILITY_LENS_GOVERNMENT"));
+		Controls.WaterLensButton:SetHide(not GameCapabilities.HasCapability("CAPABILITY_LENS_SETTLER"));
+		Controls.TourismLensButton:SetHide(not GameCapabilities.HasCapability("CAPABILITY_LENS_TOURISM"));
+		Controls.LensToggleStack:CalculateSize();
+		Controls.LensPanel:SetSizeY(Controls.LensToggleStack:GetSizeY() + LENS_PANEL_OFFSET);
 	end
 end
 
@@ -192,9 +202,9 @@ end
 -- ===========================================================================
 function ToggleContinentLens()
 	if Controls.ContinentLensButton:IsChecked() then
-		UILens.SetActive("Continent");                 	else
+		UILens.SetActive("Continent");
         RefreshInterfaceMode();
-
+	else
         m_shouldCloseLensMenu = false;
         if UI.GetInterfaceMode() == InterfaceModeTypes.VIEW_MODAL_LENS then
 			UI.SetInterfaceMode(InterfaceModeTypes.SELECTION);
@@ -300,7 +310,7 @@ function OnCollapseToggle()
 	if ( m_isCollapsed ) then
 		UI.PlaySound("Minimap_Open");
 		Controls.ExpandButton:SetHide( true );
-		Controls.ExpandAnim:SetEndVal(0, -Controls.MinimapImage:GetOffsetY() - Controls.MinimapImage:GetSizeY());
+		Controls.ExpandAnim:SetEndVal(0, -Controls.MinimapContainer:GetOffsetY() - Controls.MinimapContainer:GetSizeY());
 		Controls.ExpandAnim:SetToBeginning();
 		Controls.ExpandAnim:Play();
 		Controls.CompassArm:SetPercent(.25);
@@ -308,12 +318,22 @@ function OnCollapseToggle()
 		UI.PlaySound("Minimap_Closed");
 		Controls.ExpandButton:SetHide( false );
 		Controls.Pause:Play();
-		Controls.CollapseAnim:SetEndVal(0, Controls.MinimapImage:GetOffsetY() + Controls.MinimapImage:GetSizeY());
+		Controls.CollapseAnim:SetEndVal(0, Controls.MinimapContainer:GetOffsetY() + Controls.MinimapContainer:GetSizeY());
 		Controls.CollapseAnim:SetToBeginning();
 		Controls.CollapseAnim:Play();
 		Controls.CompassArm:SetPercent(.5);
 	end
 	m_isCollapsed = not m_isCollapsed;
+end
+
+-- ===========================================================================
+function OnMinimapImageSizeChanged()
+	ResizeBacking();
+end
+
+-- ===========================================================================
+function ResizeBacking()
+	Controls.MinimapBacking:SetSizeY(Controls.MinimapImage:GetSizeY() + MINIMAP_BACKING_PADDING_SIZEY);
 end
 
 -- ===========================================================================
@@ -451,12 +471,16 @@ function SetGovernmentHexes()
 			local culture = player:GetCulture();
 			local governmentId :number = culture:GetCurrentGovernment();
 			local GovernmentColor; 
-			if(governmentId < 0) then
-				GovernmentColor = UI.GetColorValue("COLOR_GOVERNMENT_CITYSTATE");
+
+			if culture:IsInAnarchy() then
+				GovernmentColor = UI.GetColorValue("COLOR_CLEAR");
 			else
-				GovernmentColor = UI.GetColorValue("COLOR_" ..  GameInfo.Governments[governmentId].GovernmentType);
+				if(governmentId < 0) then
+					GovernmentColor = UI.GetColorValue("COLOR_GOVERNMENT_CITYSTATE");
+				else
+					GovernmentColor = UI.GetColorValue("COLOR_" ..  GameInfo.Governments[governmentId].GovernmentType);
+				end
 			end
-			
 
 			for _, pCity in cities:Members() do
 				local visibleCityPlots:table = Map.GetCityPlots():GetVisiblePurchasedPlots(pCity);
@@ -583,7 +607,10 @@ function OnInputActionTriggered( actionId )
         ToggleTourismLens();
         UI.PlaySound("Play_UI_Click");
 	end
-
+	if m_Toggle2DViewId ~= nil and (actionId == m_Toggle2DViewId) then
+        UI.PlaySound("Play_UI_Click");
+        Toggle2DView();
+    end
 end
 
 -- ===========================================================================
@@ -683,6 +710,8 @@ function OnInputHandler( pInputStruct:table )
 			return isMouseInMinimap; -- Only consume event if it's inside the minimap.
 
 		end
+
+		-- TODO the letterbox background should block mouse input
 	end
 	return false;
 end
@@ -711,9 +740,12 @@ end
 -- INITIALIZATION
 -- ===========================================================================
 function Initialize()
+
 	m_MiniMap_xmloffsety = Controls.MiniMap:GetOffsetY();
 	m_ContinentsCache = Map.GetContinentsInUse();
-	UI.SetMinimapImageControl(Controls.MinimapImage);
+
+	Controls.MinimapImage:RegisterSizeChanged( OnMinimapImageSizeChanged );
+	UI.SetMinimapImageControl( Controls.MinimapImage );
 	
 	ContextPtr:SetInputHandler( OnInputHandler, true );
 	ContextPtr:SetShutdown( OnShutdown );

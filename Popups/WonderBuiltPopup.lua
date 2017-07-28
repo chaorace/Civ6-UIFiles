@@ -6,7 +6,7 @@
 --	***************************************************************************
 local ms_eventID = 0;
 
-function OnWonderComplete(locX, locY, buildingIndex, playerIndex, iPercentComplete)
+function OnWonderCompleted(locX, locY, buildingIndex, playerIndex, iPercentComplete)
 
 	local localPlayer = Game.GetLocalPlayer();
 	if (localPlayer == PlayerTypes.NONE) then
@@ -48,11 +48,16 @@ function OnWonderComplete(locX, locY, buildingIndex, playerIndex, iPercentComple
 				Controls.ForceAutoCloseMarketingMode:RegisterEndCallback( OnClose );
 			else
 				ContextPtr:SetHide( false );
-			end	
+			end
+
+			UI.LookAtPlot(locX, locY);
+
+			LuaEvents.WonderRevealPopup_Shown();	-- Signal other systems (e.g., bulk hide UI)
 
 			ms_eventID = ReferenceCurrentGameCoreEvent();
 			UIManager:QueuePopup( ContextPtr, PopupPriority.Current);
-			Controls.ReplayButton:SetHide(UI.GetWorldRenderView() == WorldRenderView.VIEW_2D);
+			Controls.ReplayButton:SetEnabled(UI.GetWorldRenderView() == WorldRenderView.VIEW_3D);
+			Controls.ReplayButton:SetHide(not UI.IsWorldRenderViewAvailable(WorldRenderView.VIEW_3D));
 		end
 	end
 end
@@ -94,6 +99,7 @@ function Resize()
 end
 
 function Close()
+	LuaEvents.WonderRevealPopup_Closed();	-- Signal other systems (e.g., bulk show UI)
 	-- Release our hold on the event
 	ReleaseGameCoreEvent( ms_eventID );
 	ms_eventID = 0;
@@ -129,18 +135,25 @@ function KeyHandler( key:number )
     end
     return false;
 end
+
 function OnInputHandler( pInputStruct:table )
 	local uiMsg = pInputStruct:GetMessageType();
 	if (uiMsg == KeyEvents.KeyUp) then return KeyHandler( pInputStruct:GetKey() ); end;
 	return false;
-end 
+end
+
+function OnWorldRenderViewChanged()
+	Controls.ReplayButton:SetEnabled(UI.GetWorldRenderView() == WorldRenderView.VIEW_3D);
+end
 
 function Initialize()	
 	if(not GameConfiguration.IsAnyMultiplayer()) then
 		ContextPtr:SetInputHandler( OnInputHandler, true );
 		Controls.Close:RegisterCallback(Mouse.eLClick, OnClose);
 		Controls.ReplayButton:RegisterCallback(Mouse.eLClick, RestartMovie);
-		Events.WonderCompleted.Add( OnWonderComplete );	
+		Controls.ReplayButton:SetToolTipString(Locale.Lookup("LOC_UI_ENDGAME_REPLAY_MOVIE"));
+		Events.WonderCompleted.Add( OnWonderCompleted );	
+		Events.WorldRenderViewChanged.Add( OnWorldRenderViewChanged );
 		Events.SystemUpdateUI.Add( OnUpdateUI );
 	end
 end

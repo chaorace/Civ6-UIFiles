@@ -23,8 +23,8 @@ local ms_CurrentViewType = VIEW_TYPE_NONE;
 local ms_AllowViewSwitching = true;
 
 -- View durations.  Make these automation parameters
-local ms_ViewDurationMin = { 60.0 * 3.0, 60.0 * 3.0 };
-local ms_ViewDurationMax = { 60.0 * 6.0, 60.0 * 6.0 };
+local ms_ViewDurationMin = { 60.0 * 3.0, 60.0 * 2.0 };
+local ms_ViewDurationMax = { 60.0 * 6.0, 60.0 * 4.0 };
 
 -- Chances that when the players turn starts, we look at their capital, 0 - 1
 -- Make these automation parameters
@@ -254,6 +254,53 @@ function Initialize()
 		end
 	end
 
+	-- 2D View time
+	local kTime = Automation.GetSetParameter("CurrentTest", "View2DMinTime");
+	if kTime == nil then
+		kTime = Automation.GetSetParameter("CurrentTest", "ViewStrategicMinTime");
+	end
+
+	if kTime ~= nil then
+		ms_ViewDurationMin[VIEW_TYPE_STRATEGIC] = kTime;
+	else
+		ms_ViewDurationMin[VIEW_TYPE_STRATEGIC] = 60.0 * 3.0;
+	end
+
+	kTime = Automation.GetSetParameter("CurrentTest", "View2DMaxTime");
+	if kTime == nil then
+		kTime = Automation.GetSetParameter("CurrentTest", "ViewStrategicMaxTime");
+	end
+
+	if kTime ~= nil then
+		ms_ViewDurationMax[VIEW_TYPE_STRATEGIC] = kTime;
+	else
+		ms_ViewDurationMax[VIEW_TYPE_STRATEGIC] = 60.0 * 6.0;
+	end
+
+	-- 3D View time
+	local kTime = Automation.GetSetParameter("CurrentTest", "View3DMinTime");
+	if kTime == nil then
+		kTime = Automation.GetSetParameter("CurrentTest", "ViewWorldMinTime");
+	end
+
+	if kTime ~= nil then
+		ms_ViewDurationMin[VIEW_TYPE_WORLD] = kTime;
+	else
+		ms_ViewDurationMin[VIEW_TYPE_WORLD] = 60.0 * 3.0;
+	end
+
+	kTime = Automation.GetSetParameter("CurrentTest", "View3DMaxTime");
+	if kTime == nil then
+		kTime = Automation.GetSetParameter("CurrentTest", "ViewWorldMaxTime");
+	end
+
+	if kTime ~= nil then
+		ms_ViewDurationMax[VIEW_TYPE_WORLD] = kTime;
+	else
+		ms_ViewDurationMax[VIEW_TYPE_WORLD] = 60.0 * 6.0;
+	end
+
+	-- Game Seed
 	local gameSeed = Automation.GetSetParameter("CurrentTest", "GameSeed");
 	if (gameSeed ~= nil) then
 		math.randomseed(gameSeed);

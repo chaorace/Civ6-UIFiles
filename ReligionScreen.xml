@@ -346,10 +346,8 @@
   <Instance Name="ReligionTab">
     <GridButton	ID="Button" Size="50,34" Style="TabButton" FontSize="14" TextOffset="0,2">
       <Image ID="Icon" Size="22,22" Texture="Religions22" Offset="8,8" />
-      <AlphaAnim ID="Selection" Offset="-2,0" Size="parent,parent" Speed="4" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
-        <GridButton Size="parent,parent" Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
-        <Image ID="SelectionIcon" Size="22,22" Texture="Religions22" Offset="8,8" />
-      </AlphaAnim>
+      <GridButton ID="Selection" Offset="-2,0" Size="parent,parent" Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" Hidden="1"/>
+      <Image ID="SelectionIcon" Size="22,22" Texture="Religions22" Offset="8,8" />
     </GridButton>
   </Instance>
 

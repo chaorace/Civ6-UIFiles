@@ -48,14 +48,10 @@
 			<Grid																							Anchor="C,T"									Size="580,61"					Texture="Controls_TabLedge2"  SliceCorner="194,18" SliceSize="52,26" SliceTextureSize="438,61">
 				<Container				ID="TabContainer"														Offset="50,13"	Size="parent-80,34">
 					<GridButton			ID="ButtonGreatPeople"																			Size="170,34"					Style="TabButton"					FontSize="14"	TextOffset="0,2" String="LOC_GREAT_PEOPLE_TAB_GREAT_PEOPLE" >
-						<AlphaAnim		ID="SelectGreatPeople"											Offset="-2,0"		Size="parent,parent"	Speed="2"									AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
-							<GridButton																															Size="parent,parent"	Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
-						</AlphaAnim>
+							<GridButton	ID="SelectGreatPeople"																														Size="parent,parent"	Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
 					</GridButton>
 					<GridButton			ID="ButtonPreviouslyRecruited"															Size="170,34"					Style="TabButton"					FontSize="14"	TextOffset="0,2" String="LOC_GREAT_PEOPLE_TAB_PREVIOUSLY_RECRUITED" >
-						<AlphaAnim		ID="SelectPreviouslyRecruited"							Offset="-2,0"		Size="parent,parent"	Speed="2"									AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
-							<GridButton																															Size="parent,parent"	Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
-						</AlphaAnim>
+							<GridButton	ID="SelectPreviouslyRecruited"																														Size="parent,parent"	Style="TabButtonSelected" ConsumeMouseButton="0" ConsumeMouseOver="1" />
 					</GridButton>
 				</Container>
 			</Grid>

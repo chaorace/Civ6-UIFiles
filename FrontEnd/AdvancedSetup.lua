@@ -4,7 +4,8 @@
 include("InstanceManager");
 include("PlayerSetupLogic");
 include("Civ6Common");
-
+-- ===========================================================================
+-- ===========================================================================
 
 -- ===========================================================================
 -- ===========================================================================
@@ -12,7 +13,7 @@ include("Civ6Common");
 local m_NonLocalPlayerSlotManager	:table = InstanceManager:new("NonLocalPlayerSlotInstance", "Root", Controls.NonLocalPlayersSlotStack);
 local m_singlePlayerID				:number = 0;			-- The player ID of the human player in singleplayer.
 local m_AdvancedMode				:boolean = false;
-local m_BasicTooltipData			:table = nil; -- Gets initialized in RefreshPlayerSlots, reused in UI_PostRefreshParameters
+local m_RulesetData					:table = {};
 
 -- ===========================================================================
 -- Input Handler
@@ -28,29 +29,68 @@ function OnInputHandler( pInputStruct:table )
 	return true;
 end
 
+-- Override for SetupParameters to filter ruleset values by non-scenario only.
+function GameParameters_FilterValues(o, parameter, values)
+	values = o.Default_Parameter_FilterValues(o, parameter, values);
+	if(parameter.ParameterId == "Ruleset") then
+		local new_values = {};
+		for i,v in ipairs(values) do
+			local data = GetRulesetData(v.Value);
+			-- Add all rulesets for now since this will apply to the create-game drop-down and advanced-setup dropdown.
+			--if(not data.IsScenario) then
+				table.insert(new_values, v);
+			--end
+		end
+		values = new_values;
+	end
+
+	return values;
+end
+
+function GetRulesetData(rulesetType)
+	if not m_RulesetData[rulesetType] then
+		local query:string = "SELECT Description, LongDescription, IsScenario, ScenarioSetupPortrait, ScenarioSetupPortraitBackground from Rulesets where RulesetType = ? LIMIT 1";
+		local result:table = DB.ConfigurationQuery(query, rulesetType);
+		if result and #result > 0 then
+			m_RulesetData[rulesetType] = result[1];
+		else
+			m_RulesetData[rulesetType] = {};
+		end
+	end
+	return m_RulesetData[rulesetType];
+end
 -- ===========================================================================
-function CreatePulldownDriver(o, parameter, c)
+function CreatePulldownDriver(o, parameter, c, container)
 	local driver = {
 		Control = c,
+		Container = container,
 		UpdateValue = function(value)
 			local button = c:GetButton();
 			button:SetText( value and value.Name or nil);
 		end,
 		UpdateValues = function(values)
-			c:ClearEntries();
+			-- If container was included, hide it if there is only 1 possible value.
+			if(#values == 1 and container ~= nil) then
+				container:SetHide(true);
+			else
+				if(container) then
+					container:SetHide(false);
+				end
 
-			for i,v in ipairs(values) do
-				local entry = {};
-				c:BuildEntry( "InstanceOne", entry );
-				entry.Button:SetText(v.Name);
-				entry.Button:SetToolTipString(v.Description);
+				c:ClearEntries();
+				for i,v in ipairs(values) do
+					local entry = {};
+					c:BuildEntry( "InstanceOne", entry );
+					entry.Button:SetText(v.Name);
+					entry.Button:SetToolTipString(v.Description);
 
-				entry.Button:RegisterCallback(Mouse.eLClick, function()
-					o:SetParameterValue(parameter, v);
-					Network.BroadcastGameConfig();
-				end);
-			end
-			c:CalculateInternals();
+					entry.Button:RegisterCallback(Mouse.eLClick, function()
+						o:SetParameterValue(parameter, v);
+						Network.BroadcastGameConfig();
+					end);
+				end
+				c:CalculateInternals();
+			end			
 		end,
 		SetEnabled = function(enabled)
 			c:SetDisabled(not enabled);
@@ -64,12 +104,25 @@ end
 
 -- ===========================================================================
 -- Override parameter behavior for basic setup screen.
+g_ParameterFactories["Ruleset"] = function(o, parameter)
+	
+	local drivers = {};
+	-- Basic setup version.
+	-- Use an explicit table.
+	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_GameRuleset, Controls.CreateGame_RulesetContainer));
+
+	-- Advanced setup version.
+	-- Create the parameter dynamically like we normally would...
+	table.insert(drivers, GameParameters_UI_DefaultCreateParameterDriver(o, parameter));
+
+	return drivers;
+end
 g_ParameterFactories["GameDifficulty"] = function(o, parameter)
 
 	local drivers = {};
 	-- Basic setup version.
 	-- Use an explicit table.
-	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_GameDifficulty));
+	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_GameDifficulty, Controls.CreateGame_GameDifficultyContainer));
 
 	-- Advanced setup version.
 	-- Create the parameter dynamically like we normally would...
@@ -84,7 +137,7 @@ g_ParameterFactories["GameSpeeds"] = function(o, parameter)
 	local drivers = {};
 	-- Basic setup version.
 	-- Use an explicit table.
-	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_SpeedPulldown));
+	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_SpeedPulldown, Controls.CreateGame_SpeedPulldownContainer));
 
 	-- Advanced setup version.
 	-- Create the parameter dynamically like we normally would...
@@ -99,7 +152,7 @@ g_ParameterFactories["Map"] = function(o, parameter)
 	local drivers = {};
 	-- Basic setup version.
 	-- Use an explicit table.
-	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_MapType));
+	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_MapType, Controls.CreateGame_MapTypeContainer));
 
 	-- Advanced setup version.
 	-- Create the parameter dynamically like we normally would...
@@ -114,7 +167,7 @@ g_ParameterFactories["MapSize"] = function(o, parameter)
 	local drivers = {};
 	-- Basic setup version.
 	-- Use an explicit table.
-	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_MapSize));
+	table.insert(drivers, CreatePulldownDriver(o, parameter, Controls.CreateGame_MapSize, Controls.CreateGame_MapSizeContainer));
 
 	-- Advanced setup version.
 	-- Create the parameter dynamically like we normally would...
@@ -164,7 +217,7 @@ function RefreshPlayerSlots()
 	local basicPlacard	:table = {};
 	ContextPtr:BuildInstanceForControl( "LeaderPlacard", basicPlacard, Controls.BasicPlacardContainer );
 
-	m_BasicTooltipData = {
+	local basicTooltipData : table = {
 		InfoStack			= basicTooltip.InfoStack,
 		InfoScrollPanel		= basicTooltip.InfoScrollPanel;
 		CivToolTipSlide		= basicTooltip.CivToolTipSlide;
@@ -196,7 +249,7 @@ function RefreshPlayerSlots()
 
 	for i, player_id in ipairs(player_ids) do	
 		if(m_singlePlayerID == player_id) then
-			SetupLeaderPulldown(player_id, Controls, "Basic_LocalPlayerPulldown", "Basic_LocalPlayerCivIcon", "Basic_LocalPlayerLeaderIcon", m_BasicTooltipData);
+			SetupLeaderPulldown(player_id, Controls, "Basic_LocalPlayerPulldown", "Basic_LocalPlayerCivIcon", "Basic_LocalPlayerLeaderIcon", basicTooltipData);
 			SetupLeaderPulldown(player_id, Controls, "Advanced_LocalPlayerPulldown", "Advanced_LocalPlayerCivIcon", "Advanced_LocalPlayerLeaderIcon", advancedTooltipData);
 		else
 			local ui_instance = m_NonLocalPlayerSlotManager:GetInstance();
@@ -257,6 +310,14 @@ function UI_PostRefreshParameters()
 
 end
 
+-------------------------------------------------------------------------------
+-- Event Listeners
+-------------------------------------------------------------------------------
+function OnFinishedGameplayContentConfigure(result)
+	if(ContextPtr and not ContextPtr:IsHidden() and result.Success) then
+		GameSetup_RefreshParameters();
+	end
+end
 
 -- ===========================================================================
 function GameSetup_PlayerCountChanged()
@@ -267,7 +328,7 @@ end
 -- ===========================================================================
 function OnShow()
 	RefreshPlayerSlots();	-- Will trigger a game parameter refresh.
-	AutoSizeGridButton(Controls.DefaultButton,50,22,10,"H");
+	AutoSizeGridButton(Controls.DefaultButton,133,36,15,"H");
 	AutoSizeGridButton(Controls.CloseButton,133,36,10,"H");
 end
 
@@ -275,6 +336,7 @@ end
 function OnHide()
 	HideGameSetup();
 	ReleasePlayerParameters();
+	m_RulesetData = {};
 end
 
 
@@ -314,6 +376,11 @@ end
 function OnAdvancedSetup()
 	Controls.CreateGameWindow:SetHide(true);
 	Controls.AdvancedOptionsWindow:SetHide(false);
+	Controls.LoadConfig:SetHide(false);
+	Controls.SaveConfig:SetHide(false);
+	Controls.ButtonStack:CalculateSize();
+	Controls.ButtonStack:ReprocessAnchoring();
+
 	m_AdvancedMode = true;
 end
 
@@ -340,18 +407,40 @@ function OnStartButton()
 	end
 end
 
-
-
 ----------------------------------------------------------------    
 function OnBackButton()
 	if(m_AdvancedMode) then
 		Controls.CreateGameWindow:SetHide(false);
 		Controls.AdvancedOptionsWindow:SetHide(true);
+		Controls.LoadConfig:SetHide(true);
+		Controls.SaveConfig:SetHide(true);
+		Controls.ButtonStack:CalculateSize();
+		Controls.ButtonStack:ReprocessAnchoring();
+		
 		UpdateCivLeaderToolTip();					-- Need to make sure we update our placard/flyout card if we make a change in advanced setup and then come back
 		m_AdvancedMode = false;		
 	else
 		UIManager:DequeuePopup( ContextPtr );
 	end
+end
+
+-- ===========================================================================
+function OnLoadConfig()
+
+	local loadGameMenu = ContextPtr:LookUpControl( "/FrontEnd/MainMenu/LoadGameMenu" );
+	local kParameters = {};
+	kParameters.FileType = SaveFileTypes.GAME_CONFIGURATION;
+	UIManager:QueuePopup(loadGameMenu, PopupPriority.Current, kParameters);
+end
+
+-- ===========================================================================
+function OnSaveConfig()
+
+	local saveGameMenu = ContextPtr:LookUpControl( "/FrontEnd/MainMenu/SaveGameMenu" );
+	local kParameters = {};
+	kParameters.FileType = SaveFileTypes.GAME_CONFIGURATION;
+	UIManager:QueuePopup(saveGameMenu, PopupPriority.Current, kParameters);
+	
 end
 
 ----------------------------------------------------------------    
@@ -401,7 +490,12 @@ function Initialize()
 	Controls.StartButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.CloseButton:RegisterCallback( Mouse.eLClick, OnBackButton );
 	Controls.CloseButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	Controls.LoadConfig:RegisterCallback( Mouse.eLClick, OnLoadConfig );
+	Controls.LoadConfig:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	Controls.SaveConfig:RegisterCallback( Mouse.eLClick, OnSaveConfig );
+	Controls.SaveConfig:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	
+	Events.FinishedGameplayContentConfigure.Add(OnFinishedGameplayContentConfigure);
 	Events.SystemUpdateUI.Add( OnUpdateUI );
 	Events.BeforeMultiplayerInviteProcessing.Add( OnBeforeMultiplayerInviteProcessing );
 	Resize();

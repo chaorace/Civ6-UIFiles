@@ -216,15 +216,16 @@ end
 -- ===========================================================================
 --
 -- ===========================================================================
-function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:table, kGovernmentIM:table, callback:ifunction )
+function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:table, kGovernmentIM:table, callback:ifunction, hideDescriptionIcon:boolean )
 
-	local civicType:string = GameInfo.Civics[civicID].CivicType;
-	if civicType == nil then
+	local civicData:table = GameInfo.Civics[civicID];
+	if civicData == nil then
 		UI.DataError("Unable to find a civic type in the database with an ID value of #"..tostring(civicID));
 		return;
 	end
 
 	local governmentData = GetGovernmentData();
+	local civicType:string = civicData.CivicType;
 
 	-- Unlockables is an array of {type, name}
 	local numIcons:number = 0;
@@ -292,7 +293,7 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 		
 	end
 
-	if (GameInfo.Civics[civicID].Description) then
+	if (civicData.Description and hideDescriptionIcon ~= true) then
 		local unlockIcon:table	= kItemIM:GetInstance();
 		unlockIcon.Icon:SetHide(true); -- foreground icon unnecessary in this case
 		local textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas("ICON_TECHUNLOCK_13",38);
@@ -308,7 +309,7 @@ function PopulateUnlockablesForCivic(playerID:number, civicID:number, kItemIM:ta
 
 		if(not IsTutorialRunning()) then
 			unlockIcon.UnlockIcon:RegisterCallback(Mouse.eRClick, function() 
-				LuaEvents.OpenCivilopedia(GameInfo.Civics[civicID].CivicType);
+				LuaEvents.OpenCivilopedia(civicType);
 			end);
 		end
 

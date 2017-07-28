@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Context Name="Options">
+
+  <Include File="PopupDialog"/>
+  
   <Box ID="MainGrid" Style="ShellBGBox">
 
     <Container ID="MainWindow" Style="ShellWindowContainer">
@@ -44,6 +47,10 @@
               <Stack Anchor="R,T" StackGrowth="Left" Padding="5">
                 <PullDown ID="AutoEndTurnPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0"/>
                 <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_AUTO_END_TURN"/>
+              </Stack>
+              <Stack Anchor="R,T" StackGrowth="Left" Padding="5">
+                <PullDown ID="CityRangeAttackTurnBlockingPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0"/>
+                <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_CITY_RANGE_ATTACK" ToolTip="LOC_OPTIONS_CITY_RANGE_ATTACK_TOOLTIP"/>
               </Stack>
               <Stack Anchor="R,T" StackGrowth="Left" Padding="5">
                 <PullDown ID="TunerPullDown" Style="PullDownBlue" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0"/>
@@ -195,7 +202,7 @@
                     </Grid>
 
                     <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
-                      <PullDown ID="OverlayResolutionPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_OVERLAY_RESOLUTION_TOOLTIP"/>
+                      <PullDown ID="OverlayResolutionPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" AutoFlip="1" ToolTip="LOC_OPTIONS_OVERLAY_RESOLUTION_TOOLTIP"/>
                       <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_OVERLAY_RESOLUTION_TEXT"/>
                     </Stack>
                     <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
@@ -210,7 +217,7 @@
                     </Grid>
 
                     <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
-                      <PullDown ID="TerrainQualityPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_TERRAIN_QUALITY_TOOLTIP"/>
+                      <PullDown ID="TerrainQualityPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" AutoFlip="1" ToolTip="LOC_OPTIONS_TERRAIN_QUALITY_TOOLTIP"/>
                       <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_TERRAIN_QUALITY_TEXT"/>
                     </Stack>
                     <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
@@ -226,7 +233,7 @@
                       <GridButton ID="TerrainAOEnabledCheckbox" Anchor="L,L" Offset="5,0" Size="300,24" Style="CheckBoxControl" String="LOC_OPTIONS_LIGHTING_AO_ENABLED_TEXT" ToolTip="LOC_OPTIONS_LIGHTING_AO_ENABLED_TOOLTIP"/>
                     </Stack>
                     <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
-                      <PullDown ID="TerrainAOResolutionPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_LIGHTING_AO_RENDER_RESOLUTION_TOOLTIP"/>
+                      <PullDown ID="TerrainAOResolutionPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" AutoFlip="1" ToolTip="LOC_OPTIONS_LIGHTING_AO_RENDER_RESOLUTION_TOOLTIP"/>
                       <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_LIGHTING_AO_RENDER_RESOLUTION_TEXT"/>
                     </Stack>
                     <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
@@ -247,7 +254,7 @@
                       <GridButton ID="WaterShaderCheckbox" Anchor="L,L" Offset="5,0" Size="300,24" Style="CheckBoxControl" String="LOC_OPTIONS_WATER_HIGH_QUALITY_SHADER_TEXT" ToolTip="LOC_OPTIONS_WATER_HIGH_QUALITY_SHADER_TOOLTIP"/>
                     </Stack>
                     <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
-                      <PullDown ID="WaterReflectionPassesPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_WATER_REFLECTION_PASSES_TOOLTIP"/>
+                      <PullDown ID="WaterReflectionPassesPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" AutoFlip="1" ToolTip="LOC_OPTIONS_WATER_REFLECTION_PASSES_TOOLTIP"/>
                       <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_WATER_REFLECTION_PASSES_TEXT"/>
                     </Stack>
 
@@ -259,7 +266,7 @@
                     </Grid>
 
                     <Stack Anchor="R,T" StackGrowth="Left" Padding="5" Offset="200,0">
-                      <PullDown ID="LeaderQualityPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_LEADER_QUALITY_TOOLTIP"/>
+                      <PullDown ID="LeaderQualityPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0" ToolTip="LOC_OPTIONS_LEADER_QUALITY_TOOLTIP" AutoFlip="1"/>
                       <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_LEADER_QUALITY_TEXT"/>
                     </Stack>
 
@@ -335,12 +342,18 @@
                 <PullDown ID="UnitCyclingPullDown" Style="PullDownBlue" Anchor="R,T" ScrollThreshold="400" Size="300,24" Offset="0,0" SpaceForScroll="0"/>
                 <Label Anchor="L,C" Style="ShellOptionText" String="LOC_OPTIONS_AUTO_UNIT_CYCLING"/>
               </Stack>
+							<Stack Anchor="R,T" StackGrowth="Right" Padding="5">
+								<Label  Style="ShellOptionText" Anchor="C,C" String="LOC_OPTIONS_INTERFACE_MINIMAP_SIZE"/>
+								<Container Size="300,24">
+									<Slider ID="MinimapSizeSlider" Style="SliderControl" Anchor="C,C" Size="300,13" Steps="100" />
+								</Container>
+							</Stack>
               <Stack Anchor="R,T" StackGrowth="Right" Padding="5">
-                <Label  Style="ShellOptionText" String="LOC_OPTIONS_PLOT_TOOLTIP_DELAY"/>
-                <Slider ID="PlotToolTipDelaySlider" Style="SliderControl" Offset="5,0" Size="300,13" Steps="10" />
-                <Container Size="60,18">
-                  <Label  ID="PlotToolTipDelayValue" Style="ShellOptionText" String="UNSET" />
-                </Container>
+                <Label  Style="ShellOptionText" Anchor="C,C" String="LOC_OPTIONS_PLOT_TOOLTIP_DELAY"/>
+								<Container Size="300,24">
+									<Label  ID="PlotToolTipDelayValue"  Style="ShellOptionText" Anchor="L,C" String="UNSET" />
+									<Slider ID="PlotToolTipDelaySlider" Style="SliderControl"   Anchor="R,C" Size="250,13" Steps="10" />
+								</Container>
               </Stack>
             </Stack>
           </Container>
@@ -378,9 +391,9 @@
     <AlphaAnim ID="KeyBindingAlpha" AlphaBegin="0" AlphaEnd="1" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
       <SlideAnim ID="KeyBindingSlide" Start="0,-20" End="0,0" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
         <Grid Size="500,250" Anchor="C,C" Offset="0,0" Style="DropShadow2"  Hidden="0" Color="255,255,255,200">
-          <Grid ID="KeyBindingPopupWindow" Size="parent-50,parent-50" Anchor="C,C" Offset="0,-50" SizePadding="0,20" Style="WindowFrameTitle"  Hidden="0" AutoSize="1">
+          <Grid ID="KeyBindingPopupWindow" Size="parent-50,0" Anchor="C,C" Offset="0,-50" SizePadding="0,20" Style="WindowFrameTitle" Hidden="0" AutoSize="V">
             <Label ID="BindingTitle" Anchor="C,T" String="Title of Window" Align="Center" Style="BlueGlow" Offset="0,15"/>
-            <Stack Offset="0,60" StackGrowth="Down" Anchor="C,T" Padding="15">
+            <Stack Offset="0,60" Size="parent,0" StackGrowth="Down" Anchor="C,T" Padding="15">
               <Label ID="Message" Anchor="C,T" WrapWidth="400" String="LOC_OPTIONS_SET_KEY_BINDING_TEXT" Style="BodyTextDark18" Align="Center"/>
               <Container Size="parent,50" Anchor="C,T">
                 <GridButton ID="CancelBindingButton" Style="MainButton" Size="200,41" Offset="10,0" Anchor="L,T" String="LOC_CANCEL"/>
@@ -404,23 +417,7 @@
     </Stack>
   </Instance>
 
-  <Box Style="PopupDialogBox"/>
-  <Instance Name="PopupButtonInstance">
-    <GridButton ID="Button" Style="MainButton" Size="200,41" />
-  </Instance>
-  <Instance Name="PopupButtonAltInstance">
-    <GridButton ID="Button" Style="ButtonRed" Size="200,41" />
-  </Instance>
-  <Instance Name="PopupTextInstance">
-    <Label        ID="Text"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="400"/>
-  </Instance>
-  <Instance Name="RowInstance">
-    <Stack ID="Row" Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
-  </Instance>
-  <Instance Name="CountDownInstance">
-    <AlphaAnim ID="Anim" Anchor="C,T" Size="50,50" AlphaStart="1" AlphaEnd="0.1" Function="OutQuint" Cycle="Once">
-      <Label ID="Text" Anchor="C,T" Style="FontNormal40" Align="C,T" Color="0,0,0,255" />
-    </AlphaAnim>
-  </Instance>
+  <!-- Dialog Support -->
+  <MakeInstance Name="PopupDialog" />
 
 </Context>

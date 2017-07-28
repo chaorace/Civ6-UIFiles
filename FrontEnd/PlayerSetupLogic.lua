@@ -535,6 +535,11 @@ function SetupLeaderPulldown(playerId:number, instance:table, pulldownControlNam
 	local control = instance[pulldownControlName];
 	local civIcon = instance[civIconControlName];
 	local leaderIcon = instance[leaderIconControlName];
+	local instanceManager = control["InstanceManager"];
+	if not instanceManager then
+		instanceManager = PullDownInstanceManager:new( "InstanceOne", "Button", control );
+		control["InstanceManager"] = instanceManager;
+	end
 
 	local controls = parameters.Controls["PlayerLeader"];
 	if(controls == nil) then
@@ -577,14 +582,14 @@ function SetupLeaderPulldown(playerId:number, instance:table, pulldownControlNam
 			end
 		end,
 		UpdateValues = function(values)
-			control:ClearEntries();
+
+			instanceManager:ResetInstances();
 			for i,v in ipairs(values) do
 				local info = GetPlayerInfo(v.Domain, v.Value);
 				local tooltip = GenerateToolTipFromPlayerInfo(info);
 
-				local entry = {};
-				control:BuildEntry( "InstanceOne", entry );
-
+				local entry = instanceManager:GetInstance();
+				
 				local caption = v.Name;
 				if(v.Invalid) then 
 					local err = v.InvalidReason or "LOC_SETUP_ERROR_INVALID_OPTION";
@@ -604,15 +609,18 @@ function SetupLeaderPulldown(playerId:number, instance:table, pulldownControlNam
 				entry.Button:RegisterCallback(Mouse.eLClick, function()
 					local parameter = parameters.Parameters["PlayerLeader"];
 					parameters:SetParameterValue(parameter, v);
-					if(playerId==0) then
+					if(playerId == 0) then
 						m_currentInfo = info;
 					end
 				end);
 			end
 			control:CalculateInternals();
 		end,
-		SetEnabled = function(enabled)
-			control:SetDisabled(not CheckExternalEnabled(playerId, enabled, true));
+		SetEnabled = function(enabled, parameter)
+			local notExternalEnabled = not CheckExternalEnabled(playerId, enabled, true);
+			local singleOrEmpty = #parameter.Values <= 1;
+
+			control:SetDisabled(notExternalEnabled or singleOrEmpty);
 		end,
 	--	SetVisible = function(visible)
 	--		control:SetHide(not visible);

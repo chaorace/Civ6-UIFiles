@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ContextDefaults ColorSet="BodyTextCool" Style="FontNormal22" FontStyle="Stroke" Name="MainMenu" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\ForgeUI_Assets\Controls.xsd">
-  
+
+	<!-- Include Instances -->
+	<Include File="PopupDialog" />
   
   <Stack                  ID="ShellMenuAndLogo" StackGrowth="Down" Anchor="C,C">
     <Image ID="Logo"				Anchor="C,T"	Offset="0,0" Texture="MainLogo.dds" StretchMode="Auto"/>
@@ -39,21 +41,6 @@
       </Stack>
     </SlideAnim>
   </Stack>
-  
-  <!-- Dialog Support -->
-  <Box Style="PopupDialogBox"/>
-  <Instance Name="PopupButtonInstance">
-    <GridButton ID="Button" Style="MainButton" Size="200,41" />
-  </Instance>
-  <Instance Name="PopupButtonAltInstance">
-    <GridButton ID="Button" Style="ButtonRed" Size="200,41" />
-  </Instance>
-  <Instance Name="PopupTextInstance">
-    <Label        ID="Text"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="400"/>
-  </Instance>
-  <Instance Name="RowInstance">
-    <Stack ID="Row" Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
-  </Instance>
 
   <Instance Name="MenuOption">
     <Container Size="300,40" ID="Top">
@@ -82,8 +69,8 @@
   </Container>
 
 	<Container ID="MotDContainter" Anchor="C,B"	Size="parent,120" InnerPadding="300,0" Offset="0,24">
-		<Grid ID="MotDFrame" Style="SubContainer3" Color="204,207,245,100" Size="parent,parent" AutoSize="V" Anchor="C,C">
-			<Stack ID="MotDStack" Size="parent,0" Anchor="L,T" StackGrowth="Right" StackPadding="10" AutoSize="V" ClampSize="V">
+		<Grid ID="MotDFrame" Style="SubContainer3" Color="204,207,245,100" Size="parent,120" AutoSize="V" Anchor="C,C">
+			<Stack ID="MotDStack" Anchor="L,T" StackGrowth="Right" StackPadding="10" AutoSize="V" ClampSize="V">
 				<Button ID="MotDLogo" States="1" Anchor="R,C"	Size="32,32" Texture="Firaxis32"/>
 				<ScrollPanel ID="MotDScroll" Anchor="L,C"  Size="parent-60, parent" Vertical="1" AutoScollbar="1" AutoSize="V" ClampSize="V">
 					<Label ID="MotDText" Style="FontNormal16" WrapWidth="parent-8" Anchor="L,C"/>
@@ -94,6 +81,7 @@
 	</Container>
 
 	<Label				ID="VersionLabel" Anchor="L,B"  Offset="2,2" Style="FontNormal12" ColorSet="ButtonCS"  />
+  
 	<LuaContext		ID="Options"							DeferLoad="1"	FileName="Options"						Hidden="1" />
 	<LuaContext		ID="ModsContext"					DeferLoad="1"	FileName="Mods"								Hidden="1" />
 	<LuaContext		ID="AdvancedSetup"				DeferLoad="1"	FileName="AdvancedSetup"			Hidden="1" />
@@ -102,9 +90,11 @@
 	<LuaContext		ID="My2K"										            FileName="My2K"								Hidden="1" />
   <LuaContext		ID="WorldBuilder"					DeferLoad="1" FileName="WorldBuilderMenu"		Hidden="1" />
 	<LuaContext		ID="TutorialSetup"				DeferLoad="1" FileName="TutorialSetup"		  Hidden="1" />
-	<LuaContext		ID="FrontEndPopup"											FileName="FrontEndPopup"			Hidden="1" />
 	<LuaContext		ID="Lobby"															FileName="Lobby"							Hidden="1" />
 	<LuaContext		ID="HostGame"														FileName="HostGame"						Hidden="1" />
 	<LuaContext		ID="StagingRoom"												FileName="StagingRoom"				Hidden="1" />
 	<LuaContext		ID="LoadGameMenu"												FileName="LoadGameMenu"				Hidden="1" />
+	<LuaContext		ID="SaveGameMenu"												FileName="SaveGameMenu"				Hidden="1" />
+	<LuaContext		ID="CloudGameScreen"	FileName="UI/FrontEnd/Multiplayer/CloudGame"	Hidden="1" />
+	<LuaContext		ID="FrontEndPopup"											FileName="FrontEndPopup"			Hidden="1" />
 </ContextDefaults>

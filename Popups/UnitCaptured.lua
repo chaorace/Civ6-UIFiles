@@ -1,4 +1,4 @@
-include( "PopupDialogSupport" );
+include( "PopupDialog" );
 
 -- ===========================================================================
 --	Game Engine Event
@@ -30,8 +30,8 @@ function OnUnitCaptured( currentUnitOwner, unit, owningPlayer, capturingPlayer )
 		end
 
 		local msg			:string = Locale.Lookup( captureMessage, szOwnerString )
-		local pPopupDialog	:table = PopupDialog:new("UnitCaptured"); 
-		pPopupDialog:AddTitle( Locale.ToUpper( Locale.Lookup("LOC_UNIT_CAPTURE_DEFAULT") ));	
+		local pPopupDialog	:table = PopupDialogInGame:new("UnitCaptured"); 
+		pPopupDialog:AddTitle( Locale.ToUpper( Locale.Lookup("LOC_UNIT_CAPTURE_DEFAULT")));	
 		pPopupDialog:AddText( msg );
 		pPopupDialog:AddButton(Locale.Lookup("LOC_UNIT_CAPTURE_OK"),  function() end );	-- Just lower.
 		pPopupDialog:Open();

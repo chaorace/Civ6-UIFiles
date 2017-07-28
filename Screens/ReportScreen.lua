@@ -27,6 +27,7 @@ local DARKEN_CITY_INCOME_AREA_ADDITIONAL_Y		:number = 6;
 local DATA_FIELD_SELECTION						:string = "Selection";
 local SIZE_HEIGHT_BOTTOM_YIELDS					:number = 135;
 local SIZE_HEIGHT_PADDING_BOTTOM_ADJUST			:number = 85;	-- (Total Y - (scroll area + THIS PADDING)) = bottom area
+local INDENT_STRING								:string = "        ";
 
 -- Mapping of unit type to cost.
 local UnitCostMap:table = {};
@@ -61,8 +62,11 @@ local m_uiGroups			:table = nil;	-- Track the groups on-screen for collapse all 
 --	Single exit point for display
 -- ===========================================================================
 function Close()
+	if not ContextPtr:IsHidden() then
+		UI.PlaySound("UI_Screen_Close");
+	end
+
 	UIManager:DequeuePopup(ContextPtr);
-	UI.PlaySound("UI_Screen_Close");
 end
 
 
@@ -258,6 +262,7 @@ function GetData()
 	local kPlayers	:table = PlayerManager.GetAliveMajors();
 	for _, pOtherPlayer in ipairs(kPlayers) do
 		local otherID:number = pOtherPlayer:GetID();
+		local currentGameTurn = Game.GetCurrentGameTurn();
 		if  otherID ~= playerID then			
 			
 			local pPlayerConfig	:table = PlayerConfigurations[otherID];
@@ -265,90 +270,92 @@ function GetData()
 			
 			if pDeals ~= nil then
 				for i,pDeal in ipairs(pDeals) do
-					if pDeal:IsValid() then
-						-- Add outgoing gold deals
-						local pOutgoingDeal :table	= pDeal:FindItemsByType(DealItemTypes.GOLD, DealItemSubTypes.NONE, playerID);
-						if pOutgoingDeal ~= nil then
-							for i,pDealItem in ipairs(pOutgoingDeal) do
-								local duration		:number = pDealItem:GetDuration();
-								if duration ~= 0 then
-									local gold :number = pDealItem:GetAmount();
-									table.insert( kDealData, {
-										Type		= DealItemTypes.GOLD,
-										Amount		= gold,
-										Duration	= duration,
-										IsOutgoing	= true,
-										PlayerID	= otherID,
-										Name		= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
-									});						
-								end
+					-- Add outgoing gold deals
+					local pOutgoingDeal :table	= pDeal:FindItemsByType(DealItemTypes.GOLD, DealItemSubTypes.NONE, playerID);
+					if pOutgoingDeal ~= nil then
+						for i,pDealItem in ipairs(pOutgoingDeal) do
+							local duration		:number = pDealItem:GetDuration();
+							local remainingTurns:number = duration - (currentGameTurn - pDealItem:GetEnactedTurn());
+							if duration ~= 0 then
+								local gold :number = pDealItem:GetAmount();
+								table.insert( kDealData, {
+									Type		= DealItemTypes.GOLD,
+									Amount		= gold,
+									Duration	= remainingTurns,
+									IsOutgoing	= true,
+									PlayerID	= otherID,
+									Name		= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
+								});						
 							end
 						end
+					end
 
-						-- Add outgoing resource deals
-						pOutgoingDeal = pDeal:FindItemsByType(DealItemTypes.RESOURCES, DealItemSubTypes.NONE, playerID);
-						if pOutgoingDeal ~= nil then
-							for i,pDealItem in ipairs(pOutgoingDeal) do
-								local duration		:number = pDealItem:GetDuration();
-								if duration ~= 0 then
-									local amount		:number = pDealItem:GetAmount();
-									local resourceType	:number = pDealItem:GetValueType();
-									table.insert( kDealData, {
-										Type			= DealItemTypes.RESOURCES,
-										ResourceType	= resourceType,
-										Amount			= amount,
-										Duration		= duration,
-										IsOutgoing		= true,
-										PlayerID		= otherID,
-										Name			= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
-									});
-									
-									local entryString:string = Locale.Lookup("LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS") .. " (" .. Locale.Lookup(pPlayerConfig:GetPlayerName()) .. ")";
-									AddResourceData(kResources, resourceType, entryString, "LOC_HUD_REPORTS_TRADE_EXPORTED", -1 * amount);				
-								end
+					-- Add outgoing resource deals
+					pOutgoingDeal = pDeal:FindItemsByType(DealItemTypes.RESOURCES, DealItemSubTypes.NONE, playerID);
+					if pOutgoingDeal ~= nil then
+						for i,pDealItem in ipairs(pOutgoingDeal) do
+							local duration		:number = pDealItem:GetDuration();
+							local remainingTurns:number = duration - (currentGameTurn - pDealItem:GetEnactedTurn());
+							if duration ~= 0 then
+								local amount		:number = pDealItem:GetAmount();
+								local resourceType	:number = pDealItem:GetValueType();
+								table.insert( kDealData, {
+									Type			= DealItemTypes.RESOURCES,
+									ResourceType	= resourceType,
+									Amount			= amount,
+									Duration		= remainingTurns,
+									IsOutgoing		= true,
+									PlayerID		= otherID,
+									Name			= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
+								});
+								
+								local entryString:string = Locale.Lookup("LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS") .. " (" .. Locale.Lookup(pPlayerConfig:GetPlayerName()) .. " " .. Locale.Lookup("LOC_REPORTS_NUMBER_OF_TURNS", remainingTurns) .. ")";
+								AddResourceData(kResources, resourceType, entryString, "LOC_HUD_REPORTS_TRADE_EXPORTED", -1 * amount);				
 							end
 						end
+					end
 					
-						-- Add incoming gold deals
-						local pIncomingDeal :table = pDeal:FindItemsByType(DealItemTypes.GOLD, DealItemSubTypes.NONE, otherID);
-						if pIncomingDeal ~= nil then
-							for i,pDealItem in ipairs(pIncomingDeal) do
-								local duration		:number = pDealItem:GetDuration();
-								if duration ~= 0 then
-									local gold :number = pDealItem:GetAmount()
-									table.insert( kDealData, {
-										Type		= DealItemTypes.GOLD;
-										Amount		= gold,
-										Duration	= duration,
-										IsOutgoing	= false,
-										PlayerID	= otherID,
-										Name		= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
-									});						
-								end
+					-- Add incoming gold deals
+					local pIncomingDeal :table = pDeal:FindItemsByType(DealItemTypes.GOLD, DealItemSubTypes.NONE, otherID);
+					if pIncomingDeal ~= nil then
+						for i,pDealItem in ipairs(pIncomingDeal) do
+							local duration		:number = pDealItem:GetDuration();
+							local remainingTurns:number = duration - (currentGameTurn - pDealItem:GetEnactedTurn());
+							if duration ~= 0 then
+								local gold :number = pDealItem:GetAmount()
+								table.insert( kDealData, {
+									Type		= DealItemTypes.GOLD;
+									Amount		= gold,
+									Duration	= remainingTurns,
+									IsOutgoing	= false,
+									PlayerID	= otherID,
+									Name		= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
+								});						
 							end
 						end
+					end
 
-						-- Add incoming resource deals
-						pIncomingDeal = pDeal:FindItemsByType(DealItemTypes.RESOURCES, DealItemSubTypes.NONE, otherID);
-						if pIncomingDeal ~= nil then
-							for i,pDealItem in ipairs(pIncomingDeal) do
-								local duration		:number = pDealItem:GetDuration();
-								if duration ~= 0 then
-									local amount		:number = pDealItem:GetAmount();
-									local resourceType	:number = pDealItem:GetValueType();
-									table.insert( kDealData, {
-										Type			= DealItemTypes.RESOURCES,
-										ResourceType	= resourceType,
-										Amount			= amount,
-										Duration		= duration,
-										IsOutgoing		= false,
-										PlayerID		= otherID,
-										Name			= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
-									});
-									
-									local entryString:string = Locale.Lookup("LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS") .. " (" .. Locale.Lookup(pPlayerConfig:GetPlayerName()) .. ")";
-									AddResourceData(kResources, resourceType, entryString, "LOC_HUD_REPORTS_TRADE_IMPORTED", amount);				
-								end
+					-- Add incoming resource deals
+					pIncomingDeal = pDeal:FindItemsByType(DealItemTypes.RESOURCES, DealItemSubTypes.NONE, otherID);
+					if pIncomingDeal ~= nil then
+						for i,pDealItem in ipairs(pIncomingDeal) do
+							local duration		:number = pDealItem:GetDuration();
+							if duration ~= 0 then
+								local amount		:number = pDealItem:GetAmount();
+								local resourceType	:number = pDealItem:GetValueType();
+								local remainingTurns:number = duration - (currentGameTurn - pDealItem:GetEnactedTurn());
+								table.insert( kDealData, {
+									Type			= DealItemTypes.RESOURCES,
+									ResourceType	= resourceType,
+									Amount			= amount,
+									Duration		= remainingTurns,
+									IsOutgoing		= false,
+									PlayerID		= otherID,
+									Name			= Locale.Lookup( pPlayerConfig:GetCivilizationDescription() )
+								});
+								
+								local entryString:string = Locale.Lookup("LOC_HUD_REPORTS_ROW_DIPLOMATIC_DEALS") .. " (" .. Locale.Lookup(pPlayerConfig:GetPlayerName()) .. " " .. Locale.Lookup("LOC_REPORTS_NUMBER_OF_TURNS", remainingTurns) .. ")";
+								AddResourceData(kResources, resourceType, entryString, "LOC_HUD_REPORTS_TRADE_IMPORTED", amount);				
 							end
 						end
 					end	
@@ -398,6 +405,12 @@ end
 -- ===========================================================================
 function AddResourceData( kResources:table, eResourceType:number, EntryString:string, ControlString:string, InAmount:number)
 	local kResource :table = GameInfo.Resources[eResourceType];
+
+	--Artifacts need to be excluded because while TECHNICALLY a resource, they do nothing to contribute in a way that is relevant to any other resource 
+	--or screen. So... exclusion.
+	if kResource.ResourceClassType == "RESOURCECLASS_ARTIFACT" then
+		return;
+	end
 
 	if kResources[eResourceType] == nil then
 		kResources[eResourceType] = {
@@ -640,11 +653,28 @@ function ViewYieldsPage()
 
 	-- ========== City Income ==========
 
+	function CreatLineItemInstance(cityInstance:table, name:string, production:number, gold:number, food:number, science:number, culture:number, faith:number)
+		local lineInstance:table = {};
+		ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", lineInstance, cityInstance.LineItemStack );
+		TruncateStringWithTooltipClean(lineInstance.LineItemName, 160, name);
+		lineInstance.Production:SetText( toPlusMinusNoneString(production));
+		lineInstance.Food:SetText( toPlusMinusNoneString(food));
+		lineInstance.Gold:SetText( toPlusMinusNoneString(gold));
+		lineInstance.Faith:SetText( toPlusMinusNoneString(faith));
+		lineInstance.Science:SetText( toPlusMinusNoneString(science));
+		lineInstance.Culture:SetText( toPlusMinusNoneString(culture));
+
+		return lineInstance;
+	end
+
 	for cityName,kCityData in pairs(m_kCityData) do
 		local pCityInstance:table = {};
 		ContextPtr:BuildInstanceForControl( "CityIncomeInstance", pCityInstance, instance.ContentStack ) ;
 		pCityInstance.LineItemStack:DestroyAllChildren();
 		pCityInstance.CityName:SetText( Locale.Lookup(kCityData.CityName) );
+
+		--Great works
+		local greatWorks:table = GetGreatWorksForCity(kCityData.City);
 
 		-- Current Production
 		local kCurrentProduction:table = kCityData.ProductionQueue[1];
@@ -691,17 +721,49 @@ function ViewYieldsPage()
 		local cultureTilesWorked	:number = kCityData.CulturePerTurn;
 
 		for i,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do			
-			for i,kBuilding in ipairs(kDistrict.Buildings) do
-				local pLineItemInstance:table = {};
-				ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
-				pLineItemInstance.LineItemName:SetText( kBuilding.Name );
+			--District line item
+			local districtInstance = CreatLineItemInstance(	pCityInstance, 
+															kDistrict.Name,
+															kDistrict.Production,
+															kDistrict.Gold,
+															kDistrict.Food,
+															kDistrict.Science,
+															kDistrict.Culture,
+															kDistrict.Faith);
+			districtInstance.DistrictIcon:SetHide(false);
+			districtInstance.DistrictIcon:SetIcon(kDistrict.Icon);
 
-				pLineItemInstance.Production:SetText( toPlusMinusNoneString(kBuilding.ProductionPerTurn) );
-				pLineItemInstance.Food:SetText( toPlusMinusNoneString(kBuilding.FoodPerTurn) );
-				pLineItemInstance.Gold:SetText( toPlusMinusNoneString(kBuilding.GoldPerTurn) );
-				pLineItemInstance.Faith:SetText( toPlusMinusNoneString(kBuilding.FaithPerTurn) );
-				pLineItemInstance.Science:SetText( toPlusMinusNoneString(kBuilding.SciencePerTurn) );
-				pLineItemInstance.Culture:SetText( toPlusMinusNoneString(kBuilding.CulturePerTurn) );
+			function HasValidAdjacencyBonus(adjacencyTable:table)
+				for _, yield in pairs(adjacencyTable) do
+					if yield ~= 0 then
+						return true;
+					end
+				end
+				return false;
+			end
+
+			--Adjacency
+			if HasValidAdjacencyBonus(kDistrict.AdjacencyBonus) then
+				CreatLineItemInstance(	pCityInstance,
+										INDENT_STRING .. Locale.Lookup("LOC_HUD_REPORTS_ADJACENCY_BONUS"),
+										kDistrict.AdjacencyBonus.Production,
+										kDistrict.AdjacencyBonus.Gold,
+										kDistrict.AdjacencyBonus.Food,
+										kDistrict.AdjacencyBonus.Science,
+										kDistrict.AdjacencyBonus.Culture,
+										kDistrict.AdjacencyBonus.Faith);
+			end
+
+			
+			for i,kBuilding in ipairs(kDistrict.Buildings) do
+				CreatLineItemInstance(	pCityInstance,
+										INDENT_STRING ..  kBuilding.Name,
+										kBuilding.ProductionPerTurn,
+										kBuilding.GoldPerTurn,
+										kBuilding.FoodPerTurn,
+										kBuilding.SciencePerTurn,
+										kBuilding.CulturePerTurn,
+										kBuilding.FaithPerTurn);
 				
 				productionTilesWorked	= productionTilesWorked - kBuilding.ProductionPerTurn;
 				foodTilesWorked			= foodTilesWorked		- kBuilding.FoodPerTurn;
@@ -709,18 +771,39 @@ function ViewYieldsPage()
 				faithTilesWorked		= faithTilesWorked		- kBuilding.FaithPerTurn;
 				scienceTilesWorked		= scienceTilesWorked	- kBuilding.SciencePerTurn;
 				cultureTilesWorked		= cultureTilesWorked	- kBuilding.CulturePerTurn;
+
+				--Add great works
+				if greatWorks[kBuilding.Type] ~= nil then
+					--Add our line items!
+					for _, kGreatWork in ipairs(greatWorks[kBuilding.Type]) do
+						local pLineItemInstance = CreatLineItemInstance(	pCityInstance, INDENT_STRING .. INDENT_STRING ..  Locale.Lookup(kGreatWork.Name), 0, 0, 0,	0, 0, 0);
+						for _, yield in ipairs(kGreatWork.YieldChanges) do
+							if (yield.YieldType == "YIELD_FOOD") then
+								pLineItemInstance.Food:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							elseif (yield.YieldType == "YIELD_PRODUCTION") then
+								pLineItemInstance.Production:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							elseif (yield.YieldType == "YIELD_GOLD") then
+								pLineItemInstance.Gold:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							elseif (yield.YieldType == "YIELD_SCIENCE") then
+								pLineItemInstance.Science:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							elseif (yield.YieldType == "YIELD_CULTURE") then
+								pLineItemInstance.Culture:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							elseif (yield.YieldType == "YIELD_FAITH") then
+								pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							end
+						end
+					end
+				end
+
 			end
 		end
 
 		-- Display wonder yields
 		if kCityData.Wonders then
 			for _, wonder in ipairs(kCityData.Wonders) do
-				if wonder.Yields[1] ~= nil then
-					local pLineItemInstance:table = {};
-					ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
-					pLineItemInstance.LineItemName:SetText( wonder.Name );
-
-					-- Show yields
+				if wonder.Yields[1] ~= nil or greatWorks[wonder.Type] ~= nil then
+				-- Assign yields to the line item
+					local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, wonder.Name, 0, 0, 0, 0, 0, 0);
 					for _, yield in ipairs(wonder.Yields) do
 						if (yield.YieldType == "YIELD_FOOD") then
 							pLineItemInstance.Food:SetText( toPlusMinusNoneString(yield.YieldChange) );
@@ -737,6 +820,29 @@ function ViewYieldsPage()
 						end
 					end
 				end
+
+				--Add great works
+				if greatWorks[wonder.Type] ~= nil then
+					--Add our line items!
+					for _, kGreatWork in ipairs(greatWorks[wonder.Type]) do
+						local pLineItemInstance = CreatLineItemInstance(	pCityInstance, INDENT_STRING ..  Locale.Lookup(kGreatWork.Name), 0, 0, 0,	0, 0, 0);
+						for _, yield in ipairs(kGreatWork.YieldChanges) do
+							if (yield.YieldType == "YIELD_FOOD") then
+								pLineItemInstance.Food:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							elseif (yield.YieldType == "YIELD_PRODUCTION") then
+								pLineItemInstance.Production:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							elseif (yield.YieldType == "YIELD_GOLD") then
+								pLineItemInstance.Gold:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							elseif (yield.YieldType == "YIELD_SCIENCE") then
+								pLineItemInstance.Science:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							elseif (yield.YieldType == "YIELD_CULTURE") then
+								pLineItemInstance.Culture:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							elseif (yield.YieldType == "YIELD_FAITH") then
+								pLineItemInstance.Faith:SetText( toPlusMinusNoneString(yield.YieldChange) );
+							end
+						end
+					end
+				end
 			end
 		end
 
@@ -750,10 +856,8 @@ function ViewYieldsPage()
 						local pDestPlayerCities:table = pDestPlayer:GetCities();
 						local pDestCity:table = pDestPlayerCities:FindID(route.DestinationCityID);
 
-						local pLineItemInstance:table = {};
-						ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
-						pLineItemInstance.LineItemName:SetText( Locale.Lookup("LOC_HUD_REPORTS_TRADE_WITH", Locale.Lookup(pDestCity:GetName()) ));
-
+						--Assign yields to the line item
+						local pLineItemInstance:table = CreatLineItemInstance(pCityInstance, Locale.Lookup("LOC_HUD_REPORTS_TRADE_WITH", Locale.Lookup(pDestCity:GetName())), 0, 0, 0, 0, 0, 0);
 						for j,yield in ipairs(route.OriginYields) do
 							local yieldInfo = GameInfo.Yields[yield.YieldIndex];
 							if yieldInfo then
@@ -777,26 +881,35 @@ function ViewYieldsPage()
 			end
 		end
 
-		local pLineItemInstance:table = {};
-		ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
-		pLineItemInstance.LineItemName:SetText( Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES") );
-		pLineItemInstance.Production:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_PRODUCTION"]) );
-		pLineItemInstance.Food:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_FOOD"]) );
-		pLineItemInstance.Gold:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_GOLD"]) );
-		pLineItemInstance.Faith:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_FAITH"]) );
-		pLineItemInstance.Science:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_SCIENCE"]) );
-		pLineItemInstance.Culture:SetText( toPlusMinusNoneString(kCityData.WorkedTileYields["YIELD_CULTURE"]) );
+		--Worked Tiles
+		CreatLineItemInstance(	pCityInstance,
+								Locale.Lookup("LOC_HUD_REPORTS_WORKED_TILES"),
+								kCityData.WorkedTileYields["YIELD_PRODUCTION"],
+								kCityData.WorkedTileYields["YIELD_GOLD"],
+								kCityData.WorkedTileYields["YIELD_FOOD"],
+								kCityData.WorkedTileYields["YIELD_SCIENCE"],
+								kCityData.WorkedTileYields["YIELD_CULTURE"],
+								kCityData.WorkedTileYields["YIELD_FAITH"]);
 
 		local iYieldPercent = (Round(1 + (kCityData.HappinessNonFoodYieldModifier/100), 2)*.1);
-		pLineItemInstance = {};
-		ContextPtr:BuildInstanceForControl("CityIncomeLineItemInstance", pLineItemInstance, pCityInstance.LineItemStack );
-		pLineItemInstance.LineItemName:SetText( Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES") );
-		pLineItemInstance.Production:SetText( toPlusMinusNoneString((kCityData.WorkedTileYields["YIELD_PRODUCTION"] * iYieldPercent) ) );
-		pLineItemInstance.Food:SetText( "" );
-		pLineItemInstance.Gold:SetText( toPlusMinusNoneString((kCityData.WorkedTileYields["YIELD_GOLD"] * iYieldPercent)) );
-		pLineItemInstance.Faith:SetText( toPlusMinusNoneString((kCityData.WorkedTileYields["YIELD_FAITH"] * iYieldPercent)) );
-		pLineItemInstance.Science:SetText( toPlusMinusNoneString((kCityData.WorkedTileYields["YIELD_SCIENCE"] * iYieldPercent)) );
-		pLineItemInstance.Culture:SetText( toPlusMinusNoneString((kCityData.WorkedTileYields["YIELD_CULTURE"] * iYieldPercent)) );
+		CreatLineItemInstance(	pCityInstance,
+								Locale.Lookup("LOC_HUD_REPORTS_HEADER_AMENITIES"),
+								kCityData.WorkedTileYields["YIELD_PRODUCTION"] * iYieldPercent,
+								kCityData.WorkedTileYields["YIELD_GOLD"] * iYieldPercent,
+								0,
+								kCityData.WorkedTileYields["YIELD_SCIENCE"] * iYieldPercent,
+								kCityData.WorkedTileYields["YIELD_CULTURE"] * iYieldPercent,
+								kCityData.WorkedTileYields["YIELD_FAITH"] * iYieldPercent);
+
+		local populationToCultureScale:number = GameInfo.GlobalParameters["CULTURE_PERCENTAGE_YIELD_PER_POP"].Value / 100;
+		CreatLineItemInstance(	pCityInstance,
+								Locale.Lookup("LOC_HUD_CITY_POPULATION"),
+								0,
+								0,
+								0,
+								0,
+								kCityData["Population"] * populationToCultureScale, 
+								0);
 
 		pCityInstance.LineItemStack:CalculateSize();
 		pCityInstance.Darken:SetSizeY( pCityInstance.LineItemStack:GetSizeY() + DARKEN_CITY_INCOME_AREA_ADDITIONAL_Y );
@@ -825,7 +938,7 @@ function ViewYieldsPage()
 
 	local iTotalBuildingMaintenance :number = 0;
 	for cityName,kCityData in pairs(m_kCityData) do
-		for i,kBuilding in ipairs(kCityData.Buildings) do
+		for _,kBuilding in ipairs(kCityData.Buildings) do
 			if kBuilding.Maintenance > 0 then
 				local pBuildingInstance:table = {};		
 				ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pBuildingInstance, instance.ContentStack ) ;		
@@ -833,6 +946,16 @@ function ViewYieldsPage()
 				pBuildingInstance.BuildingName:SetText( Locale.Lookup(kBuilding.Name) );
 				pBuildingInstance.Gold:SetText( "-"..tostring(kBuilding.Maintenance));
 				iTotalBuildingMaintenance = iTotalBuildingMaintenance - kBuilding.Maintenance;
+			end
+		end
+		for _,kDistrict in ipairs(kCityData.BuildingsAndDistricts) do
+			if kDistrict.Maintenance > 0 then
+				local pDistrictInstance:table = {};		
+				ContextPtr:BuildInstanceForControl( "BuildingExpensesEntryInstance", pDistrictInstance, instance.ContentStack ) ;		
+				pDistrictInstance.CityName:SetText( Locale.Lookup(cityName) );
+				pDistrictInstance.BuildingName:SetText( Locale.Lookup(kDistrict.Name) );
+				pDistrictInstance.Gold:SetText( "-"..tostring(kDistrict.Maintenance));
+				iTotalBuildingMaintenance = iTotalBuildingMaintenance - kDistrict.Maintenance;
 			end
 		end
 	end
@@ -909,22 +1032,36 @@ function ViewYieldsPage()
 	Controls.Stack:CalculateSize();
 	Controls.Scroll:CalculateSize();
 
-	-- Totals at the bottom
-	Controls.GoldIncome:SetText( toPlusMinusNoneString( m_kCityTotalData.Income[YieldTypes.GOLD] ));
-	Controls.FaithIncome:SetText( toPlusMinusNoneString( m_kCityTotalData.Income[YieldTypes.FAITH] ));
-	Controls.ScienceIncome:SetText( toPlusMinusNoneString( m_kCityTotalData.Income[YieldTypes.SCIENCE] ));
-	Controls.CultureIncome:SetText( toPlusMinusNoneString( m_kCityTotalData.Income[YieldTypes.CULTURE] ));
-	Controls.TourismIncome:SetText( toPlusMinusNoneString( m_kCityTotalData.Income["TOURISM"] ));	
-	Controls.GoldExpense:SetText( toPlusMinusNoneString( -m_kCityTotalData.Expenses[YieldTypes.GOLD] ));	-- Flip that value!
-	Controls.GoldNet:SetText( toPlusMinusNoneString( m_kCityTotalData.Net[YieldTypes.GOLD] ));
-	Controls.FaithNet:SetText( toPlusMinusNoneString( m_kCityTotalData.Net[YieldTypes.FAITH] ));
-	
+	-- Totals at the bottom [Definitive values]
+	local localPlayer = Players[Game.GetLocalPlayer()];
+	--Gold
+	local playerTreasury:table	= localPlayer:GetTreasury();
+	Controls.GoldIncome:SetText( toPlusMinusNoneString( playerTreasury:GetGoldYield() ));
+	Controls.GoldExpense:SetText( toPlusMinusNoneString( -playerTreasury:GetTotalMaintenance() ));	-- Flip that value!
+	Controls.GoldNet:SetText( toPlusMinusNoneString( playerTreasury:GetGoldYield() - playerTreasury:GetTotalMaintenance() ));
 	Controls.GoldBalance:SetText( m_kCityTotalData.Treasury[YieldTypes.GOLD] );
-	Controls.FaithBalance:SetText( m_kCityTotalData.Treasury[YieldTypes.FAITH] );
-	Controls.ScienceBalance:SetText( m_kCityTotalData.Treasury[YieldTypes.SCIENCE] );
-	Controls.CultureBalance:SetText( m_kCityTotalData.Treasury[YieldTypes.CULTURE] );
-	Controls.TourismBalance:SetText( m_kCityTotalData.Treasury["TOURISM"] );
+
 	
+	--Faith
+	local playerReligion:table	= localPlayer:GetReligion();
+	Controls.FaithIncome:SetText( toPlusMinusNoneString(playerReligion:GetFaithYield()));
+	Controls.FaithNet:SetText( toPlusMinusNoneString(playerReligion:GetFaithYield()));
+	Controls.FaithBalance:SetText( m_kCityTotalData.Treasury[YieldTypes.FAITH] );
+
+	--Science
+	local playerTechnology:table	= localPlayer:GetTechs();
+	Controls.ScienceIncome:SetText( toPlusMinusNoneString(playerTechnology:GetScienceYield()));
+	Controls.ScienceBalance:SetText( m_kCityTotalData.Treasury[YieldTypes.SCIENCE] );
+	
+	--Culture
+	local playerCulture:table	= localPlayer:GetCulture();
+	Controls.CultureIncome:SetText(toPlusMinusNoneString(playerCulture:GetCultureYield()));
+	Controls.CultureBalance:SetText(m_kCityTotalData.Treasury[YieldTypes.CULTURE] );
+	
+	--Tourism. We don't talk about this one much.
+	Controls.TourismIncome:SetText( toPlusMinusNoneString( m_kCityTotalData.Income["TOURISM"] ));	
+	Controls.TourismBalance:SetText( m_kCityTotalData.Treasury["TOURISM"] );
+		
 	Controls.BottomYieldTotals:SetHide( false );
 	Controls.BottomYieldTotals:SetSizeY( SIZE_HEIGHT_BOTTOM_YIELDS );
 	Controls.BottomResourceTotals:SetHide( true );
@@ -1060,7 +1197,7 @@ function ViewCityStatusPage()
 		pCityInstance.CityName:SetText( Locale.Lookup(kCityData.CityName) );
 		pCityInstance.Population:SetText( tostring(kCityData.Population) );
 
-		if kCityData.HousingMultiplier == 0 then
+		if kCityData.HousingMultiplier == 0 or kCityData.Occupied then
 			status = "LOC_HUD_REPORTS_STATUS_HALTED";
 		elseif kCityData.HousingMultiplier <= 0.5 then
 			status = "LOC_HUD_REPORTS_STATUS_SLOWED";

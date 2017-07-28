@@ -259,8 +259,7 @@ function PlayAnimations()
 end
 
 -- ===========================================================================
-function OnCivicBoostTriggered(ePlayer, civicIndex, iCivicProgress, eSource)
-
+function DoCivicBoost(ePlayer, civicIndex, iCivicProgress, eSource)
 	-- If it's the first turn of a late start game, ignore all the boosts the come across the wire.
 	if (not m_isPastLoadingScreen) and (Game.GetCurrentGameTurn() == GameConfiguration.GetStartTurn()) then 
 		return; 
@@ -280,7 +279,7 @@ function OnCivicBoostTriggered(ePlayer, civicIndex, iCivicProgress, eSource)
 end
 
 -- ===========================================================================
-function OnTechBoostTriggered(ePlayer, techIndex, iTechProgress, eSource)
+function DoTechBoost(ePlayer, techIndex, iTechProgress, eSource)
 
 	-- If it's the first turn of a late start game, ignore all the boosts the come across the wire.
 	if (not m_isPastLoadingScreen) and (Game.GetCurrentGameTurn() == GameConfiguration.GetStartTurn()) then 
@@ -360,6 +359,14 @@ function OnEnableTechAndCivicPopups()
 	m_isDisabledByTutorial = false;
 end
 
+function OnNotificationPanel_ShowTechBoost( ePlayer, techIndex, iTechProgress, eSource )
+	DoTechBoost(ePlayer, techIndex, iTechProgress, eSource);
+end
+
+function OnNotificationPanel_ShowCivicBoost( ePlayer, civicIndex, iCivicProgress, eSource )
+	DoCivicBoost(ePlayer, civicIndex, iCivicProgress, eSource);
+end
+
 -- ===========================================================================
 --	UI Callback
 -- ===========================================================================
@@ -383,10 +390,10 @@ function Initialize()
 	-- LUA Events
 	LuaEvents.TutorialUIRoot_DisableTechAndCivicPopups.Add( OnDisableTechAndCivicPopups );
 	LuaEvents.TutorialUIRoot_EnableTechAndCivicPopups.Add( OnEnableTechAndCivicPopups );
+	LuaEvents.NotificationPanel_ShowTechBoost.Add( OnNotificationPanel_ShowTechBoost );
+	LuaEvents.NotificationPanel_ShowCivicBoost.Add( OnNotificationPanel_ShowCivicBoost );
 
 	-- Game Events
-	Events.CivicBoostTriggered.Add( OnCivicBoostTriggered );
-	Events.TechBoostTriggered.Add( OnTechBoostTriggered );
 	Events.LocalPlayerTurnEnd.Add( OnLocalPlayerTurnEnd );
     Events.LoadGameViewStateDone.Add( OnLoadGameViewStateDone );	
 end

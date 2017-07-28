@@ -1,6 +1,6 @@
-include("InstanceManager");
+﻿include("InstanceManager");
 include("LobbyTypes"); --MPLobbyMode
-include("PopupDialogSupport");
+include("PopupDialog");
 
 -- ===========================================================================
 --	Members
@@ -11,10 +11,13 @@ local m_preSaveMainMenuOptions:	table = {};
 local m_defaultMainMenuOptions:	table = {};
 local m_singlePlayerListOptions:table = {};
 local m_hasSaves:boolean = false;
-local m_kPopupDialog;
+local m_hasCloudTurn:boolean = false;
+local m_checkedCloudTurns:boolean = false;
 local m_currentOptions:table = {};		--Track which main menu options are being displayed and selected. Indices follow the format of {optionControl:table, isSelected:boolean}
 local m_initialPause = 1.5;				--How long to wait before building the main menu options when the game first loads
 local m_internetButton:table = nil;		--Cache internet button so it can be updated when online status events fire
+local m_multiplayerButton:table = nil;	--Cache multiplayer button so it can be updated if a new cloud turn comes in.
+local m_cloudGamesButton:table = nil;	--Cache cloud games button so it can be updated if a new cloud turn comes in.
 local m_resumeButton:table = nil;		--Cache resume button so it can be updated when FileListQueryResults event fires
 local m_scenariosButton:table = nil;	--Cache scenarios button so it can be updated later.
 
@@ -97,12 +100,20 @@ end
 -- ===========================================================================
 function OnAdvancedSetup()
 	GameConfiguration.SetToDefaults();
+	-- Kludge:  SetToDefaults assigns the ruleset to be standard.
+	-- Clear this value so that the setup parameters code can guess the best 
+	-- default.
+	GameConfiguration.SetValue("RULESET", nil);
 	UIManager:QueuePopup(Controls.AdvancedSetup, PopupPriority.Current);
 end
 
 -- ===========================================================================
 function OnScenarioSetup()
 	GameConfiguration.SetToDefaults();
+	-- Kludge:  SetToDefaults assigns the ruleset to be standard.
+	-- Clear this value so that the setup parameters code can guess the best 
+	-- default.
+	GameConfiguration.SetValue("RULESET", nil);
 	UIManager:QueuePopup(Controls.ScenarioSetup, PopupPriority.Current);
 end
 
@@ -175,31 +186,7 @@ Events.MarketingPushDataUpdated.Add( OnMarketingPushDataUpdated );
 --	Engine Event
 -- ===========================================================================
 function OnUserRequestClose()
-    if ( not m_kPopupDialog:IsOpen()) then
-		m_kPopupDialog:AddText(Locale.Lookup("LOC_CONFIRM_EXIT_TXT"));
-		m_kPopupDialog:AddTitle(Locale.ToUpper(Locale.Lookup("LOC_MAIN_MENU_EXIT_TO_DESKTOP")), Controls.PopupTitle);
-		m_kPopupDialog:AddButton(Locale.Lookup("LOC_CANCEL_BUTTON"), ExitCancel);
-		m_kPopupDialog:AddButton(Locale.Lookup("LOC_OK_BUTTON"), ExitOK, nil, nil, "PopupButtonAltInstance"); 
-		m_kPopupDialog:Open();
-		UIManager:PushModal(Controls.PopupDialog, true);
-	end
-end
-
--- ===========================================================================
-function ExitOK()
-	ExitCancel();
-
-	if (Steam ~= nil) then
-		Steam.ClearRichPresence();
-	end
-
-	Events.UserConfirmedClose();
-end    
-
--- ===========================================================================
-function ExitCancel()
-	m_kPopupDialog:Close();
-	UIManager:PopModal(Controls.PopupDialog);
+    LuaEvents.MainMenu_UserRequestClose();
 end
 
     -- ===========================================================================
@@ -218,10 +205,23 @@ function OnCredits()
 end
 
 -- ===========================================================================
+function OnCloudTurnCheckComplete(haveTurn :boolean)
+	m_hasCloudTurn = haveTurn;
+	if (not ContextPtr:IsHidden()) then
+		UpdateCloudGamesButton();
+		UpdateMultiplayerButton();
+	end
+end
+
+-- ===========================================================================
 -- Multiplayer Select Screen
 -- ===========================================================================
 local InternetButtonOnlineStr : string = Locale.Lookup("LOC_MULTIPLAYER_INTERNET_GAME_TT");
 local InternetButtonOfflineStr : string = Locale.Lookup("LOC_MULTIPLAYER_INTERNET_GAME_OFFLINE_TT");
+local CloudButtonTTStr : string = Locale.Lookup("LOC_MULTIPLAYER_CLOUD_GAME_TT");
+local CloudButtonHaveTurnTTStr : string = Locale.Lookup("LOC_MULTIPLAYER_CLOUD_GAME_HAVE_TURN_TT");
+local MultiplayerButtonTTStr : string = Locale.Lookup("LOC_MAINMENU_MULTIPLAYER_TT");
+local MultiplayerButtonHaveTurnTTStr : string = Locale.Lookup("LOC_MAINMENU_MULTIPLAYER_HAVE_CLOUD_TURN_TT");
 
 -- ===========================================================================
 function OnInternet()
@@ -232,7 +232,7 @@ end
 
 -- ===========================================================================
 --	WB: This callback is complicated by these events which can happen at any time.
---	Because NO other buttons in the shell function in this way, using a special 
+--	Because few other buttons in the shell function in this way, using a special 
 --	variable to save this control (instead of a more general solution).
 -- ===========================================================================
 function UpdateInternetButton(buttonControl: table)
@@ -255,6 +255,40 @@ function UpdateInternetButton(buttonControl: table)
 	end
 end
 
+function UpdateCloudGamesButton(buttonControl: table)
+	if (buttonControl ~=nil) then
+		m_cloudGamesButton = buttonControl;
+	end
+	
+	-- Your turn in a cloud game?
+	if(m_cloudGamesButton ~= nil) then
+		if (m_hasCloudTurn) then
+			m_cloudGamesButton.Top:SetToolTipString(CloudButtonHaveTurnTTStr);
+			m_cloudGamesButton.ButtonLabel:SetText(Locale.Lookup("LOC_MULTIPLAYER_CLOUD_GAME_HAVE_TURN"));
+		else
+			m_cloudGamesButton.Top:SetToolTipString(CloudButtonTTStr);
+			m_cloudGamesButton.ButtonLabel:SetText(Locale.Lookup("LOC_MULTIPLAYER_CLOUD_GAME"));
+		end
+	end
+end
+
+function UpdateMultiplayerButton(buttonControl: table)
+	if (buttonControl ~=nil) then
+		m_multiplayerButton = buttonControl;
+	end
+	
+	-- Your turn in a cloud game?
+	if(m_multiplayerButton ~= nil) then
+		if (m_hasCloudTurn) then
+			m_multiplayerButton.Top:SetToolTipString(MultiplayerButtonHaveTurnTTStr);
+			m_multiplayerButton.ButtonLabel:SetText(Locale.Lookup("LOC_PLAY_MULTIPLAYER_HAVE_CLOUD_TURN"));
+		else
+			m_multiplayerButton.Top:SetToolTipString(MultiplayerButtonTTStr);
+			m_multiplayerButton.ButtonLabel:SetText(Locale.Lookup("LOC_PLAY_MULTIPLAYER"));
+		end
+	end
+end
+
 -- ===========================================================================
 function OnLANGame()
 	LuaEvents.ChangeMPLobbyMode(MPLobbyTypes.STANDARD_LAN);
@@ -270,28 +304,20 @@ function OnHotSeat()
 end
 
 -- ===========================================================================
+function OnPlayByCloud()
+	LuaEvents.ChangeMPLobbyMode(MPLobbyTypes.PLAYBYCLOUD);
+	UIManager:QueuePopup( Controls.Lobby, PopupPriority.Current );
+	Close();
+end
+
+-- ===========================================================================
 function OnCloud()
 	UIManager:QueuePopup( Controls.CloudGameScreen, PopupPriority.Current );
+	Close();
 end
 
 -- ===========================================================================
 function OnGameLaunched()	
-end
-
--- ===========================================================================
--- ESC handler
--- ===========================================================================
-function InputHandler( uiMsg, wParam, lParam )
-	if uiMsg == KeyEvents.KeyUp then
-		if wParam == Keys.VK_ESCAPE then
-			if(m_kPopupDialog ~= nil) then
-				if(m_kPopupDialog:IsOpen()) then
-					m_kPopupDialog:Close();
-				end
-			end
-		end
-		return true;
-	end
 end
 
 -- ===========================================================================
@@ -331,7 +357,7 @@ function ToggleOption(optionIndex, submenu)
 	if(m_currentOptions[optionIndex].isSelected) then
 		-- If the thing I selected was already selected, then toggle it off
 		UI.PlaySound("Main_Main_Panel_Collapse"); 
-		--Controls.SubMenuContainer:SetHide(true);
+		Controls.SubMenuContainer:SetHide(true);
 		Controls.SubMenuAlpha:Reverse();
 		Controls.SubMenuSlide:Reverse();
 		DeselectOption(optionIndex);
@@ -355,6 +381,7 @@ function ToggleOption(optionIndex, submenu)
 			Controls.SubMenuAlpha:Play();
 			Controls.SubMenuSlide:SetToBeginning();
 			Controls.SubMenuSlide:Play();
+			Controls.SubMenuContainer:SetHide(false);
 		end
 		-- Now show the selector around the new thing 
 		optionControl.SelectionAnimAlpha:SetToBeginning();
@@ -438,10 +465,11 @@ local m_SinglePlayerSubMenu :table = {
 							};
 
 local m_MultiPlayerSubMenu :table = {
-								{label = "LOC_MULTIPLAYER_INTERNET_GAME",	callback = OnInternet,	tooltip = "LOC_MULTIPLAYER_INTERNET_GAME_TT", buttonState = UpdateInternetButton},
-								{label = "LOC_MULTIPLAYER_LAN_GAME",		callback = OnLANGame,	tooltip = "LOC_MULTIPLAYER_LAN_GAME_TT"},
-								{label = "LOC_MULTIPLAYER_HOTSEAT_GAME",	callback = OnHotSeat,	tooltip = "LOC_MULTIPLAYER_HOTSEAT_GAME_TT"},
-								--{label = "LOC_MULTIPLAYER_CLOUD_GAME",		callback = OnCloud,		tooltip = "LOC_MULTIPLAYER_CLOUD_GAME_TT"},
+								--{label = "LOC_MULTIPLAYER_CLOUD_GAME",		callback = OnPlayByCloud,	tooltip = "LOC_MULTIPLAYER_CLOUD_GAME_TT", buttonState = UpdateCloudGamesButton},
+								{label = "LOC_MULTIPLAYER_INTERNET_GAME",	callback = OnInternet,		tooltip = "LOC_MULTIPLAYER_INTERNET_GAME_TT", buttonState = UpdateInternetButton},
+								{label = "LOC_MULTIPLAYER_LAN_GAME",		callback = OnLANGame,		tooltip = "LOC_MULTIPLAYER_LAN_GAME_TT"},
+								{label = "LOC_MULTIPLAYER_HOTSEAT_GAME",	callback = OnHotSeat,		tooltip = "LOC_MULTIPLAYER_HOTSEAT_GAME_TT"},
+								--{label = "LOC_MULTIPLAYER_CLOUD_GAME",		callback = OnCloud,			tooltip = "LOC_MULTIPLAYER_CLOUD_GAME_TT"},
 							};
 
 local m_BenchmarkSubMenu :table = {
@@ -455,11 +483,12 @@ local m_BenchmarkSubMenu :table = {
 --	label - the text string for the button (un-localized)
 --	callback - the function to call from this button
 --	submenu - the submenu table to open for this button (defined above)
+--	buttonState - a function to call which will update the buttonstate and tooltip
 -- ===========================================================================
 local m_preSaveMainMenuOptions :table = {	{label = "LOC_PLAY_CIVILIZATION_6",			callback = OnPlayCiv6}};  
 local m_defaultMainMenuOptions :table = {	
 								{label = "LOC_SINGLE_PLAYER",				callback = OnSinglePlayer,	tooltip = "LOC_MAINMENU_SINGLE_PLAYER_TT",	submenu = m_SinglePlayerSubMenu}, 
-								{label = "LOC_PLAY_MULTIPLAYER",			callback = OnMultiPlayer,	tooltip = "LOC_MAINMENU_MULTIPLAYER_TT",	submenu = m_MultiPlayerSubMenu},
+								{label = "LOC_PLAY_MULTIPLAYER",			callback = OnMultiPlayer,	tooltip = "LOC_MAINMENU_MULTIPLAYER_TT",	submenu = m_MultiPlayerSubMenu, buttonState = UpdateMultiplayerButton},
 								{label = "LOC_MAIN_MENU_OPTIONS",			callback = OnOptions,	tooltip = "LOC_MAINMENU_GAME_OPTIONS_TT"},
 								{label = "LOC_MAIN_MENU_ADDITIONAL_CONTENT",				callback = OnMods,	tooltip = "LOC_MAIN_MENU_ADDITIONAL_CONTENT_TT"},
 								{label = "LOC_MAIN_MENU_TUTORIAL",			callback = OnTutorial,	tooltip = "LOC_MAINMENU_TUTORIAL_TT"},
@@ -552,6 +581,11 @@ function BuildMenu(menuOptions:table)
 
 		
 		option.Top:LocalizeAndSetToolTip(menuOption.tooltip);
+
+		-- Use special button update function if it exists for this menu option.
+		if (menuOption.buttonState ~= nil) then
+			menuOption.buttonState(option); 
+		end	
 		
 		-- Accumulate a pause so that the flags appear one at a time
 		pauseAccumulator = pauseAccumulator + PAUSE_INCREMENT;
@@ -684,6 +718,8 @@ function BuildAllMenus()
 	m_resumeButton = nil;
 	m_internetButton = nil;
 	m_scenariosButton = nil;
+	m_multiplayerButton = nil;
+	m_cloudGamesButton = nil;
 
 	-- WISHLIST: When we rebuild the menus, let's check to see if there are ANY saved games whatsoever.  
 	-- If none exist, then do not display the option in the submenu. (See: OnFileListQueryResults)
@@ -712,6 +748,7 @@ function Resize()
 	Controls.VersionLabel:ReprocessAnchoring();
 	Controls.ShellStack:ReprocessAnchoring();
 	Controls.My2KContents:ReprocessAnchoring();
+	Controls.MotDContainter:SetSizeX(screenX);
 	ResizeMOTD();
 end
 
@@ -755,6 +792,9 @@ function OnShow()
 	g_LastFileQueryRequestID = nil;
 	local options = SaveLocationOptions.NORMAL + SaveLocationOptions.AUTOSAVE + SaveLocationOptions.QUICKSAVE + SaveLocationOptions.MOST_RECENT_ONLY + SaveLocationOptions.LOAD_METADATA ;
 	g_LastFileQueryRequestID = UI.QuerySaveGameList( saveLocation, gameType, options );
+
+	m_checkedCloudTurns = false;
+	UpdateCheckCloudTurns();
 end
 
 function OnHide()
@@ -801,16 +841,31 @@ function OnCycleMotD()
 end
 
 -- ===========================================================================
+function OnFiraxisLiveActivate(bActive)
+	UpdateCheckCloudTurns();
+end
+
+function UpdateCheckCloudTurns()
+	--[[
+	if(not m_checkedCloudTurns) then
+		local kandoConnected = FiraxisLive.IsKandoConnected();
+		if(kandoConnected) then
+			local started = FiraxisLive.CheckForCloudTurns();
+			if(started) then
+				m_checkedCloudTurns = true;
+			end
+		end
+	end
+	--]]
+end
+
+-- ===========================================================================
 function Initialize()
-	m_kPopupDialog = PopupDialogLogic:new( "MainMenu", Controls.PopupDialog, Controls.StackContents );
-    m_kPopupDialog:SetInstanceNames( "PopupButtonInstance", "Button", "PopupTextInstance", "Text", "RowInstance", "Row");
-	m_kPopupDialog:SetOpenAnimationControls( Controls.PopupAlphaIn, Controls.PopupSlideIn );
-	m_kPopupDialog:SetSize(400,200);
 
 	UI.CheckUserSetup();
 
 	ContextPtr:SetShowHandler( OnShow );
-	ContextPtr:SetInputHandler( InputHandler );
+	
 	Controls.VersionLabel:SetText( UI.GetAppVersion() );
 	Controls.My2KLogin:RegisterCallback( Mouse.eLClick, OnMy2KLogin );
 	Controls.My2KLogin:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
@@ -825,6 +880,8 @@ function Initialize()
 	Events.MultiplayerGameLaunched.Add( OnGameLaunched );
 	Events.SystemUpdateUI.Add( OnUpdateUI );
     Events.UserRequestClose.Add( OnUserRequestClose );
+	Events.CloudTurnCheckComplete.Add( OnCloudTurnCheckComplete );
+	Events.FiraxisLiveActivate.Add( OnFiraxisLiveActivate );
 
 	-- LUA Events
 	LuaEvents.FileListQueryResults.Add( OnFileListQueryResults );

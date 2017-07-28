@@ -6,13 +6,15 @@
 
     <Container ID="MainWindow" Style="ShellWindowContainer">
 
-      <Container Style="ShellHeaderContainer">
-        <Grid Style="ShellHeaderButtonGrid">
+      <Container Style="ShellHeaderContainer">  
+		<Grid Style="ShellHeaderButtonGrid">
+			<GridButton ID="DefaultButton" Style="ShellButtonOrnateFlat" Anchor="L,C" Size="300,parent" Offset="1,0" String="{LOC_SETUP_RESTORE_DEFAULT:upper}" ToolTip="LOC_SETUP_RESTORE_DEFAULT_TT" />
+		</Grid>
+		 <Grid Style="ShellHeaderButtonGrid">
           <GridButton ID="CloseButton" Style="ShellButtonOrnateFlat" Anchor="R,C" Offset="1,0" String="LOC_MULTIPLAYER_BACK"/>
         </Grid>
         <Label ID="WindowTitle" Style="ShellHeader" Anchor="C,C" String="{LOC_SETUP_CREATE_GAME:upper}"/>
       </Container>
-
 
       <Container ID="CreateGameWindow" Hidden="0" Size="parent,parent">
         <Grid Style="SubContainer4" Size="parent-10,670" Anchor="C,T" Color="7,28,50" Offset="0,55"  InnerPadding="0,0">
@@ -22,9 +24,15 @@
                 <Image Texture="Controls_Gradient_HalfRadial" Size="parent, 120" Anchor="C,T" Color="44,90,134,255" Offset="0,-4" FlipY="1"/>
                 <Image Texture="Controls_Gradient_HalfRadial" Size="parent, 120" Anchor="C,B" Color="44,90,134,255" Offset="0,-4"/>
                 <Stack ID="CreateGameOptions" StackGrowth="Down" Offset="0,30" Anchor="C,T">
+                <Container ID="CreateGame_RulesetContainer" Size="parent+10,50">
+                  <Box Color="62,152,203,20" Anchor="C,T" Size="parent,30">
+                    <Label Anchor="C,T" Style="ShellSubHeaderText" String="{LOC_SETUP_CHOOSE_RULESET:upper}" AnchorSide="I,O"/>
+                    <PullDown ID="CreateGame_GameRuleset" Anchor="C,C" Style="PullDownBlue" Size="325,24"/>
+                  </Box>
+                </Container>
                   <Container Size="parent+10,70">
                     
-                    <Box Color="62,152,203,20" Anchor="C,T" Size="parent,55">                    
+                  <Box Color="62,152,203,20" Anchor="C,C" Size="parent,55">
                       <Label Anchor="C,T" Style="ShellSubHeaderText" String="{LOC_SETUP_CIVILIZATION:upper}" AnchorSide="I,O"/>
 											<PullDown ID="Basic_LocalPlayerPulldown" Anchor="C,C" Offset="0,0" Size="325,50"  AutoSizePopup="1" ScrollThreshold="520" SpaceForScroll="15">
 												<ButtonData>
@@ -60,28 +68,28 @@
                     </Box>
                   </Container>
                   
-                  <Container Size="parent+10,50">
+                <Container ID="CreateGame_GameDifficultyContainer" Size="parent+10,50">
                     <Box Color="62,152,203,20" Anchor="C,B" Size="parent,30">
                       <Label Anchor="C,T" Style="ShellSubHeaderText" String="{LOC_SETUP_DIFFICULTY:upper}" AnchorSide="I,O"/>
                       <PullDown ID="CreateGame_GameDifficulty" Anchor="C,C" Style="PullDownBlue" Size="200,24"/>
                     </Box>
                   </Container>
                   
-                  <Container Size="parent+10,70">
+                <Container ID="CreateGame_SpeedPulldownContainer" Size="parent+10,70">
                     <Box Color="62,152,203,20" Anchor="C,B" Size="parent,30">
                       <Label Anchor="C,T" Style="ShellSubHeaderText" String="{LOC_SETUP_SPEED:upper}" AnchorSide="I,O"/>
                       <PullDown ID="CreateGame_SpeedPulldown" Anchor="C,C" Style="PullDownBlue" Size="200,24"/>
                     </Box>
                   </Container>
                   
-                  <Container Size="parent+10,70">
+                <Container ID="CreateGame_MapTypeContainer" Size="parent+10,70">
                     <Box Color="62,152,203,20" Anchor="C,B" Size="parent,30">
                       <Label Anchor="C,T" Style="ShellSubHeaderText" String="{LOC_SETUP_MAP_TYPE:upper}" AnchorSide="I,O"/>
                       <PullDown ID="CreateGame_MapType" Anchor="C,C" Style="PullDownBlue" Size="200,24"/>
                     </Box>
                   </Container>
                   
-                  <Container Size="parent+10,70">
+                <Container ID="CreateGame_MapSizeContainer" Size="parent+10,70">
                     <Box Color="62,152,203,20" Anchor="C,B" Size="parent,30">
                       <Label Anchor="C,T" Style="ShellSubHeaderText" String="{LOC_SETUP_MAP_SIZE:upper}" AnchorSide="I,O"/>
                       <PullDown ID="CreateGame_MapSize" Anchor="C,C" Style="PullDownBlue" Size="200,24"/>
@@ -208,11 +216,14 @@
             </Grid><!-- Game options -->
             </Stack>
             <Container ID="AdvancedTooltipContainer" Size="340,670" Anchor="L,C" Offset="445,0"/>
-            <GridButton ID="DefaultButton" Size="150,22" Style="ShellButton" AnchorSide="I,O" Anchor="R,B" Offset="0,10" String="LOC_SETUP_RESTORE_DEFAULT" ToolTip="LOC_SETUP_RESTORE_DEFAULT_TT"/>
         </Grid><!-- Decorative border -->
       </Container><!--Advanced Options-->
-    <GridButton ID="StartButton" Size="260,45" Style="ButtonConfirm" Anchor="C,B" String="LOC_START_GAME" Hidden="0"/>
-    </Container><!-- Main Window -->
+		<Stack ID="ButtonStack" Anchor="C,B" Padding="20" StackGrowth="Right">
+			<GridButton ID="LoadConfig" Size="260,45" Style="MainButton" Anchor="C,B" String="LOC_LOAD_CONFIG" Hidden="1"/>
+			<GridButton ID="SaveConfig" Size="260,45" Style="MainButton" Anchor="C,B" String="LOC_SAVE_CONFIG" Hidden="1"/>
+			<GridButton ID="StartButton" Size="260,45" Style="ButtonConfirm" Anchor="C,B" String="LOC_START_GAME" Hidden="0"/>
+		</Stack>
+	</Container><!-- Main Window -->
   </Box><!-- Main Box -->
 
 

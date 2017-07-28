@@ -6,7 +6,8 @@
 	  <Row Name="ICON_ATLAS_UNITS" IconSize="50" IconsPerRow="16" IconsPerColumn="8" Filename="Units50.dds"/>
 	  <Row Name="ICON_ATLAS_UNITS" IconSize="38" IconsPerRow="16" IconsPerColumn="8" Filename="Units38.dds"/>
 	  <Row Name="ICON_ATLAS_UNITS" IconSize="32" IconsPerRow="16" IconsPerColumn="8" Filename="Units32.dds"/>
-    <Row Name="ICON_ATLAS_UNITS_FOW" IconSize="32" IconsPerRow="16" IconsPerColumn="8" Filename="Units32.dds"/>
+		<Row Name="ICON_ATLAS_UNITS" IconSize="22" IconsPerRow="16" IconsPerColumn="8" Filename="Units22.dds"/>
+		<Row Name="ICON_ATLAS_UNITS_FOW" IconSize="32" IconsPerRow="16" IconsPerColumn="8" Filename="Units32.dds"/>
   </IconTextureAtlases>
   <IconDefinitions>
     <Row Name="ICON_UNIT_SETTLER"                  Atlas="ICON_ATLAS_UNITS" Index="0"/>

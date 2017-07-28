@@ -25,6 +25,7 @@ g_CloudSaves = {};
 g_FileList = {};
 g_FileEntryInstanceList = {};
 g_GameType = SaveTypes.SINGLE_PLAYER;
+g_FileType = SaveFileTypes.GAME_STATE;
 
 g_CurrentGameMetaData = nil
 
@@ -36,6 +37,11 @@ g_FilenameIsValid = false;
 
 ----------------------------------------------------------------
 function ValidateFileName(text)
+
+	if text == nil then
+		return false;
+	end
+
 	local isAllWhiteSpace = true;
 	for i = 1, #text, 1 do
 		if (string.byte(text, i) ~= 32) then
@@ -117,10 +123,27 @@ end
 -- Must exist below callback function names
 ---------------------------------------------------------------------------
 local m_sortOptions = {
-	{"LOC_SORTBY_LASTMODIFIED", SortByLastModified},
-	{"LOC_SORTBY_NAME",			SortByName},
+	{"LOC_SORTBY_LASTMODIFIED", SortByLastModified, 1},
+	{"LOC_SORTBY_NAME",			SortByName, 2},
 };
 
+
+---------------------------------------------------------------------------
+function RefreshSortPulldown()
+	if g_GameType == SaveTypes.WORLDBUILDER_MAP then
+		sortStyle = Options.GetUserOption("Interface", "WorldBuilderMapBrowseSortDefault");
+	else
+		sortStyle = Options.GetUserOption("Interface", "SaveGameBrowseSortDefault");
+	end
+
+	-- Make sure it is valid
+	if sortStyle ~= 1 and sortStyle ~= 2 then
+		sortStyle = 1;
+	end
+
+	Controls.SortByPullDown:GetButton():LocalizeAndSetText(m_sortOptions[sortStyle][1]);
+	g_CurrentSort = m_sortOptions[sortStyle][2];
+end
 
 ---------------------------------------------------------------------------
 function SetupSortPulldown()
@@ -134,14 +157,151 @@ function SetupSortPulldown()
 		controlTable.Button:RegisterCallback(Mouse.eLClick, function()
 			sortByPulldown:GetButton():LocalizeAndSetText( v[1] );
 			g_CurrentSort = v[2];
+			-- Store the default
+			if g_GameType == SaveTypes.WORLDBUILDER_MAP then
+				Options.SetUserOption("Interface", "WorldBuilderMapBrowseSortDefault", v[3]);
+			else
+				Options.SetUserOption("Interface", "SaveGameBrowseSortDefault", v[3]);
+			end
+
+	        Options.SaveOptions();
+
 			RebuildFileList();
 		end);
 	
 	end
 	sortByPulldown:CalculateInternals();
 
-	sortByPulldown:GetButton():LocalizeAndSetText(m_sortOptions[1][1]);
-	g_CurrentSort = m_sortOptions[1][2];
+	RefreshSortPulldown();
+end
+
+----------------------------------------------------------------        
+-- Directory Browse
+----------------------------------------------------------------        
+
+g_CurrentDirectoryPath = "";
+g_CurrentDirectorySegments = {};
+
+---------------------------------------------------------------------------
+function ChangeDirectoryLevelTo(toLevel)
+
+	g_CurrentDirectoryPath = UI.TruncatePathLevels(SaveLocations.LOCAL_STORAGE, g_CurrentDirectoryPath, toLevel);
+	g_CurrentDirectorySegments = UI.GetPathLevels(SaveLocations.LOCAL_STORAGE, g_CurrentDirectoryPath);
+
+	ContextPtr:RequestRefresh();
+end
+
+---------------------------------------------------------------------------
+function ChangeDirectoryTo(newDirectory)
+
+	if newDirectory ~= nil then
+		g_CurrentDirectoryPath = newDirectory;
+		g_CurrentDirectorySegments = UI.GetPathLevels(SaveLocations.LOCAL_STORAGE, g_CurrentDirectoryPath);
+
+		ContextPtr:RequestRefresh();
+	end
+end
+
+---------------------------------------------------------------------------
+function ChangeVolumeTo(newVolume)
+
+	if newVolume ~= nil then
+		g_CurrentDirectoryPath = newVolume;
+		g_CurrentDirectorySegments = UI.GetPathLevels(SaveLocations.LOCAL_STORAGE, g_CurrentDirectoryPath);
+
+		ContextPtr:RequestRefresh();
+	end
+end
+
+---------------------------------------------------------------------------
+function InitializeDirectoryBrowsing()
+	g_CurrentDirectoryPath = "";
+	g_CurrentDirectorySegments = {};
+end
+
+---------------------------------------------------------------------------
+function SetupDirectoryBrowsePulldown()
+	local directoryPullDown = Controls.DirectoryPullDown;
+	if directoryPullDown ~= nil then
+		directoryPullDown:ClearEntries();
+
+		if g_ShowCloudSaves or g_GameType ~= SaveTypes.WORLDBUILDER_MAP then
+			-- Only have directory browsing for WorldBuilder Maps
+			directoryPullDown:SetHide(true);
+		else
+			directoryPullDown:SetHide(false);
+
+			if g_CurrentDirectoryPath == nil or g_CurrentDirectoryPath == "" then
+				g_CurrentDirectoryPath = UI.GetSaveLocationPath(SaveLocations.LOCAL_STORAGE, g_GameType, SaveLocationOptions.NO_OPTIONS, true);		-- Get the save location path, if applicable.  Note, passing true at the end is requesting the previously used directory.
+				g_CurrentDirectorySegments = UI.GetPathLevels(SaveLocations.LOCAL_STORAGE, g_CurrentDirectoryPath);
+			end
+		
+			local usingVolumeName = nil;
+
+			if g_CurrentDirectorySegments ~= nil then
+				local iEntryCount = #g_CurrentDirectorySegments;
+				if iEntryCount > 0 then
+					-- We are going to go back to front, so the last directory is at the top of the pulldown.
+					for i = iEntryCount, 1, -1 do 
+						local v = g_CurrentDirectorySegments[i];
+						local controlTable = {};
+						directoryPullDown:BuildEntry( "InstanceOne", controlTable );
+						local displayName;
+						if v.DisplayName ~= nil and v.DisplayName ~= "" then
+							displayName = v.DisplayName;
+						else
+							displayName = v.SegmentName;
+						end
+
+						controlTable.Button:LocalizeAndSetText(displayName);
+						controlTable.Button:RegisterCallback(Mouse.eLClick, function()
+							ChangeDirectoryLevelTo(i);
+							end);
+
+						-- Set the top level button to the first one.
+						if i == iEntryCount then
+							directoryPullDown:GetButton():LocalizeAndSetText(displayName);
+						end
+
+						if i == 1 then
+							usingVolumeName = v.SegmentName;
+						end
+					end
+				end
+			end
+
+			-- Put the volume list after that
+
+			if g_VolumeList == nil then
+				g_VolumeList = UI.GetVolumes(SaveLocations.LOCAL_STORAGE);
+			end
+
+			if g_VolumeList ~= nil then
+				local iEntryCount = #g_VolumeList;
+				if iEntryCount > 0 then
+					for i = 1, iEntryCount, 1 do 
+						local v = g_VolumeList[i];
+						if usingVolumeName == nil or usingVolumeName ~= v.VolumeName then
+							local controlTable = {};
+							directoryPullDown:BuildEntry( "InstanceOne", controlTable );
+							local displayName;
+							if v.DisplayName ~= nil and v.DisplayName ~= "" then
+								controlTable.Button:LocalizeAndSetText(v.DisplayName);
+							else
+								controlTable.Button:SetText(v.VolumeName);		-- Assume the volume name doesn't need translation.
+							end
+
+							local volumeName = v.VolumeName
+							controlTable.Button:RegisterCallback(Mouse.eLClick, function()
+								ChangeVolumeTo(volumeName);
+							end);
+						end
+					end
+				end				
+			end
+		end
+		directoryPullDown:CalculateInternals();
+	end
 end
 
 ----------------------------------------------------------------        
@@ -155,30 +315,124 @@ function UpdateGameType()
 	else
 		g_GameType = Network.GetGameConfigurationSaveType();
 	end
+	
+	-- Setup the type of file we are working with, full game state or configuration
+	g_FileType = SaveFileTypes.GAME_STATE;
+
+	local params = ContextPtr:GetPopupParameters();
+	if params ~= nil then
+		local fileType = params:GetValue("FileType");
+		if fileType ~= nil then
+			-- Make sure it is one of the values we know how to deal with.
+			if fileType == SaveFileTypes.GAME_STATE or fileType == SaveFileTypes.GAME_CONFIGURATION then
+				g_FileType = fileType;
+			end
+		end
+	end
+
+	-- Set some strings that change whether this is a Game State or Configuration operation
+	if g_GameType == SaveTypes.WORLDBUILDER_MAP then
+		Controls.NoGames:LocalizeAndSetText( "{LOC_NO_SAVED_MAPS:upper}" );
+	else
+		if g_FileType == SaveFileTypes.GAME_CONFIGURATION then
+			Controls.NoGames:LocalizeAndSetText( "{LOC_NO_SAVED_CONFIGS:upper}" );
+		else
+			Controls.NoGames:LocalizeAndSetText( "{LOC_NO_SAVED_GAMES:upper}" );				
+		end
+	end
+
+	-- Update Title text
+	if g_GameType == SaveTypes.WORLDBUILDER_MAP then
+		if g_MenuType == SAVE_GAME then
+			Controls.WindowHeader:LocalizeAndSetText( "{LOC_SAVE_MAP_BUTTON:upper}" );
+		else
+			Controls.WindowHeader:LocalizeAndSetText( "{LOC_LOAD_MAP:upper}" );
+		end
+	elseif g_FileType == SaveFileTypes.GAME_CONFIGURATION then
+		if g_MenuType == SAVE_GAME then
+			Controls.WindowHeader:LocalizeAndSetText( "{LOC_SAVE_CONFIG:upper}" );
+		else
+			Controls.WindowHeader:LocalizeAndSetText( "{LOC_LOAD_CONFIG:upper}" );
+		end
+	else
+		if g_MenuType == SAVE_GAME then
+			Controls.WindowHeader:LocalizeAndSetText( "{LOC_SAVE_GAME:upper}" );
+		else
+			Controls.WindowHeader:LocalizeAndSetText( "{LOC_LOAD_GAME:upper}" );
+		end
+	end
+
+
 end
 
 ----------------------------------------------------------------        
 ---------------------------------------------------------------- 
-function GetDisplayName(file)
-	return Path.GetFileNameWithoutExtension(file);
+function GetDisplayName(file, isDirectory)
+	if isDirectory == nil or isDirectory == false then		
+		return Path.GetFileNameWithoutExtension(file);
+	else
+		return file;
+	end
+end
+
+----------------------------------------------------------------        
+----------------------------------------------------------------   
+function UpdateActionButtonText(isDirectory)
+
+	if isDirectory then
+		Controls.ActionButton:LocalizeAndSetText("LOC_OPEN_DIRECTORY");
+	else
+		if g_GameType == SaveTypes.WORLDBUILDER_MAP then
+			if g_MenuType == SAVE_GAME then
+				Controls.ActionButton:LocalizeAndSetText( "LOC_SAVE_MAP_BUTTON" );
+			else
+				Controls.ActionButton:LocalizeAndSetText( "LOC_LOAD_MAP" );
+			end
+		else
+			if g_FileType == SaveFileTypes.GAME_CONFIGURATION then
+				if g_MenuType == SAVE_GAME then
+					Controls.ActionButton:LocalizeAndSetText( "LOC_SAVE_CONFIG" );
+				else
+					Controls.ActionButton:LocalizeAndSetText( "LOC_LOAD_CONFIG" );
+				end
+			else
+				if g_MenuType == SAVE_GAME then
+					Controls.ActionButton:LocalizeAndSetText( "LOC_SAVE_GAME" );
+				else
+					Controls.ActionButton:LocalizeAndSetText( "LOC_LOAD_GAME" );
+				end
+			end
+		end
+	end
 end
 
 ----------------------------------------------------------------        
 ----------------------------------------------------------------   
 function DismissCurrentSelected()   
     if( g_iSelectedFileEntry ~= -1 ) then
-		g_FileEntryInstanceList[ g_iSelectedFileEntry ].SelectionAnimAlpha:Reverse();
-		g_FileEntryInstanceList[ g_iSelectedFileEntry ].SelectionAnimSlide:Reverse();
-		g_FileEntryInstanceList[ g_iSelectedFileEntry ].Button:SetDisabled(false);
+		local fileEntryInstance = g_FileEntryInstanceList[ g_iSelectedFileEntry ];
+		if fileEntryInstance ~= nil then
+			fileEntryInstance.SelectionAnimAlpha:Reverse();
+			fileEntryInstance.SelectionAnimSlide:Reverse();
+		end
 		g_iSelectedFileEntry = -1;
     end  
 end
 
+----------------------------------------------------------------        
+----------------------------------------------------------------   
 function SetSelected( index )
+	
 	if( index == -1) then
 		Controls.NoSelectedFile:SetHide(false);
 		Controls.SelectedFile:SetHide(true);
 	else
+
+		if( g_iSelectedFileEntry == index) then
+			-- Already selected
+			return;
+		end
+
 		Controls.NoSelectedFile:SetHide(true);
 		Controls.SelectedFile:SetHide(false);
 	end
@@ -188,38 +442,62 @@ function SetSelected( index )
     g_iSelectedFileEntry = index;
 	local modsHidden = true;
     if( g_iSelectedFileEntry ~= -1 ) then
-		g_FileEntryInstanceList[ g_iSelectedFileEntry ].SelectionAnimAlpha:SetToBeginning();
-		g_FileEntryInstanceList[ g_iSelectedFileEntry ].SelectionAnimAlpha:Play();
-		g_FileEntryInstanceList[ g_iSelectedFileEntry ].SelectionAnimSlide:SetToBeginning();
-		g_FileEntryInstanceList[ g_iSelectedFileEntry ].SelectionAnimSlide:Play();
-		g_FileEntryInstanceList[ g_iSelectedFileEntry ].Button:SetDisabled(true);
-		local kSelectedFile = g_FileList[ g_iSelectedFileEntry ];
-		local displayName = GetDisplayName(kSelectedFile.Name); 
 
-		local mods = kSelectedFile.RequiredMods or {};
-		local mod_errors = Modding.CheckRequirements(mods, g_GameType);
-		local success = (mod_errors == nil or mod_errors.Success);
-
-		-- Populate details of the save, include list of mod errors so the UI can reflect.
-		PopulateInspectorData(kSelectedFile, displayName, mod_errors);
-
-		if (g_MenuType == LOAD_GAME) then
-			-- Assume the filename is valid when loading.
-			g_FilenameIsValid = true;
-		else
-			g_FilenameIsValid = ValidateFileName(displayName);
+		local fileEntryInstance = g_FileEntryInstanceList[ g_iSelectedFileEntry ];
+		if fileEntryInstance == nil then
+			return;
 		end
 
-		UpdateActionButtonState();
-		Controls.Delete:SetHide( false );
+		fileEntryInstance.SelectionAnimAlpha:SetToBeginning();
+		fileEntryInstance.SelectionAnimAlpha:Play();
+		fileEntryInstance.SelectionAnimSlide:SetToBeginning();
+		fileEntryInstance.SelectionAnimSlide:Play();
 
-		-- Presume there are no errors if the table is nil.
-		Controls.ActionButton:SetDisabled(not success);
+		local kSelectedFile = g_FileList[ g_iSelectedFileEntry ];
+		if kSelectedFile == nil then
+			return;
+		end
+
+		if kSelectedFile.IsDirectory then
+			-- Selected a directory
+			Controls.NoSelectedFile:SetHide(false);
+			Controls.SelectedFile:SetHide(true);
+			Controls.ActionButton:SetToolTipString(nil);
+			Controls.ActionButton:SetDisabled(false);
+			UpdateActionButtonText(true);
+			Controls.Delete:SetHide( false );
+		else
+			-- Selected a save game
+			local displayName = GetDisplayName(kSelectedFile.Name); 
+
+			local mods = kSelectedFile.RequiredMods or {};
+			local mod_errors = Modding.CheckRequirements(mods, g_GameType);
+			local success = (mod_errors == nil or mod_errors.Success);
+
+			-- Populate details of the save, include list of mod errors so the UI can reflect.
+			PopulateInspectorData(kSelectedFile, displayName, mod_errors);
+
+			if (g_MenuType == LOAD_GAME) then
+				-- Assume the filename is valid when loading.
+				g_FilenameIsValid = true;
+			else
+				g_FilenameIsValid = ValidateFileName(displayName);
+			end
+
+			UpdateActionButtonText(false);
+			UpdateActionButtonState();
+			Controls.Delete:SetHide( false );
+
+			-- Presume there are no errors if the table is nil.
+			Controls.ActionButton:SetDisabled(not success);
+		end
 	else
 		if (g_MenuType == LOAD_GAME) then
 			Controls.ActionButton:SetDisabled( true );
 			Controls.ActionButton:SetToolTipString(nil);
 		end
+
+		UpdateActionButtonText(false);
 
 		Controls.Delete:SetHide( true );
     end
@@ -249,16 +527,23 @@ function PopulateInspectorData(fileInfo, fileName, mod_errors)
 	else
 		-- Set default file data for save game...
 		local defaultFileName: string = "";
-		local turnNumber = Game.GetCurrentGameTurn();
-		if GameCapabilities.HasCapability("CAPABILITY_DISPLAY_NORMALIZED_TURN") then
-			turnNumber = (turnNumber - GameConfiguration.GetStartTurn()) + 1; -- Keep turns starting at 1.
-		end
-		local localPlayer = Game.GetLocalPlayer();
-		if (localPlayer ~= -1) then
-			local player = Players[localPlayer];
-			local playerConfig = PlayerConfigurations[player:GetID()];
-			local strDate = Calendar.MakeYearStr(turnNumber, GameConfiguration.GetCalendarType(), GameConfiguration.GetGameSpeedType(), false);
-			defaultFileName = Locale.ToUpper( Locale.Lookup(playerConfig:GetLeaderName())).." "..turnNumber.. " ".. strDate;
+		if g_GameType == SaveTypes.WORLDBUILDER_MAP then
+			-- For World Builder, use the last name
+			defaultFileName = UI.GetLastSaveName();
+		else
+			if g_FileType == SaveFileTypes.GAME_STATE then
+				local turnNumber = Game.GetCurrentGameTurn();
+				if GameCapabilities.HasCapability("CAPABILITY_DISPLAY_NORMALIZED_TURN") then
+					turnNumber = (turnNumber - GameConfiguration.GetStartTurn()) + 1; -- Keep turns starting at 1.
+				end
+				local localPlayer = Game.GetLocalPlayer();
+				if (localPlayer ~= -1) then
+					local player = Players[localPlayer];
+					local playerConfig = PlayerConfigurations[player:GetID()];
+					local strDate = Calendar.MakeYearStr(turnNumber, GameConfiguration.GetCalendarType(), GameConfiguration.GetGameSpeedType(), false);
+					defaultFileName = Locale.ToUpper( Locale.Lookup(playerConfig:GetLeaderName())).." "..turnNumber.. " ".. strDate;
+				end
+			end
 		end
 		Controls.FileName:SetText(defaultFileName);
 	end
@@ -509,7 +794,7 @@ function RebuildFileList()
 		if(v.IsQuicksave) then
 			v.DisplayName = Locale.Lookup("LOC_LOADSAVE_QUICK_SAVE");
 		else
-			v.DisplayName = GetDisplayName(v.Name);
+			v.DisplayName = GetDisplayName(v.Name, v.IsDirectory);
 		end
 	
 		local high, low = UI.GetSaveGameModificationTimeRaw(v);
@@ -651,7 +936,7 @@ function UpdateActionButtonState()
 
 			if (g_MenuType == SAVE_GAME) then
 				local gameFile = {};
-				gameFile.Location = SaveLocations.FIRAXIS_CLOUD;
+				gameFile.Location = UI.GetDefaultCloudSaveLocation();
 				gameFile.Type = g_GameType;
 
 				if (UI.IsAtMaxSaveCount(gameFile)) then
@@ -704,12 +989,13 @@ function SetupFileList()
 		Controls.NoSelectedFile:SetHide(true);
 		Controls.SelectedFile:SetHide(false);
 		if (g_CurrentGameMetaData == nil) then
-			g_CurrentGameMetaData = UI.MakeSaveGameMetaData();
+			g_CurrentGameMetaData = UI.MakeSaveGameMetaData(g_FileType);
 		end
 
 		if (g_CurrentGameMetaData ~= nil and g_CurrentGameMetaData[1] ~= nil) then
 			PopulateInspectorData(g_CurrentGameMetaData[1]);
 		end
+		UpdateActionButtonText(false);
 	else
 		SetSelected( -1 );
 	end
@@ -719,7 +1005,7 @@ function SetupFileList()
     	
 	local saveLocation = SaveLocations.LOCAL_STORAGE;
     if (g_ShowCloudSaves) then
-		saveLocation = SaveLocations.FIRAXIS_CLOUD;		
+		saveLocation = UI.GetDefaultCloudSaveLocation();
     end
 
 	-- Query for the files, this is asynchronous
@@ -738,9 +1024,13 @@ function SetupFileList()
 		end
 	end
 
+	if (g_GameType == SaveTypes.WORLDBUILDER_MAP) then
+		saveLocationOptions = SaveLocationOptions.DIRECTORIES;
+	end
+
 	saveLocationOptions = saveLocationOptions + SaveLocationOptions.LOAD_METADATA;
 
-	g_LastFileQueryRequestID = UI.QuerySaveGameList( saveLocation, g_GameType, saveLocationOptions);
+	g_LastFileQueryRequestID = UI.QuerySaveGameList( saveLocation, g_GameType, saveLocationOptions, g_FileType, g_CurrentDirectoryPath );
 	
 	RebuildFileList();	-- It will be empty at this time
 

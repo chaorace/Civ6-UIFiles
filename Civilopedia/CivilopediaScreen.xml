@@ -127,7 +127,8 @@
 	<Instance Name="SearchResultInstance">
 		<Container ID="Root" Size="370,84" AutoSize="1">
 			<GridButton ID="Button" Offset="0,0" Size="250,84" Style="ButtonLightWeightGrid" AutoSize="V" InnerPadding="10,10">
-				<Label ID="Name" Offset="10,0" Style="FontNormal14" String="TechName" Anchor="L,C" WrapWidth="parent-45" ColorSet="BodyTextCool"/>
+				<Image ID="Icon" Anchor="L,C" Texture="CivilopediaChapter32" Size="32,32" />
+				<Label ID="Name" Offset="36,0" Style="FontNormal14" String="TechName" Anchor="L,C" WrapWidth="parent-45" ColorSet="BodyTextCool"/>
 			</GridButton>
 		</Container>
 	</Instance>
@@ -144,7 +145,7 @@
 	<Instance Name="CivilopediaPageTabInstance">
 		<Box ID="Root" Size="parent-5,32" Color="0,0,0,0">
 			<GridButton ID="Button" Style="Civilopedia_PageTabButton" Size="parent-5,parent">
-				<Label ID="Caption" Style="Civilopedia_PageTabButtonCaption" String="Bacon." />
+				<Label ID="Caption" Style="Civilopedia_PageTabButtonCaption" String="Bacon." WrapWidth="210"/>
 			</GridButton>
 			<Grid ID="Header" Style="Civilopedia_PageTabHeaderOverlay" Size="parent-5,parent" />
       			<Image ID="Expand" Anchor="R,C" Offset="10,0" Size="22,22" Texture="Controls_ExpandButton" />

@@ -6,7 +6,6 @@
 include("InstanceManager");
 include("AnimSidePanelSupport");
 include("SupportFunctions");
-include("PopupDialogSupport");
 include("EspionageSupport");
 
 -- ===========================================================================
@@ -21,7 +20,7 @@ local EspionageChooserModes:table = {
 };
 
 local MISSION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y = -126;
-local DESTINATION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y = -248;
+local DESTINATION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y = -257;
 
 -- ===========================================================================
 --	MEMBERS
@@ -433,7 +432,7 @@ function UpdateCityBanner(city:table)
 	Controls.BannerDarker:SetColor( darkerBackColor );
 	Controls.BannerLighter:SetColor( brighterBackColor );
 	Controls.CityName:SetColor( frontColor );
-	Controls.CityName:SetText(Locale.ToUpper(city:GetName()));
+	TruncateStringWithTooltip(Controls.CityName, 195, Locale.ToUpper(city:GetName()));
 	Controls.BannerBase:SetHide(false);
 
 	if m_currentChooserMode == EspionageChooserModes.DESTINATION_CHOOSER then
@@ -514,8 +513,19 @@ function RefreshDistrictIcon(city:table, districtType:string, districtIcon:table
 	local cityDistricts:table = city:GetDistricts();
 	for i, district in cityDistricts:Members() do
 		if district:IsComplete() then
+			
+			--gets the district type of the currently selected district 
 			local districtInfo:table = GameInfo.Districts[district:GetType()];
-			if districtInfo.DistrictType == districtType then
+			local currentDistrictType = districtInfo.DistrictType
+
+			--assigns currentDistrictType to be the general type of district (i.e. DISTRICT_HANSA becomes DISTRICT_INDUSTRIAL_ZONE)
+			local replaces = GameInfo.DistrictReplaces[districtInfo.Hash];
+			if(replaces) then
+				currentDistrictType = GameInfo.Districts[replaces.ReplacesDistrictType].DistrictType
+			end
+
+			--if this district is the type we are looking for, display that
+			if currentDistrictType == districtType then
 				hasDistrict = true;
 			end
 		end

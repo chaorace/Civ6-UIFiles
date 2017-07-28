@@ -49,8 +49,7 @@ local g_RankIM = InstanceManager:new( "RankEntry", "Root", Controls.RankingStack
 local g_GraphLegendInstanceManager = InstanceManager:new("GraphLegendInstance", "GraphLegend", Controls.GraphLegendStack);
 local g_LineSegmentInstanceManager = InstanceManager:new("GraphLineInstance","LineSegment", Controls.GraphCanvas);
 
--- TODO: Move this into the database.
-local Styles = {
+Styles = {
 	["GENERIC_DEFEAT"] ={
 		RibbonIcon = "ICON_DEFEAT_GENERIC",
 		Ribbon = "EndGame_Ribbon_Defeat",
@@ -205,7 +204,7 @@ function PopulateRankingResults()
 	Controls.RankingScrollPanel:CalculateInternalSize();
 end
 
-function UpdateButtonStates()
+function UpdateButtonStates(data:table)
 	-- Display a continue button if there are other players left in the game
 	local player = Players[Game.GetLocalPlayer()];
 
@@ -225,6 +224,10 @@ function UpdateButtonStates()
 
 	local noExtendedGame = GameConfiguration.GetValue("NO_EXTENDED_GAME");
 	local canExtendGame = noExtendedGame == nil or (noExtendedGame ~= 1 and noExtendedGame ~= true);
+	
+	if data ~= nil and data.OneMoreTurn ~= nil then
+		canExtendGame = data.OneMoreTurn;
+	end
 	
 	canExtendGame = canExtendGame and player and player:IsAlive();
 	
@@ -620,11 +623,11 @@ function View(data:table)
 	Controls.MovieFill:SetHide(true);
 	Controls.Movie:Close();
 
-	UpdateButtonStates();
-
 	if(ContextPtr:IsHidden()) then
 		UIManager:QueuePopup( ContextPtr, PopupPriority.High );
 	end	
+
+	UpdateButtonStates(data);
 end
 
 ----------------------------------------------------------------
@@ -670,8 +673,14 @@ function PlayerDefeatedData(playerID:number, defeatType:string)
 		data.PlayerPortrait = leaderType .. "_NEUTRAL";
 	end
 
+	local defeatInfo = GameInfo.Defeats[defeatType];
+	if defeatInfo and defeatInfo.Name then
+		data.RibbonText = Locale.ToUpper(defeatInfo.Name);
+	else
+		data.RibbonText = Locale.ToUpper("LOC_DEFEAT_DEFAULT_NAME");
+	end
+
 	-- Gather ribbon data
-	data.RibbonText = Locale.ToUpper("LOC_DEFEAT_DEFAULT_NAME");
 	data.RibbonIcon = "ICON_DEFEAT_GENERIC";
 	data.RibbonStyle = Styles["GENERIC_DEFEAT"];
 
@@ -693,6 +702,10 @@ function PlayerDefeatedData(playerID:number, defeatType:string)
 	local backColor, frontColor = UI.GetPlayerColors(playerID);
 	data.DefeatedFrontColor = frontColor;
 	data.DefeatedBackColor = backColor;
+
+	if GameInfo.Defeats[defeatType] then
+		data.OneMoreTurn = GameInfo.Defeats[defeatType].OneMoreTurn;
+	end
 
 	return data;
 end
@@ -747,6 +760,7 @@ function TeamVictoryData(winningTeamID:number, victoryType:string)
 	if victoryStyle.Color then
 		data.VictoryTypeColor = victoryStyle.Color;
 	end
+	data.OneMoreTurn = victory.OneMoreTurn;
 
 	-- Display victory blurb if local player is the winner
 	if data.IsWinnerLocalPlayer then
@@ -1055,6 +1069,8 @@ function Initialize()
 
 	Resize();
 end
+
+include("EndGameMenu_", true);
 
 Initialize();
  

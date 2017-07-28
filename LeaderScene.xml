@@ -1,12 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Context>
-  <Container Size="full,full" Offset="500,100" Hidden="0">
+  <Include File="CivilizationIcon"/>
+  
+  <Container Size="full,full">
 
     <!--
     This container control passed to engine to use as a leader background. Hidden so UI system doesn't
     render it but GlobalUpdate set to 1 so UI manager can update animaions while hidden.
     -->
-    <Container ID="LeaderScene" Size="full,full" Hidden ="1" GlobalUpdate="1">
+    <Container ID="LeaderScene" Size="full,full" Hidden ="1" GlobalUpdate="1" ConsumeMouse="1">
       <Container ID="Backgrounds" Size="full,full"/>
       <Image ID="BottomLetterbox" Texture="DiplomacyLetterboxTop" Size="full,200" Anchor="L,B" Hidden="0" FlipX="1" FlipY="1" StretchMode="Fill" Color="0,0,0,255"/>
       <Image ID="TopLetterbox" Texture="DiplomacyLetterboxTop" Size="full,200" Anchor="L,T" Hidden="0" StretchMode="Fill" Color="0,0,0,255"/>
@@ -15,11 +17,27 @@
       <Image Size="300,parent" Texture="Controls_Gradient" Anchor="R,T" Rotate="270" Color="0,0,0,255"/>
       <Image Size="300,parent" Texture="Controls_Gradient" Anchor="L,T" Rotate="90" Color="0,0,0,255"/>
     </Container>
+
+    <!-- Signature area -->
+    <AlphaAnim		ID="Signature_Alpha"					AlphaBegin="0"	AlphaEnd="1"	Speed="2" Function="Root" Cycle="Once" Size="full,full"  >
+      <SlideAnim	ID="Signature_Slide"					Begin="-10,0"		End="0,0"			Speed="2" Function="Root" Cycle="Once" Size="full,full"  >
+        <Stack		ID="SignatureStack" StackGrowth="Left" Offset="10,20" Anchor="R,T">
+          <Container Size="62,62">
+            <MakeInstance Name="CivilizationIconShaded44"/>
+            <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="-1,-1" Color="255,255,255,50"/>
+          </Container>
+          <Stack StackGrowth="Down" Padding="5" Offset="10,10" Anchor="R,T">
+            <Label	ID="LeaderName"	String="CLEOPATRA"  WrapWidth="400" Align="R" Anchor="R,T" Style="FontBoldFlair18"	SmallCaps="22" FontStyle="glow" Color0="130,130,130,255"	Color1="0,0,0,200"/>
+            <Label	ID="CivName"	  String="EGYPT"      WrapWidth="400" Align="R" Anchor="R,T" Style="FontBoldFlair18"	SmallCaps="22" FontStyle="glow" Color0="130,130,130,255"	Color1="0,0,0,200"/>
+          </Stack>
+        </Stack>
+      </SlideAnim>
+    </AlphaAnim>
   </Container>
   
   <Instance Name="Layer">
     <SlideAnim ID="Background_Anim" Begin="0,0" End="0,0" Cycle="Once" Function="OutQuint" Power="4" Speed=".5" Size="full,full">
-      <Image   ID="Background_Image" Anchor="L,C"	Size="1920, 1010" Texture="CLEOPATRA_1" Sampler ="Linear" StretchMode="Fill"/>
+      <Image   ID="Background_Image" Anchor="C,C"	Size="parent,parent" Texture="CLEOPATRA_1" Sampler ="Linear" StretchMode="Fill"/>
     </SlideAnim>
   </Instance>
 </Context>

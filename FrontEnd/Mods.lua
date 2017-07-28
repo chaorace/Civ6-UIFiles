@@ -90,7 +90,7 @@ function RefreshListings()
 
 			local handle = v.Handle;
 
-			instance.ModInstanceRoot:RegisterCallback(Mouse.eLClick, function()
+			instance.ModInstanceButton:RegisterCallback(Mouse.eLClick, function()
 				SelectMod(handle);
 			end);
 
@@ -119,6 +119,7 @@ function RefreshListings()
 			end
 
 			instance.OfficialIcon:SetHide(v.Official ~= true);
+			instance.CommunityIcon:SetHide(v.Official == true);
 		end
 
 		if(hasEnabledMods) then
@@ -184,7 +185,7 @@ function FilterListings(mods)
 		if(g_SearchQuery) then
 			if (g_SearchQuery ~= nil and #g_SearchQuery > 0 and g_SearchQuery ~= LOC_MODS_SEARCH_NAME) then
 				local include_map = {};
-				local search_results = Search.Search(g_SearchContext, g_SearchQuery .. "*");
+				local search_results = Search.Search(g_SearchContext, g_SearchQuery);
 				if (search_results and #search_results > 0) then
 					for i, v in ipairs(search_results) do
 						include_map[tonumber(v[1])] = v[2];
@@ -220,9 +221,9 @@ end
 function RefreshListingsSelectionState()
 	for i,v in ipairs(g_ModListings) do
 		if(v[1] == g_SelectedModHandle) then
-			v[2].ModInstanceRoot:SetColor(2/255,200/255,148/255);
+			v[2].ModInstanceButton:SetSelected(true);
 		else
-			v[2].ModInstanceRoot:SetColor(2/255,89/255,148/255);
+			v[2].ModInstanceButton:SetSelected(false);
 		end
 	end
 end
@@ -231,11 +232,11 @@ function RefreshModDetails()
 	if(g_SelectedModHandle == nil) then
 		-- Hide details and offer up a guidance string.
 		Controls.NoModSelected:SetHide(false);
-		Controls.ModDetails:SetHide(true);
+		Controls.ModDetailsContainer:SetHide(true);
 
 	else
 		Controls.NoModSelected:SetHide(true);
-		Controls.ModDetails:SetHide(false);
+		Controls.ModDetailsContainer:SetHide(false);
 
 		local modHandle = g_SelectedModHandle;
 		local info = Modding.GetModInfo(modHandle);
@@ -245,6 +246,10 @@ function RefreshModDetails()
 		else
 			Controls.ModContent:LocalizeAndSetText("LOC_MODS_USER_CONTENT");
 		end
+
+		-- Official/Community Icons
+		Controls.OfficialIcon:SetHide(not info.Official);
+		Controls.CommunityIcon:SetHide(info.Official);
 
 		local enableButton = Controls.EnableButton;
 		local disableButton = Controls.DisableButton;
@@ -458,7 +463,7 @@ function RefreshModDetails()
 		Controls.ModPropertiesStack:ReprocessAnchoring();
 		Controls.ModDetailsStack:CalculateSize();
 		Controls.ModDetailsStack:ReprocessAnchoring();
-		Controls.ModDetails:CalculateInternalSize();
+		Controls.ModDetailsScrollPanel:CalculateInternalSize();
 	end
 end
 
@@ -680,7 +685,12 @@ end
 function InputHandler( uiMsg, wParam, lParam )
 	if uiMsg == KeyEvents.KeyUp then
 		if wParam == Keys.VK_ESCAPE then
-			HandleExitRequest();
+
+			if(Controls.NameModGroupPopup ~= nil and Controls.NameModGroupPopup:IsVisible()) then
+				Controls.NameModGroupPopup:SetHide(true);
+			else
+				HandleExitRequest();
+			end
 		end
 	end
 
@@ -882,13 +892,18 @@ function Initialize()
 		end
 	end);
 
-	if(Steam.IsOverlayEnabled()) then
+	if(Steam.GetAppID() ~= 0) then
 		Controls.SubscriptionsTab:RegisterCallback(Mouse.eLClick, function() OnSubscriptionsTabClick() end);
 		Controls.SubscriptionsTab:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+		Controls.SubscriptionsTab:SetHide(false);
+	else
+		Controls.SubscriptionsTab:SetHide(true);
+	end
+
+	if(Steam.IsOverlayEnabled()) then
 		Controls.BrowseWorkshop:RegisterCallback( Mouse.eLClick, OnOpenWorkshop );
 		Controls.BrowseWorkshop:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	else
-		Controls.SubscriptionsTab:SetDisabled(true);
 		Controls.BrowseWorkshop:SetDisabled(true);
 	end
 	Controls.ShowOfficialContent:SetCheck(true);

@@ -7,6 +7,8 @@
 --	Interacts With:	DiplomacyActionView, DiplomacyView, and DiplomacyDealView
 -- ------------------------------------------------------------------------------------------------------------------------
 include( "InstanceManager" );
+include( "SupportFunctions" ); -- DarkenLightenColor
+
 --	MEMBERS
 local m_kBackgroundLayersIM	:table		= InstanceManager:new( "Layer",  "Background_Anim", Controls.Backgrounds );
 local m_uiBackgroundLayers	: table = {};
@@ -90,29 +92,73 @@ end
 -- This function correctly sizes the background images.  Layers 1-3 are sized down vertically by 200 pixels so that most of the 
 -- scene is visible within the letterboxing.  The last layer - the "porthole" - can be stretched to be the full size of the screen
 function SizeBackgrounds()
-	local screenX, screenY:number = UIManager:GetScreenSizeVal();
 	local numLayers = table.count(m_uiBackgroundLayers);
-	adjustedY = screenY - 200;
-	local adjustedWidth = adjustedY*1.9;
+--	local adjustedWidth = adjustedY*1.9; -- TODO
 	for layer = 1,numLayers,1 do
-		if(layer == numLayers) then
-			m_uiBackgroundLayers[layer].Background_Anim:SetSizeVal(screenX,screenY);
+		if(not layer == numLayers) then
+			m_uiBackgroundLayers[layer].Background_Anim:SetParentRelativeSizeY(-200);
 			m_uiBackgroundLayers[layer].Background_Anim:ReprocessAnchoring();
-			m_uiBackgroundLayers[layer].Background_Image:SetSizeVal(screenX,screenY);
-			m_uiBackgroundLayers[layer].Background_Image:ReprocessAnchoring();
-		else
-			m_uiBackgroundLayers[layer].Background_Anim:SetSizeVal(adjustedWidth,screenY);
-			m_uiBackgroundLayers[layer].Background_Anim:ReprocessAnchoring();
-			m_uiBackgroundLayers[layer].Background_Image:SetSizeVal(adjustedWidth,adjustedY);
+			m_uiBackgroundLayers[layer].Background_Image:SetParentRelativeSizeY(-200);
 			m_uiBackgroundLayers[layer].Background_Image:ReprocessAnchoring();
 		end
 	end
+end
+
+--	Displays the leader's name (with screen name if you are a human in a multiplayer game), along with the civ name,
+--	and the icon of the civ with civ colors.  When you mouse over the civ icon, you should see a full list of all cities.
+--	This should help players differentiate between duplicate civs.
+function PopulateSignatureArea(player:table)
+	-- Set colors for the Civ icon
+	if (player ~= nil) then
+		m_primaryColor, m_secondaryColor  = UI.GetPlayerColors( player:GetID() );
+		local darkerBackColor = DarkenLightenColor(m_primaryColor,(-85),100);
+		local brighterBackColor = DarkenLightenColor(m_primaryColor,90,255);
+		Controls.CivBacking_Base:SetColor(m_primaryColor);
+		Controls.CivBacking_Lighter:SetColor(brighterBackColor);
+		Controls.CivBacking_Darker:SetColor(darkerBackColor);
+		Controls.CivIcon:SetColor(m_secondaryColor);
+	end
+
+	-- Set the leader name, civ name, and civ icon data
+	local leader:string = PlayerConfigurations[player:GetID()]:GetLeaderTypeName();
+	if GameInfo.CivilizationLeaders[leader] == nil then
+		UI.DataError("Banners found a leader \""..leader.."\" which is not/no longer in the game; icon may be whack.");
+	else
+		if(GameInfo.CivilizationLeaders[leader].CivilizationType ~= nil) then
+			local civTypeName = GameInfo.CivilizationLeaders[leader].CivilizationType
+			local civIconName = "ICON_"..civTypeName;
+			Controls.CivIcon:SetIcon(civIconName);
+			Controls.CivName:SetText(Locale.ToUpper(Locale.Lookup(GameInfo.Civilizations[civTypeName].Name)));
+			local leaderName = Locale.ToUpper(Locale.Lookup(GameInfo.Leaders[leader].Name))
+			local playerName = PlayerConfigurations[player:GetID()]:GetPlayerName();
+			if GameConfiguration.IsAnyMultiplayer() and player:IsHuman() then
+				leaderName = leaderName .. " ("..Locale.ToUpper(playerName)..")"
+			end
+			Controls.LeaderName:SetText(leaderName);
+
+			--Create a tooltip which shows a list of this Civ's cities
+			local civTooltip = Locale.Lookup(GameInfo.Civilizations[civTypeName].Name);
+			local pPlayerConfig = PlayerConfigurations[player:GetID()];
+			local playerName = pPlayerConfig:GetPlayerName();
+			local playerCities = player:GetCities();
+			if(playerCities ~= nil) then
+				civTooltip = civTooltip .. "[NEWLINE]"..Locale.Lookup("LOC_PEDIA_CONCEPTS_PAGEGROUP_CITIES_NAME").. ":[NEWLINE]----------";
+				for i,city in playerCities:Members() do
+					civTooltip = civTooltip.. "[NEWLINE]".. Locale.Lookup(city:GetName());
+				end
+			end
+			Controls.CivIcon:SetToolTipString(Locale.Lookup(civTooltip));
+		end
+	end
+	Controls.SignatureStack:CalculateSize();
+	Controls.SignatureStack:ReprocessAnchoring();
 end
 
 -- ------------------------------------------------------------------------------------------------------------------------
 -- LUA EVENT HANDLING
 -- Listen for a change in leader selection, and update the background images to correspond to it
 function OnLeaderSelect(selectedPlayerID)
+	PopulateSignatureArea(Players[selectedPlayerID]);
 	GenerateLayers(selectedPlayerID);
 	Parallax(PARALLAX_DISTANCE);
 end
@@ -126,6 +172,12 @@ function OnSceneOpened(selectedPlayerID)
 		ContextPtr:SetHide(false);
 		InitializeView();
 	end
+
+	PopulateSignatureArea(Players[selectedPlayerID]);
+	Controls.Signature_Slide:SetToBeginning();
+	Controls.Signature_Alpha:SetToBeginning();
+	Controls.Signature_Slide:Play();
+	Controls.Signature_Alpha:Play();
 end
 -- ------------------------------------------------------------------------------------------------------------------------
 --	InitializeView and UninitializeView

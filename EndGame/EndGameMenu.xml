@@ -9,7 +9,7 @@
 
 	<!-- Background -->
 	<Box ID="BackgroundFill" Size="full,full" Color="0,0,0,255" ConsumeMouse="1">
-		<Image ID="Background" size="parent,parent" StretchMode="Fill" Anchor="C,C" Texture="EndGame_BG_Time" />
+		<Image ID="Background" Size="parent,parent" StretchMode="Fill" Anchor="C,C" Texture="EndGame_BG_Time" />
 	</Box>
 
 	<!-- Ribbon -->
@@ -230,7 +230,7 @@
 			<Image Anchor="L,C" Offset="7,0" Size="14,19" Texture="Controls_LocationPip"  ID="LegendIcon"/>
 
       <Grid  Texture="Controls_SubContainer4" Offset="0,0" Size="parent,parent" Anchor="L,T" SliceCorner="9,9" SliceSize="0,0" Color=" 0,0,0,45">
-		  	<Label Offset="26,0" WrapWidth="parent-46" String="America" Style="ButtonText14" Anchor="L,C" ID="LegendName" Hidden="0"/>
+		  	<Label Offset="26,0" String="America" Style="ButtonText14" Anchor="L,C" ID="LegendName" Hidden="0"/>
       </Grid>
 			<CheckBox ID="ShowHide" Anchor="R,C" Offset="4,0" Style="MainCheckBox" IsChecked="1"  ConsumeMouse="1"  />
 		</Box>

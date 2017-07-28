@@ -151,19 +151,21 @@ end
 
 -- ===========================================================================
 function OnKeyStringListSelection(entry)
-	if m_ViewingTab.TextInstance ~= nil then
-		-- Set text tag and callback
-		if m_ViewingTab.TextInstance.TextTagEditBox ~= nil then
-			m_ViewingTab.TextInstance.TextTagEditBox:SetText(entry.Key);
-			m_ViewingTab.TextInstance.TextTagEditBox:SetVoid1(entry.Index);
-			m_ViewingTab.TextInstance.TextTagEditBox:RegisterCommitCallback(OnCommitTextKey);
-		end
+	if entry ~= nil then
+		if m_ViewingTab.TextInstance ~= nil then
+			-- Set text tag and callback
+			if m_ViewingTab.TextInstance.TextTagEditBox ~= nil then
+				m_ViewingTab.TextInstance.TextTagEditBox:SetText(entry.Key);
+				m_ViewingTab.TextInstance.TextTagEditBox:SetVoid1(entry.Index);
+				m_ViewingTab.TextInstance.TextTagEditBox:RegisterCommitCallback(OnCommitTextKey);
+			end
 
-		-- Set text string and callback
-		if m_ViewingTab.TextInstance.TextStringEditBox ~= nil then
-			m_ViewingTab.TextInstance.TextStringEditBox:SetText(entry.Text);
-			m_ViewingTab.TextInstance.TextStringEditBox:SetVoid1(entry.Index);
-			m_ViewingTab.TextInstance.TextStringEditBox:RegisterCommitCallback(OnCommitTextString);						
+			-- Set text string and callback
+			if m_ViewingTab.TextInstance.TextStringEditBox ~= nil then
+				m_ViewingTab.TextInstance.TextStringEditBox:SetText(entry.Text);
+				m_ViewingTab.TextInstance.TextStringEditBox:SetVoid1(entry.Index);
+				m_ViewingTab.TextInstance.TextStringEditBox:RegisterCommitCallback(OnCommitTextString);						
+			end
 		end
 	end
 end

@@ -75,13 +75,13 @@ function GetStatementFromQuery(handler : table, q, fromLeaderName, fromLeaderMoo
 
 		handler.ParseStatement(row, kOutputTable);
 
-		local q = DB.Query("SELECT Text, Key, Sort, DiplomaticActionType from DiplomacySelections WHERE Type = ? AND Leader = ? AND Mood = ?", row.Selections, fromLeaderName, fromLeaderMoodName );
+		local q = DB.Query("SELECT Text, Tooltip, Key, Sort, DiplomaticActionType from DiplomacySelections WHERE Type = ? AND Leader = ? AND Mood = ?", row.Selections, fromLeaderName, fromLeaderMoodName );
 		if (not GetStatementSelectionsFromQuery(handler, q, kOutputTable)) then
-			q = DB.Query("SELECT Text, Key, Sort, DiplomaticActionType from DiplomacySelections WHERE Type = ? AND Leader = ? AND Mood = 'ANY'", row.Selections, fromLeaderName );
+			q = DB.Query("SELECT Text, Tooltip, Key, Sort, DiplomaticActionType from DiplomacySelections WHERE Type = ? AND Leader = ? AND Mood = 'ANY'", row.Selections, fromLeaderName );
 			if (not GetStatementSelectionsFromQuery(handler, q, kOutputTable)) then
-				q = DB.Query("SELECT Text, Key, Sort, DiplomaticActionType from DiplomacySelections WHERE Type = ? AND Leader = 'ANY' AND Mood = ?", row.Selections, fromLeaderMoodName );
+				q = DB.Query("SELECT Text, Tooltip, Key, Sort, DiplomaticActionType from DiplomacySelections WHERE Type = ? AND Leader = 'ANY' AND Mood = ?", row.Selections, fromLeaderMoodName );
 				if (not GetStatementSelectionsFromQuery(handler, q, kOutputTable)) then
-					q = DB.Query("SELECT Text, Key, Sort, DiplomaticActionType from DiplomacySelections WHERE Type = ? AND Leader = 'ANY' AND Mood = 'ANY'", row.Selections );
+					q = DB.Query("SELECT Text, Tooltip, Key, Sort, DiplomaticActionType from DiplomacySelections WHERE Type = ? AND Leader = 'ANY' AND Mood = 'ANY'", row.Selections );
 					GetStatementSelectionsFromQuery(handler, q, kOutputTable);
 				end
 			end

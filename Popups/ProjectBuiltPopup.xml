@@ -38,7 +38,7 @@
 					</Box>
 				</Grid>
 				<Grid ID="ProjectQuoteContainer" Style="SubContainerFill" Size="600,50" AutoSize="V" Color="14,21,26,255" Anchor="C,C" Offset="200,-1" AutoSizePadding="0,-3">
-					<Grid ID="ProjectQuoteDeco" Texture="Controls_PanelBlue" SliceCorner="25,28" SliceSize="33,18" SliceTextureSize="83,75" MinSize="70,70" Offset="0,-2" Size="parent+4,parent" Anchor="C,T" AutoSize="V" InnerPadding="25,20">
+					<Grid ID="ProjectQuoteDeco" Texture="Controls_PanelBlue" SliceCorner="25,28" SliceSize="33,18" SliceTextureSize="83,75" MinSize="70,70" Offset="0,-2" Size="parent+4,0" Anchor="C,T" AutoSize="V" InnerPadding="25,20">
 						<Label ID="ProjectQuote" Style="BodyText16" Anchor="C,C" WrapWidth="parent-20" String="&quot; In West Philadelphia, born and raised, on a playground is where I spent most of my days.&quot; ~Fresh Prince"/>
 					</Grid>
 				</Grid>

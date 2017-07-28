@@ -223,7 +223,7 @@ function InputHandler( pInputStruct:table )
 
 	local uiMsg = pInputStruct:GetMessageType();
 
-	if Controls.IntroMovie:IsPlaying() then
+	if Controls.IntroMovie:IsPlaying() and not Controls.IntroMovieContainer:IsHidden() then
 		if uiMsg == KeyEvents.KeyUp then
 			local uiKey = pInputStruct:GetKey();
 			if uiKey == Keys.VK_ESCAPE or uiKey == Keys.VK_RETURN then

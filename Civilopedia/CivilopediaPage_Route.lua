@@ -34,6 +34,8 @@ local sectionId = page.SectionId;
 
 
 	-- Right Column
+	AddPortrait("ICON_" .. routeType);
+
 	AddRightColumnStatBox("LOC_UI_PEDIA_TRAITS", function(s)
 		s:AddSeparator();
 

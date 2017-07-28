@@ -5,6 +5,16 @@
 include("InstanceManager");
 include("SupportFunctions");
 
+-- ===========================================================================
+--	CONSTANTS
+-- ===========================================================================
+
+local DESTINATION_SCROLLPANEL_RELATIVE_Y:number = -34;
+
+-- ===========================================================================
+--	VARIABLES
+-- ===========================================================================
+
 local m_RouteChoiceIM			: table = InstanceManager:new("RouteChoiceInstance", "Top", Controls.RouteChoiceStack);
 local m_originCity				: table = nil;	-- City where the trade route will begin
 local m_destinationCity			: table = nil;	-- City where the trade route will end, nil if none selected
@@ -22,7 +32,6 @@ local m_filteredDestinations:table = {};
 local m_filterList:table = {};
 local m_filterCount:number = 0;
 local m_filterSelected:number = 1;
-
 
 -- ===========================================================================
 --	Refresh
@@ -148,17 +157,44 @@ function RefreshTopPanel()
 			Controls.DestinationReceivesNoBenefitsLabel:SetHide(false);
 		end
 
+		-- Show Begin Route or Repeat Route if we're rerun the last completed route
+		local selectedUnit:table = UI.GetHeadSelectedUnit();
+		local trade:table = selectedUnit:GetTrade();
+		local prevOriginComponentID:table = trade:GetLastOriginTradeCityComponentID();
+		local prevDestComponentID:table = trade:GetLastDestinationTradeCityComponentID();
+
+		if	m_originCity:GetID() == prevOriginComponentID.id and 
+			m_originCity:GetOwner() == prevOriginComponentID.player and
+			m_destinationCity:GetID() == prevDestComponentID.id and
+			m_destinationCity:GetOwner() == prevDestComponentID.player then
+			Controls.BeginRouteLabel:SetText(Locale.Lookup("LOC_ROUTECHOOSER_REPEAT_ROUTE_BUTTON"));
+			Controls.BeginRouteAnim:SetToBeginning();
+			Controls.BeginRouteAnim:Play();
+		else
+			Controls.BeginRouteLabel:SetText(Locale.Lookup("LOC_ROUTECHOOSER_BEGIN_ROUTE_BUTTON"));
+			Controls.BeginRouteAnim:Stop();
+			Controls.BeginRouteAnim:SetToBeginning();
+		end
+
 		-- Show Panel
 		Controls.CurrentSelectionContainer:SetHide(false);
+		Controls.ConfirmGrid:SetHide(false);
 
 		-- Hide Status Message
 		Controls.StatusMessage:SetHide(true);
+
+		-- Resize RouteChoiceScrollPanel to fit ConfirmGrid
+		Controls.RouteChoiceScrollPanel:SetParentRelativeSizeY(DESTINATION_SCROLLPANEL_RELATIVE_Y - Controls.ConfirmGrid:GetSizeY());
 	else
 		-- Hide Panel
 		Controls.CurrentSelectionContainer:SetHide(true);
+		Controls.ConfirmGrid:SetHide(true);
 
 		-- Show Status Message
 		Controls.StatusMessage:SetHide(false);
+
+		-- Resize RouteChoiceScrollPanel since ConfirmGrid is hidden
+		Controls.RouteChoiceScrollPanel:SetParentRelativeSizeY(DESTINATION_SCROLLPANEL_RELATIVE_Y);
 	end
 end
 
@@ -318,13 +354,32 @@ function RefreshChooserPanel()
 	-- Send Trade Route Paths to Engine
 	UILens.ClearLayerHexes( LensLayers.TRADE_ROUTE );
 
+	local DEFAULT_TINT = RGBAValuesToABGRHex(1, 1, 1, 1);
+	local FADED_TINT = RGBAValuesToABGRHex(0.3, 0.3, 0.3, 1);
+
+	-- If a city is selected, fade the other routes
+	local kUnselectedColor = DEFAULT_TINT;
+	if (m_destinationCity ~= nil) then kUnselectedColor = FADED_TINT; end
+
+	-- Show all paths that aren't selected
 	local pathPlots		: table = {};
 	for index, city in ipairs(m_filteredDestinations) do
 		pathPlots = tradeManager:GetTradeRoutePath(m_originCity:GetOwner(), m_originCity:GetID(), city:GetOwner(), city:GetID() );
 		local kVariations:table = {};
 		local lastElement : number = table.count(pathPlots);
 		table.insert(kVariations, {"TradeRoute_Destination", pathPlots[lastElement]} );
-		UILens.SetLayerHexesPath( LensLayers.TRADE_ROUTE, Game.GetLocalPlayer(), pathPlots, kVariations );	
+		if (city ~= m_destinationCity) then
+			UILens.SetLayerHexesPath( LensLayers.TRADE_ROUTE, Game.GetLocalPlayer(), pathPlots, kVariations, kUnselectedColor );
+		end
+	end
+
+	-- Show the selected path last if it exists so it's on top
+	if m_destinationCity ~= nil then
+		pathPlots = tradeManager:GetTradeRoutePath(m_originCity:GetOwner(), m_originCity:GetID(), m_destinationCity:GetOwner(), m_destinationCity:GetID() );
+		local kVariations:table = {};
+		local lastElement : number = table.count(pathPlots);
+		table.insert(kVariations, {"TradeRoute_Destination", pathPlots[lastElement]} );
+		UILens.SetLayerHexesPath( LensLayers.TRADE_ROUTE, Game.GetLocalPlayer(), pathPlots, kVariations, DEFAULT_TINT );
 	end
 end
 
@@ -379,8 +434,10 @@ function AddCityToDestinationStack(city:table)
 	-- Update Selector Brace
 	if m_destinationCity ~= nil and city:GetName() == m_destinationCity:GetName() then
 		cityEntry.SelectorBrace:SetHide(false);
+		cityEntry.Button:SetSelected(true);
 	else
 		cityEntry.SelectorBrace:SetHide(true);
+		cityEntry.Button:SetSelected(false);
 	end
 
 	-- Setup city banner
@@ -498,8 +555,6 @@ function TradeRouteSelected( cityOwner:number, cityID:number )
 		local pCity:table = player:GetCities():FindID(cityID);
 		if pCity then
 			m_destinationCity = pCity;			
-		else
-			error("Unable to find city '"..tostring(cityID).."' for creating a trade route.");
 		end
 	end
 	
@@ -679,10 +734,27 @@ function Open()
 		-- Reset values
 		m_postOpenSelectPlayerID = -1;
 		m_postOpenSelectCityID = -1;
+	else
+		-- Select the previously completed trade route automatically
+		local selectedUnit:table = UI.GetHeadSelectedUnit();
+		local trade:table = selectedUnit:GetTrade();
+		local prevOriginComponentID:table = trade:GetLastOriginTradeCityComponentID();
+		local prevDestComponentID:table = trade:GetLastDestinationTradeCityComponentID();
+
+		local originCity:table = Cities.GetCityInPlot(selectedUnit:GetX(), selectedUnit:GetY());
+		if originCity:GetID() == prevOriginComponentID.id and originCity:GetOwner() == prevOriginComponentID.player then
+			TradeRouteSelected( prevDestComponentID.player, prevDestComponentID.id );
+		end
 	end
 
 	LuaEvents.TradeRouteChooser_Open();
 	
+	Refresh();
+end
+
+-- ===========================================================================
+function ClearSelection()
+	m_destinationCity = nil;
 	Refresh();
 end
 
@@ -864,6 +936,7 @@ function Initialize()
 	-- Control Events
 	Controls.BeginRouteButton:RegisterCallback( eLClick, RequestTradeRoute );
 	Controls.BeginRouteButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	Controls.CancelButton:RegisterCallback( eLClick, ClearSelection );
 	Controls.FilterButton:RegisterCallback( eLClick, UpdateFilterArrow );
 	Controls.DestinationFilterPulldown:RegisterSelectionCallback( OnFilterSelected );
 	Controls.Header_CloseButton:RegisterCallback( eLClick, OnClose );

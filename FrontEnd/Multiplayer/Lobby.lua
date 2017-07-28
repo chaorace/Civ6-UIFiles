@@ -5,6 +5,7 @@ include( "InstanceManager" );	--InstanceManager
 include("LobbyTypes");		--MPLobbyTypes
 include("SteamUtilities");
 include("ButtonUtilities");
+include( "Civ6Common" ); -- AutoSizeGridButton
 
 
 -- ===========================================================================
@@ -25,14 +26,20 @@ local DlcGuidsToIgnore = {
 --]]
 
 -- Listing Box Buttons
+local m_shellTabIM:table = InstanceManager:new("ShellTab", "TopControl", Controls.ShellTabs);
 local g_FriendsIM = InstanceManager:new( "FriendInstance", "RootContainer", Controls.FriendsStack );
 local g_GridLinesIM = InstanceManager:new( "HorizontalGridLine", "Control", Controls.GridContainer );
 local g_InstanceManager = InstanceManager:new( "ListingButtonInstance", "Button", Controls.ListingStack );
 local g_InstanceList = {};
+local g_TabInstances = {};	-- indexed by browser mode ID
 
 local LIST_LOBBIES				:number = 0;
 local LIST_SERVERS				:number = 1;
 local LIST_INVITES				:number = 2;
+
+-- PlayByCloud Specific Browse Modes
+local LIST_PUBLIC_GAMES			:number = 0;
+local LIST_PERSONAL_GAMES		:number = 1;
 
 local SEARCH_INTERNET			:number = 0;	-- Internet Servers/Lobbies
 local SEARCH_LAN				:number = 1;	-- LAN Servers/Lobbies
@@ -55,8 +62,19 @@ local FRIENDS_BG_WIDTH			:number = 236;
 local FRIENDS_BG_HEIGHT			:number = 342;
 local FRIENDS_BG_PADDING		:number = 20;
 
+-- GameListRoot Offset and Size (with and without shell tabs)
+local GAME_LIST_OFFSET_Y		:number = 52;
+local GAME_LIST_TABS_OFFSET_Y	:number = 82;
+local GAME_LIST_SIZE_Y			:number = 723;
+local GAME_LIST_TABS_SIZE_Y		:number = 693;	
+local LIST_PANEL_SIZE_Y			:number = 628;
+local LIST_PANEL_TABS_SIZE_Y	:number = 598;
+local GAME_GRID_SIZE_Y			:number = 714;
+local GAME_GRID_TABS_SIZE_Y		:number = 684;
+
 local m_shouldShowFriends		:boolean = true;
 local m_lobbyModeName			:string = MPLobbyTypes.STANDARD_INTERNET;
+local m_browserMode				:number = LIST_PERSONAL_GAMES;-- Current PlayByCloud browser mode.
 
 local m_steamFriendActions = 
 {
@@ -75,6 +93,12 @@ local ColorString_ModRed		:string = "[color:Civ6Red]";
 
 local DEFAULT_RULE_SET:string = Locale.Lookup("LOC_MULTIPLAYER_STANDARD_GAME");
 local DEFAULT_GAME_SPEED:string = Locale.Lookup("LOC_GAMESPEED_STANDARD_NAME");
+local gameStartedTooltip:string = Locale.Lookup("LOC_LOBBY_GAME_STARTED_TOOLTIP");
+local gameLoadingSaveTooltip:string = Locale.Lookup("LOC_LOBBY_GAME_LOADING_SAVE_TOOLTIP");
+local gameYourTurnTooltip:string = Locale.Lookup("LOC_LOBBY_GAME_YOUR_TURN_TOOLTIP");
+local playByCloudJoinsDisabled:string = "[color:Civ6Red]You can not join PlayByCloud games while in a debug build.[ENDCOLOR]";
+local LOC_LOBBY_MY_GAMES		:string = Locale.Lookup("LOC_LOBBY_MY_GAMES");
+local LOC_LOBBY_OPEN_GAMES		:string = Locale.Lookup("LOC_LOBBY_OPEN_GAMES");
 													  
 g_SelectedServerID = nil;
 g_Listings = {};
@@ -127,6 +151,13 @@ g_SortFunction = nil;
 -------------------------------------------------
 -- Helper Functions
 -------------------------------------------------
+function IsUsingPlayByCloudGameList()
+	if (m_lobbyModeName == MPLobbyTypes.PLAYBYCLOUD) then
+		return true;
+	end 
+	return false;
+end
+
 function IsUsingInternetGameList()
 	if (m_lobbyModeName == MPLobbyTypes.STANDARD_INTERNET 
 		or m_lobbyModeName == MPLobbyTypes.PITBOSS_INTERNET
@@ -146,14 +177,15 @@ function IsUsingPitbossGameList()
 	end
 end
 
-function RefreshGameList()
-	if IsUsingInternetGameList() then
-		Matchmaking.RefreshInternetGameList(); -- Async
-	else
-		Matchmaking.RefreshLANGameList(); -- Async
-	end
+function IsPlayByCloudJoinsDisabled()
+	local joiningDisabled :boolean = IsUsingPlayByCloudGameList() and not UI.IsFinalRelease();
+	return joiningDisabled;
 end
 
+function SetBrowserMode(browserMode :number)
+	m_browserMode = browserMode;
+	Matchmaking.SetBrowseMode(m_browserMode);
+end
 
 -------------------------------------------------
 -- Server Listing Button Handler (Dynamic)
@@ -165,8 +197,15 @@ function ServerListingButtonClick()
 		end
 	end
 
+	if(IsPlayByCloudJoinsDisabled()) then
+		return;
+	end
+
 	if g_SelectedServerID and g_SelectedServerID >= 0 then
-		local bResult, bPending = Network.JoinGame( g_SelectedServerID );
+		local bSuccess, bPending = Network.JoinGame( g_SelectedServerID );
+		if(not bSuccess) then
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_JOIN_FAILED" );
+		end
 	end
 end
 
@@ -197,9 +236,17 @@ function OnRefreshButtonClick()
 	if (Matchmaking.IsRefreshingGameList()) then
 		Matchmaking.StopRefreshingGameList();
 	else
-		RefreshGameList();
+		Matchmaking.RefreshGameList();
 	end	
 	UpdateRefreshButton();
+end
+
+-------------------------------------------------
+-- Friends Button Handler
+-------------------------------------------------
+function OnFriendsButtonClick()
+	Controls.FriendsCheck:SetCheck(not Controls.FriendsCheck:IsChecked()); 
+	OnFriendsListToggled();
 end
 
 -------------------------------------------------
@@ -226,16 +273,20 @@ end
 -- Event Handler: MultiplayerGameListClear
 -------------------------------------------------
 function OnGameListClear()
-	g_SelectedServerID = nil;
-	UpdateRefreshButton();
-	UpdateGameList();
+	if(ContextPtr:IsVisible()) then
+		g_SelectedServerID = nil;
+		UpdateRefreshButton();
+		UpdateGameList();
+	end
 end
 
 -------------------------------------------------
 -- Event Handler: MultiplayerGameListComplete
 -------------------------------------------------
 function OnGameListComplete()
-	UpdateRefreshButton();
+	if(ContextPtr:IsVisible()) then
+		UpdateRefreshButton();
+	end
 end
 
 
@@ -244,25 +295,26 @@ end
 -- Event Handler: MultiplayerGameListUpdated
 -------------------------------------------------
 function OnGameListUpdated(eAction, idLobby, eLobbyType, eSearchType)
-
-	if (eAction == GAMELISTUPDATE_ADD) then
-		local serverTable = Matchmaking.GetGameListEntry(idLobby);		
-		if (serverTable ~= nil) then 
-			AddServer( serverTable[1] );
-			bUpdate = true;
-		end
-	else
-		if (eAction == GAMELISTUPDATE_REMOVE) then
-			RemoveServer( idLobby );
-			if (g_SelectedServerID == idLobby) then
-				g_SelectedServerID = nil;
+	if(ContextPtr:IsVisible()) then
+		if (eAction == GAMELISTUPDATE_ADD) then
+			local serverTable = Matchmaking.GetGameListEntry(idLobby);		
+			if (serverTable ~= nil) then 
+				AddServer( serverTable[1] );
+				bUpdate = true;
 			end
-			bUpdate = true;
+		else
+			if (eAction == GAMELISTUPDATE_REMOVE) then
+				RemoveServer( idLobby );
+				if (g_SelectedServerID == idLobby) then
+					g_SelectedServerID = nil;
+				end
+				bUpdate = true;
+			end
 		end
-	end
 
-	if (bUpdate) then
-		SortAndDisplayListings(true);
+		if (bUpdate) then
+			SortAndDisplayListings(true);
+		end
 	end
 end
 
@@ -305,6 +357,11 @@ function SelectGame( serverID )
 		if listItem ~= nil then
 			listItem.Selected:SetHide(true);
 		end
+	end
+
+	if(IsPlayByCloudJoinsDisabled()) then
+		Controls.JoinGameButton:SetDisabled(true);
+		Controls.JoinGameButton:SetToolTipString(playByCloudJoinsDisabled);
 	end
 	
 	Controls.BottomButtons:CalculateSize();
@@ -359,7 +416,7 @@ function AddServer(serverEntry)
 	end
 
 	if(mapSizeName == nil) then
-		mapSizeName = Locale.Lookup("LOC_MULTIPLAYER_UNKNOWN");
+		mapSizeName = Locale.Lookup("LOC_MULTIPLAYER_UNKNOWN_MAP_SIZE");
 	end
 
 	-- Fall-back to unknown.
@@ -381,8 +438,14 @@ function AddServer(serverEntry)
 		GameSpeed = serverEntry.GameSpeed,
 		GameSpeedName = gameSpeedName,
 		EnabledMods = serverEntry.EnabledMods,
-		MapSizeName = mapSizeName
+		MapSizeName = mapSizeName,
+		GameStarted = serverEntry.GameStarted,
+		SavedGame = serverEntry.SavedGame
 	};
+
+	if(m_lobbyModeName == MPLobbyTypes.PLAYBYCLOUD and m_browserMode == LIST_PERSONAL_GAMES) then
+		listing.YourTurn = Network.CheckServerForYourTurn(listing.ServerID);
+	end
 				
 	-- Don't add servers that have an invalid Initialized value.  
 	-- Steam lobbies briefly don't have meta data between getting created and getting their meta data from the game host.
@@ -513,13 +576,43 @@ function SortAndDisplayListings(resetSelection:boolean)
 	for _, listing in ipairs(g_Listings) do
 		local controlTable = g_InstanceManager:GetInstance();
 		local serverID = listing.ServerID;
+		local textColor = ColorSet_Default;
+		local rowTooltip = "";
+		local gameName = listing.ServerName;
 		g_InstanceList[serverID] = controlTable;
+
+		-- Row color and tooltip is determined by game state.
+		if(listing.SavedGame == 1) then
+			textColor = ColorSet_Faded;
+			rowTooltip = gameLoadingSaveTooltip;
+		elseif(listing.GameStarted == 1) then
+			textColor = ColorSet_Faded;
+			rowTooltip = gameStartedTooltip;
+		end
+
+		-- PlayByCloud Only - If it is your turn in this game, provide some UI feedback.
+		if(listing.YourTurn ~= nil and listing.YourTurn == true) then
+			if(rowTooltip ~= "") then
+				rowTooltip = rowTooltip .. "[NEWLINE][NEWLINE]";
+			end
+			rowTooltip = rowTooltip .. gameYourTurnTooltip;
+
+			gameName = Locale.Lookup("LOC_LOBBY_GAME_NAME_YOUR_TURN", gameName);
+		end
 		
-		controlTable.ServerNameLabel:SetText(listing.ServerName);
-		controlTable.ServerNameLabel:SetColorByName(ColorSet_Default);
+		if(IsPlayByCloudJoinsDisabled()) then
+			if(rowTooltip ~= "") then
+				rowTooltip = rowTooltip .. "[NEWLINE][NEWLINE]";
+			end
+			rowTooltip = rowTooltip .. playByCloudJoinsDisabled;
+		end
+		
+		controlTable.ServerNameLabel:SetText(gameName);
+		controlTable.ServerNameLabel:SetColorByName(textColor);
+		controlTable.ServerNameLabel:SetToolTipString(rowTooltip);
 		controlTable.MembersLabel:SetText( listing.MembersLabelCaption);
 		controlTable.MembersLabel:SetToolTipString(listing.MembersLabelToolTip);
-		controlTable.MembersLabel:SetColorByName(ColorSet_Default);
+		controlTable.MembersLabel:SetColorByName(textColor);
 
 		-- RuleSet Info
 		if (listing.RuleSetName) then
@@ -527,10 +620,14 @@ function SortAndDisplayListings(resetSelection:boolean)
 		else
 			controlTable.RuleSetBoxLabel:LocalizeAndSetText("LOC_MULTIPLAYER_UNKNOWN");
 		end
+		controlTable.RuleSetBoxLabel:SetColorByName(textColor);
+		controlTable.RuleSetBoxLabel:SetToolTipString(rowTooltip);
 		
 		-- Map Type info	
 		controlTable.ServerMapTypeLabel:LocalizeAndSetText(listing.MapName);
 		controlTable.ServerMapTypeLabel:LocalizeAndSetToolTip(listing.MapSizeName);
+		controlTable.ServerMapTypeLabel:SetColorByName(textColor);
+		controlTable.ServerMapTypeLabel:SetToolTipString(rowTooltip);
 
 		-- Game Speed
 		if (listing.GameSpeedName) then
@@ -538,6 +635,8 @@ function SortAndDisplayListings(resetSelection:boolean)
 		else
 			controlTable.GameSpeedLabel:LocalizeAndSetText("LOC_MULTIPLAYER_UNKNOWN");
 		end
+		controlTable.GameSpeedLabel:SetColorByName(textColor);
+		controlTable.GameSpeedLabel:SetToolTipString(rowTooltip);
 
 		-- Mod Info
 		local hasMods = listing.EnabledMods ~= nil;
@@ -706,6 +805,20 @@ function OnLoadButtonClick()
 	--LuaEvents.Lobby_ShowLoadScreen();
 end
 
+function OnJoinCodeCommit(joinCodeString)
+	if(IsJoiningDisabled()) then
+		UI.DataError("PlayByCloud joining is disabled.");
+		return;
+	end
+
+	if(joinCodeString ~= nil and joinCodeString ~= "") then
+		local bSuccess, bPending = Network.JoinGameByJoinCode(joinCodeString);
+		if(not bSuccess) then
+			LuaEvents.MultiplayerPopup( "LOC_GAME_ABANDONED_JOIN_FAILED" );
+		end
+	end
+end
+
 -- ===========================================================================
 -- Sorting Support
 -- ===========================================================================
@@ -858,13 +971,15 @@ function OnShow()
 		UI.DataError("Showing lobby but currently in a game.  This could corrupt your lobby.  @assign bolson");
 	end
 	
-	if IsUsingInternetGameList() then
-		Matchmaking.InitInternetLobby();
-	else
-		Matchmaking.InitLanLobby();
-	end
-		
-	if (m_lobbyModeName == MPLobbyTypes.PITBOSS_INTERNET) then
+	-- Initialize network lobby for lobby mode.
+	Matchmaking.InitLobby(LobbyTypeForMPLobbyType(m_lobbyModeName));
+
+	-- Set default game list filter.
+	-- PLAYBYCLOUD uses Matchmaking.SetBrowseMode().
+	-- Steam Lobby (Internet) uses Matchmaking.SetGameListType().
+	if (m_lobbyModeName == MPLobbyTypes.PLAYBYCLOUD) then
+		SetBrowserMode(LIST_PERSONAL_GAMES);
+	elseif (m_lobbyModeName == MPLobbyTypes.PITBOSS_INTERNET) then
 		Matchmaking.SetGameListType( LIST_SERVERS, SEARCH_INTERNET );
 	elseif (m_lobbyModeName == MPLobbyTypes.PITBOSS_LAN) then 
 		Matchmaking.SetGameListType( LIST_SERVERS, SEARCH_LAN );
@@ -872,11 +987,15 @@ function OnShow()
 		Matchmaking.SetGameListType( LIST_LOBBIES, SEARCH_INTERNET );
 	end
 
+	RealizeShellTabs();
+
 	UpdateGameList();
-	RefreshGameList();
+	Matchmaking.RefreshGameList();
 	UpdateRefreshButton();
 		
-	if IsUsingPitbossGameList() then
+	if IsUsingPlayByCloudGameList() then
+		Controls.TitleLabel:LocalizeAndSetText("LOC_MULTIPLAYER_CLOUD_LOBBY");
+	elseif IsUsingPitbossGameList() then
 		Controls.TitleLabel:LocalizeAndSetText("LOC_MULTIPLAYER_PITBOSS_LOBBY");
 	elseif IsUsingInternetGameList() then
 		Controls.TitleLabel:LocalizeAndSetText("LOC_MULTIPLAYER_INTERNET_LOBBY");
@@ -925,6 +1044,66 @@ function OnFriendsListToggled()
 	UpdateFriendsList();
 end
 
+function OnBrowserModeClicked(browserMode :number)
+	SetBrowserMode(browserMode); 
+
+	-- Updated selected state
+	FilterTabsSetSelected(g_TabInstances[browserMode]);
+
+	Matchmaking.RefreshGameList();
+	UpdateRefreshButton();
+end
+
+function FilterTabsSetSelected(shellTabControl :table)
+	for i,v in ipairs( g_TabInstances ) do
+		local isSelected = shellTabControl == v;
+		v.Selected:SetHide(not isSelected);
+	end
+end
+
+function AddShellTab(browserModeType :number, locText :string)
+	local newTab:table = m_shellTabIM:GetInstance();
+	newTab.Button:SetText(locText);
+	newTab.SelectedButton:SetText(locText);
+	newTab.Button:SetVoid1(browserModeType);
+	newTab.Button:RegisterCallback( Mouse.eLClick, OnBrowserModeClicked );
+
+	AutoSizeGridButton(newTab.Button,250,32,10,"H");
+	AutoSizeGridButton(newTab.SelectedButton,250,32,20,"H");
+	newTab.TopControl:SetSizeX(newTab.Button:GetSizeX());
+	g_TabInstances[browserModeType] = newTab;
+end
+
+function RealizeShellTabs()
+	m_shellTabIM:ResetInstances();
+	g_TabInstances = {};
+
+	if(IsUsingPlayByCloudGameList()) then
+		Controls.JoinCodeRoot:SetHide(false);
+		
+		Controls.GameListRoot:SetOffsetY(GAME_LIST_TABS_OFFSET_Y);
+		Controls.GameListRoot:SetSizeY(GAME_LIST_TABS_SIZE_Y);
+		Controls.ListingScrollPanel:SetSizeY(LIST_PANEL_TABS_SIZE_Y);
+		Controls.GameListGrid:SetSizeY(GAME_GRID_TABS_SIZE_Y);
+
+		AddShellTab(LIST_PERSONAL_GAMES, LOC_LOBBY_MY_GAMES);
+		AddShellTab(LIST_PUBLIC_GAMES, LOC_LOBBY_OPEN_GAMES);
+
+		-- Set the current browser mode tab as selected.
+		FilterTabsSetSelected(g_TabInstances[m_browserMode]); 
+	else
+		Controls.JoinCodeRoot:SetHide(true);
+
+		Controls.GameListRoot:SetOffsetY(GAME_LIST_OFFSET_Y);
+		Controls.GameListRoot:SetSizeY(GAME_LIST_SIZE_Y);
+		Controls.ListingScrollPanel:SetSizeY(LIST_PANEL_SIZE_Y);
+		Controls.GameListGrid:SetSizeY(GAME_GRID_TABS_SIZE_Y);
+	end
+
+	Controls.ShellTabs:CalculateSize();
+	Controls.ShellTabs:ReprocessAnchoring();
+end
+
 -- ===========================================================================
 --	Initialize screen
 -- ===========================================================================
@@ -944,8 +1123,9 @@ function Initialize()
 	Controls.JoinGameButton:RegisterCallback( Mouse.eLClick, ServerListingButtonClick );		-- set up join game callback
 	Controls.LoadGameButton:RegisterCallback( Mouse.eLClick, OnLoadButtonClick );
 	Controls.RefreshButton:RegisterCallback( Mouse.eLClick, OnRefreshButtonClick );
-	Controls.FriendsButton:RegisterCallback( Mouse.eLClick, function() Controls.FriendsCheck:SetCheck(not Controls.FriendsCheck:IsChecked()); OnFriendsListToggled(); end );
+	Controls.FriendsButton:RegisterCallback( Mouse.eLClick, OnFriendsButtonClick );
 	Controls.FriendsCheck:RegisterCheckHandler( OnFriendsListToggled );
+	Controls.JoinCodeEditBox:RegisterCommitCallback( OnJoinCodeCommit );
 	
 	Events.SteamFriendsStatusUpdated.Add( UpdateFriendsList );
 	Events.SteamFriendsPresenceUpdated.Add( UpdateFriendsList );

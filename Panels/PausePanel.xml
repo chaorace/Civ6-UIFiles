@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Context Style="FontNormal20">
-	<AlphaAnim AlphaBegin="0" AlphaEnd="1" Function="Root" Speed="4" Cycle="Once" Size="full,full" ID="AlphaIn">
-		<SlideAnim Begin="0,-50" End="0,0" Function="Root" Speed="4" Cycle="Once" Size="full,full" ID="SlideIn">
-			<AlphaAnim AlphaBegin="1" AlphaEnd="0" Function="Root" Pause="0" Speed="4" Cycle="Once" Size="full,full" ID="AlphaOut">
-				<SlideAnim Begin="0,0" End="0,-50" Function="Root" Pause="0" Speed="4" Cycle="Once" Size="full,full" ID="SlideOut">
+	<AlphaAnim AlphaBegin="0" AlphaEnd="1" Function="Root" Speed="4" Cycle="Once" Size="full,full" ID="AlphaIn" Stopped="1">
+		<SlideAnim Begin="0,-50" End="0,0" Function="Root" Speed="4" Cycle="Once" Size="full,full" ID="SlideIn" Stopped="1">
+			<AlphaAnim AlphaBegin="1" AlphaEnd="0" Function="Root" Pause="0" Speed="4" Cycle="Once" Size="full,full" ID="AlphaOut" Stopped="1">
+				<SlideAnim Begin="0,0" End="0,-50" Function="Root" Pause="0" Speed="4" Cycle="Once" Size="full,full" ID="SlideOut" Stopped="1">
 					<!-- Window Containers -->
 					<Grid Style="DropShadow" Size="450,100" Offset="0,100" Anchor="C,T" ID="Root" Hidden="1">
 						<Stack ID="PauseStack" Anchor="C,T" Offset="0,10" StackGrowth="Bottom" Padding="10">

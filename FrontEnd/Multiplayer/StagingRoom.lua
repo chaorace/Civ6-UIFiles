@@ -8,7 +8,7 @@ include( "ButtonUtilities" );
 include( "PlayerTargetLogic" );
 include( "ChatLogic" );
 include( "NetConnectionIconLogic" );
-include( "PopupDialogSupport" );
+include( "PopupDialog" );
 include( "Civ6Common" );
 include( "TeamSupport" );
 
@@ -49,6 +49,7 @@ local g_badPlayerForMapSize = false;			-- Are there too many active civs for thi
 local g_notEnoughPlayers = false;				-- Is there at least two players in the game?
 local g_everyoneReady = false;					-- Is everyone ready to play?
 local g_everyoneModReady = true;				-- Does everyone have the mods for this game?
+local g_humanRequiredFilled = true;				-- Are all the human required slots filled by humans?
 local g_duplicateLeaders = false;				-- Are there duplicate leaders blocking launch?
 												-- Note:  This only applies if No Duplicate Leaders parameter is set.
 local g_viewingGameSummary = true;
@@ -59,6 +60,7 @@ local g_isBuildingPlayerList = false;
 local m_iFirstClosedSlot = -1;					-- Closed slot to show Add player line
 
 local g_fCountdownTimer = -1;			-- Start game countdown timer.  Set to -1 when not in use.
+local g_fCountdownInitialTime = -1;		-- Initial time for the current countdown.
 local g_fCountdownTickSoundTime	= -1;	-- When was the last time we make a countdown tick sound?
 local g_fCountdownReadyButtonTime = -1;	-- When was the last time we updated the ready button countdown time?
 
@@ -68,7 +70,6 @@ local g_fCountdownReadyButtonTime = -1;	-- When was the last time we updated the
 local g_slotTypeData = 
 {
 	{ name ="LOC_SLOTTYPE_OPEN",		tooltip = "LOC_SLOTTYPE_OPEN_TT",		hotseatOnly=false,	slotStatus=SlotStatus.SS_OPEN,		hotseatInProgress = false,		hotseatAllowed=false},
-	--{ name ="LOC_SLOTTYPE_HUMANREQ",	tooltip = "LOC_SLOTTYPE_HUMANREQ_TT",	hotseatOnly=false,	slotStatus=SlotStatus.SS_OPEN,		hotseatInProgress = false,		hotseatDisabled=true },
 	{ name ="LOC_SLOTTYPE_AI",			tooltip = "LOC_SLOTTYPE_AI_TT",			hotseatOnly=false,	slotStatus=SlotStatus.SS_COMPUTER,	hotseatInProgress = true,		hotseatAllowed=true },
 	{ name ="LOC_SLOTTYPE_CLOSED",		tooltip = "LOC_SLOTTYPE_CLOSED_TT",		hotseatOnly=false,	slotStatus=SlotStatus.SS_CLOSED,	hotseatInProgress = false,		hotseatAllowed=true },		
 	{ name ="LOC_SLOTTYPE_HUMAN",		tooltip = "LOC_SLOTTYPE_HUMAN_TT",		hotseatOnly=true,	slotStatus=SlotStatus.SS_TAKEN,		hotseatInProgress = true,		hotseatAllowed=true },		
@@ -109,6 +110,11 @@ local BadMapSizeSlotStatusStrTT = Locale.Lookup("LOC_INVALID_SLOT_MAP_SIZE_TT");
 local UnsupportedText = Locale.Lookup("LOC_READY_UNSUPPORTED");
 local UnsupportedTextTT = Locale.Lookup("LOC_READY_UNSUPPORTED_TT");
 local downloadPendingStr = Locale.Lookup("LOC_MODS_SUBSCRIPTION_DOWNLOAD_PENDING");
+local loadingSaveGameStr = Locale.Lookup("LOC_STAGING_ROOM_LOADING_SAVE");
+local gameInProgressGameStr = Locale.Lookup("LOC_STAGING_ROOM_GAME_IN_PROGRESS");
+
+local onlineIconStr = "[ICON_OnlinePip]";
+local offlineIconStr = "[ICON_OfflinePip]";
 
 local COLOR_GREEN				:number = 0xFF00FF00;
 local COLOR_RED					:number = 0xFF0000FF;
@@ -183,7 +189,12 @@ function OnGameConfigChanged()
 	if(ContextPtr:IsHidden() == false) then
 		RealizeGameSetup(); -- Rebuild the game settings UI.
 		RebuildTeamPulldowns();	-- NoTeams setting might have changed.
-		SetLocalReady(false);  -- unready so player can acknowledge the new settings.
+
+		-- PLAYBYCLOUDTODO - Remove PBC special case once ready state changes have been moved to cloud player meta data.
+		-- PlayByCloud uses GameConfigChanged to communicate player ready state changes, don't reset ready in that mode.
+		if(not GameConfiguration.IsPlayByCloud()) then
+			SetLocalReady(false);  -- unready so player can acknowledge the new settings.
+		end
 		CheckGameAutoStart();  -- Toggling "No Duplicate Leaders" can affect the start countdown.
 	end
 	OnMapMaxMajorPlayersChanged(MapConfiguration.GetMaxMajorPlayers());	
@@ -250,11 +261,14 @@ function OnTeamChange( playerID, isBatchCall )
 			-- this player was the last player on that team.  We might need to create a new empty team.
 			updateOpenEmptyTeam = true;
 		end
+		
+		if(g_cachedTeams[playerID] ~= nil and g_cachedTeams[playerID] ~= teamID) then
+			-- Reset the player's ready status if they actually changed teams.
+			SetLocalReady(false);
+		end
 
 		-- cache the player's teamID for the next OnTeamChange.
 		g_cachedTeams[playerID] = teamID;
-
-		SetLocalReady(false); -- Team switching unreadies players
 		
 		if(not isBatchCall) then
 			-- There's some stuff that we have to do it to maintain the player list. 
@@ -273,6 +287,19 @@ function OnMultiplayerPingTimesChanged()
 	for playerID, playerEntry in pairs( g_PlayerEntries ) do
 		--UpdateNetConnectionIcon(playerID, playerEntry.ConnectionStatus, playerEntry.StatusLabel);
 		--UpdateNetConnectionLabel(playerID, playerEntry.StatusLabel);
+	end
+end
+
+function OnCloudGameKilled( matchID, success )
+	if(success) then
+		-- On success, exit the screen
+		LuaEvents.Multiplayer_ExitShell();
+	else
+		--Show error prompt.
+		m_kPopupDialog:Close();
+		m_kPopupDialog:AddText(	  Locale.Lookup("LOC_MULTIPLAYER_ENDING_GAME_FAIL"));
+		m_kPopupDialog:AddButton( Locale.Lookup("LOC_MULTIPLAYER_ENDING_GAME_FAIL_ACCEPT") );
+		m_kPopupDialog:Open();
 	end
 end
 
@@ -499,6 +526,19 @@ end
 -------------------------------------------------
 -------------------------------------------------
 
+function OnMultiplayerGameLaunchFailed()
+	-- Multiplayer game failed for launch for some reason.
+	SetLocalReady(false); -- Unready the local player so they can try it again.
+
+	m_kPopupDialog:Close();	-- clear out the popup incase it is already open.
+	m_kPopupDialog:AddText(	  Locale.Lookup("LOC_MULTIPLAYER_GAME_LAUNCH_FAILED"));
+	m_kPopupDialog:AddButton( Locale.Lookup("LOC_MULTIPLAYER_GAME_LAUNCH_FAILED_ACCEPT"));
+	m_kPopupDialog:Open();
+end
+
+-------------------------------------------------
+-------------------------------------------------
+
 function OnLeaveGameComplete()
 	-- We just left the game, we shouldn't be open anymore.
 	UIManager:DequeuePopup( ContextPtr );
@@ -549,7 +589,6 @@ function OnSlotType( playerID, id )
 		return;
 	end
 
-	-- UINETTODO - need to hook up the special boolean for LOC_SLOTTYPE_HUMANREQ
 	pPlayerConfig:SetSlotStatus(g_slotTypeData[id].slotStatus);
 
 	-- When setting the slot status to a major civ type, some additional data in the player config needs to be set.
@@ -746,6 +785,7 @@ function CheckGameAutoStart()
 		g_notEnoughPlayers = false;
 		g_everyoneModReady = true;
 		g_duplicateLeaders = false;
+		g_humanRequiredFilled = true;
 
 		-- Count players and check to see if a human player isn't ready.
 		local totalPlayers = 0;
@@ -767,6 +807,10 @@ function CheckGameAutoStart()
 					startCountdown = false;
 					g_everyoneModReady = false;
 				end
+			elseif(curPlayerConfig:IsHumanRequired() == true) then
+				--A human required slot is not filled by a human.  Can't launch.
+				startCountdown = false;
+				g_humanRequiredFilled = false;
 			end
 			if( (curSlotStatus == SlotStatus.SS_COMPUTER or curSlotStatus == SlotStatus.SS_TAKEN) and curIsFullCiv ) then
 				totalPlayers = totalPlayers + 1;
@@ -920,10 +964,17 @@ end
 -- PopulateSlotTypePulldown
 -------------------------------------------------
 function PopulateSlotTypePulldown( pullDown, playerID, slotTypeOptions )
-	pullDown:ClearEntries();
+	
+	local instanceManager = pullDown["InstanceManager"];
+	if not instanceManager then
+		instanceManager = PullDownInstanceManager:new("InstanceOne", "Button", pullDown);
+		pullDown["InstanceManager"] = instanceManager;
+	end
+	
+	
+	instanceManager:ResetInstances();
+	pullDown.ItemCount = 0;
 
-	local controlTable = {};
-	local createEntry;
 	for i, pair in ipairs(slotTypeOptions) do
 
 		local pPlayerConfig = PlayerConfigurations[playerID];
@@ -941,8 +992,11 @@ function PopulateSlotTypePulldown( pullDown, playerID, slotTypeOptions )
 			-- You can't switch a civilization to open/closed if the game is at the minimum player count.
 			and ((pair.slotStatus ~= SlotStatus.SS_CLOSED and pair.slotStatus ~= SlotStatus.SS_OPEN)		-- Target SlotType isn't open/close
 				or (playerSlotStatus ~= SlotStatus.SS_TAKEN and playerSlotStatus ~= SlotStatus.SS_COMPUTER) -- Current SlotType isn't a civ
+				or (GameConfiguration.IsPlayByCloud() and pair.slotStatus == SlotStatus.SS_OPEN)			-- In PlayByCloud OPEN slots are autoflagged as HumanRequired.
+																											-- We allow them to bypass the minimum player count because 
+																											-- a human player must occupy the slot for the game to launch. 
 				or GameConfiguration.GetParticipatingPlayerCount() > g_currentMinPlayers)					-- Above player count
-			and (playerSlotStatus ~= SlotStatus.SS_TAKEN or GameConfiguration.IsHotseat()) -- You can only change the slot type of humans while in hotseat.
+			and (playerSlotStatus ~= SlotStatus.SS_TAKEN or GameConfiguration.IsHotseat())					-- You can only change the slot type of humans while in hotseat.
 			and not pPlayerConfig:IsLocked() -- Can't change the slot type of locked player slots.
 			-- Can normally only change slot types in the pregame unless this is a option that can be changed mid-game in hotseat.
 			and (GameConfiguration.GetGameState() == GameStateTypes.GAMESTATE_PREGAME 
@@ -951,26 +1005,36 @@ function PopulateSlotTypePulldown( pullDown, playerID, slotTypeOptions )
 		-- Valid state for hotseatOnly flag
 		local hotseatOnlyCheck = (GameConfiguration.IsHotseat() and pair.hotseatAllowed) or (not GameConfiguration.IsHotseat() and not pair.hotseatOnly);
 
-		if(hotseatOnlyCheck 
+		if(	hotseatOnlyCheck 
 			and playerID ~= Network.GetLocalPlayerID()
 			and (showSwapButton or showSlotButton)) then
-			controlTable = {};
-			pullDown:BuildEntry( "InstanceOne", controlTable );
-					
-			controlTable.Button:LocalizeAndSetText( pair.name );
+
+			pullDown.ItemCount = pullDown.ItemCount + 1;
+			local instance = instanceManager:GetInstance();
+			local slotDisplayName = pair.name;
+			local slotToolTip = pair.tooltip;
+
+			-- In PlayByCloud OPEN slots are autoflagged as HumanRequired., morph the display name and tooltip.
+			if(GameConfiguration.IsPlayByCloud() and pair.slotStatus == SlotStatus.SS_OPEN) then
+				slotDisplayName = "LOC_SLOTTYPE_HUMANREQ";
+				slotToolTip = "LOC_SLOTTYPE_HUMANREQ_TT";
+			end
+
+			instance.Button:LocalizeAndSetText( slotDisplayName );
 
 			if pair.slotStatus == -1 then
 				local isHuman = (playerSlotStatus == SlotStatus.SS_TAKEN);
-				controlTable.Button:LocalizeAndSetToolTip(isHuman and "TXT_KEY_MP_SWAP_WITH_PLAYER_BUTTON_TT" or "TXT_KEY_MP_SWAP_BUTTON_TT");
+				instance.Button:LocalizeAndSetToolTip(isHuman and "TXT_KEY_MP_SWAP_WITH_PLAYER_BUTTON_TT" or "TXT_KEY_MP_SWAP_BUTTON_TT");
 			else
-				controlTable.Button:LocalizeAndSetToolTip( pair.tooltip );
+				instance.Button:LocalizeAndSetToolTip( slotToolTip );
 			end
-			controlTable.Button:SetVoids( playerID, i);	
+			instance.Button:SetVoids( playerID, i );	
 		end
 	end
 
 	pullDown:CalculateInternals();
 	pullDown:RegisterSelectionCallback(OnSlotType);
+	pullDown:SetDisabled(pullDown.ItemCount < 1);
 end
 
 -------------------------------------------------
@@ -986,22 +1050,28 @@ function GetTeamCounts( teamCountTable :table )
 	end
 end
 
-function AddTeamPulldownEntry( playerID :number, pullDown :table, teamID :number, teamName :string )
-	local controlTable = {};
-	pullDown:BuildEntry( "InstanceOne", controlTable );
+function AddTeamPulldownEntry( playerID:number, pullDown:table, instanceManager:table, teamID:number, teamName:string )
+	
+	local instance = instanceManager:GetInstance();
 	
 	if teamID >= 0 then
 		local teamIconName:string = TEAM_ICON_PREFIX .. tostring(teamID);
-		controlTable.ButtonImage:SetSizeVal(TEAM_ICON_SIZE, TEAM_ICON_SIZE);
-		controlTable.ButtonImage:SetIcon(teamIconName, TEAM_ICON_SIZE);
-		controlTable.ButtonImage:SetColor(GetTeamColor(teamID));
+		instance.ButtonImage:SetSizeVal(TEAM_ICON_SIZE, TEAM_ICON_SIZE);
+		instance.ButtonImage:SetIcon(teamIconName, TEAM_ICON_SIZE);
+		instance.ButtonImage:SetColor(GetTeamColor(teamID));
 	end
 
-	controlTable.Button:SetVoids( playerID, teamID);
+	instance.Button:SetVoids( playerID, teamID );
 end
 
-function SetupTeamPulldown( playerID :number, pullDown :table )
-	pullDown:ClearEntries();
+function SetupTeamPulldown( playerID:number, pullDown:table )
+
+	local instanceManager = pullDown["InstanceManager"];
+	if not instanceManager then
+		instanceManager = PullDownInstanceManager:new("InstanceOne", "Button", pullDown);
+		pullDown["InstanceManager"] = instanceManager;
+	end
+	instanceManager:ResetInstances();
 
 	local teamCounts = {};
 	GetTeamCounts(teamCounts);
@@ -1040,11 +1110,11 @@ function SetupTeamPulldown( playerID :number, pullDown :table )
 	table.sort(pulldownEntries, function(a, b) return a.teamID < b.teamID; end);
 
 	for pullID, curPulldownEntry in ipairs(pulldownEntries) do
-		AddTeamPulldownEntry(playerID, pullDown, curPulldownEntry.teamID, curPulldownEntry.teamName);
+		AddTeamPulldownEntry(playerID, pullDown, instanceManager, curPulldownEntry.teamID, curPulldownEntry.teamName);
 	end
 
 	pullDown:CalculateInternals();
-	pullDown:RegisterSelectionCallback( OnTeamPull);
+	pullDown:RegisterSelectionCallback( OnTeamPull );
 end
 
 function RebuildTeamPulldowns()
@@ -1096,12 +1166,15 @@ function UpdatePlayerEntry_SlotTypeDisabled(playerID)
 	local localPlayerConfig = PlayerConfigurations[localPlayerID];
 	local playerEntry = g_PlayerEntries[playerID];
 	if(playerEntry ~= nil) then
-		local slotTypeStack = playerEntry.SlotTypePulldown:GetStack();
+
+		-- Disable the pulldown if there are no items in it.
+		local itemCount = playerEntry.SlotTypePulldown.ItemCount or 0;
+
 		-- The slot type pulldown handles user access permissions internally (See PopulateSlotTypePulldown()).  
 		-- However, we need to disable the pulldown entirely if the local player has readied up.
 		local bCanChangeSlotType:boolean = not localPlayerConfig:GetReady() 
 											and playerID ~= Network.GetLocalPlayerID()
-											and slotTypeStack:GetNumChildren() > 0; -- No available slot type options.
+											and itemCount > 0; -- No available slot type options.
 
 		playerEntry.AlternateSlotTypePulldown:SetDisabled(not bCanChangeSlotType);
 		playerEntry.SlotTypePulldown:SetDisabled(not bCanChangeSlotType);
@@ -1320,6 +1393,15 @@ function UpdatePlayerEntry(playerID)
 		-- Update AFTER hotseat checks as hot seat checks may upate nickname.
 		playerEntry.PlayerName:LocalizeAndSetText(pPlayerConfig:GetSlotName()); 
 		playerEntry.AlternateName:LocalizeAndSetText(pPlayerConfig:GetSlotName()); 
+
+		-- Update online pip status for human slots.
+		if(pPlayerConfig:IsHuman()) then
+			local iconStr = onlineIconStr;
+			if(not Network.IsPlayerConnected(playerID)) then
+				iconStr = offlineIconStr;
+			end
+			playerEntry.ConnectionStatus:SetText(iconStr);
+		end
 		
 	else
 		print("PlayerEntry not found for playerID(" .. tostring(playerID) .. ").");
@@ -1544,6 +1626,11 @@ function UpdateReadyButton()
 		Controls.ReadyButton:LocalizeAndSetToolTip("LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS");
 		Controls.ReadyCheck:LocalizeAndSetToolTip( "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS");
 		localPlayerButton:LocalizeAndSetToolTip( "LOC_SETUP_ERROR_NO_DUPLICATE_LEADERS");
+	elseif(not g_humanRequiredFilled) then
+		Controls.StartLabel:LocalizeAndSetText("LOC_SETUP_ERROR_HUMANS_REQUIRED");
+		Controls.ReadyButton:LocalizeAndSetToolTip("LOC_SETUP_ERROR_HUMANS_REQUIRED");
+		Controls.ReadyCheck:LocalizeAndSetToolTip( "LOC_SETUP_ERROR_HUMANS_REQUIRED");
+		localPlayerButton:LocalizeAndSetToolTip( "LOC_SETUP_ERROR_HUMANS_REQUIRED");
 	end
 
 	local errorReason;
@@ -1574,8 +1661,17 @@ end
 -------------------------------------------------
 function StartCountdown()
 	--print("StartCountdown");
-	g_fCountdownTimer = 10;
-	g_fCountdownTickSoundTime = g_fCountdownTimer - 3; -- start countdown ticks in 3 seconds.
+	local gameState = GameConfiguration.GetGameState();
+	if(GameConfiguration.IsPlayByCloud() and gameState == GameStateTypes.GAMESTATE_LAUNCHED) then
+		-- Joining a PlayByCloud game already in progress has a much faster countdown to be less annoying.
+		g_fCountdownTimer = 3;
+		g_fCountdownTickSoundTime = g_fCountdownTimer; -- start countdown tick now.
+	else
+		g_fCountdownTimer = 10;
+		g_fCountdownTickSoundTime = g_fCountdownTimer - 3; -- start countdown ticks in 3 seconds.
+	end
+	
+	g_fCountdownInitialTime = g_fCountdownTimer;
 	g_fCountdownReadyButtonTime = g_fCountdownTimer;
 	ContextPtr:SetUpdate( OnUpdate );
 
@@ -1584,10 +1680,7 @@ function StartCountdown()
 		UpdatePlayerEntry(m_iFirstClosedSlot);
 	end
 
-	if not GameConfiguration.IsHotseat() then
-		Controls.ReadyButtonContainer:SetHide(true);
-		Controls.StartButtonContainer:SetHide(false);
-	end
+	ShowHideReadyButtons();
 end
 
 -------------------------------------------------
@@ -1605,10 +1698,7 @@ function StopCountdown()
 		UpdatePlayerEntry(m_iFirstClosedSlot);
 	end
 
-	if not GameConfiguration.IsHotseat() then
-		Controls.StartButtonContainer:SetHide(true);
-		Controls.ReadyButtonContainer:SetHide(false);
-	end
+	ShowHideReadyButtons();
 end
 
 -------------------------------------------------
@@ -1679,7 +1769,7 @@ end
 function OnUpdate( fDTime )
 	-- OnUpdate only runs when the game start countdown is ticking down.
 	g_fCountdownTimer = g_fCountdownTimer - fDTime;
-	Controls.TurnTimerMeter:SetPercent(g_fCountdownTimer / 10);
+	Controls.TurnTimerMeter:SetPercent(g_fCountdownTimer / g_fCountdownInitialTime);
 	if( not Network.IsEveryoneConnected() ) then
 		-- not all players are connected anymore.  This is probably due to a player join in progress.
 		StopCountdown();
@@ -1711,8 +1801,9 @@ function OnShow()
 	-- Fetch g_currentMaxPlayers because it might be stale due to loading a save.
 	g_currentMaxPlayers = math.min(MapConfiguration.GetMaxMajorPlayers(), 12);
 
-	InitializeReadyButton();
+	InitializeReadyUI();
 	ShowHideInviteButton();	
+	ShowHideEndGameButton();
 	RealizeGameSetup();
 	BuildPlayerList();
 	PopulateTargetPull(Controls.ChatPull, Controls.ChatEntry, m_playerTargetEntries, m_playerTarget, false, OnChatPulldownChanged);
@@ -1725,15 +1816,6 @@ function OnShow()
 	UpdateFriendsList();
 	RealizeInfoTabs();
 	RealizeGridSize();
-
-	local isHotSeat:boolean = GameConfiguration.IsHotseat();
-	Controls.LargeCompassDeco:SetHide(isHotSeat);
-	Controls.TurnTimerBG:SetHide(isHotSeat);
-	Controls.TurnTimerMeter:SetHide(isHotSeat);
-	Controls.TurnTimerHotseatBG:SetHide(not isHotSeat);
-	Controls.ReadyColumnLabel:SetHide(isHotSeat);
-	Controls.ReadyButtonContainer:SetHide(isHotSeat);
-	Controls.StartButtonContainer:SetHide(not isHotSeat);
 
 	-- Forgive me universe!
 	Controls.ReadyButton:SetOffsetY(isHotSeat and -16 or -18);
@@ -1766,14 +1848,21 @@ ContextPtr:SetHideHandler(OnHide);
 
 -------------------------------------------------
 -------------------------------------------------
-function InitializeReadyButton()
-	local bShow = not Network.IsInGameStartedState();
-	Controls.ReadyButton:SetHide( not bShow );
-
+function InitializeReadyUI()
 	-- Set initial ready check state.  This might be dirty from a previous staging room.
 	local localPlayerID = Network.GetLocalPlayerID();
 	local localPlayerConfig = PlayerConfigurations[localPlayerID];
 	Controls.ReadyCheck:SetSelected(localPlayerConfig:GetReady());
+
+	-- Hotseat doesn't use the readying mechanic (countdown; ready background elements; ready column). 
+	local isHotSeat:boolean = GameConfiguration.IsHotseat();
+	Controls.LargeCompassDeco:SetHide(isHotSeat);
+	Controls.TurnTimerBG:SetHide(isHotSeat);
+	Controls.TurnTimerMeter:SetHide(isHotSeat);
+	Controls.TurnTimerHotseatBG:SetHide(not isHotSeat);
+	Controls.ReadyColumnLabel:SetHide(isHotSeat);
+
+	ShowHideReadyButtons();
 end
 
 -------------------------------------------------
@@ -1781,6 +1870,22 @@ end
 function ShowHideInviteButton()
 	local steamGame :boolean = Network.GetTransportType() == TransportType.TRANSPORT_STEAM;
 	Controls.InviteButton:SetHide( not steamGame );
+end
+
+-------------------------------------------------
+-------------------------------------------------
+function ShowHideEndGameButton()
+	local showEndGame :boolean = GameConfiguration.IsPlayByCloud();
+	Controls.EndGameButton:SetHide( not showEndGame);
+end
+
+-------------------------------------------------
+-------------------------------------------------
+function ShowHideReadyButtons()
+	-- show ready button when in the countdown or hotseat.
+	local showReadyCheck = not GameConfiguration.IsHotseat() and (g_fCountdownTimer == -1);
+	Controls.ReadyCheckContainer:SetHide(not showReadyCheck);
+	Controls.ReadyButtonContainer:SetHide(showReadyCheck);
 end
 
 -------------------------------------------------
@@ -1880,10 +1985,50 @@ function BuildGameSetupParameter(o, parameter)
 end
 
 function RealizeGameSetup()
+	BuildGameState();
+
 	m_gameSetupParameterIM:ResetInstances();
 	BuildGameSetup(BuildGameSetupParameter);
 
 	BuildAdditionalContent();
+end
+
+function BuildGameState()
+	-- Indicate that this game is for loading a save or already in progress.
+	local gameState = GameConfiguration.GetGameState();
+	if(gameState ~= GameStateTypes.GAMESTATE_PREGAME) then
+		local gameModeStr : string;
+
+		if(gameState == GameStateTypes.GAMESTATE_LOAD_PREGAME) then
+			-- in the pregame for loading a save
+			gameModeStr = loadingSaveGameStr;
+		else
+			-- standard game in progress
+			gameModeStr = gameInProgressGameStr;
+		end
+		Controls.GameStateText:SetHide(false);
+		Controls.GameStateText:SetText(gameModeStr);
+	else
+		Controls.GameStateText:SetHide(true);
+	end
+
+	-- Display join code for PlayByCloud games.
+	if(GameConfiguration.IsPlayByCloud()) then
+		local joinCode :string = Network.GetJoinCode();
+		if(joinCode ~= nil and joinCode ~= "") then
+			Controls.JoinCodeRoot:SetHide(false);
+			Controls.JoinCodeText:SetText(joinCode);
+		else
+			Controls.JoinCodeRoot:SetHide(true);
+		end
+	else
+		Controls.JoinCodeRoot:SetHide(true);
+	end
+
+	Controls.AdditionalContentStack:CalculateSize();
+	Controls.AdditionalContentStack:ReprocessAnchoring();
+
+	Controls.ParametersScrollPanel:CalculateInternalSize();
 end
 
 function BuildAdditionalContent()
@@ -2091,13 +2236,31 @@ function OnExitGame()
 	LuaEvents.Multiplayer_ExitShell();
 end
 
+function OnEndGame_Start()
+	Network.CloudKillGame();
+
+	-- Show killing game popup
+	m_kPopupDialog:Close(); -- clear out the popup incase it is already open.
+	m_kPopupDialog:AddText(	  Locale.Lookup("LOC_MULTIPLAYER_ENDING_GAME_PROMPT"));
+	m_kPopupDialog:Open();
+
+	-- Next step is in OnCloudGameKilled.
+end
+
 function OnExitGameAskAreYouSure()
-	if (not m_kPopupDialog:IsOpen()) then
-		m_kPopupDialog:AddText(	  Locale.Lookup("LOC_GAME_MENU_QUIT_WARNING"));
-		m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_NO_BUTTON_CAPTION"), nil );
-		m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnExitGame, nil, nil, "PopupButtonInstanceAlt" );
-		m_kPopupDialog:Open();
-	end
+	m_kPopupDialog:Close();	-- clear out the popup incase it is already open.
+	m_kPopupDialog:AddText(	  Locale.Lookup("LOC_GAME_MENU_QUIT_WARNING"));
+	m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_NO_BUTTON_CAPTION"), nil );
+	m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnExitGame, nil, nil, "PopupButtonInstanceRed" );
+	m_kPopupDialog:Open();
+end
+
+function OnEndGameAskAreYouSure()
+	m_kPopupDialog:Close(); -- clear out the popup incase it is already open.
+	m_kPopupDialog:AddText(	  Locale.Lookup("LOC_GAME_MENU_END_GAME_WARNING"));
+	m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_NO_BUTTON_CAPTION"), nil );
+	m_kPopupDialog:AddButton( Locale.Lookup("LOC_COMMON_DIALOG_YES_BUTTON_CAPTION"), OnEndGame_Start, nil, nil, "PopupButtonInstanceRed" );
+	m_kPopupDialog:Open();
 end
 
 -- ===========================================================================
@@ -2118,6 +2281,8 @@ function Initialize()
 	Controls.ChatEntry:RegisterCommitCallback( SendChat );
 	Controls.InviteButton:RegisterCallback( Mouse.eLClick, OnInviteButton );
 	Controls.InviteButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+	Controls.EndGameButton:RegisterCallback( Mouse.eLClick, OnEndGameAskAreYouSure );
+	Controls.EndGameButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);	
 	Controls.ReadyButton:RegisterCallback( Mouse.eLClick, OnReadyButton );
 	Controls.ReadyButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 	Controls.ReadyCheck:RegisterCallback( Mouse.eLClick, OnReadyButton );
@@ -2132,6 +2297,7 @@ function Initialize()
 	Events.ModStatusUpdated.Add(OnModStatusUpdated);
 	Events.MultiplayerChat.Add( OnMultiplayerChat );
 	Events.MultiplayerGameAbandoned.Add( OnAbandoned );
+	Events.MultiplayerGameLaunchFailed.Add( OnMultiplayerGameLaunchFailed );
 	Events.LeaveGameComplete.Add( OnLeaveGameComplete );
 	Events.BeforeMultiplayerInviteProcessing.Add( OnBeforeMultiplayerInviteProcessing );
 	Events.MultiplayerHostMigrated.Add( OnMultiplayerHostMigrated );
@@ -2139,6 +2305,7 @@ function Initialize()
 	Events.MultiplayerPingTimesChanged.Add(OnMultiplayerPingTimesChanged);
 	Events.SteamFriendsStatusUpdated.Add( UpdateFriendsList );
 	Events.SteamFriendsPresenceUpdated.Add( UpdateFriendsList );
+	Events.CloudGameKilled.Add(OnCloudGameKilled);
 
 	LuaEvents.GameDebug_Return.Add(OnGameDebugReturn);
 	LuaEvents.HostGame_ShowStagingRoom.Add( OnRaise );
@@ -2153,9 +2320,6 @@ function Initialize()
 	SetupGridLines(0);
 
 	-- Custom popup setup	
-	m_kPopupDialog = PopupDialogLogic:new( "InGameTopOptionsMenu", Controls.PopupDialog, Controls.PopupStack );
-	m_kPopupDialog:SetInstanceNames( "PopupButtonInstance", "Button", "PopupTextInstance", "Text", "RowInstance", "Row");
-	m_kPopupDialog:SetOpenAnimationControls( Controls.PopupAlphaIn, Controls.PopupSlideIn );	
-	m_kPopupDialog:SetSize(400,200);
+	m_kPopupDialog = PopupDialog:new( "InGameTopOptionsMenu" );
 end
 Initialize();

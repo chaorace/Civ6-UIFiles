@@ -99,6 +99,19 @@ function GetUnlockableItems(playerId)
 	end
 
 	local unlockables = {};
+	
+	for row in GameInfo.Governments() do
+		if(CanEverUnlock(row)) then
+			table.insert(unlockables, {row, row.GovernmentType, row.Name, row.GovernmentType});
+		end
+	end
+
+	for row in GameInfo.Policies() do
+		if(CanEverUnlock(row)) then
+			table.insert(unlockables, {row, row.PolicyType, row.Name, row.PolicyType});
+		end
+	end
+
 	for row in GameInfo.Buildings() do
 		if(CanEverUnlock(row)) then
 			table.insert(unlockables, {row, row.BuildingType, row.Name, row.BuildingType});
@@ -116,21 +129,9 @@ function GetUnlockableItems(playerId)
 		end
 	end
 
-	for row in GameInfo.Governments() do
-		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.GovernmentType, row.Name, row.GovernmentType});
-		end
-	end
-
 	for row in GameInfo.Improvements() do
 		if(CanEverUnlock(row)) then
 			table.insert(unlockables, {row, row.ImprovementType, row.Name, row.ImprovementType});
-		end
-	end
-
-	for row in GameInfo.Policies() do
-		if(CanEverUnlock(row)) then
-			table.insert(unlockables, {row, row.PolicyType, row.Name, row.PolicyType});
 		end
 	end
 

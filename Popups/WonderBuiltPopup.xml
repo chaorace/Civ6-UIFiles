@@ -42,7 +42,7 @@
           </Box>
         </Grid>
         <Grid ID="WonderQuoteContainer" Style="SubContainerFill" Size="600,50" AutoSize="V" Color="14,21,26,255" Anchor="C,C" Offset="200,-1" AutoSizePadding="0,-3">
-          <Grid ID="WonderQuoteDeco" Texture="Controls_GossipContainer" SliceTextureSize="70,70" SliceCorner="35,35" MinSize="70,70" Offset="0,-2" Size="parent+4,parent" Anchor="C,T" Color="36,49,59,255" AutoSize="V" InnerPadding="25,20">
+          <Grid ID="WonderQuoteDeco" Texture="Controls_GossipContainer" SliceTextureSize="70,70" SliceCorner="35,35" MinSize="70,70" Offset="0,-2" Size="parent+4,0" Anchor="C,T" Color="36,49,59,255" AutoSize="V" InnerPadding="25,20">
             <Label ID="WonderQuote" Style="BodyText16" Anchor="C,C" WrapWidth="parent-20" String="&quot; In West Philadelphia, born and raised, on a playground is where I spent most of my days.&quot; ~Fresh Prince"/>
           </Grid>
         </Grid>

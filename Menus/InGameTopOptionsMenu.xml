@@ -2,6 +2,9 @@
 <Context  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\..\CivTech\Libs\ForgeUI\ForgeUI_Assets\Controls.xsd"
 					ColorSet="Beige_Black" Style="FontNormal16" FontStyle="Shadow" >
 
+	<Include File="PopupDialog"/>
+  <Include File="CivilizationIcon"/>
+
   <AlphaAnim        ID="PauseWindowClose"  AlphaBegin="0"  AlphaEnd="1"  Speed="3" Function="Root" Cycle="Once" Stopped="1"/>
 
   <AlphaAnim        ID="AlphaIn"      Size="parent,parent"  AlphaBegin="0"  AlphaEnd="1"  Speed="9" Function="Root" Cycle="Once">
@@ -26,7 +29,8 @@
                 <GridButton ID="SaveGameButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_SAVE:upper}" ToolTip="LOC_GAME_MENU_SAVE_TOOLTIP" />
                 <GridButton ID="LoadGameButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_LOAD:upper}" ToolTip="LOC_GAME_MENU_LOAD_TOOLTIP" />
                 <GridButton ID="OptionsButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_OPTIONS:upper}" ToolTip="LOC_GAME_MENU_OPTIONS_TOOLTIP"/>
-                <GridButton ID="RetireButton"					Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_RETIRE:upper}" ToolTip="LOC_GAME_MENU_RETIRE_TOOLTIP"/>
+                <GridButton ID="RetireButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_RETIRE:upper}" ToolTip="LOC_GAME_MENU_RETIRE_TOOLTIP"/>
+                <GridButton ID="RestartButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_RESTART:upper}" ToolTip="LOC_GAME_MENU_RESTART_TOOLTIP"/>
                 <GridButton ID="MainMenuButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_EXIT_TO_MAIN:upper}" ToolTip="LOC_GAME_MENU_EXIT_TO_MAIN_TOOLTIP" />
                 <GridButton ID="ExitGameButton"				Anchor="C,T" Style="PauseMenuButton" Size="250,36" String="{LOC_GAME_MENU_EXIT_TO_DESKTOP:upper}" ToolTip="LOC_GAME_MENU_EXIT_TO_DESKTOP_TOOLTIP" />
 
@@ -52,11 +56,7 @@
                 <Grid Style="ShellGameDetailsContainerR" Size="52,55" Anchor="R,C"/>
                 <Stack StackGrowth="Right" Anchor="C,C" Offset="0,1" Padding="-3">
                   <Container Size="62,62">
-                    <Image ID="CivBacking_Base" Texture="Circle44_Base" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-                    <Image ID="CivBacking_Darker" Texture="Circle44_Darker" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-                    <Image ID="CivBacking_Lighter" Texture="Circle44_Lighter" Size="44,44" Anchor="C,C" Color="49,59,80,255"/>
-                    <Image ID="CivBacking_None" Texture="Circle44_None" Size="44,44" Anchor="C,C"/>
-                    <Image ID="CivIcon" Texture="CivSymbols36" Size="36,36" Anchor="C,C"/>
+                    <MakeInstance Name="CivilizationIconShaded44"/>
                     <Image Texture="Controls_CircleRim50" Size="50,50" Anchor="C,C" Offset="-1,-1" Color="2,119,186"/>
                   </Container>
                   <Container Size="62,62">
@@ -76,29 +76,12 @@
     </SlideAnim>
   </AlphaAnim>
 
-	<!-- Custom popup dialog -->
-  <Box Style="PopupDialogBox"/>
-
-
+  <!-- Dialog Support -->
+  <MakeInstance Name="PopupDialog" />
 
 	<Instance Name="ModInstance">
 		<Label ID="ModTitle" Style="FontNormal14"	Color="102,122,145" Anchor="L,T" Offset="5,0" WrapWidth="205" String="Mod Title" />
 	</Instance>
-
-	<!-- Customized popup dialog pieces-->
-  <Instance				Name="PopupButtonInstance">
-    <GridButton   ID="Button"     Size="200,41"   Style="MainButton"/>
-  </Instance>
-  <Instance				Name="PopupButtonInstanceAlt">
-    <GridButton   ID="Button"     Size="200,41"   Style="ButtonRed"/>
-  </Instance>
-  <Instance				Name="PopupTextInstance">
-    <Label        ID="Text"       Anchor="C,T" Style="BodyTextDark18" Align="Center" WrapWidth="parent-20"/>
-  </Instance>
-  <Instance				Name="RowInstance">
-    <Stack        ID="Row"			Anchor="C,T" StackGrowth="Right" StackWrap="Bottom" StackPadding="10" />
-  </Instance>
-
 
 	<LuaContext FileName="LoadGameMenu" ID="LoadGameMenu" Hidden="1" />
 	<LuaContext FileName="SaveGameMenu" ID="SaveGameMenu" Hidden="1" TutorialActive="1" />

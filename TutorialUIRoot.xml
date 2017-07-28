@@ -4,7 +4,7 @@
 <!-- Tabs set to 2 spaces, retaining the tab.		-->
 <Context					Name="TutorialUIRoot" Layer="Tutorial" >
 
-	<Container			ID="ListContainer"		Size="200,full" AutoSize="V" Hidden="1" Buttons="L" ConsumeAllMouse="1">
+	<Container			ID="ListContainer"		Size="200,full" Hidden="1" Buttons="L" ConsumeAllMouse="1">
 		<Box																Size="parent,parent" Color="10,10,10,200" />
 		<ScrollPanel	ID="TutorialScroll"		Size="200,full" Vertical="1" >
 			<Stack			ID="TutorialItemStack" StackGrowth="Down" StackPadding="2" />

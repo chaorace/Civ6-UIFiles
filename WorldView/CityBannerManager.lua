@@ -47,6 +47,7 @@ local ALPHA_DIM					:number = 0.45;
 
 local m_pDirtyCityComponents	:table = {};
 local m_isReligionLensActive	:boolean = false;
+local m_refreshLocalPlayerRangeStrike:boolean = false;
 
 -- The meta table definition that holds the function pointers
 hstructure CityBannerMeta
@@ -327,7 +328,7 @@ function CityBanner.UpdateAerodromeBanner( self : CityBanner )
 				unitEntry.UnitName:SetText( Locale.ToUpper( unit:GetName() ) );
 
 				-- Update icon
-				local iconInfo:table, iconShadowInfo:table = GetUnitIconAndIconShadow(unit, 22, true);
+				local iconInfo:table = GetUnitIcon(unit, 22);
 				if iconInfo.textureSheet then
 					unitEntry.UnitTypeIcon:SetTexture( iconInfo.textureOffsetX, iconInfo.textureOffsetY, iconInfo.textureSheet );
 				end
@@ -369,7 +370,7 @@ function CityBanner.UpdateAerodromeBanner( self : CityBanner )
 				unitEntry.UnitName:SetText( Locale.ToUpper(unit:GetName()) );
 
 				-- Update icon
-				local iconInfo:table, iconShadowInfo:table = GetUnitIconAndIconShadow(unit, 22, true);
+				local iconInfo:table = GetUnitIcon(unit, 22, true);
 				if iconInfo.textureSheet then
 					unitEntry.UnitTypeIcon:SetTexture( iconInfo.textureOffsetX, iconInfo.textureOffsetY, iconInfo.textureSheet );
 				end
@@ -1177,13 +1178,15 @@ function CityBanner.UpdateName( self : CityBanner )
 
 			if not self:IsTeam() then
 				local leader:string = PlayerConfigurations[owner]:GetLeaderTypeName();
-				if GameInfo.CivilizationLeaders[leader] == nil then
-					UI.DataError("Banners found a leader \""..leader.."\" which is not/no longer in the game; icon may be whack.");
-				else
-					local civIconName	:string = "ICON_";
-					local civType		:string = GameInfo.CivilizationLeaders[leader].CivilizationType;
-					if civType ~= nil then
-						self.m_Instance.CivIcon:SetIcon(civIconName..civType);
+				if leader ~= nil then
+					if GameInfo.CivilizationLeaders[leader] == nil then
+						UI.DataError("Banners found a leader \""..leader.."\" which is not/no longer in the game; icon may be whack.");
+					else
+						local civIconName	:string = "ICON_";
+						local civType		:string = GameInfo.CivilizationLeaders[leader].CivilizationType;
+						if civType ~= nil then
+							self.m_Instance.CivIcon:SetIcon(civIconName..civType);
+						end
 					end
 				end
 			end
@@ -2000,6 +2003,11 @@ function OnCityOccupationChanged( playerID: number, cityID : number )
 end
 
 -- ===========================================================================
+function OnCityPopulationChanged( playerID: number, cityID : number )
+	RefreshBanner( playerID, cityID );
+end
+
+-- ===========================================================================
 function OnDistrictVisibilityChanged( playerID :number, districtID :number, eVisibility :number )
 	local bannerInstance = GetMiniBanner( playerID, districtID );
 	if (bannerInstance ~= nil) then
@@ -2380,7 +2388,14 @@ end
 function OnUnitMoved( playerID:number, unitID:number )
 	local localPlayer = Game.GetLocalPlayer();
 	if localPlayer ~= -1 and localPlayer ~= playerID and Players[localPlayer]:IsTurnActive() then
-		RefreshPlayerRangeStrike( localPlayer );
+		m_refreshLocalPlayerRangeStrike = true;
+	end
+end
+
+function FlushChanges()
+	if m_refreshLocalPlayerRangeStrike then
+		RefreshPlayerRangeStrike( Game.GetLocalPlayer() );
+		m_refreshLocalPlayerRangeStrike = false;
 	end
 end
 
@@ -2430,7 +2445,7 @@ end
 function OnDiplomacyDeclareWar( firstPlayerID:number, secondPlayerID:number )
 	local localPlayer = Game.GetLocalPlayer();
 	if firstPlayerID == localPlayer or secondPlayerID == localPlayer then
-		RefreshPlayerRangeStrike( localPlayer );
+		m_refreshLocalPlayerRangeStrike = true;
 	end
 end
 
@@ -2440,7 +2455,7 @@ end
 function OnDiplomacyMakePeace( firstPlayerID:number, secondPlayerID:number )
 	local localPlayer = Game.GetLocalPlayer();
 	if firstPlayerID == localPlayer or secondPlayerID == localPlayer then
-		RefreshPlayerRangeStrike( localPlayer );
+		m_refreshLocalPlayerRangeStrike = true;
 	end
 end
 
@@ -2809,6 +2824,7 @@ function Initialize()
 	Events.CityUnitsChanged.Add(                OnCityUnitsChanged );
 	Events.CityVisibilityChanged.Add(			OnCityVisibilityChanged );
 	Events.CityOccupationChanged.Add(			OnCityOccupationChanged );
+	Events.CityPopulationChanged.Add(			OnCityPopulationChanged );
 	Events.DiplomacyDeclareWar.Add(				OnDiplomacyDeclareWar );
 	Events.DiplomacyMakePeace.Add(				OnDiplomacyMakePeace );
 	Events.DistrictAddedToMap.Add(				OnDistrictAddedToMap );
@@ -2841,6 +2857,7 @@ function Initialize()
 	Events.GovernmentPolicyChanged.Add(         OnPolicyChanged );
 	Events.GovernmentPolicyObsoleted.Add(       OnPolicyChanged );
 	Events.CitySiegeStatusChanged.Add(			OnSiegeStatusChanged);
+	Events.GameCoreEventPublishComplete.Add(	FlushChanges); --This event is raised directly after a series of gamecore events.
 
 	LuaEvents.GameDebug_Return.Add(OnGameDebugReturn);	
 end

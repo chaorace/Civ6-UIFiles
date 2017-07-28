@@ -15,9 +15,24 @@
 				<Label ID="TitleLabel" Style="ShellHeader" Anchor="C,C" String="LOC_MULTIPLAYER_LAN_LOBBY"/>
 			</Container>
 
-			<Container Anchor="L,T" Offset="0,52" Size="1024,723">
+			<Stack ID="ShellTabs" Anchor="C,T" Offset="0,54" StackGrowth="Right" Size="940,70" Padding="10"/>
 
-				<Grid Offset="2,0" Size="1020, 714" Style="SubContainer2" Color="MultiplayerSubContainer">
+			<!-- PlayByCloud join code edit box -->
+			<Container AutoSize="1" Anchor="R,T" Offset="0,54" ID="JoinCodeRoot" Hidden="1">
+				<Container AutoSize="1">
+					<Box Size="140,30" Color="0,0,0,0"/>
+					<Label ID="JoinCodeEditLabel" Anchor="R,C" Offset="0,0" Style="FontNormal14" ColorSet="ShellOptionText" FontStyle="stroke" WrapWidth="180" String="Join Code:"/>
+				</Container>
+				<Container AutoSize="1" Offset="145,0">
+					<Grid Style="EditTextArea" Size="160,30">
+						<EditBox ID="JoinCodeEditBox" Anchor="L,C" Offset="6,0" Size="248,23" EditMode="0" Style="FontNormal18" ColorSet="BodyTextCool" FontStyle="stroke" MaxLength="20"/>
+					</Grid>
+				</Container>
+			</Container>
+
+			<Container ID="GameListRoot" Anchor="L,T" Offset="0,114" Size="1024,661">
+
+				<Grid ID="GameListGrid" Offset="2,0" Size="1020,714" Style="SubContainer2" Color="MultiplayerSubContainer">
 					<Line															Anchor="L,B" Offset="-6,43" Start="0,0" End="1016,0" Width="2" Color="35,66,92,150" />
 				</Grid>
 
@@ -161,6 +176,16 @@
 			</PullDown>
 		</Container>
 
+	</Instance>
+
+	<!-- ShellTab Instance -->
+	<Instance Name="ShellTab">
+		<Container ID="TopControl" Size="1,1">
+			<GridButton ID="Button" Anchor="C,T" Style="ShellTab"/>
+			<AlphaAnim ID="Selected" Anchor="C,T" Speed="5" AlphaBegin="0" AlphaEnd="1" Cycle="Once" Function="Root" Hidden="1" >
+				<GridButton ID="SelectedButton" Style="ShellTabSelected" Anchor="C,T"/>
+			</AlphaAnim>
+		</Container>
 	</Instance>
 	
 </Context>

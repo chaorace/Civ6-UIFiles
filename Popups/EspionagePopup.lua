@@ -397,12 +397,15 @@ end
 
 -- ===========================================================================
 function Close()
+	if not ContextPtr:IsHidden() then
+		UI.PlaySound("UI_Screen_Close");
+	end
+
 	-- Dequeue popup from UI mananger (will re-queue if another is about to show).
 	UIManager:DequeuePopup( ContextPtr );
 
 	-- Callback to chooser so it can unselect any selected mission
 	LuaEvents.EspionagePopup_MissionBriefingClosed();
-	UI.PlaySound("UI_Screen_Close");
 
 	-- Check if we have any popups queued internally and show those if necessary
 	local queuedPopup:table = table.remove(m_internalPopupQueue);

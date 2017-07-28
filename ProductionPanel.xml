@@ -58,7 +58,7 @@
                 <ScrollBar				Anchor="R,T" AnchorSide="O,I"  Offset="1,0"	Style="ScrollVerticalBar" />
               </ScrollPanel>
 
-              <Tutorial ID="TutTrainBuilders" Style="TutorialContainer" Anchor="L,C"  AnchorSide="O,O" Offset="0,240" TriggerBy="TutorialTrainBuilders">
+              <Tutorial ID="TutTrainBuilders" Style="TutorialContainer" Anchor="L,C"  AnchorSide="O,O" Offset="0,310" TriggerBy="TutorialTrainBuilders">
                 <Grid Style="TutorialCalloutGrid">
                   <Label Style="TutorialHeaderText" String="LOC_META_102_HEAD"/>
                   <Label Style="TutorialBodyText" String="LOC_META_102_BODY" />
@@ -301,9 +301,10 @@
             <Image ID="FlagBaseDarken"	Size="64,64" TextureOffset="192,128"	Texture="UnitFlagCivilian"/>
             <Image				ID="Icon"			        Size="32,32" Texture="Units32" Anchor="C,C" ConsumeMouse="0"/>
           </Container>
-          <Container															Size="parent-65,parent-15" Anchor="L,C" Offset="60,0">
-            <Label				ID="LabelText"					WrapWidth="120" String="Industrial Zone" Style="WhiteSemiBold14"  Anchor="L,C"/>
-          </Container>
+          <Stack Anchor="L,C" Offset="60,0" StackPadding="2">
+            <Label ID="LabelText"	WrapWidth="120" String="Industrial Zone" Style="WhiteSemiBold14"/>
+            <Image ID="ReligionIcon" Size="22,22" IconSize="22" Icon="ICON_RELIGION_ISLAM"/>
+          </Stack>
           <Stack Anchor="R,C" StackGrowth="Down" Padding="-6">
             <Grid               ID="RecommendedIcon" SliceTextureSize="40,34" SliceCorner="22,15" Size="40,34" Hidden="1" Texture="Controls_AdvisorRecBacking" ToolTip="LOC_HUD_UNIT_PANEL_RECOMMENDED" Anchor="R,T">
               <Image            Texture="AdvisorRec22"      Size="22,22" Anchor="R,T" Offset="6,4">
@@ -429,7 +430,10 @@
               </Container>
             </Stack>
           </Stack>
-          <Label				ID="LabelText"					 WrapWidth="120" String="Industrial Zone" Style="WhiteSemiBold14" Anchor="L,C" Offset="65,0"/>
+          <Stack Anchor="L,C" Offset="65,0" StackPadding="2">
+            <Label ID="LabelText"	WrapWidth="120" String="Industrial Zone" Style="WhiteSemiBold14" />
+            <Image ID="ReligionIcon" Size="22,22" IconSize="22" Icon="ICON_RELIGION_ISLAM"/>
+          </Stack>
           <Container			ID="Disabled"						Size="parent,parent" Hidden="1"  ConsumeMouse="1">
             <GridButton														Size="parent,parent" Style="ProductionButton" Color="200,200,200,150" Disabled="1"/>
           </Container>

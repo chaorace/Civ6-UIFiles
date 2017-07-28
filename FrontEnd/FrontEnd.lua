@@ -5,7 +5,7 @@
 --
 -- ===========================================================================
 
-include("PopupDialogSupport")
+include("PopupDialog")
 include("InputSupport");
 
 

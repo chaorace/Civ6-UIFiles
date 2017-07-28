@@ -163,7 +163,7 @@ local sectionId = page.SectionId;
 		if(row.BuildingType == buildingType) then
 			local feature = GameInfo.Features[row.FeatureType];
 			if(feature ~= nil) then
-				table.insert(placement_requirements, Locale.Lookup(feature.Name));
+				table.insert(placement_requirements, {Locale.Lookup(feature.Name), feature.FeatureType});
 			end
 		end
 	end
@@ -172,7 +172,7 @@ local sectionId = page.SectionId;
 		if(row.BuildingType == buildingType) then
 			local feature = GameInfo.Features[row.FeatureType];
 			if(feature ~= nil) then
-				table.insert(placement_requirements, Locale.Lookup(feature.Name));
+				table.insert(placement_requirements, {Locale.Lookup(feature.Name), feature.FeatureType});
 			end
 		end
 	end
@@ -183,34 +183,39 @@ local sectionId = page.SectionId;
 			if(terrain ~= nil) then
 				-- Do not list coast as a requirement if we're going to list it further down anyways.
 				if(terrain.TerrainType ~= "TERRAIN_COAST" or not(building.Coast or building.MustBeAdjacentLand)) then
-					table.insert(placement_requirements, Locale.Lookup(terrain.Name));
+					table.insert(placement_requirements, {Locale.Lookup(terrain.Name), terrain.TerrainType});
 				end
 			end
 		end
 	end
+	table.sort(placement_requirements, function(a,b) return Locale.Compare(a[1],b[1]) == -1 end);
 
-
+	local additional_placement_requirements = {};
 	if(building.RequiresRiver or building.RequiresAdjacentRiver) then
-		table.insert(placement_requirements, Locale.Lookup("LOC_TOOLTIP_PLACEMENT_REQUIRES_ADJACENT_RIVER"));
+		table.insert(additional_placement_requirements, Locale.Lookup("LOC_TOOLTIP_PLACEMENT_REQUIRES_ADJACENT_RIVER"));
 	end
 
 	if(building.AdjacentToMountain == 1) then
-		table.insert(placement_requirements, Locale.Lookup("LOC_TOOLTIP_PLACEMENT_REQUIRES_ADJACENT_MOUNTAIN"));
+		table.insert(additional_placement_requirements, Locale.Lookup("LOC_TOOLTIP_PLACEMENT_REQUIRES_ADJACENT_MOUNTAIN"));
 	end
 
 	if(building.MustBeLake) then
-		table.insert(placement_requirements, Locale.Lookup("LOC_UI_PEDIA_PLACEMENT_REQUIRES_LAKE"));
+		table.insert(additional_placement_requirements, Locale.Lookup("LOC_UI_PEDIA_PLACEMENT_REQUIRES_LAKE"));
 	end
 
 	if(building.MustNotBeLake) then
-		table.insert(placement_requirements, Locale.Lookup("LOC_UI_PEDIA_PLACEMENT_REQUIRES_NOT_LAKE"));
+		table.insert(additional_placement_requirements, Locale.Lookup("LOC_UI_PEDIA_PLACEMENT_REQUIRES_NOT_LAKE"));
 	end
 
 	if(building.Coast or building.MustBeAdjacentLand) then
-		table.insert(placement_requirements, Locale.Lookup("LOC_UI_PEDIA_PLACEMENT_REQUIRES_COAST"));
+		table.insert(additional_placement_requirements, Locale.Lookup("LOC_UI_PEDIA_PLACEMENT_REQUIRES_COAST"));
 	end
 	
-	table.sort(placement_requirements, function(a,b) return Locale.Compare(a,b) == -1 end);
+	table.sort(additional_placement_requirements, function(a,b) return Locale.Compare(a,b) == -1 end);
+
+	for i,v in ipairs(additional_placement_requirements) do
+		table.insert(placement_requirements, v);
+	end
 
 	local stats = {};
 
@@ -419,7 +424,15 @@ local sectionId = page.SectionId;
 			s:AddHeader("LOC_UI_PEDIA_PLACEMENT");
 
 			for i, v in ipairs(placement_requirements) do
-				s:AddLabel("[ICON_Bullet] " .. v);
+				local t = type(v);
+				if(t == "table") then
+					local tName = v[1];
+					local tType = v[2];
+					s:AddIconLabel({"ICON_" .. tType, tName, tType}, tName);
+
+				elseif(t == "string") then
+					s:AddLabel("[ICON_Bullet] " .. v);
+				end
 			end
 
 			s:AddSeparator();
@@ -429,11 +442,22 @@ local sectionId = page.SectionId;
 		local maintenance = tonumber(building.Maintenance);
 
 		if(cost ~= 0) then
-			local yield = GameInfo.Yields["YIELD_PRODUCTION"];
-			if(yield) then
-				s:AddHeader("LOC_UI_PEDIA_PRODUCTION_COST");
-				local t = Locale.Lookup("LOC_UI_PEDIA_BASE_COST", tonumber(building.Cost), yield.IconString, yield.Name);		
-				s:AddLabel(t);
+			if (not building.MustPurchase) then
+				local yield = GameInfo.Yields["YIELD_PRODUCTION"];
+				if(yield) then
+					s:AddHeader("LOC_UI_PEDIA_PRODUCTION_COST");
+					local t = Locale.Lookup("LOC_UI_PEDIA_BASE_COST", tonumber(building.Cost), yield.IconString, yield.Name);
+					s:AddLabel(t);
+				end
+			end
+
+			if (building.PurchaseYield) then	
+				local y = GameInfo.Yields[building.PurchaseYield];
+				if(y) then
+					s:AddHeader("LOC_UI_PEDIA_PURCHASE_COST");
+					local t = Locale.Lookup("LOC_UI_PEDIA_BASE_COST", tonumber(building.Cost), y.IconString, y.Name);
+					s:AddLabel(t);
+				end
 			end
 		end
 

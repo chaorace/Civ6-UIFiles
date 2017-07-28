@@ -14,7 +14,7 @@
   <AlphaAnim ID="WarConfirmAlpha" AlphaBegin="0" AlphaEnd="1" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
     <SlideAnim ID="WarConfirmSlide" Start="0,-20" End="0,0" Speed="3" Function="Root" Cycle="Once" Size="parent,parent">
       <Grid ID="DropShadow" Size="500,250" Anchor="C,C" Offset="0,0" Style="DropShadow2" Color="255,255,255,200">
-        <Grid ID="Window" Size="parent-50,parent-50" Anchor="C,C" Offset="0,0" SizePadding="0,20" Style="WindowFrameTitle" AutoSize="V">
+        <Grid ID="Window" Size="parent-50,0" Anchor="C,C" Offset="0,0" SizePadding="0,20" Style="WindowFrameTitle" AutoSize="V">
           <Container Size="parent,38" Offset="0,4">
             <Label Style="WindowHeader" String="{LOC_DECLARE_WAR_HEADER:upper}" Anchor="C,C"/>
           </Container>

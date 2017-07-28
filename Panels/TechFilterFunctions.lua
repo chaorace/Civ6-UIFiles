@@ -16,6 +16,10 @@ end
 
 g_TechFilters = hmake TechFilters{};
 
+-- Set up additional data for each filter
+g_AdditionalFilters = {}
+include("TechFilterFunctions_", true);
+
 -- Recommended by Advisors Filter
 --[[
 g_TechFilters.TECHFILTER_RECOMMENDED = function(techType)
@@ -31,57 +35,27 @@ end
 
 -- Food Filter
 g_TechFilters.TECHFILTER_FOOD = function(techType)
-	local yieldType : string = "YIELD_FOOD";
-
-	if CheckUnlocksForYield(techType, yieldType) then
-		return true;
-	end
-
-	return false;
+	return CheckUnlocksForYield(techType, "YIELD_FOOD") or CheckAdditionalFilter("TECHFILTER_FOOD", techType);
 end
 
 -- Science Filter
 g_TechFilters.TECHFILTER_SCIENCE = function(techType)
-	local yieldType : string = "YIELD_SCIENCE";
-
-	if CheckUnlocksForYield(techType, yieldType) then
-		return true;
-	end
-
-	return false;
+	return CheckUnlocksForYield(techType, "YIELD_SCIENCE") or CheckAdditionalFilter("TECHFILTER_SCIENCE", techType);
 end
 
 -- Production Filter
 g_TechFilters.TECHFILTER_PRODUCTION = function(techType)
-	local yieldType : string = "YIELD_PRODUCTION";
-
-	if CheckUnlocksForYield(techType, yieldType) then
-		return true;
-	end
-
-	return false;
+	return CheckUnlocksForYield(techType, "YIELD_PRODUCTION") or CheckAdditionalFilter("TECHFILTER_PRODUCTION", techType);
 end
 
 -- Culture Filter
 g_TechFilters.TECHFILTER_CULTURE = function(techType)
-	local yieldType : string = "YIELD_CULTURE";
-
-	if CheckUnlocksForYield(techType, yieldType) then
-		return true;
-	end
-
-	return false;
+	return CheckUnlocksForYield(techType, "YIELD_CULTURE") or CheckAdditionalFilter("TECHFILTER_CULTURE", techType);
 end
 
 -- Faith Filter
 g_TechFilters.TECHFILTER_FAITH = function(techType)
-	local yieldType : string = "YIELD_FAITH";
-
-	if CheckUnlocksForYield(techType, yieldType) then
-		return true;
-	end
-
-	return false;
+	return CheckUnlocksForYield(techType, "YIELD_FAITH") or CheckAdditionalFilter("TECHFILTER_FAITH", techType);
 end
 
 -- Housing Filter
@@ -107,13 +81,13 @@ g_TechFilters.TECHFILTER_HOUSING = function(techType)
 		end
 	end
 
-	return false;
+	return CheckAdditionalFilter("TECHFILTER_HOUSING", techType);
 end
 
 -- Amenities Filter
 g_TechFilters.TECHFILTER_AMENITIES = function(techType)
 	--??TODO - Implement Amenities filter function
-	return false;
+	return CheckAdditionalFilter("TECHFILTER_AMENITIES", techType);
 end
 
 -- Gold Filter
@@ -124,48 +98,32 @@ g_TechFilters.TECHFILTER_GOLD = function(techType)
 		return true;
 	end
 
-	return false;
-end
-
--- Health Filter
-g_TechFilters.TECHFILTER_HEALTH = function(techType)
-	if CheckUnlocksForHealth(techType) then
-		return true;
-	end
-
-	return false;
-end
-
-
--- Improvements Filter
-g_TechFilters.TECHFILTER_IMPROVEMENTS = function(techType)
-	-- Improvements
-	local has_trait:table = nil;
-	local player = Players[Game.GetLocalPlayer()];
-	if(player ~= nil) then
-		has_trait = {};
-		local config = PlayerConfigurations[Game.GetLocalPlayer()];
-		if(config ~= nil) then
-			local leaderType = config:GetLeaderTypeName();
-			local civType = config:GetCivilizationTypeName();
-
-			if(leaderType) then
-				for row in GameInfo.LeaderTraits() do
-					if(row.LeaderType== leaderType) then
-						has_trait[row.TraitType] = true;
-					end
-				end
-			end
-
-			if(civType) then
-				for row in GameInfo.CivilizationTraits() do
-					if(row.CivilizationType== civType) then
-						has_trait[row.TraitType] = true;
+	for row in GameInfo.Policies() do
+		if (row.PrereqTech == techType or row.PrereqCivic == techType) then
+			local policyType = row.PolicyType;
+			for rowPolicyModifier in GameInfo.PolicyModifiers() do
+				if rowPolicyModifier.PolicyType == policyType then
+					local modifier = GameInfo.Modifiers[rowPolicyModifier.ModifierId];
+					if modifier.ModifierType == "MODIFIER_PLAYER_ADJUST_UNIT_MAINTENANCE_DISCOUNT" then
+						return true;
 					end
 				end
 			end
 		end
 	end
+
+	return CheckAdditionalFilter("TECHFILTER_GOLD", techType);
+end
+
+-- Health Filter
+g_TechFilters.TECHFILTER_HEALTH = function(techType)
+	return CheckUnlocksForHealth(techType) or CheckAdditionalFilter("TECHFILTER_HEALTH", techType);
+end
+
+
+-- Improvements Filter
+g_TechFilters.TECHFILTER_IMPROVEMENTS = function(techType)
+	local has_trait:table = GetTraits();
 
 	for row in GameInfo.Improvements() do
 		if (row.PrereqTech == techType or row.PrereqCivic == techType) and (row.TraitType== nil or has_trait == nil or has_trait[row.TraitType]) then
@@ -173,7 +131,7 @@ g_TechFilters.TECHFILTER_IMPROVEMENTS = function(techType)
 		end
 	end
 
-	return false;
+	return CheckAdditionalFilter("TECHFILTER_IMPROVEMENTS", techType);
 end
 
 -- Wonders Filter
@@ -184,45 +142,45 @@ g_TechFilters.TECHFILTER_WONDERS = function(techType)
 		end
 	end
 
-	return false;
+	return CheckAdditionalFilter("TECHFILTER_WONDERS", techType);
 end
 
 -- Units Filter
 g_TechFilters.TECHFILTER_UNITS = function(techType)
-	local has_trait:table = nil;
-	local player = Players[Game.GetLocalPlayer()];
-	if(player ~= nil) then
-		has_trait = {};
-		local config = PlayerConfigurations[Game.GetLocalPlayer()];
-		if(config ~= nil) then
-			local leaderType = config:GetLeaderTypeName();
-			local civType = config:GetCivilizationTypeName();
-
-			if(leaderType) then
-				for row in GameInfo.LeaderTraits() do
-					if(row.LeaderType== leaderType) then
-						has_trait[row.TraitType] = true;
-					end
-				end
-			end
-
-			if(civType) then
-				for row in GameInfo.CivilizationTraits() do
-					if(row.CivilizationType== civType) then
-						has_trait[row.TraitType] = true;
-					end
-				end
-			end
-		end
-	end
-
+	local has_trait:table = GetTraits();
 	for row in GameInfo.Units() do
 		if (row.PrereqTech == techType or row.PrereqCivic == techType) and (row.TraitType== nil or has_trait == nil or has_trait[row.TraitType]) then
 			return true;
 		end
 	end
 
-	return false;
+	for row in GameInfo.CivicModifiers() do
+		if row.CivicType == techType then
+			local modifier = GameInfo.Modifiers[row.ModifierId];
+			if(modifier) then
+				local dynamicModifier = GameInfo.DynamicModifiers[modifier.ModifierType];
+				local effect = dynamicModifier and dynamicModifier.EffectType;
+				if effect == "EFFECT_GRANT_UNIT_IN_CITY" then
+					return true;
+				end
+			end
+		end
+	end
+
+	for row in GameInfo.TechnologyModifiers() do
+		if row.TechnologyType == techType then
+			local modifier = GameInfo.Modifiers[row.ModifierId];
+			if(modifier) then
+				local dynamicModifier = GameInfo.DynamicModifiers[modifier.ModifierType];
+				local effect = dynamicModifier and dynamicModifier.EffectType;
+				if effect == "EFFECT_GRANT_UNIT_IN_CITY" then
+					return true;
+				end
+			end
+		end
+	end
+
+	return CheckAdditionalFilter("TECHFILTER_UNITS", techType);
 end
 
 
@@ -230,34 +188,7 @@ end
 -- 	Utility Functions
 -- ===========================================================================
 function CheckUnlocksForYield(techType, yieldType)
-
-	local has_trait:table = nil;
-	local player = Players[Game.GetLocalPlayer()];
-
-	if(player ~= nil) then
-		has_trait = {};
-		local config = PlayerConfigurations[Game.GetLocalPlayer()];
-		if(config ~= nil) then
-			local leaderType = config:GetLeaderTypeName();
-			local civType = config:GetCivilizationTypeName();
-
-			if(leaderType) then
-				for row in GameInfo.LeaderTraits() do
-					if(row.LeaderType== leaderType) then
-						has_trait[row.TraitType] = true;
-					end
-				end
-			end
-
-			if(civType) then
-				for row in GameInfo.CivilizationTraits() do
-					if(row.CivilizationType== civType) then
-						has_trait[row.TraitType] = true;
-					end
-				end
-			end
-		end
-	end
+	local has_trait:table = GetTraits();
 
 	-- Yield via Buildings
 	for row in GameInfo.Buildings() do
@@ -337,7 +268,7 @@ function CheckUnlocksForYield(techType, yieldType)
 		end
 	end
 		
-	-- Yield via District Adjacencies
+	-- Yield via Districts
 	for row in GameInfo.Districts() do
 		if (row.PrereqTech == techType or row.PrereqCivic == techType) and (row.TraitType == nil or has_trait == nil or has_trait[row.TraitType]) then
 			local districtType = row.DistrictType;
@@ -365,6 +296,14 @@ function CheckUnlocksForYield(techType, yieldType)
 						if(rowModifierYieldChange.ModifierId == modifierID and rowModifierYieldChange.Value == yieldType) then
 							return true;
 						end
+					end
+				end
+			end
+
+			for rowDistrictCitizenYield in GameInfo.District_CitizenYieldChanges() do
+				if rowDistrictCitizenYield.DistrictType == districtType then
+					if rowDistrictCitizenYield.YieldType == yieldType then
+						return true;
 					end
 				end
 			end
@@ -428,6 +367,48 @@ function CheckUnlocksForYield(techType, yieldType)
 	end
 
 	return false;
+end
+
+function CheckAdditionalFilter(filterKey:string, techOrCivicType:string)
+	local filters = g_AdditionalFilters[filterKey];
+	if filters then
+		for _, value in ipairs(filters) do
+			if value == techOrCivicType then
+				return true;
+			end
+		end
+	end
+	return false;
+end
+
+function GetTraits()
+	local has_trait:table = nil;
+	local player = Players[Game.GetLocalPlayer()];
+	if(player ~= nil) then
+		has_trait = {};
+		local config = PlayerConfigurations[Game.GetLocalPlayer()];
+		if(config ~= nil) then
+			local leaderType = config:GetLeaderTypeName();
+			local civType = config:GetCivilizationTypeName();
+
+			if(leaderType) then
+				for row in GameInfo.LeaderTraits() do
+					if(row.LeaderType== leaderType) then
+						has_trait[row.TraitType] = true;
+					end
+				end
+			end
+
+			if(civType) then
+				for row in GameInfo.CivilizationTraits() do
+					if(row.CivilizationType== civType) then
+						has_trait[row.TraitType] = true;
+					end
+				end
+			end
+		end
+	end
+	return has_trait;
 end
 
 -- ===========================================================================
